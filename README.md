@@ -55,3 +55,16 @@ flutter build apk --debug --flavor stage --dart-define-from-file=stage_env.json
 flutter build ios --debug \
 --flavor stage \
 --dart-define-from-file=stage_env.json
+stage_env.json
+{
+"base_url": "https://google.com",
+"envKey": "stage",
+"androidAppId": "1:537817253607:android:e22032e3cc4ac65020c442",
+"iosAppId": "1:537817253607:android:e22032e3cc4ac65020c442",
+"messagingSenderId": "537817253607",
+"projectId": "flutterbysajid",
+"iosApiKey": "",
+"androidApiKey": "",
+"sentryDSN": "",
+"googleApiKey": ""
+}
