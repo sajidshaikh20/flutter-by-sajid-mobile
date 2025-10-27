@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter: Default",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "Flutter: Stage",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--flavor", "stage",
+        "--dart-define-from-file=stage_env.json"
+      ]
+    },
+    {
+      "name": "Flutter: Prod",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--flavor", "prod",
+        "--dart-define-from-file=prod_env.json"
+      ]
+    }
+  ]
+}

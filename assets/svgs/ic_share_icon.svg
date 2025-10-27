@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="24" height="24" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Icons_Outlines_Share" data-name="Icons / Outlines / Share" clip-path="url(#clip-path)">
+    <rect id="Rectangle" width="24" height="24" fill="rgba(255,255,255,0)"/>
+    <path id="Share" d="M3,23a3,3,0,0,1-3-3V12a1,1,0,0,1,2,0v8a1,1,0,0,0,1,1H19a1,1,0,0,0,1-1V12a1,1,0,0,1,2,0v8a3,3,0,0,1-3,3Zm7-7V3.415L5.707,7.707A1,1,0,1,1,4.293,6.293l6-6a1,1,0,0,1,1.414,0l6,6a1,1,0,0,1-1.415,1.414L12,3.415V16a1,1,0,1,1-2,0Z" transform="translate(1)" fill="#2d2d2f"/>
+  </g>
+</svg>

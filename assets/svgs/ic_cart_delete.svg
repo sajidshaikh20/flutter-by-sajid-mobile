@@ -1,0 +1,10 @@
+<svg id="Icon_1" data-name="Icon 1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <rect id="Rectangle" width="20" height="20" transform="translate(0 0)" fill="rgba(255,255,255,0)"/>
+  <g id="ic_delete" transform="translate(-15.768 1)">
+    <path id="path_0" d="M306.521,175.108l-1.409-.052-.305,8.342,1.409.051Z" transform="translate(-277.323 -168.902)" fill="#40c8f4"/>
+    <path id="path_1" d="M235.948,175.791h1.41v8.342h-1.41Z" transform="translate(-210.885 -169.611)" fill="#40c8f4"/>
+    <path id="path_2" d="M160.133,183.391l-.305-8.342-1.409.052.305,8.342Z" transform="translate(-136.082 -168.895)" fill="#40c8f4"/>
+    <path id="path_3" d="M17.379,76.867v1.41h1.469l1.166,13.245a.7.7,0,0,0,.7.643H30.8a.7.7,0,0,0,.7-.643l1.166-13.244h1.493v-1.41ZM30.151,90.755H21.361l-1.1-12.478H31.249Z" transform="translate(0 -74.165)" fill="#40c8f4"/>
+    <path id="path_4" d="M162.857,0h-4.606a1.176,1.176,0,0,0-1.175,1.175V3.407h1.41v-2h4.136v2h1.41V1.175A1.176,1.176,0,0,0,162.857,0Z" transform="translate(-134.786)" fill="#40c8f4"/>
+  </g>
+</svg>

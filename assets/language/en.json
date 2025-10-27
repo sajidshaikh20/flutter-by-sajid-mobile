@@ -1,0 +1,1771 @@
+[
+  {
+    "key_name": "key_mobile_no_email_id",
+    "value": "Mobile No / Email ID"
+  },
+  {
+    "key_name": "key_password",
+    "value": "Password"
+  },
+  {
+    "key_name": "key_log_in_btn",
+    "value": "SIGN IN"
+  },
+  {
+    "key_name": "key_don_t_have_an_account",
+    "value": "Don't have an account?"
+  },
+  {
+    "key_name": "key_sign_up",
+    "value": "Sign Up"
+  },
+  {
+    "key_name": "key_forgot_password",
+    "value": "Forgot Password?"
+  },
+  {
+    "key_name": "key_or_login_with",
+    "value": "Or SignIn with"
+  },
+  {
+    "key_name": "key_please_enter_mobile_number_or_email_id",
+    "value": "Please enter mobile number / email id"
+  },
+  {
+    "key_name": "key_please_enter_a_email",
+    "value": "Please enter a email"
+  },
+  {
+    "key_name": "key_please_enter_a_valid_email",
+    "value": "Please enter a valid email"
+  },
+  {
+    "key_name": "key_please_enter_minimum_8_and_maximum_14_digit_mobile_number",
+    "value": "Please enter minimum 8 and maximum 14 digit mobile number"
+  },
+  {
+    "key_name": "key_please_enter_password",
+    "value": "Please enter password"
+  },
+  {
+    "key_name": "key_login_email_id",
+    "value": "Email ID"
+  },
+  {
+    "key_name": "key_please_enter_valid_password",
+    "value": "Password must contain 3 type of this 4 option (1 upper case, 1 lower case, 1 special character, 1 digit) & minimum 8 characters."
+  },
+  {
+    "key_name": "key_biometric_validation",
+    "value": "Please login first, then you can do login with this."
+  },
+  {
+    "key_name": "key_biometric_msg_for_quick_login",
+    "value": "Would you like to register fingerprint access for next quick login"
+  },
+  {
+    "key_name": "key_authenticate_with_biometric",
+    "value": "Please authenticate with biometric credential"
+  },
+  {
+    "key_name": "key_register_first_with_touch",
+    "value": "Please register finger print first"
+  },
+  {
+    "key_name": "key_register_first_with_face",
+    "value": "Please register face id first"
+  },
+  {
+    "key_name": "key_forgot_password_title",
+    "value": "FORGOT PASSWORD"
+  },
+  {
+    "key_name": "key_forgot_or",
+    "value": "OR"
+  },
+  {
+    "key_name": "key_forgot_mobile_no",
+    "value": "Mobile Number (50 123 4567)"
+  },
+  {
+    "key_name": "key_forgot_password_note",
+    "value": "Please enter your email address or mobile number. You will receive an OTP to reset your password"
+  },
+  {
+    "key_name": "key_send",
+    "value": "SEND"
+  },
+  {
+    "key_name": "key_otp_verification_title",
+    "value": "OTP VERIFICATION"
+  },
+  {
+    "key_name": "key_otp_verification_note",
+    "value": "OTP has been sent to your Mobile number"
+  },
+  {
+    "key_name": "key_enter_otp",
+    "value": "Enter OTP"
+  },
+  {
+    "key_name": "key_verify",
+    "value": "VERIFY"
+  },
+  {
+    "key_name": "key_resend_otp",
+    "value": "Resend OTP"
+  },
+  {
+    "key_name": "key_please_enter_otp",
+    "value": "Please enter OTP"
+  },
+  {
+    "key_name": "key_reset_password_title",
+    "value": "RESET PASSWORD"
+  },
+  {
+    "key_name": "key_place_holder_new_password",
+    "value": "New Password"
+  },
+  {
+    "key_name": "key_please_enter_new_password",
+    "value": "Please enter new password"
+  },
+  {
+    "key_name": "key_place_holder_confirm_password",
+    "value": "Confirm New Password"
+  },
+  {
+    "key_name": "key_please_enter_confirm_password",
+    "value": "Please enter confirm new password"
+  },
+  {
+    "key_name": "key_new_password_confirm_password_not_match",
+    "value": "new password and confirm new password should be match"
+  },
+  {
+    "key_name": "key_reset_btn",
+    "value": "RESET"
+  },
+  {
+    "key_name": "key_register_first_name",
+    "value": "First Name*"
+  },
+  {
+    "key_name": "key_register_last_name",
+    "value": "Last Name*"
+  },
+  {
+    "key_name": "key_register_mobile_no",
+    "value": "Mobile Number (50 123 4567)*"
+  },
+  {
+    "key_name": "key_register_email_id",
+    "value": "Email ID*"
+  },
+  {
+    "key_name": "key_register_password",
+    "value": "Password*"
+  },
+  {
+    "key_name": "key_register_confirm_password",
+    "value": "Confirm Password*"
+  },
+  {
+    "key_name": "key_register_email_sms_receive",
+    "value": "Yes, I would like to receive emails and SMS regarding the promotions and special offers."
+  },
+  {
+    "key_name": "key_register_agree_note",
+    "value": "By Signing Up, you agree to Alokozay's"
+  },
+  {
+    "key_name": "key_register_terms_conditions",
+    "value": "Terms & Conditions"
+  },
+  {
+    "key_name": "key_register_and",
+    "value": "and"
+  },
+  {
+    "key_name": "key_register_privacy_policy",
+    "value": "Privacy Policy"
+  },
+  {
+    "key_name": "key_register_sign_up",
+    "value": "SIGN UP"
+  },
+  {
+    "key_name": "key_register_or_sign_up_with",
+    "value": "Or Sign Up with"
+  },
+  {
+    "key_name": "key_register_already_have_an_account",
+    "value": "Already have an account?"
+  },
+  {
+    "key_name": "key_please_enter_first_name",
+    "value": "Please enter first name"
+  },
+  {
+    "key_name": "key_first_name_min_max_validation",
+    "value": "First name should be minimum 2 and maximum 100 characters"
+  },
+  {
+    "key_name": "key_please_enter_last_name",
+    "value": "Please enter last name"
+  },
+  {
+    "key_name": "key_last_name_min_max_validation",
+    "value": "Last name should be minimum 2 and maximum 100 characters"
+  },
+  {
+    "key_name": "key_register_log_in",
+    "value": "Sign In"
+  },
+  {
+    "key_name": "key_register_please_enter",
+    "value": "Please enter"
+  },
+  {
+    "key_name": "key_please_register_enter_confirm_password",
+    "value": "Please enter confirm password"
+  },
+  {
+    "key_name": "key_change_password_title",
+    "value": "CHANGE PASSWORD"
+  },
+  {
+    "key_name": "key_change_password_current_password",
+    "value": "Current Password"
+  },
+  {
+    "key_name": "key_current_password_note",
+    "value": "Please enter current password"
+  },
+  {
+    "key_name": "key_change_password_update_password",
+    "value": "UPDATE PASSWORD"
+  },
+  {
+    "key_name": "key_home_super_sale",
+    "value": "SUPER SALE"
+  },
+  {
+    "key_name": "key_home_you_may_also_like",
+    "value": "You May Also Like"
+  },
+  {
+    "key_name": "key_home_recently_viewed",
+    "value": "RECENTLY VIEWED"
+  },
+  {
+    "key_name": "key_refreshing",
+    "value": "Refreshing"
+  },
+  {
+    "key_name": "key_view_all",
+    "value": "View All"
+  },
+  {
+    "key_name": "key_add_to_cart",
+    "value": "ADD TO CART"
+  },
+  {
+    "key_name": "key_best_seller",
+    "value": "Best seller"
+  },
+  {
+    "key_name": "key_new",
+    "value": "New"
+  },
+  {
+    "key_name": "key_description",
+    "value": "Description"
+  },
+  {
+    "key_name": "key_ingredients",
+    "value": "Ingredients"
+  },
+  {
+    "key_name": "key_reviews",
+    "value": "Reviews"
+  },
+  {
+    "key_name": "key_off",
+    "value": "OFF"
+  },
+  {
+    "key_name": "key_buy",
+    "value": "BUY"
+  },
+  {
+    "key_name": "key_items_together",
+    "value": "ITEMS TOGETHER"
+  },
+  {
+    "key_name": "key_frequently_bought_together",
+    "value": "FREQUENTLY BOUGHT TOGETHER"
+  },
+  {
+    "key_name": "key_sort",
+    "value": "Sort"
+  },
+  {
+    "key_name": "key_filter",
+    "value": "Filter"
+  },
+  {
+    "key_name": "key_list",
+    "value": "List"
+  },
+  {
+    "key_name": "key_grid",
+    "value": "Grid"
+  },
+  {
+    "key_name": "key_filter_clear_all",
+    "value": "CLEAR ALL"
+  },
+  {
+    "key_name": "key_filter_product_found",
+    "value": "Product Found"
+  },
+  {
+    "key_name": "key_filter_apply",
+    "value": "APPLY"
+  },
+  {
+    "key_name": "key_shipping_address",
+    "value": "Shipping Address"
+  },
+  {
+    "key_name": "key_change",
+    "value": "Change"
+  },
+  {
+    "key_name": "key_add_new",
+    "value": "Add New"
+  },
+  {
+    "key_name": "key_shipping_method",
+    "value": "Shipping Method"
+  },
+  {
+    "key_name": "key_change_method",
+    "value": "Change Method"
+  },
+  {
+    "key_name": "key_add_shipping_address",
+    "value": "Please add shipping address"
+  },
+  {
+    "key_name": "key_sub_total",
+    "value": "Subtotal"
+  },
+  {
+    "key_name": "key_shipping_charges",
+    "value": "Shipping Charges"
+  },
+  {
+    "key_name": "key_total_excl_vat",
+    "value": "Total (Excl. VAT)"
+  },
+  {
+    "key_name": "key_vat",
+    "value": "VAT"
+  },
+  {
+    "key_name": "key_wishlist",
+    "value": "WISHLIST"
+  },
+  {
+    "key_name": "key_or",
+    "value": "OR"
+  },
+  {
+    "key_name": "key_pick_up_from_store",
+    "value": "Pick up from store"
+  },
+  {
+    "key_name": "key_delete",
+    "value": "Delete"
+  },
+  {
+    "key_name": "key_move_to_wishlist",
+    "value": "Move to Wishlist"
+  },
+  {
+    "key_name": "key_enter_discount_code",
+    "value": "Enter Discount Code"
+  },
+  {
+    "key_name": "key_enter_delivery_instruction",
+    "value": "Enter Delivery Instruction"
+  },
+  {
+    "key_name": "key_proceed_to_buy",
+    "value": "Proceed To Buy"
+  },
+  {
+    "key_name": "key_total",
+    "value": "Total"
+  },
+  {
+    "key_name": "key_remove_from_cart_msg",
+    "value": "This item will be removed from your cart."
+  },
+  {
+    "key_name": "key_move_wish_list_msg",
+    "value": "This item will be moved to your wish list."
+  },
+  {
+    "key_name": "key_login_proceed_buy_msg",
+    "value": "Please login to buy the items"
+  },
+  {
+    "key_name": "key_coupon_apply",
+    "value": "APPLY"
+  },
+  {
+    "key_name": "key_coupon_remove",
+    "value": "REMOVE"
+  },
+  {
+    "key_name": "key_update_shopping_cart",
+    "value": "UPDATE SHOPPING CART"
+  },
+  {
+    "key_name": "key_remove_cart_message_out_stock",
+    "value": "Please remove out of stock product to proceed"
+  },
+  {
+    "key_name": "key_empty_cart",
+    "value": "Empty Cart"
+  },
+  {
+    "key_name": "key_no_item_in_cart",
+    "value": "You have no items in your cart"
+  },
+  {
+    "key_name": "key_enter_coupon_code",
+    "value": "Please enter coupon code"
+  },
+  {
+    "key_name": "key_add_new_address",
+    "value": "Add new address"
+  },
+  {
+    "key_name": "key_add",
+    "value": "Add"
+  },
+  {
+    "key_name": "key_edit",
+    "value": "Edit"
+  },
+  {
+    "key_name": "key_search",
+    "value": "Search"
+  },
+  {
+    "key_name": "key_your_location",
+    "value": "YOUR LOCATION"
+  },
+  {
+    "key_name": "key_move_the_map_to_set_the_location",
+    "value": "Move the map to set the location"
+  },
+  {
+    "key_name": "key_msg_location_permission_needed",
+    "value": "Location permission is required to view nearby stores. Please enable location access in settings."
+  },
+  {
+    "key_name": "key_enable_location_to_view_nearest_stores",
+    "value": "Enable location to view the nearest stores"
+  },
+  {
+    "key_name": "key_enable_location",
+    "value": "Enable Location"
+  },
+  {
+    "key_name": "key_home",
+    "value": "Home"
+  },
+  {
+    "key_name": "key_office",
+    "value": "Office"
+  },
+  {
+    "key_name": "key_other",
+    "value": "Other"
+  },
+  {
+    "key_name": "key_street_address_1",
+    "value": "Street Address 1*"
+  },
+  {
+    "key_name": "key_street_address_2",
+    "value": "Street Address 2*"
+  },
+  {
+    "key_name": "key_address_select_country",
+    "value": "Please select country"
+  },
+  {
+    "key_name": "key_address_select_city",
+    "value": "Please select area"
+  },
+  {
+    "key_name": "key_address_select_state",
+    "value": "Please select emirate"
+  },
+  {
+    "key_name": "key_enter_street_address",
+    "value": "Please enter street address"
+  },
+  {
+    "key_name": "key_street_address_3",
+    "value": "Street Address 3*"
+  },
+  {
+    "key_name": "key_address_remove_message",
+    "value": "This address will be removed from your address book"
+  },
+  {
+    "key_name": "key_street_address",
+    "value": "Street Address*"
+  },
+  {
+    "key_name": "key_city",
+    "value": "Area"
+  },
+  {
+    "key_name": "key_state",
+    "value": "Emirate"
+  },
+  {
+    "key_name": "key_postal_code",
+    "value": "Postal Code"
+  },
+  {
+    "key_name": "key_default_billing_address",
+    "value": "Mark this address as default billing address"
+  },
+  {
+    "key_name": "key_default_shipping_address",
+    "value": "Mark this address as default shipping address"
+  },
+  {
+    "key_name": "key_mark_address",
+    "value": "Mark this address as default billing and shipping address"
+  },
+  {
+    "key_name": "key_add_address",
+    "value": "ADD ADDRESS"
+  },
+  {
+    "key_name": "key_default_billing_address_list",
+    "value": "Billing Address"
+  },
+  {
+    "key_name": "key_default_shipping_address_list",
+    "value": "Shipping Address"
+  },
+  {
+    "key_name": "key_my_addresses_list",
+    "value": "My Address"
+  },
+  {
+    "key_name": "key_update_address",
+    "value": "UPDATE ADDRESS"
+  },
+  {
+    "key_name": "key_please_login_to_add_address",
+    "value": "Please login to add address"
+  },
+  {
+    "key_name": "key_delivered",
+    "value": "Delivered"
+  },
+  {
+    "key_name": "key_reordered",
+    "value": "REORDER"
+  },
+  {
+    "key_name": "key_no_of_items",
+    "value": "No Of Items:"
+  },
+  {
+    "key_name": "key_in_process",
+    "value": "In Process"
+  },
+  {
+    "key_name": "key_cancelled",
+    "value": "Cancelled"
+  },
+  {
+    "key_name": "key_track_order",
+    "value": "TRACK ORDER"
+  },
+  {
+    "key_name": "key_are_you_sure_you_want_to_cancel_order",
+    "value": "Are you sure you want to cancel this order?"
+  },
+  {
+    "key_name": "key_yes",
+    "value": "Yes"
+  },
+  {
+    "key_name": "key_no",
+    "value": "No"
+  },
+  {
+    "key_name": "key_cancel_order",
+    "value": "CANCEL ORDER"
+  },
+  {
+    "key_name": "key_list_of_items",
+    "value": "List Of Items"
+  },
+  {
+    "key_name": "key_write_a_review",
+    "value": "Write A Review"
+  },
+  {
+    "key_name": "key_login_review_msg",
+    "value": "Please login to add review to this product"
+  },
+  {
+    "key_name": "key_qty",
+    "value": "QTY"
+  },
+  {
+    "key_name": "key_order_summery",
+    "value": "Order Summary"
+  },
+  {
+    "key_name": "key_delivery_details",
+    "value": "Delivery Details"
+  },
+  {
+    "key_name": "key_order_delivered_on",
+    "value": "Order delivered on"
+  },
+  {
+    "key_name": "key_billing_address",
+    "value": "Billing Address"
+  },
+  {
+    "key_name": "key_payment_method",
+    "value": "Payment Method"
+  },
+  {
+    "key_name": "key_return_order",
+    "value": "Return Order"
+  },
+  {
+    "key_name": "key_price_details",
+    "value": "Price Details"
+  },
+  {
+    "key_name": "key_order_details",
+    "value": "Order Total"
+  },
+  {
+    "key_name": "key_ordered",
+    "value": "Ordered"
+  },
+  {
+    "key_name": "key_packed",
+    "value": "Packed"
+  },
+  {
+    "key_name": "key_shipped",
+    "value": "Shipped"
+  },
+  {
+    "key_name": "key_rate_product",
+    "value": "Rate the Product"
+  },
+  {
+    "key_name": "key_valid_rate_product",
+    "value": "Please select the rating for this product 1 to 5"
+  },
+  {
+    "key_name": "key_write_comment",
+    "value": "Write a Comment"
+  },
+  {
+    "key_name": "key_valid_summary_review",
+    "value": "Enter Review Details"
+  },
+  {
+    "key_name": "key_valid_name_review",
+    "value": "Enter Your name"
+  },
+  {
+    "key_name": "key_login_writeReview_Msg",
+    "value": "Please login to add review for this product"
+  },
+  {
+    "key_name": "key_submit",
+    "value": "SUBMIT"
+  },
+  {
+    "key_name": "key_profile_hello",
+    "value": "Hello !"
+  },
+  {
+    "key_name": "key_profile_welcome_to",
+    "value": "Welcome To AlokozayShop"
+  },
+  {
+    "key_name": "key_profile_sign_in",
+    "value": "Sign In"
+  },
+  {
+    "key_name": "key_profile_sign_up",
+    "value": "Sign Up"
+  },
+  {
+    "key_name": "key_profile_country",
+    "value": "Country"
+  },
+  {
+    "key_name": "key_profile_language",
+    "value": "Language"
+  },
+  {
+    "key_name": "key_profile_currency",
+    "value": "Currency"
+  },
+  {
+    "key_name": "key_profile_about_alokozay",
+    "value": "About Alokozayshop"
+  },
+  {
+    "key_name": "key_profile_contact_us",
+    "value": "Contact Us"
+  },
+  {
+    "key_name": "key_profile_help",
+    "value": "Help"
+  },
+  {
+    "key_name": "key_profile_edit_profile",
+    "value": "Edit Profile"
+  },
+  {
+    "key_name": "key_profile_change_password",
+    "value": "Change Password"
+  },
+  {
+    "key_name": "key_profile_my_order",
+    "value": "My Orders"
+  },
+  {
+    "key_name": "key_profile_my_returns",
+    "value": "My Returns"
+  },
+  {
+    "key_name": "key_profile_my_wallet",
+    "value": "My Wallet"
+  },
+  {
+    "key_name": "key_profile_my_addresses",
+    "value": "My Addresses"
+  },
+  {
+    "key_name": "key_profile_my_wishlist",
+    "value": "My Wishlist"
+  },
+  {
+    "key_name": "key_profile_my_payments",
+    "value": "My Payments"
+  },
+  {
+    "key_name": "key_profile_my_review_ratting",
+    "value": "My Reviews & Rating"
+  },
+  {
+    "key_name": "key_logout",
+    "value": "LOG OUT"
+  },
+  {
+    "key_name": "key_continue",
+    "value": "Continue"
+  },
+  {
+    "key_name": "key_select_shipping_method",
+    "value": "Select Shipping Method"
+  },
+  {
+    "key_name": "key_wallet_balance",
+    "value": "Wallet Balance"
+  },
+  {
+    "key_name": "key_enter_amount_you_want_to_redeem",
+    "value": "Enter amount you want to redeem"
+  },
+  {
+    "key_name": "key_select_payment_type",
+    "value": "Select Payment Type"
+  },
+  {
+    "key_name": "key_checkout",
+    "value": "Checkout"
+  },
+  {
+    "key_name": "key_saved_cards",
+    "value": "Saved Cards"
+  },
+  {
+    "key_name": "key_cancel_payment",
+    "value": "Cancel Payment"
+  },
+  {
+    "key_name": "key_cancel_payment_alert_msg",
+    "value": "Do you really want to cancel the Payment?"
+  },
+  {
+    "key_name": "key_dismiss",
+    "value": "Dismiss"
+  },
+  {
+    "key_name": "key_thank_you",
+    "value": "THANK YOU"
+  },
+  {
+    "key_name": "key_for_making_an_online_payment",
+    "value": "For making an online payment"
+  },
+  {
+    "key_name": "key_paid",
+    "value": "Paid"
+  },
+  {
+    "key_name": "key_transaction_id",
+    "value": "Transaction ID"
+  },
+  {
+    "key_name": "key_order_no",
+    "value": "Order No"
+  },
+  {
+    "key_name": "key_bank_authorization_code",
+    "value": "Bank Authorization Code"
+  },
+  {
+    "key_name": "key_done",
+    "value": "Done"
+  },
+  {
+    "key_name": "key_failed",
+    "value": "Failed"
+  },
+  {
+    "key_name": "key_your_payment_wasnot_completed",
+    "value": "Your payment wasn't completed"
+  },
+  {
+    "key_name": "key_try_again",
+    "value": "TRY AGAIN"
+  },
+  {
+    "key_name": "key_select_store",
+    "value": "Select Store"
+  },
+  {
+    "key_name": "key_move_the_map_location",
+    "value": "Move the map to set the location"
+  },
+  {
+    "key_name": "key_search_placeholder",
+    "value": "Search"
+  },
+  {
+    "key_name": "key_select",
+    "value": "Select"
+  },
+  {
+    "key_name": "key_cancel",
+    "value": "Cancel"
+  },
+  {
+    "key_name": "key_contact_us_description",
+    "value": "If you have a question, query or comment, please feel free to get in touch and our friendly team will be delighted to help you."
+  },
+  {
+    "key_name": "key_full_name",
+    "value": "Full Name*"
+  },
+  {
+    "key_name": "key_write_message",
+    "value": "Write A Message*"
+  },
+  {
+    "key_name": "key_please_enter_mobile_number",
+    "value": "Please enter mobile number "
+  },
+  {
+    "key_name": "key_please_enter_full_name",
+    "value": "Please enter full name"
+  },
+  {
+    "key_name": "key_please_enter_full_name_valid",
+    "value": "Full name should be minimum 2 and maximum 100 characters"
+  },
+  {
+    "key_name": "key_please_enter_message",
+    "value": "Please enter message"
+  },
+  {
+    "key_name": "key_email_address",
+    "value": "Email Address*"
+  },
+  {
+    "key_name": "key_notify_me",
+    "value": "NOTIFY ME"
+  },
+  {
+    "key_name": "key_wishlist_delete_msg",
+    "value": "Do you want to delete this item from wishlist?"
+  },
+  {
+    "key_name": "key_out_off_stock",
+    "value": "OUT OF STOCK"
+  },
+  {
+    "key_name": "key_about_us",
+    "value": "About Us"
+  },
+  {
+    "key_name": "key_refund_exchange",
+    "value": "Refund & Exchange"
+  },
+  {
+    "key_name": "key_shipping_delivery",
+    "value": "Shipping & Delivery"
+  },
+  {
+    "key_name": "key_alokozayshop",
+    "value": "AlokozayShop"
+  },
+  {
+    "key_name": "key_select_free_gift",
+    "value": "Select your FREE GIFT"
+  },
+  {
+    "key_name": "key_save",
+    "value": "SAVE"
+  },
+  {
+    "key_name": "key_cancel_order_title",
+    "value": "Select Order Cancellation Reasons*"
+  },
+  {
+    "key_name": "key_comments",
+    "value": "Comments*"
+  },
+  {
+    "key_name": "key_cancel_order_description",
+    "value": "In such cases, the order will be cancelled and the money will be refunded to you within 24-48 business hours after the cancellation request."
+  },
+  {
+    "key_name": "key_order_return_title",
+    "value": "Select Return Reasons*"
+  },
+  {
+    "key_name": "key_logout_message",
+    "value": "Are you sure you want to logout?"
+  },
+  {
+    "key_name": "key_select_currency",
+    "value": "SELECT CURRENCY"
+  },
+  {
+    "key_name": "key_select_language",
+    "value": "Select Language"
+  },
+  {
+    "key_name": "key_select_country",
+    "value": "SELECT COUNTRY"
+  },
+  {
+    "key_name": "key_free_gift",
+    "value": "Free Gift"
+  },
+  {
+    "key_name": "key_free_gift_other",
+    "value": "when you spend AED 100 Above"
+  },
+  {
+    "key_name": "key_enter_name",
+    "value": "Enter Name"
+  },
+  {
+    "key_name": "key_enter_summary",
+    "value": "Enter Summary"
+  },
+  {
+    "key_name": "key_no_items",
+    "value": "No Items"
+  },
+  {
+    "key_name": "key_login_wishlist_msg",
+    "value": "Please login to add this product to your wishlist."
+  },
+  {
+    "key_name": "key_empty_wishlist",
+    "value": "You didn’t add anything to wishlist yet"
+  },
+  {
+    "key_name": "key_cancel_upper",
+    "value": "CANCEL"
+  },
+  {
+    "key_name": "key_checkOut_upper",
+    "value": "CHECKOUT"
+  },
+  {
+    "key_name": "key_continue_upper",
+    "value": "Continue"
+  },
+  {
+    "key_name": "key_buy_now",
+    "value": "BUY NOW"
+  },
+  {
+    "key_name": "key_write_a_review_upper",
+    "value": "WRITE A REVIEW"
+  },
+  {
+    "key_name": "key_sort_upper",
+    "value": "SORT"
+  },
+  {
+    "key_name": "key_filter_upper",
+    "value": "FILTER"
+  },
+  {
+    "key_name": "key_list_upper",
+    "value": "LIST"
+  },
+  {
+    "key_name": "key_grid_upper",
+    "value": "GRID"
+  },
+  {
+    "key_name": "key_done_upper",
+    "value": "DONE"
+  },
+  {
+    "key_name": "key_version",
+    "value": "Version"
+  },
+  {
+    "key_name": "key_all",
+    "value": "All"
+  },
+  {
+    "key_name": "key_no_data_available",
+    "value": "No data available"
+  },
+  {
+    "key_name": "key_ok",
+    "value": "Ok"
+  },
+  {
+    "key_name": "key_chhose_a_product_to_review",
+    "value": "CHOOSE A PRODUCT TO REVIEW"
+  },
+  {
+    "key_name": "key_coming_soon",
+    "value": "Coming Soon"
+  },
+  {
+    "key_name": "key_21",
+    "value": "21+"
+  },
+  {
+    "key_name": "key_adult_message",
+    "value": "The sale and delivery of tobacco based product are prohibited by law to persons under the age of 21"
+  },
+  {
+    "key_name": "key_adult_confirm",
+    "value": "I'm 21 years or above"
+  },
+  {
+    "key_name": "key_adult_reject",
+    "value": "I'm below 21 years old"
+  },
+  {
+    "key_name": "key_order_no_1",
+    "value": "Order No 1"
+  },
+  {
+    "key_name": "key_order_no_2",
+    "value": "Order No 2"
+  },
+  {
+    "key_name": "key_adult_message_new",
+    "value": "The sale and delivery of tobacco based product are prohibited by law to persons under the age of"
+  },
+  {
+    "key_name": "key_adult_i_am",
+    "value": "I'm"
+  },
+  {
+    "key_name": "key_adult_below_age",
+    "value": "I'm below "
+  },
+  {
+    "key_name": "key_adult_yrs",
+    "value": "years or above"
+  },
+  {
+    "key_name": "key_adult_old",
+    "value": "years old"
+  },
+  {
+    "key_name": "key_m",
+    "value": "M"
+  },
+  {
+    "key_name": "key_please_select_reason",
+    "value": "please select reason"
+  },
+  {
+    "key_name": "key_please_select_resolution",
+    "value": "please select resolution"
+  },
+  {
+    "key_name": "key_please_select_condition",
+    "value": "please select Condition"
+  },
+  {
+    "key_name": "key_please_select_one_item",
+    "value": "please select at lease one item to return"
+  },
+  {
+    "key_name": "key_reason",
+    "value": "Reason"
+  },
+  {
+    "key_name": "key_resolution",
+    "value": "Resolution"
+  },
+  {
+    "key_name": "key_condition",
+    "value": "Condition"
+  },
+  {
+    "key_name": "key_complete_address",
+    "value": "Complete Address"
+  },
+  {
+    "key_name": "key_error_internet",
+    "value": "Internet not available, Cross check your internet connectivity and try again later"
+  },
+  {
+    "key_name": "key_error_server",
+    "value": "Looks like our server is down for maintenance, Please try again later"
+  },
+  {
+    "key_name": "key_error_request",
+    "value": "Unable to communicate with the server at the moment. Please try again later"
+  },
+  {
+    "key_name": "key_error_timeout",
+    "value": "The request has timed out. The network seems to be very slow, Please try again!!!"
+  },
+  {
+    "key_name": "key_error",
+    "value": "Error"
+  },
+  {
+    "key_name": "key_no_internet",
+    "value": "No Internet Connection"
+  },
+  {
+    "key_name": "key_label_response_error",
+    "value": "Something went wrong. Please try again later"
+  },
+  {
+    "key_name": "key_something_went_wrong",
+    "value": "Something went wrong"
+  },
+  {
+    "key_name": "key_label_camera",
+    "value": "Take a Photo"
+  },
+  {
+    "key_name": "key_label_choose_photo",
+    "value": "Choose photo"
+  },
+  {
+    "key_name": "key_try_again_new",
+    "value": "Try Again"
+  },
+  {
+    "key_name": "key_msg_storage_permission_needed_to_choose_image",
+    "value": "Access to storage is required to choose a photo"
+  },
+  {
+    "key_name": "key_msg_camera_permission_needed_to_capture_image",
+    "value": "Access to camera is required to take a photo"
+  },
+  {
+    "key_name": "key_str_warning",
+    "value": "Warning!"
+  },
+  {
+    "key_name": "key_str_info",
+    "value": "Info"
+  },
+  {
+    "key_name": "key_error_while_using_flash",
+    "value": "There has been some error while accessing flash on your device"
+  },
+  {
+    "key_name": "key_enter_quantity",
+    "value": "Enter Quantity"
+  },
+  {
+    "key_name": "key_quantity",
+    "value": "Quantity"
+  },
+  {
+    "key_name": "key_lbl_review_validation",
+    "value": "Please write review minimum 10 and maximum 280 characters"
+  },
+  {
+    "key_name": "key_low_to_high",
+    "value": "Low to High"
+  },
+  {
+    "key_name": "key_high_to_low",
+    "value": "High to Low"
+  },
+  {
+    "key_name": "key_loading",
+    "value": "Loading..."
+  },
+  {
+    "key_name": "key_more",
+    "value": "More"
+  },
+  {
+    "key_name": "key_no_review",
+    "value": "No Reviews"
+  },
+  {
+    "key_name": "key_did_not_review_any_item",
+    "value": "You didn’t reviewed any of the items yet."
+  },
+  {
+    "key_name": "key_menu_home",
+    "value": "Home"
+  },
+  {
+    "key_name": "key_menu_categories",
+    "value": "Categories"
+  },
+  {
+    "key_name": "key_menu_offer",
+    "value": "Offers"
+  },
+  {
+    "key_name": "key_menu_my_account",
+    "value": "My Account"
+  },
+  {
+    "key_name": "key_menu_cart",
+    "value": "Cart"
+  },
+  {
+    "key_name": "key_email_configure",
+    "value": "Please configure your Email in settings."
+  },
+  {
+    "key_name": "key_select_payment_method",
+    "value": "Please select payment method."
+  },
+  {
+    "key_name": "key_retry",
+    "value": "Retry"
+  },
+  {
+    "key_name": "key_something_went_wrong_try_again",
+    "value": "Something went wrong, Please try again!!"
+  },
+  {
+    "key_name": "key_success",
+    "value": "Success"
+  },
+  {
+    "key_name": "key_upload_photo",
+    "value": "Upload Photo"
+  },
+  {
+    "key_name": "key_select_shipping_address",
+    "value": "Please select shipping address"
+  },
+  {
+    "key_name": "key_no_orders",
+    "value": "No Orders"
+  },
+  {
+    "key_name": "key_not_place_any_order_yet",
+    "value": "You have not placed any order with us yet"
+  },
+  {
+    "key_name": "kye_no_return_orders",
+    "value": "No Return Orders"
+  },
+  {
+    "key_name": "key_write_comment_validation",
+    "value": "Please write commnet"
+  },
+  {
+    "key_name": "key_no_orders_yet",
+    "value": "You have not placed ay order with us yet."
+  },
+  {
+    "key_name": "key_order_placed",
+    "value": "Order Placed"
+  },
+  {
+    "key_name": "key_order_processing",
+    "value": "Processing"
+  },
+  {
+    "key_name": "key_order_out_for_delivery",
+    "value": "Out for Delivery"
+  },
+  {
+    "key_name": "key_mark_address_alert",
+    "value": "Are you sure mark this address as default billing and shipping address?"
+  },
+  {
+    "key_name": "key_update",
+    "value": "Update"
+  },
+  {
+    "key_name": "key_mark_as_billing",
+    "value": "Mark as billing address"
+  },
+  {
+    "key_name": "key_mark_as_shipping",
+    "value": "Mark as shipping address"
+  },
+  {
+    "key_name": "key_empty_cart_msg",
+    "value": "All the products from your cart will be removed"
+  },
+  {
+    "key_name": "key_yes_empty_it",
+    "value": "Yes, Empty It."
+  },
+  {
+    "key_name": "key_empty_shopping_cart",
+    "value": "Empty Shopping Cart"
+  },
+  {
+    "key_name": "key_please_provide_shipping_address",
+    "value": "Please provide a shipping address"
+  },
+  {
+    "key_name": "key_same_as_shipping_address",
+    "value": "Same as Shipping Address"
+  },
+  {
+    "key_name": "key_edit_address",
+    "value": "Edit Address"
+  },
+  {
+    "key_name": "key_select_your_free_gift",
+    "value": "Select your FREE GIFT"
+  },
+  {
+    "key_name": "key_save_this_address",
+    "value": "save this address"
+  },
+  {
+    "key_name": "key_delivery_msg",
+    "value": "Your order will be delivered in next 3 - 5 business days"
+  },
+  {
+    "key_name": "key_check_account_is_exist",
+    "value": "You already have an account with us. Sign in or continue as guest."
+  },
+  {
+    "key_name": "key_select_checkout_method",
+    "value": "Select Checkout Method"
+  },
+  {
+    "key_name": "key_checkout_as_guest",
+    "value": "CHECKOUT AS GUEST"
+  },
+  {
+    "key_name": "key_register_and_checkout",
+    "value": "REGISTER AND CHECKOUT"
+  },
+  {
+    "key_name": "key_refer_and_earn",
+    "value": "Refer and Earn"
+  },
+  {
+    "key_name": "key_your_invitation_code",
+    "value": "Your invitation Code"
+  },
+  {
+    "key_name": "key_tap_to_copy",
+    "value": "Tap to copy"
+  },
+  {
+    "key_name": "key_or_share_code",
+    "value": "Or share code"
+  },
+  {
+    "key_name": "key_share",
+    "value": "Share"
+  },
+  {
+    "key_name": "key_referral_code",
+    "value": "Referral Code (Optional)"
+  },
+  {
+    "key_name": "key_no_transaction",
+    "value": "No transaction available"
+  },
+  {
+    "key_name": "key_please_enter_valid_amount",
+    "value": "Please enter valid amount"
+  },
+  {
+    "key_name": "key_oops",
+    "value": "Oops!"
+  },
+  {
+    "key_name": "key_no_products_found",
+    "value": "No products found here"
+  },
+  {
+    "key_name": "key_go_to_cart",
+    "value": "Go to Cart"
+  },
+  {
+    "key_name": "key_product_added_cart",
+    "value": "Product(s) has been added to cart."
+  },
+  {
+    "key_name": "key_wallet_history",
+    "value": "Wallet History"
+  },
+  {
+    "key_name": "key_wallet_amount",
+    "value": "Wallet Amount"
+  },
+  {
+    "key_name": "key_view_reward_history",
+    "value": "View Rewards History"
+  },
+  {
+    "key_name": "key_reward_history",
+    "value": "Reward History"
+  },
+  {
+    "key_name": "key_total_rewards",
+    "value": "Total Rewards"
+  },
+  {
+    "key_name": "key_refferal_code_copy",
+    "value": "Copied code to clipboard"
+  },
+  {
+    "key_name": "key_mobile_no",
+    "value": "Mobile Number*"
+  },
+  {
+    "key_name": "key_district",
+    "value": "District"
+  },
+  {
+    "key_name": "key_city_cyp_can",
+    "value": "City"
+  },
+  {
+    "key_name": "key_reward_to_currency",
+    "value": "*100 Rewads"
+  },
+  {
+    "key_name": "key_convert_point_to_wallet",
+    "value": "Convert Reward points to Wallet Credit"
+  },
+  {
+    "key_name": "key_reward_points",
+    "value": "Reward points"
+  },
+  {
+    "key_name": "key_reward_points_you_want_to_convert_wallet",
+    "value": "Enter Reward points you want to convert Wallet Credit"
+  },
+  {
+    "key_name": "key_use_maximum",
+    "value": "Use maximum"
+  },
+  {
+    "key_name": "key_province_state",
+    "value": "Province/State"
+  },
+  {
+    "key_name": "key_no_shipping_address",
+    "value": "No shipping method for this address"
+  },
+  {
+    "key_name": "key_delete_account",
+    "value": "Delete an account"
+  },
+  {
+    "key_name": "key_delete_account_message",
+    "value": "Kindly note your account will be permanently deleted, please confirm if you are sure to delete your account."
+  },
+  {
+    "key_name": "key_confirm",
+    "value": "Confirm"
+  },
+  {
+    "key_name": "key_delivery_information",
+    "value": "Delivery Information"
+  },
+  {
+    "key_name": "key_delivery_date",
+    "value": "Delivery Date:"
+  },
+  {
+    "key_name": "key_delivery_time",
+    "value": "Delivery Time:"
+  },
+  {
+    "key_name": "key_pick_a_delivery_slot",
+    "value": "Next Available Slot"
+  },
+  {
+    "key_name": "key_please_select_time_slot",
+    "value": "Please select a timeslot"
+  },
+  {
+    "key_name": "key_company",
+    "value": "Company"
+  },
+  {
+    "key_name": "key_no_filters_available",
+    "value": "No Filters Available"
+  },
+  {
+    "key_name": "key_shop_by_category",
+    "value": "Shop by Category"
+  },
+  {
+    "key_name": "key_contact_titlephone",
+    "value": "Phone"
+  },
+  {
+    "key_name": "key_contactdata_requestcallbackdesc",
+    "value": "Please enter your phone number and we will call you back soon."
+  },
+  {
+    "key_name": "key_contact_successcallback",
+    "value": "Callback request send successfully"
+  },
+  {
+    "key_name": "key_contact_requestcallbackdesc",
+    "value": "Send us a callback request and we will call you soon"
+  },
+  {
+    "key_name": "key_contact_emaildesc",
+    "value": "Email us with any questions or inquiries"
+  },
+  {
+    "key_name": "key_contact_titleemail",
+    "value": "Email"
+  },
+  {
+    "key_name": "key_contact_chatwhatsapp",
+    "value": "Chat On Whatsapp"
+  },
+  {
+    "key_name": "key_contact_titlewhatsapp",
+    "value": "Whatsapp"
+  },
+  {
+    "key_name": "key_contact_titlerequestcallback",
+    "value": "Request a Callback"
+  },
+  {
+    "key_name": "key_no_result_found",
+    "value": "No Result Found"
+  },
+  {
+    "key_name": "key_suggestion",
+    "value": "Suggestions"
+  },
+  {
+    "key_name": "key_products",
+    "value": "Products"
+  },
+  {
+    "key_name": "key_contact_duration",
+    "value": "(MONDAY - FRIDAY 10 AM TO & 7 PM )"
+  },
+  {
+    "key_name": "key_delete_all",
+    "value": "Delete All"
+  },
+  {
+    "key_name": "key_subtotal_incl_tex",
+    "value": "Subtotal(Incl. Tax)"
+  },
+  {
+    "key_name": "key_saved",
+    "value": "Saved"
+  },
+  {
+    "key_name": "key_proceed",
+    "value": "Proceed"
+  },
+  {
+    "key_name": "key_subtotal_incl_tax",
+    "value": "Subtotal(Incl. Tax)"
+  },
+  {
+    "key_name": "key_total_incl_tax",
+    "value": "Total(Incl. Tax)"
+  },
+  {
+    "key_name": "key_free_gifts",
+    "value": "Select your Free Gifts"
+  },
+  {
+    "key_name": "key_also_available_in",
+    "value": "Also available in"
+  },
+  {
+    "key_name": "key_read_more",
+    "value": "READ MORE"
+  },
+  {
+    "key_name": "key_read_less",
+    "value": "READ LESS"
+  },
+  {
+    "key_name": "key_user_reviews",
+    "value": "User Reviews"
+  },
+  {
+    "key_name": "key_based_on",
+    "value": "Based on"
+  },
+  {
+    "key_name": "key_ratings",
+    "value": "Ratings"
+  },
+  {
+    "key_name": "key_name",
+    "value": "Name"
+  },
+  {
+    "key_name": "key_address",
+    "value": "Address"
+  },
+  {
+    "key_name": "key_delivery_address",
+    "value": "Delivery Address"
+  },
+  {
+    "key_name": "key_no_address_selected",
+    "value": "No Address Selected"
+  },
+  {
+    "key_name": "key_please_enter_postal_code",
+    "value": "Please enter postal code"
+  },
+  {
+    "key_name": "key_i_bought_the_wrong_item",
+    "value": "I bought the wrong item(s)"
+  },
+  {
+    "key_name": "key_i_found_a_cheaper_alternative",
+    "value": "I found a cheaper alternative"
+  },
+  {
+    "key_name": "key_i_have_changed_my_mind",
+    "value": "I have changed my mind"
+  },
+  {
+    "key_name": "key_i_placed_a_duplicate_order",
+    "value": "I placed a duplicate order"
+  },
+  {
+    "key_name": "key_invite_your_friend_and_earn",
+    "value": "Invite your friends and earn!"
+  },
+  {
+    "key_name": "key_wishlist_added_successfully",
+    "value": "WishList Added Successfully"
+  },
+  {
+    "key_name": "key_copy_upper",
+    "value": "COPY"
+  },
+  {
+    "key_name": "key_step_one",
+    "value": "STEP 1"
+  },
+  {
+    "key_name": "key_step_two",
+    "value": "STEP 2"
+  },
+  {
+    "key_name": "key_step_three",
+    "value": "STEP 3"
+  },
+  {
+    "key_name": "key_invite_friends",
+    "value": "Invite\na Friends"
+  },
+  {
+    "key_name": "key_friends_becomes_customer",
+    "value": "Friends\nbecomes customer"
+  },
+  {
+    "key_name": "key_get_rewarded",
+    "value": "Get\nRewarded"
+  },
+
+  {
+    "key_name": "key_wishlist_deleted_successfully",
+    "value": "WishList Deleted Successfully"
+  },
+  {
+    "key_name": "key_update_app",
+    "value": "Update App"
+  },
+  {
+    "key_name": "key_freegift_card_msg",
+    "value": "Free Gift when you spend AED 100 Above"
+  },
+  {
+    "key_name": "key_no_store_found",
+    "value": "No Store Found"
+  },
+  {
+    "key_name": "key_no_stores_available_in_your_area",
+    "value": "No stores available in your area."
+  },
+  {
+    "key_name": "key_km",
+    "value": "Km"
+  }
+]

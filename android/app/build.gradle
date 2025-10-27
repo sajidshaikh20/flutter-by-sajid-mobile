@@ -1,0 +1,124 @@
+plugins {
+    id "com.android.application"
+    id 'com.google.gms.google-services'
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def keyStoreProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+def keyStorePropertiesFile = rootProject.file('keystore.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+if(keyStorePropertiesFile.exists()){
+    keyStorePropertiesFile.withReader('UTF-8'){reader->
+        keyStoreProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+
+android {
+
+    compileSdkVersion 36
+    ndkVersion = "26.1.10909125"
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    signingConfigs {
+        release {
+            if (keyStoreProperties.getProperty("storeFile") != null) {
+                storeFile file(keyStoreProperties.getProperty("storeFile"))
+                storePassword keyStoreProperties.getProperty("storePassword")
+                keyPassword keyStoreProperties.getProperty("keyPassword")
+                keyAlias keyStoreProperties.getProperty("keyAlias")
+            }
+        }
+    }
+    flavorDimensions 'default'
+    productFlavors {
+        stage {
+
+            applicationId "base.com.flutterbysajid.app"
+            dimension 'default'
+            namespace "base.com.flutterbysajid.app"
+            //applicationIdSuffix ".stage"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        prod {
+            applicationId "base.com.flutterbysajid.app"
+            dimension 'default'
+            namespace "base.com.flutterbysajid.app"
+            //applicationIdSuffix ".prod"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "base.com.flutterbysajid.app"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-build-configuration.
+        minSdkVersion 29
+        targetSdkVersion 35
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+    }
+    //namespace "flutterbysajid.com.app"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // add this
+            multiDexEnabled = true
+            if (keyStoreProperties.getProperty("storeFile") != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            if (keyStoreProperties.getProperty("storeFile") != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+        profile {
+            if (keyStoreProperties.getProperty("storeFile") != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "com.google.android.gms:play-services-base:18.5.0"
+}

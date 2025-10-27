@@ -1,0 +1,9 @@
+<svg id="_7_Toggle_ON" data-name=" 7) Toggle ON" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="52" height="32" viewBox="0 0 52 32">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="_Background" data-name="🎨 Background" width="52" height="32" rx="16" fill="#fb4a46"/>
+    </clipPath>
+  </defs>
+  <rect id="_Background-2" data-name="🎨 Background" width="52" height="32" rx="16" fill="#09195d"/>
+  <circle id="_Toggle_Mark" data-name="🎨 Toggle Mark" cx="14" cy="14" r="14" transform="translate(22 2)" fill="#fff"/>
+</svg>

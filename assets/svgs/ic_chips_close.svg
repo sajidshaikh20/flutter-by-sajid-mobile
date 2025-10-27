@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
+  <g id="Icons_Outlines_Close" data-name="Icons / Outlines / Close" transform="translate(-4 -4)">
+    <rect id="Rectangle" width="14" height="14" transform="translate(4 4)" fill="rgba(255,255,255,0)"/>
+    <rect id="Rectangle-2" data-name="Rectangle" width="14" height="14" rx="7" transform="translate(4 4)" fill="#09195d"/>
+    <path id="Close" d="M4.313,5.031.866,8.478A.507.507,0,0,1,.149,7.76L3.6,4.313.149.866A.507.507,0,0,1,.866.149L4.313,3.6,7.76.149a.507.507,0,0,1,.718.718L5.031,4.313,8.478,7.76a.507.507,0,0,1-.718.718Z" transform="translate(6.687 6.687)" fill="#fff"/>
+  </g>
+</svg>

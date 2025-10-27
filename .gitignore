@@ -1,0 +1,143 @@
+###########################
+# Miscellaneous
+###########################
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+###########################
+# IntelliJ / Android Studio
+###########################
+*.iml
+*.ipr
+*.iws
+.idea/
+.fvm/
+
+###########################
+# VS Code
+###########################
+#.vscode/
+
+###########################
+# Flutter / Dart / Pub
+###########################
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.dart_tool/package_config.json
+.dart_tool/package_config_subset
+.dart_tool/version
+.crashlytics/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+/lib/gen/*
+lib/service/navigation/app_routes.gr.dart
+
+# Symbolication & Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Android Studio artifacts
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/app/src/keystore
+
+###########################
+# Flutter Generated Files
+###########################
+lib/aes_pointy.dart
+lib/aes_task.dart
+lib/AesCastle.dart
+lib/EncryptionUtil.dart
+lib/slidable_list_demo.dart
+lib/app/masked_input_formatter.dart
+lib/app/test_copilot.dart
+flutter_01.sksl.json
+lib/app/core/widgets/custom_date_formatter.dart
+.fvmrc
+pubspec.lock
+
+/devtools_options.yaml
+/prod_env.json
+/stage_env.json
+stage_env.json
+prod_env.json
+
+
+
+# Target hash file
+TARGET_v11@hash
+
+###########################
+# iOS Specific
+###########################
+**/dgph
+*.mode1v3
+*.mode2v3
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+**/*sync/
+.sconsign.dblite
+.tags*
+**/.vagrant/
+**/DerivedData/
+Icon?
+**/Pods/
+**/.symlinks/
+profile
+xcuserdata
+**/.generated/
+Flutter/App.framework
+Flutter/Flutter.framework
+Flutter/Flutter.podspec
+Flutter/Generated.xcconfig
+Flutter/ephemeral/
+Flutter/app.flx
+Flutter/app.zip
+Flutter/flutter_assets/
+Flutter/flutter_export_environment.sh
+ServiceDefinitions.json
+Runner/GeneratedPluginRegistrant.*
+
+# Ignore Xcode project & workspace but keep configs
+ios/Runner.xcworkspace/
+ios/Runner.xcodeproj/*
+!ios/Runner.xcodeproj/project.pbxproj
+!ios/Runner.xcodeproj/xcshareddata/
+
+# Google Services files (optional)
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
+
+###########################
+# Android Specific
+###########################
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+/.idea
+
+# Never share keystore!
+android/app/keystore
+*.jks
+*.keystore
