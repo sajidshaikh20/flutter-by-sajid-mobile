@@ -74,7 +74,7 @@ pubspec.lock
 
 /devtools_options.yaml
 /prod_env.json
-/stage_env.json
+#/stage_env.json
 stage_env.json
 prod_env.json
 

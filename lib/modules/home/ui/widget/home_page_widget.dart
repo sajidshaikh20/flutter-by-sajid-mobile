@@ -19,7 +19,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     return MultiBlocListener(
       listeners: <BlocListener<dynamic, dynamic>>[
         BlocListener<HomeCubit, HomeState>(
-
           listener: (BuildContext context, HomeState state) async {
             // Navigate to select address page if address list is empty
             // Only navigate if not already navigating to prevent multiple navigations
@@ -56,7 +55,6 @@ class _HomePageContent extends BaseResponsiveView {
   final VoidCallback onHomeCubitInitialized;
 
   Widget buildViews(BuildContext context, ScreenType device) {
-
     return NoInternetWidget(
       childWidget: Scaffold(
         backgroundColor: Colors.white,
@@ -103,10 +101,10 @@ class _HomePageContent extends BaseResponsiveView {
                   Column(
                     children: <Widget>[
                       const HomeAppbar(),
-                      homeState.apiCallForAddress != BaseStateStatus.success
+                      /*homeState.apiCallForAddress != BaseStateStatus.success
                           ? const HomeAddressSelectionShimmer()
-                          : const HomeAddressSelection(),
-                   const   ColoredBox(color: Colors.red)
+                          : const HomeAddressSelection(),*/
+                      Container(height: 200, color: Colors.red)
                     ],
                   ),
                   const Positioned(
@@ -121,8 +119,6 @@ class _HomePageContent extends BaseResponsiveView {
       ),
     );
   }
-
-
 
   Widget commonHeaderWithSizeBox(
     String title, {
