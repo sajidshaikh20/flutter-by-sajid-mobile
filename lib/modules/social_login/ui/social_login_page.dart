@@ -91,9 +91,7 @@ class SocialLoginPage extends BaseResponsiveView {
 
                               if (context.mounted) {
                                 if (user != null) {
-                                  DebugLog.instance.i(
-                                      'LOGGED IN USER FACEBOOK----> ${user.values}');
-
+                                  DebugLog.instance.i('LOGGED IN USER FACEBOOK----> ${user.values}');
                                   String email = Platform.isIOS
                                       ? user["userEmail"]
                                       : user["email"];
@@ -159,6 +157,8 @@ class SocialLoginPage extends BaseResponsiveView {
                               GoogleSignInAccount? user =
                                   await getIt<SocialLoginServices>()
                                       .signInWithGoogle();
+
+
                               if (context.mounted) {
                                 if (user != null) {
                                   DebugLog.instance.i(
