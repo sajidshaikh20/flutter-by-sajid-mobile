@@ -12,31 +12,17 @@ class HomeAddressSelection extends StatelessWidget {
   /// It consists of a background, an icon, text labels and a down arrow.
   @override
   Widget build(BuildContext context) {
-    unawaited(context.read<HomeCubit>().loadSavedAddress());
+
     return BlocListener<HomeCubit, HomeState>(
         listener: (BuildContext context, HomeState state) {
       // Reload saved address when address list is updated (e.g., during refresh)
-      if (state.apiCallForAddress == BaseStateStatus.success &&
-          state.addressList.isNotEmpty) {
-        unawaited(context.read<HomeCubit>().loadSavedAddress());
-      }
+
     }, child: BlocBuilder<HomeCubit, HomeState>(
       builder: (BuildContext context, HomeState productHomeState) {
         bool isPickup = productHomeState.deliveryType == 'pickup';
         return GestureDetector(
             onTap: () async {
-              final Object? result = await context.router.push(SelectAddressRoute());
-              if (result is bool && result == true) {
-                if (context.mounted) {
-                  // Reload saved address after address selection
-                  await context.read<HomeCubit>().loadSavedAddress();
-                  if (context.mounted) {
-                    context.read<HomeCubit>().initializeSegmentIndex();
-                    context.read<HomeCubit>().refreshHomeData();
-                    DebugLog.instance.e("Update store ${getIt<CountryService>().store}");
-                  }
-                }
-              }
+
             },
             child: Stack(
               children: <Widget>[
@@ -87,10 +73,9 @@ class HomeAddressSelection extends StatelessWidget {
                                   fontSize: Dimens.fontSize12,
                                   fontWeight: FontWeight.w600,
                                 ),
-                                content: isPickup
-                                    ? "${context.appString.pickupFromStoreKey} "
-                                        "${productHomeState.selectedAddress?.title}"
-                                    : "${context.appString.deliveryToHomeKey} ${getLocalizedAddressType(context, productHomeState.selectedAddress?.addressType)}",
+                                content: isPickup ? "${context.appString.pickupFromStoreKey} "
+                                        "${"sdf"}"
+                                    : context.appString.deliveryToHomeKey,
                                 boldPhrases: <String>[
                                   isPickup
                                       ? context.appString.pickupKey
@@ -100,12 +85,7 @@ class HomeAddressSelection extends StatelessWidget {
                             CustomTextLabelWidget(
                               overflow: TextOverflow.ellipsis,
                               maxLines: Dimens.maxLines01,
-                              label: productHomeState
-                                      .selectedAddress?.details ??
-                                  (isPickup
-                                      ? context.appString.selectPickupStoreKey
-                                      : context
-                                          .appString.selectDeliveryAddressKey),
+                              label: "sdf",
                               style: context.textTheme.headlineMedium?.copyWith(
                                   color: MainConfig.appColors.textWhiteColor,
                                   fontSize: Dimens.size10,

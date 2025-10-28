@@ -169,18 +169,18 @@ class _NotificationPageWidgetState extends State<NotificationPageWidget> {
                         final StackRouter router = context.router; // capture router reference
                         final NotificationCubit cubit = context.read<NotificationCubit>(); // capture cubit reference
 
-                        await cubit.callNotificationReadAPI(notificationIds);
+                    //    await cubit.callNotificationReadAPI(notificationIds);
 
                         final NotificationType type = NotificationType.fromValue(notificationType);
 
                         if ((type == NotificationType.deliverd || type == NotificationType.pickup) &&
                             orderId != null) {
-                          await router.push(MyOrderDetailRoute(orderId: orderId));
+                         // await router.push(MyOrderDetailRoute(orderId: orderId));
                         } else {
                           final String cleaned = entityId?.replaceAll(RegExp(r'[\[\]\s]'), '') ?? '';
                           if (cleaned.isNotEmpty) {
                             final int productId = int.parse(cleaned.split(',').first);
-                            await router.push(ProductDetailsRoute(entityId: productId));
+                           // await router.push(ProductDetailsRoute(entityId: productId));
                           }
                         }
 

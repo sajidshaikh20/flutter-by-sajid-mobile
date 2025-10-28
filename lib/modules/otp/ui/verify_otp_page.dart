@@ -16,8 +16,6 @@ class VerifyOtpPage extends BaseResponsiveView {
   /// Form data for signup flow, if applicable.
   final SignUpFormDataModel? formData;
 
-  /// Request model for email update flow, if applicable.
-  final UpdateEmailRequestModel? updateEmailRequestModel;
 
   /// The type of OTP flow (signup, login, email update, etc.).
   final OtpFlowType flowType;
@@ -39,7 +37,6 @@ class VerifyOtpPage extends BaseResponsiveView {
     required this.prefix,
     this.redirectRoute,
     this.formData,
-    this.updateEmailRequestModel,
     this.flowType = OtpFlowType.forgotPassword,
     this.autoFilledOtp,
   });

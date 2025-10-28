@@ -36,51 +36,7 @@ class GlobalWishlistManager extends Cubit<GlobalWishlistState> {
         .copyWith(cartMap: <String, int>{}, wishlistMap: <String, bool>{}));
   }
 
-  /// Store products with their isFavorite and cart status from API response
-  void storeProductsFromAPI(List<ProductListingResponse> products) {
-    DebugLog.instance
-        .d('🔄 GLOBAL MANAGER: Storing ${products.length} products from API');
 
-    final Map<String, bool> updatedWishlist =
-        Map<String, bool>.from(state.wishlistMap);
-    final Map<String, int> updatedCart = Map<String, int>.from(state.cartMap);
-
-    for (final ProductListingResponse product in products) {
-      if (product.sku != null && product.sku!.isNotEmpty) {
-        // Store wishlist data
-        updatedWishlist[product.sku!] = product.isFavorite ?? false;
-        DebugLog.instance.d(
-            '🔄 GLOBAL WISHLIST: Stored ${product.sku} = ${product.isFavorite}');
-
-        // Store cart data from variants (each variant has its own cart quantity)
-        if (product.productVariant != null &&
-            product.productVariant!.isNotEmpty) {
-          for (final ProductVariantDukkan variant in product.productVariant!) {
-            final int cartQty = variant.cartQuantity ?? 0;
-            final String? variantEntityId = variant.entityId?.toString();
-
-            if (variantEntityId != null && variantEntityId.isNotEmpty) {
-              final String cartKey =
-                  '${product.sku}_$variantEntityId'; // Unique key per variant
-
-              if (cartQty > 0) {
-                updatedCart[cartKey] = cartQty;
-                DebugLog.instance.d(
-                    '🔄 GLOBAL CART: Stored variant ${variant.name} ($cartKey) = $cartQty');
-              } else {
-                // If quantity is 0, remove from cart
-                updatedCart.remove(cartKey);
-              }
-            }
-          }
-        }
-      }
-    }
-
-    emit(state.copyWith(wishlistMap: updatedWishlist, cartMap: updatedCart));
-    DebugLog.instance.d(
-        '🔄 GLOBAL MANAGER: Updated with ${updatedWishlist.length} wishlist items and ${updatedCart.length} cart items');
-  }
 
   // ==================== CART METHODS ====================
 

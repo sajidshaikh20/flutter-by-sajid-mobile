@@ -19,9 +19,7 @@ class CommonItemSearchCart extends StatelessWidget {
           highlightColor: MainConfig.appColors.transparent,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
           onTap: () async {
-            await context.router.push(
-              const SearchRoute(),
-            );
+
           },
           child: SizedBox(
             width: Dimens.size30,
@@ -42,7 +40,6 @@ class CommonItemSearchCart extends StatelessWidget {
           highlightColor: MainConfig.appColors.transparent,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
           onTap: () async {
-            await context.router.push(const CartListRoute());
           },
           child: SizedBox(
             height: Dimens.size30,
@@ -71,7 +68,7 @@ class CommonItemSearchCart extends StatelessWidget {
                         padding: Dimens.space2.padding,
                         child: CustomTextLabelWidget(
                           onTap: () async {
-                            await context.router.push(const CartListRoute());
+
                           },
                           label: cartCount.toString(),
                           style: context.textTheme.headlineMedium?.copyWith(

@@ -75,7 +75,7 @@ class WishlistModelWithProducts {
     this.success,
     this.message,
     this.totalCount,
-    this.products,
+
   });
 
   /// Creates a WishlistModelWithProducts instance from a JSON map.
@@ -83,13 +83,6 @@ class WishlistModelWithProducts {
     success = json['success'];
     message = json['message'];
     totalCount = json['totalCount'];
-
-    if (json['data'] != null) {
-      products = (json['data'] as List<dynamic>)
-          .map<ProductListingResponse>(
-              (dynamic v) => ProductListingResponse.fromJson(v as Map<String, dynamic>))
-          .toList();
-    }
   }
 
   /// Indicates whether the operation was successful.
@@ -102,7 +95,7 @@ class WishlistModelWithProducts {
   int? totalCount;
 
   /// List of products in the wishlist.
-  List<ProductListingResponse>? products;
+
 
   /// Converts the object to a JSON map, including nested products.
   Map<String, dynamic> toJson() {
@@ -110,9 +103,7 @@ class WishlistModelWithProducts {
     data['success'] = success;
     data['message'] = message;
     data['totalCount'] = totalCount;
-    if (products != null) {
-      data['data'] = products!.map((ProductListingResponse v) => v.toJson()).toList();
-    }
+
     return data;
   }
 }

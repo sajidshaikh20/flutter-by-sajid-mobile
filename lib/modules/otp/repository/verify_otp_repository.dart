@@ -23,10 +23,5 @@ abstract class VerifyOtpRepository extends BaseRepository {
   Future<ResponseHandler<BaseResponse<void>>> callverifyOtp(
       ForgotPasswordWithMobileRequestModel request);
 
-  /// Calls the update email API to change user's email address.
-  ///
-  /// Returns a [ResponseHandler] containing [BaseResponse<EditProfileResponse>]
-  /// with the email update result.
-  Future<ResponseHandler<BaseResponse<EditProfileResponse>>> callUpdateEmail(
-      UpdateEmailRequestModel request);
+
 }

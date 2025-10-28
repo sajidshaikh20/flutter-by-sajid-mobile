@@ -107,114 +107,11 @@ class AnalyticsService {
   /// including items, names, SKUs, and prices.
 
 
-  /// Logs a begin checkout event.
-  ///
-  /// [items]: The order review details including
-  ///  product names, SKUs, and prices.
-  Future<void> beginCheckoutFirebaseEvent({
-    required OrderReviewData items,
-  }) async {
-    List<Map<String, dynamic>> itemDetails = items.items!
-        .map(
-          (Item item) => <String, Object?>{
-            AppAnalyticsConstant.itemName: item.productName,
-            AppAnalyticsConstant.itemId: item.sku,
-            AppAnalyticsConstant.price: item.unformattedPrice,
-          },
-        )
-        .toList();
 
-    Map<String, Object> eventParams = <String, Object>{
-      AppAnalyticsConstant.items: itemDetails,
-      AppAnalyticsConstant.eventActionField: '{step: 2}',
-    };
 
-    await logCustomEvent(
-      name: AppAnalyticsConstant.beginCheckout,
-      parameters: eventParams,
-    );
-  }
 
-  /// Logs a purchase event.
-  ///
-  /// [items]: A list of purchased items.
-  /// [userId]: The ID of the user making the purchase.
-  /// [transactionId]: The transaction ID of the purchase.
-  /// [totalAmount]: The total amount of the purchase.
-  /// [taxCharged]: The tax charged for the purchase.
-  /// [shippingCharges]: The shipping charges for the purchase.
-  /// [discountAmount]: The discount applied to the purchase.
-  /// [couponCode]: The coupon code applied to the purchase.
-  /// [currencyCode]: The currency code of the purchase.
-  Future<void> purchaseFirebaseEvent({
-    required List<Item> items,
-    required String userId,
-    required String transactionId,
-    required double totalAmount,
-    required String taxCharged,
-    required String shippingCharges,
-    required String discountAmount,
-    required String couponCode,
-    required String currencyCode,
-  }) async {
-    List<Map<String, Object?>> itemDetails = items
-        .map(
-          (Item item) => <String, Object?>{
-            AppAnalyticsConstant.itemName: item.productName,
-            AppAnalyticsConstant.itemId: item.sku,
-            AppAnalyticsConstant.price: item.unformattedPrice,
-          },
-        )
-        .toList();
 
-    Map<String, Object> eventParams = <String, Object>{
-      AppAnalyticsConstant.items: itemDetails,
-      AppAnalyticsConstant.userId: userId,
-      AppAnalyticsConstant.transactionId: transactionId,
-      AppAnalyticsConstant.affiliation: AppConstant.appName,
-      AppAnalyticsConstant.value: totalAmount,
-      AppAnalyticsConstant.tax: taxCharged,
-      AppAnalyticsConstant.shipping: shippingCharges,
-      AppAnalyticsConstant.discount: discountAmount,
-      AppAnalyticsConstant.coupom: couponCode,
-      AppAnalyticsConstant.currency: currencyCode,
-    };
 
-    await logCustomEvent(
-      name: AppAnalyticsConstant.purchase,
-      parameters: eventParams,
-    );
-  }
-
-  /// Logs an add-to-cart event.
-  ///
-  /// [itemName]: The name of the item being added to the cart.
-  /// [itemPrice]: The price of the item being added.
-  /// [itemSku]: The SKU of the item being added.
-  /// [currencyCode]: The currency code of the item's price.
-  Future<void> addToCartFirebaseEvent({
-    required String itemName,
-    required String itemPrice, // Fix: This should be a number
-    required String itemSku,
-    required String currencyCode,
-  }) async {
-    Map<String, Object> itemParams = <String, Object>{
-      AppAnalyticsConstant.itemId: itemSku,
-      AppAnalyticsConstant.itemName: itemName,
-      AppAnalyticsConstant.price: double.tryParse(itemPrice) ?? 0.0,
-      // Convert to number
-      AppAnalyticsConstant.currency: currencyCode,
-    };
-
-    Map<String, Object> eventParams = <String, Object>{
-      AppAnalyticsConstant.items: <Map<String, Object>>[itemParams],
-    };
-
-    await logCustomEvent(
-      name: AppAnalyticsConstant.addToCart,
-      parameters: eventParams,
-    );
-  }
 
   /// Logs a remove-from-cart event.
   ///

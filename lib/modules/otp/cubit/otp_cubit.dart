@@ -119,87 +119,7 @@ class OtpCubit extends Cubit<OtpState> {
     }
   }
 
-  /// Verifies the OTP for the forgot password flow.
-  ///
-  /// Emits loading, success, or failure states accordingly.
-  Future<void> verifyUpdateEmailOtp({
-    required String email,
-    required PageRouteInfo? redirectRoute,
-  }) async
-  {
-    if (state.otpNumber.length != AppConstant.otpTextLength) {
-      return;
-    }
 
-    emit(state.copyWith(status: BaseStateStatus.loading));
-
-    try {
-
-      final UpdateEmailRequestModel request =
-      UpdateEmailRequestModel(
-        platform: getPlatformName(),
-        version: getIt<MainConfig>().packageInfo.version,
-        otp: state.otpNumber,
-        languageId: int.tryParse(getIt<LanguageService>().languageId) ?? 1,
-        customerToken: getIt<UserProfileService>().customerToken,
-        email: email,
-        deviceId: getDeviceId(),
-        websiteId: int.tryParse(getIt<CountryService>().websiteId),
-        storeId: int.tryParse(getIt<CountryService>().store.toString()),
-        sentOtp: AppConstant.zero,
-        verifyOtp: AppConstant.one,
-      );
-
-      final ResponseHandler<BaseResponse<EditProfileResponse>> response =
-      await _repository.callUpdateEmail(request);
-
-      if (response.isSuccess()) {
-        final OnSuccessResponse<BaseResponse<EditProfileResponse>>? success =
-        response.getSuccessInstance();
-        if (success != null && success.response.success) {
-
-          await SharedPref.instance.saveEditProfileData(
-              success.response.data ??
-                  const EditProfileResponse());
-
-          final EditProfileResponse editProfileData =
-          success.response.data!;
-          await UserProfileService.instance().updateUserProfile(
-            customerName: editProfileData.customerName,
-            customerEmail: editProfileData.customerEmail,
-            phoneNumber: editProfileData.phoneNumber,
-            customerToken: editProfileData.customerToken,
-            customerId: editProfileData.customerId,
-            quoteId: editProfileData.quoteId,
-            totalOrderValue: editProfileData.totalOrderValue,
-            lastOrderDate: editProfileData.lastOrderDate,
-            storeCredit: editProfileData.walletBalance,
-            rewardPoints: editProfileData.loyaltyPoints,
-            totalOrder: editProfileData.totalOrder,
-            cartCount: editProfileData.cartCount,
-            referralCode: editProfileData.referralCode,
-            fcmToken: editProfileData.fcmToken,
-            gender: editProfileData.gender,
-            birthday: editProfileData.birthday,
-            nationality: editProfileData.nationality,
-            prefix: editProfileData.prefix,
-            arabicNationality: editProfileData.arabicNationality,
-          );
-
-          emit(state.copyWith(
-            status: BaseStateStatus.success,
-            redirectRoute: redirectRoute,
-          ));
-        } else {
-          emit(state.copyWith(status: BaseStateStatus.failure, msg: success?.response.message ?? ''));
-        }
-      } else {
-        emit(state.copyWith(status: BaseStateStatus.failure, msg: response.getFailureInstance()?.error?.errorMessage ?? ''));
-      }
-    } on Exception {
-      emit(state.copyWith(status: BaseStateStatus.failure));
-    }
-  }
 
 
   /// Verifies the OTP for the forgot password flow.
@@ -216,14 +136,14 @@ class OtpCubit extends Cubit<OtpState> {
     emit(state.copyWith(status: BaseStateStatus.loading));
 
     try {
-      final String websiteId = getIt<CountryService>().websiteId;
+
 
       final ForgotPasswordWithMobileRequestModel request =
       ForgotPasswordWithMobileRequestModel(
         platform: getPlatformName(),
         version: getIt<MainConfig>().packageInfo.version,
-        websiteId: websiteId,
-        storeId: getIt<CountryService>().store.toString(),
+        websiteId: "1",
+        storeId: "2",
         mobileNumber: mobileNumber,
         mobileNumberPrefix: AppConstant.defaultCountryCode,
         sentOtp: AppConstant.zeroStr,
@@ -339,9 +259,7 @@ class OtpCubit extends Cubit<OtpState> {
       case OtpFlowType.forgotPassword:
         await verifyForgotPasswordOtp(
           mobileNumber: mobileNumber,
-          redirectRoute: redirectRoute ?? ResetPasswordRoute(
-            mobileNumber: mobileNumber,
-          ),
+          redirectRoute: redirectRoute
         );
       case OtpFlowType.signup:
         final PageRouteInfo finalRedirectRoute = redirectRoute ?? LoginRoute();
@@ -351,10 +269,7 @@ class OtpCubit extends Cubit<OtpState> {
 
       case OtpFlowType.updateEmail:
         final PageRouteInfo finalRedirectRoute = redirectRoute ?? const MyAccountRoute();
-        await verifyUpdateEmailOtp(
-          email: mobileNumber,
-          redirectRoute: finalRedirectRoute,
-        );
+
     }
   }
 
@@ -385,14 +300,14 @@ class OtpCubit extends Cubit<OtpState> {
 
   /// Resends OTP for forgot password flow
   Future<void> _resendForgotPasswordOtp(String mobileNumber) async {
-    final String websiteId = getIt<CountryService>().websiteId;
+   // final String websiteId = getIt<CountryService>().websiteId;
 
     final ForgotPasswordWithMobileRequestModel request =
     ForgotPasswordWithMobileRequestModel(
       platform: getPlatformName(),
       version: getIt<MainConfig>().packageInfo.version,
-      websiteId: websiteId,
-      storeId: getIt<CountryService>().store.toString(),
+      websiteId: "",
+      storeId: "2",
       mobileNumber: mobileNumber,
       mobileNumberPrefix: AppConstant.defaultCountryCode,
       sentOtp: AppConstant.oneStr, // Send OTP
@@ -475,45 +390,8 @@ class OtpCubit extends Cubit<OtpState> {
 
   /// Resends OTP for update email flow
   Future<void> _resendUpdateEmailOtp(String email) async {
-    final UpdateEmailRequestModel request = UpdateEmailRequestModel(
-      platform: getPlatformName(),
-      version: getIt<MainConfig>().packageInfo.version,
-      otp: '', // Empty OTP for sending
-      languageId: int.tryParse(getIt<LanguageService>().languageId) ?? 1,
-      customerToken: getIt<UserProfileService>().customerToken,
-      email: email,
-      deviceId: getDeviceId(),
-      websiteId: int.tryParse(getIt<CountryService>().websiteId),
-      storeId: int.tryParse(getIt<CountryService>().store.toString()),
-      sentOtp: AppConstant.one, // Send OTP
-      verifyOtp: AppConstant.zero, // Don't verify
-    );
 
-    final ResponseHandler<BaseResponse<EditProfileResponse>> response =
-    await _repository.callUpdateEmail(request);
 
-    if (response.isSuccess()) {
-      final OnSuccessResponse<BaseResponse<EditProfileResponse>>? success =
-      response.getSuccessInstance();
-      if (success != null && success.response.success) {
-        // Restart timer on successful resend
-        startTimer();
-        emit(state.copyWith(
-          status: BaseStateStatus.success,
-          msg: success.response.message,
-        ));
-      } else {
-        emit(state.copyWith(
-          status: BaseStateStatus.failure,
-          msg: success?.response.message ?? '',
-        ));
-      }
-    } else {
-      emit(state.copyWith(
-        status: BaseStateStatus.failure,
-        msg: response.getFailureInstance()?.error?.errorMessage ?? '',
-      ));
-    }
   }
 
 }

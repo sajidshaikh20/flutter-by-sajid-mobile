@@ -10,7 +10,6 @@ export 'home_faq_widget.dart';
 export 'home_loyalty_points_widget.dart';
 export 'home_page_widget.dart';
 export 'hot_deals_widget.dart';
-export 'product_common_image_rating.dart';
 export 'product_common_item.dart';
 export 'product_common_new_widget.dart';
 export 'product_common_qty_button.dart';

@@ -120,8 +120,7 @@ class AccountLoginedUserInfo extends StatelessWidget {
                   highlightColor: MainConfig.appColors.transparent,
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
                   onTap: () async {
-                    await context.router.push(
-                        EditProfileRoute(editProfile: userData));
+
                   },
                   child: CustomTextLabelWidget(
                       label: context.appString.editProfileKey,
@@ -148,7 +147,7 @@ class AccountLoginedUserInfo extends StatelessWidget {
                   highlightColor: MainConfig.appColors.transparent,
                   overlayColor: WidgetStateProperty.all(Colors.transparent),
                   onTap: () async {
-                    await context.router.push(const ChangePasswordRoute());
+                   // await context.router.push(const ChangePasswordRoute());
                   },
                   child: CustomTextLabelWidget(
                       label: context.appString.changePasswordKey,

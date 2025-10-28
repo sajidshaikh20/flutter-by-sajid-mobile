@@ -243,13 +243,10 @@ class SharedPref {
         setValue(PrefsKey.offerTypeKey, type),
         setValue(PrefsKey.offerCategoryIdKey, offerCategoryIdKey),
         setValue(PrefsKey.quoteIdKey, quoteId),
-        getIt<CountryService>().loadCountryData(),
+
         getIt<LanguageService>().loadLanguageData(),
         getIt<UserProfileService>().loadUserData(),
-        setValue(
-          PrefsKey.contactUsKey,
-          jsonEncode(getIt<CountryService>().contactus),
-        ),
+
         setValue(
           PrefsKey.isEnglishLanguageLoadedKey,
           isEnglishLanguageLoaded,
@@ -304,35 +301,7 @@ class SharedPref {
     DebugLog.instance.i('saveLoginData: User profile data saved - customerName: ${userProfile.customerName}, token: ${userProfile.customerToken}');
   }
 
-  ///Save EditProfile up response data with mapping User profile
-  Future<void> saveEditProfileData(EditProfileResponse accountResponse) async {
-    UserProfileModel userProfile = accountResponse.editProfileToUserProfile();
-    String jsonString = jsonEncode(userProfile.toJson());
-    await setValue(PrefsKey.userProfileKey, jsonString);
-    await getIt<UserProfileService>().loadUserData();
-    DebugLog.instance.i('saveEditProfileData: User profile data saved - customerName: ${userProfile.customerName}, token: ${userProfile.customerToken}');
-  }
 
-  /// Save selected address data to SharedPreferences
-  Future<void> saveSelectedAddress(SelectedAddressModel addressModel) async {
-    String jsonString = jsonEncode(addressModel.toJson());
-    await setValue(PrefsKey.selectedAddressKey, jsonString);
-  }
-
-  /// Get selected address data from SharedPreferences
-  Future<SelectedAddressModel?> getSelectedAddress() async {
-    String? jsonString = await getValue(PrefsKey.selectedAddressKey);
-    if (jsonString != null && jsonString.isNotEmpty && jsonString != 'null') {
-      try {
-        Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-        return SelectedAddressModel.fromJson(jsonMap);
-      }on Exception catch (e) {
-        DebugLog.instance.e('Error parsing selected address: $e');
-        return null;
-      }
-    }
-    return null;
-  }
 
   /// Clear selected address data from SharedPreferences
   Future<void> clearSelectedAddress() async {
@@ -411,9 +380,6 @@ class SharedPref {
 
     // Reload user profile service after clearing
     await getIt<UserProfileService>().loadUserData();
-    await getIt<CountryService>().updateStore(null);
-    await getIt<CountryService>().loadCountryData();
-    await getIt<AddressService>().ensureAddressDataLoaded();
 
     DebugLog.instance.i("SharedPref: Cleared only user-related data successfully");
   }

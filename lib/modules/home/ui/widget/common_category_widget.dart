@@ -80,12 +80,7 @@ class CommonCategoryWidget extends StatelessWidget {
         DebugLog.instance.d('Navigating to category: ${categoryResponse.categoryName} (ID: $categoryId)');
 
         // Navigate to product listing page with child categories as tab labels
-        await context.router.push(ProductListingWithFilterRoute(
-          typeId: categoryId,
-          type: ProductType.category.name,
-          label: categoryResponse.categoryName,
-          tabLabels: categoryResponse.childCategories,
-        ));
+
       } else {
         DebugLog.instance.e('Category ID is null for category: ${categoryResponse.categoryName}');
       }

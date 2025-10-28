@@ -56,45 +56,9 @@ class PermissionManager {
     }
   }
 
-  /// Check Location permission (enhanced)
-  FutureOr<bool> checkLocationPermissionEnhanced() async {
-    try {
-      // First check if location services are enabled
-      bool serviceEnabled = await checkLocationServiceEnabled();
-      if (!serviceEnabled) {
-        DebugLog.instance.d('Location services are disabled');
-        return false;
-      }
 
-      // Then check permission status
-      PermissionStatus status = await Permission.location.status;
-      if (status.isGranted) {
-        DebugLog.instance.d('Location permission is granted');
-        return true;
-      } else {
-        DebugLog.instance.d('Location permission is not granted: ${status.toString()}');
-        return false;
-      }
-    } on Exception catch (e) {
-      DebugLog.instance.e('Error checking location permission: $e');
-      return false;
-    }
-  }
 
-  /// Check if location services are enabled
-  FutureOr<bool> checkLocationServiceEnabled() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        DebugLog.instance.d('Location services are disabled');
-        return false;
-      }
-      return true;
-    } on Exception catch (e) {
-      DebugLog.instance.e('Error checking location service: $e');
-      return false;
-    }
-  }
+
 
   /// Check Location permission (legacy method for backward compatibility)
   FutureOr<bool> checkLocationPermission() async {

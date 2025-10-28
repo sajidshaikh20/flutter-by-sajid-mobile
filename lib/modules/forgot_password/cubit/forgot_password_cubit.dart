@@ -20,20 +20,17 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
       emit(state.copyWith(status: BaseStateStatus.loading));
 
       // Get necessary values from SharedPref
-      final String websiteId = getIt<CountryService>().websiteId;
+     /// final String websiteId = getIt<CountryService>().websiteId;
       final String mobileNumber =
           state.resetPasswordFieldController.text.trim();
-      final String mobileNumberPrefix =
-          getIt<CountryService>().countryCode ?? '';
+     // final String mobileNumberPrefix = getIt<CountryService>().countryCode ?? '';
 
       // Create ForgotPassword with mobile request model
       final ForgotPasswordWithMobileRequestModel requestModel =
           ForgotPasswordWithMobileRequestModel(
         platform: getPlatformName(),
         version: getIt<MainConfig>().packageInfo.version,
-        websiteId: websiteId,
         mobileNumber: mobileNumber,
-        mobileNumberPrefix: mobileNumberPrefix,
         languageId: getIt<LanguageService>().languageId,
         sentOtp: AppConstant.oneStr,
         verifyOtp: AppConstant.zeroStr,
@@ -155,9 +152,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
           email: mobileNumber,
           prefix: prefix != 0 ? '${getIt<UserProfileService>().prefix}' : AppConstant.defaultCountryCodeInt.toString(),
           autoFilledOtp: extractedOtp,
-          redirectRoute: ResetPasswordRoute(
-            mobileNumber: mobileNumber,
-          ),
+
         ),
       ));
     } else {

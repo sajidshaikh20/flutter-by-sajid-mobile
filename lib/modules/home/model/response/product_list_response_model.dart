@@ -245,7 +245,7 @@ class ProductList extends Equatable {
   ///  with optional parameters.
   ProductList({
     this.entityId,
-    this.child,
+
     this.name,
     this.thumbNail,
     this.imageLarge,
@@ -284,11 +284,7 @@ class ProductList extends Equatable {
   /// [json] The JSON map to deserialize.
   ProductList.fromJson(Map<String, dynamic> json) {
     entityId = json['entityId'].toString();
-    if (json['child'] != null) {
-      child = (json['child'] as List<dynamic>)
-          .map((dynamic v) => Child.fromJson(v))
-          .toList();
-    }
+
     name = json['name'];
     thumbNail = json['thumbNail'];
     imageLarge = json['image_large'];
@@ -333,7 +329,7 @@ class ProductList extends Equatable {
   String? entityId;
 
   /// A list of child products related to this product.
-  List<Child>? child;
+
 
   /// The name of the product.
   String? name;
@@ -461,9 +457,6 @@ class ProductList extends Equatable {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = <String, dynamic>{};
     data['entityId'] = entityId;
-    if (child != null) {
-      data['child'] = child!.map((Child v) => v.toJson()).toList();
-    }
     data['name'] = name;
     data['thumbNail'] = thumbNail;
     data['image_large'] = imageLarge;
@@ -497,7 +490,7 @@ class ProductList extends Equatable {
   @override
   List<Object?> get props => <Object?>[
         entityId,
-        child,
+
         name,
         thumbNail,
         imageLarge,
@@ -534,7 +527,7 @@ class ProductList extends Equatable {
   /// Other optional fields to modify the current product list.
   ProductList copyWith({
     String? entityId,
-    List<Child>? child,
+
     String? name,
     String? thumbNail,
     String? imageLarge,
@@ -565,7 +558,7 @@ class ProductList extends Equatable {
   }) =>
       ProductList(
         entityId: entityId ?? this.entityId,
-        child: child ?? this.child,
+
         name: name ?? this.name,
         thumbNail: thumbNail ?? this.thumbNail,
         imageLarge: imageLarge ?? this.imageLarge,

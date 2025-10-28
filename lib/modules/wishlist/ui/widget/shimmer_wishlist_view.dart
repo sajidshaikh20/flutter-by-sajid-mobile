@@ -36,7 +36,7 @@ class ShimmerWishListView extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
-        itemCount: AppConstant.products.length,
+        itemCount: 10,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           childAspectRatio: itemWidth / itemHeight,
           crossAxisCount: AppConstant.crossAxisCount2,

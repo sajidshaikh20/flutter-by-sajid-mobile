@@ -1,4 +1,5 @@
 import '../../../../utils/exports.dart';
+import '../../model/response/product_listing_response_model.dart';
 
 /// A common widget for displaying product items with image, name, price,
 /// quantity controls, and wishlist functionality across different screens.
@@ -180,26 +181,12 @@ class ProductCommonItem extends StatelessWidget {
             GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
-                await context.router.push(ProductDetailsRoute(entityId: int.tryParse(productId) ?? 1));
+              //  await context.router.push(ProductDetailsRoute(entityId: int.tryParse(productId) ?? 1));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  productListingResponse != null
-                      ? ProductCommonImageRating.fromProductListing(
-                    productListingResponse: productListingResponse,
-                    removeWishListPressed: removeWishListPressed,
-                    isWishList: isWishList,
-                    likeDislikeItemPressed: likeDislikeItemPressed,
-                    sizeOfTheImage: heightAndWidthOfTheImage,
-                  )
-                      : ProductCommonImageRating(
-                    productListingResponse: productListingResponse,
-                    removeWishListPressed: removeWishListPressed,
-                    isWishList: isWishList,
-                    likeDislikeItemPressed: likeDislikeItemPressed,
-                    sizeOfTheImage: heightAndWidthOfTheImage,
-                  ),
+                  
                   const SizedBox(
                     height: Dimens.size5,
                   ),
@@ -330,36 +317,7 @@ class ProductCommonItem extends StatelessWidget {
                   if (productListingResponse?.productVariant != null && 
                       productListingResponse!.productVariant!.length > 1) {
                     // Show SelectUnit bottom sheet for multiple variants
-                    await showCustomBottomSheetView(
-                      context: context,
-                      child: SelectUnit(
-                        productVariants: productListingResponse!.productVariant,
-                        onVariantCartOperation: onVariantCartOperation,
-                        onAddPressed: (int index) {
-                          // Handle add to cart for specific variant
-                          // You can implement variant-specific logic here
-                          onAddPressed?.call();
-                        },
-                        onPlusPressed: (int index) {
-                          // Handle increase quantity for specific variant
-                          // You can implement variant-specific logic here
-                          onPlusPressed?.call();
-                        },
-                        onMinusPressed: (int index) {
-                          // Handle decrease quantity for specific variant
-                          // You can implement variant-specific logic here
-                          onMinusPressed?.call();
-                        },
-                      ),
-                      title: productListingResponse?.name ?? AppConstant.dummyProductMango,
-                      isCloseIconVisible: true,
-                      titleStyle: context.textTheme.displayMedium?.copyWith(
-                        color: AppColors.blackColor,
-                        fontSize: Dimens.fontSize18,
-                        fontWeight: FontWeight.w700,
-                        height: Dimens.lineHeight22.toLineHeight(Dimens.fontSize18),
-                      ),
-                    );
+
                   } else {
                     // Call original onAddPressed for single variant or no variants
                     onAddPressed?.call();

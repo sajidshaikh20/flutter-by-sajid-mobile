@@ -45,7 +45,7 @@ class MyAccountRepositoryImpl extends MyAccountRepository {
         languageId: int.tryParse(getIt<LanguageService>().languageId) ?? 1,
         platform: getPlatformName(),
         version: getIt<MainConfig>().packageInfo.version,
-        storeId: getIt<CountryService>().store,
+        storeId: 2,
         customerToken: getIt<UserProfileService>().customerToken);
     DebugLog.instance
         .i('DeleteAccountRequestModel created: ${request.toJson()}');
@@ -78,7 +78,7 @@ class MyAccountRepositoryImpl extends MyAccountRepository {
   Future<ResponseHandler<MyAccountInfoModel>> callAccountDetails() async {
     AccountDetailsRequest accountDetails = AccountDetailsRequest(
         // storeId: getIt<LanguageService>().storeId,
-        websiteId: getIt<CountryService>().websiteId,
+        websiteId: "",
         customerToken: getIt<UserProfileService>().customerToken,
         etag: "");
 

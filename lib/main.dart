@@ -77,8 +77,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<HomeCubit>(
           create: (BuildContext context) => HomeCubit(
               homeRepository: HomeRepositoryImpl(),
-              addressRepositoryImpl: AddressRepositoryImpl(),
-              wishlistCartRepository: WishlistCartRepositoryImpl(),
               countCubit: context.read<CartCountCubit>()),
         ),
         BlocProvider<SocialLoginCubit>(

@@ -47,7 +47,7 @@ class HomeCategoryCubit extends Cubit<HomeCategoryState> {
 
     final UserProfileService userProfileService = getIt<UserProfileService>();
     final LanguageService languageService = getIt<LanguageService>();
-    final CountryService countryService = getIt<CountryService>();
+
     final MainConfig mainConfig = getIt<MainConfig>();
 
     // Use passed parameters or fall back to defaults
@@ -62,7 +62,7 @@ class HomeCategoryCubit extends Cubit<HomeCategoryState> {
         platform: getPlatformName(),
         version: mainConfig.packageInfo.version,
         currency: languageService.defaultCurrency,
-        storeId: countryService.store,
+        storeId: 2,
         limit: finalLimit,
         offset: finalOffset);
 

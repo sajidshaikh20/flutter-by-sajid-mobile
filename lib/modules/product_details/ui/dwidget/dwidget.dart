@@ -1,1 +1,0 @@
-export '../../../../app/core/widgets/product_details_app_bar.dart';

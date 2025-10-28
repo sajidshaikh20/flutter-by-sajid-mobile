@@ -13,7 +13,7 @@ class MyAccountForm extends StatelessWidget {
     // Refresh login status when page is built to catch any changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.mounted) {
-        unawaited(context.read<MyAccountCubit>().refreshLoginStatus());
+        //unawaited(context.read<MyAccountCubit>().refreshLoginStatus());
       }
     });
 
@@ -33,7 +33,7 @@ class MyAccountForm extends StatelessWidget {
           final StackRouter router = context.router;
 
           // Reset Cubit status to prevent repeated triggers
-          context.read<MyAccountCubit>().resetLogoutAndDeleteStatus();
+       //   context.read<MyAccountCubit>().resetLogoutAndDeleteStatus();
 
           // Navigate first, then clear user data
           WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -169,10 +169,8 @@ class MyAccountForm extends StatelessWidget {
                                               CustomGradientButtonWidget(
                                                 title: context.appString.loginKey,
                                                 onTap: () async {
-                                                  final Object? result = await context.read<MyAccountCubit>().navigateToRoute(context, LoginRoute());
-                                                  if (context.mounted && result != null) {
-                                                    await context.read<MyAccountCubit>().handleReturnFromLogin();
-                                                  }
+
+
                                                 },
                                                 height: Dimens.size27,
                                                 width: isLanguageAlignmentLTR ? Dimens.size79: Dimens.size85,
@@ -220,25 +218,19 @@ class MyAccountForm extends StatelessWidget {
         RowItemModel(
           title: context.appString.languageKey,
           subtitle: AppConstantString.englishText,
-          route: const ChangeLanguageRoute(),
+        //  route: const ChangeLanguageRoute(),
         ),
         RowItemModel(
           title: context.appString.storeLocationsKey,
-          route: StoreLocationsRoute(),
+        //  route: StoreLocationsRoute(),
         ),
         RowItemModel(
           title: context.appString.aboutAppKey,
-          route: ViewCmsRoute(
-              title: context.appString.aboutAppKey, url:
-          isLanguageAlignmentLTR ? AppConstant.about_us : AppConstant.about_us_ar),
+
         ),
         RowItemModel(
           title: context.appString.termsAndConditionsKey,
-          route: ViewCmsRoute(
-              title: context.appString.termsAndConditionsKey,
-              url:
-              isLanguageAlignmentLTR ?
-              AppConstant.term_conditions:AppConstant.term_conditions_ar),
+
         ),
         RowItemModel(
           title: context.appString.rateTheAppKey,

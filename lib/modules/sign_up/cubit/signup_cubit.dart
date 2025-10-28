@@ -10,45 +10,15 @@ class SignupCubit extends Cubit<SignupState> {
       : super(initialState) {
 
     // Only set country code if it's not empty and different from the default
-    final String countryCode = getIt<CountryService>().countryCode ?? '';
-    if (countryCode.isNotEmpty && countryCode != AppConstant.defaultCountryCode) {
-      setCountryCode(countryCode);
-    }
+  //  final String countryCode = getIt<CountryService>().countryCode ?? '';
+
     /// Fetches and updates the loyalty points.
-    scheduleMicrotask(() async => _loadCountryData());
+
   }
 
   /// Repository used to perform sign-up API calls.
   final SignUpRepository repository;
 
-  Future<void> _loadCountryData() async {
-    // Also ensure country data is loaded for nationality dropdown
-    final CountryService countryService = getIt<CountryService>();
-    await countryService.ensureCountryDataLoaded();
-    await countryService.loadCountryList(); // Load the full country list for nationality dropdown
-
-    // If country list is empty, try to fetch it from API
-    if (countryService.getCountryList().isEmpty) {
-      DebugLog.instance.w('⚠ Country list is empty, attempting to fetch from API...');
-      try {
-        // Call the language API to get country list
-        final LanguageSelectionRepositoryImpl languageRepo = LanguageSelectionRepositoryImpl();
-
-        final ResponseHandler<BaseResponse<LanguageResponseModel>> response = await languageRepo.getLanguageList();
-
-        if (response.isSuccess() && response.getSuccessInstance()?.response.data?.countryList != null) {
-          final List<CountryList> countryList = response.getSuccessInstance()!.response.data!.countryList;
-          await countryService.storeCountryList(countryList);
-          DebugLog.instance.i('✓ Country list fetched from API and stored: ${countryList.length} countries');
-        } else {
-          DebugLog.instance.w('⚠ Failed to fetch country list from API');
-        }
-      } on Exception catch (e) {
-        DebugLog.instance.e('❌ Error fetching country list from API: $e');
-      }
-    }
-
-  }
 
   /// Validates the signup form input and prepares the request model.
   /// If validation passes, emits a [BaseStateStatus.loading] state with the request data.

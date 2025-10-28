@@ -127,36 +127,7 @@ extension SignInAccountResponseMapping on LoginUserResponse {
   }
 }
 
-/// Extension on [EditProfileResponse] to convert it into a [UserProfileModel].
-extension EditProfileAccountResponseMapping on EditProfileResponse {
-  /// Maps [EditProfileResponse] data into a [UserProfileModel].
-  UserProfileModel editProfileToUserProfile() {
-    return UserProfileModel(
-      phoneNumber: phoneNumber ?? '',
-      mobileNumber: phoneNumber ?? '',
-      prefix: prefix ?? AppConstant.defaultCountryCodeInt,
-      customerName: customerName ?? '',
-      customerEmail: customerEmail ?? '',
-      customerId: customerId,
-      customerToken: customerToken ?? '',
-      lastName: customerName?.split(" ").last,
-      firstName: customerName?.split(" ").first,
-      cartCount: cartCount ?? 0,
-      quoteId: quoteId ?? '',
-      totalOrderValue: totalOrderValue ?? '',
-      lastOrderDate: lastOrderDate ?? '',
-      storeCredit: walletBalance ?? '',
-      rewardPoints: loyaltyPoints ?? '',
-      totalOrder: totalOrder ?? 0,
-      referralCode: referralCode ?? '',
-      fcmToken: fcmToken ?? '',
-      gender: gender ?? '',
-      birthday: birthday ?? '',
-      nationality: nationality ?? '',
-      arabicNationality: arabicNationality ?? '',
-    );
-  }
-}
+
 
 /// Extension on [num] for quickly creating [SizedBox] instances.
 extension SizedBoxExtensions on num {

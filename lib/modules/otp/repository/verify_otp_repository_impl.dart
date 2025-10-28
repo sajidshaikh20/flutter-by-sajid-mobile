@@ -69,24 +69,5 @@ class VerifyOtpRepositoryImpl extends VerifyOtpRepository {
     );
   }
 
-  /// UpdateEmail VERIFY  with user data
-  @override
-  Future<ResponseHandler<BaseResponse<EditProfileResponse>>> callUpdateEmail(
-      UpdateEmailRequestModel request) async {
-    final ResponseHandler<Map<String, dynamic>?> response =
-    await MainConfig.apiClient.handleApiCall<Map<String, dynamic>>(
-      endUrl: Apis.updateEmail,
-      apiType: ApiType.post,
-      showLoader: true,
-      data: request.toJson(),
-    );
-    return getParsedResponseHandler(
-      responseHandler: response,
-      parser: (Map<String, dynamic> value) => BaseResponse<EditProfileResponse>.fromJson(
-        value,
-            (Object? json) => EditProfileResponse.fromJson(json as Map<String, dynamic>),
-      ),
-    );
-  }
 
 }

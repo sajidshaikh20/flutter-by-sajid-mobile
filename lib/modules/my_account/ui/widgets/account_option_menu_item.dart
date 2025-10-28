@@ -30,7 +30,7 @@ class AccountOptionMenuItem extends StatelessWidget {
           onTap: () async {
             if (loginitem.route != null) {
               // Use the debounced navigation method to prevent multiple simultaneous navigations
-              await myAccountCubit.navigateToRoute(context, loginitem.route!);
+             // await myAccountCubit.navigateToRoute(context, loginitem.route!);
             } else if (loginitem.isShowDialog ?? false) {
               if (loginitem.title == context.appString.logoutKey) {
                 //  Logout Confirmation Dialog
@@ -43,7 +43,7 @@ class AccountOptionMenuItem extends StatelessWidget {
                   onOkClicked: () async {
                     DebugLog.instance.i('AccountOptionMenuItem: Logout dialog confirmed, closing dialog and calling API');
                     goBack(context);
-                    await myAccountCubit.callLogoutAPI();
+                  //  await myAccountCubit.callLogoutAPI();
                   },
                   cancelBtnTitle: context.appString.cancelKey,
                   onCancelClicked: () => goBack(context),
@@ -58,7 +58,7 @@ class AccountOptionMenuItem extends StatelessWidget {
                   barrierDismissible: false,
                   onOkClicked: () async {
                     goBack(context);
-                    await myAccountCubit.callDeleteAccountAPI();
+                   // await myAccountCubit.callDeleteAccountAPI();
                   },
                   cancelBtnTitle: context.appString.cancelKey,
                   onCancelClicked: () => goBack(context),

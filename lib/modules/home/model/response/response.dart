@@ -11,4 +11,5 @@ export 'list_of_brands_response.dart';
 export 'loyalty_points_response_model.dart';
 export 'product_list_response_model.dart';
 export 'remove_wishlist_model.dart';
+export 'product_list_response_model.dart';
 

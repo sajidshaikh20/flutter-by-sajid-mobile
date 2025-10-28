@@ -62,10 +62,7 @@ class AgreementWidget extends StatelessWidget {
                     style: hyperLinkTextStyle,
                     recognizer: TapGestureRecognizer()
                       ..onTap = () async {
-                      await context.router.push(
-                          ViewCmsRoute(title:
-                          context.appString.termsAndConditionKey,
-                              url: AppConstant.term_conditions));
+                      DebugLog.instance.e("AgreementWidget");
                       },
                   ),
                 ]),

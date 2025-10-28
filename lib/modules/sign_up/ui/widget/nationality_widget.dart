@@ -66,10 +66,7 @@ class NationalityWidget extends StatelessWidget {
     context
         .read<SignupCubit>()
         .handleValidationErrorMessageForNationality("",isMenuOpen: true);
-    String? selectedNat = await showNationalityMenu(context, editTextKey);
-    if(context.mounted) {
-      context.read<SignupCubit>().updateNationality(selectedNat ?? "",isMenuOpen: false);
-    }
+
   }
 }
 

@@ -139,16 +139,7 @@ class BannersListModel {
     if (json['product'] != null &&
         json['product'] != 'null' &&
         json['product'] != '') {
-      if (json['product'] is List) {
-        List<ProductListingResponse> productList = (json['product']
-                as List<dynamic>)
-            .map((dynamic item) =>
-                ProductListingResponse.fromJson(item as Map<String, dynamic>))
-            .toList();
-        productData = productList;
-      } else {
-        productData = json['product'] as String;
-      }
+
     }
 
     final BannersListModel result = BannersListModel(

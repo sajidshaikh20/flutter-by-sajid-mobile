@@ -7,7 +7,7 @@ import '../../../../utils/exports.dart';
 /// and variant-specific cart operations.
 class HotDealsWidget extends StatelessWidget {
   /// The list of products to display in this widget.
-  final List<ProductListingResponse> products;
+
 
   /// Callback when the "+" button is pressed for a product.
   ///
@@ -43,7 +43,7 @@ class HotDealsWidget extends StatelessWidget {
   /// [cartCount] defaults to 0 if not provided.
   const HotDealsWidget({
     super.key,
-    required this.products,
+
     this.onPlusPressed,
     this.onMinusPressed,
     this.cartCount = 0,
@@ -57,7 +57,7 @@ class HotDealsWidget extends StatelessWidget {
     return SizedBox(
       height: Dimens.size294,
       child: ListView.builder(
-        itemCount: products.length,
+        itemCount: 10,
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) => Container(
@@ -66,25 +66,7 @@ class HotDealsWidget extends StatelessWidget {
             // Add padding to the first item only
             right: Dimens.space10,
           ),
-          child: ProductCommonItem(
-            productListingResponse: products[index],
-            onPlusPressed: onPlusPressed != null 
-                ? () => onPlusPressed!(index)
-                : null,
-            onMinusPressed: onMinusPressed != null 
-                ? () => onMinusPressed!(index)
-                : null,
-            cartCount: cartCount,
-            onAddPressed: onAddPressed != null 
-                ? () => onAddPressed!(index)
-                : null,
-            likeDislikeItemPressed: likeDislikeItemPressed != null 
-                ? () => likeDislikeItemPressed!(index)
-                : null,
-            onVariantCartOperation: onVariantCartOperation != null
-                ? (int variantIndex, CartOperation operation) => onVariantCartOperation!(index, variantIndex, operation)
-                : null,
-          ),
+          child: const ColoredBox(color: Colors.black),
         ),
       ),
     );

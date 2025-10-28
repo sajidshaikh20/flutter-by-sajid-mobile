@@ -27,7 +27,7 @@ class HomeLoyaltyPointsWidget extends StatelessWidget {
           highlightColor: MainConfig.appColors.transparent,
           overlayColor: WidgetStateProperty.all(Colors.transparent),
           onTap: () async {
-            await context.pushRoute(const LoyaltyPointsRoute());
+
           },
           child: ClipRRect(
             borderRadius: Dimens.radius8.borderRadius,

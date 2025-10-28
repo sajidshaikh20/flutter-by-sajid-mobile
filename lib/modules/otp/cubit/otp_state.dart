@@ -15,7 +15,7 @@ class OtpState extends BaseState {
   /// Signup form data for signup flow
   final SignUpFormDataModel? signupFormData;
   /// Update Email form data
-  final UpdateEmailRequestModel? updateEmailRequestModel;
+
 
   /// Auto-filled OTP from signup response
   final String? autoFilledOtp;
@@ -31,7 +31,7 @@ class OtpState extends BaseState {
     this.otp = '',
     this.flowType = OtpFlowType.forgotPassword,
     this.signupFormData,
-    this.updateEmailRequestModel,
+
     this.autoFilledOtp,
   });
 
@@ -46,7 +46,7 @@ class OtpState extends BaseState {
     String? otp,
     OtpFlowType? flowType,
     SignUpFormDataModel? signupFormData,
-    UpdateEmailRequestModel? updateEmailRequestModel,
+
     String? autoFilledOtp,
   }) {
     return OtpState(
@@ -59,7 +59,7 @@ class OtpState extends BaseState {
       otp: otp ?? this.otp,
       flowType: flowType ?? this.flowType,
       signupFormData: signupFormData ?? this.signupFormData,
-      updateEmailRequestModel: updateEmailRequestModel ?? this.updateEmailRequestModel,
+
       autoFilledOtp: autoFilledOtp ?? this.autoFilledOtp,
     );
   }
@@ -67,5 +67,5 @@ class OtpState extends BaseState {
   @override
   /// Properties used for state equality comparisons.
   List<Object?> get props =>
-      <Object?>[status, secondsRemaining, otpNumber, msg, redirectRoute, mobileNumber, otp, flowType, signupFormData,updateEmailRequestModel, autoFilledOtp];
+      <Object?>[status, secondsRemaining, otpNumber, msg, redirectRoute, mobileNumber, otp, flowType, signupFormData, autoFilledOtp];
 }

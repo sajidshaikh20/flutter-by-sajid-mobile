@@ -7,8 +7,6 @@ class WishListState extends BaseState {
     required super.status,
     this.wishlistModel,
     this.wishlistModelWithProducts,
-    this.addToCartModel,
-    this.updateCartModel,
     this.message = '',
     this.error = '',
     this.action = WishListAction.wishListInitial,
@@ -29,11 +27,7 @@ class WishListState extends BaseState {
   /// The model representing the user's wish list data with ProductListingResponse.
   final WishlistModelWithProducts? wishlistModelWithProducts;
 
-  /// The model representing the data for adding an item to the cart.
-  final AddToCartModel? addToCartModel;
 
-  /// The model representing the data for updating the cart.
-  final UpdateCartModel? updateCartModel;
 
   /// A message associated with the wish list state (e.g., success or info).
   final String message;
@@ -76,8 +70,7 @@ class WishListState extends BaseState {
     BaseStateStatus? status,
     WishlistModel? wishlistModel,
     WishlistModelWithProducts? wishlistModelWithProducts,
-    AddToCartModel? addToCartModel,
-    UpdateCartModel? updateCartModel,
+
     String? message,
     String? error,
     WishListAction? action,
@@ -95,8 +88,7 @@ class WishListState extends BaseState {
         status: status ?? this.status,
         wishlistModel: wishlistModel ?? this.wishlistModel,
         wishlistModelWithProducts: wishlistModelWithProducts ?? this.wishlistModelWithProducts,
-        addToCartModel: addToCartModel ?? this.addToCartModel,
-        updateCartModel: updateCartModel ?? this.updateCartModel,
+
         message: message ?? this.message,
         error: error ?? this.error,
         action: action ?? this.action,
@@ -116,8 +108,7 @@ class WishListState extends BaseState {
         ...super.props,
         wishlistModel,
         wishlistModelWithProducts,
-        addToCartModel,
-        updateCartModel,
+
         message,
         error,
         action,

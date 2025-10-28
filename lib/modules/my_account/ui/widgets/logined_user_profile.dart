@@ -55,7 +55,7 @@ class LoginedUserProfile extends StatelessWidget {
       RowItemModel(
         title: context.appString.myOrdersKey,
         subtitle: loyaltyData?.myOrderCounts?.toString() ?? '0',
-        route: const MyOrderListingRoute(),
+
       ),
       //# TODO in first phase we don't give loyalty things but in future its required
       /*RowItemModel(
@@ -83,18 +83,14 @@ class LoginedUserProfile extends StatelessWidget {
       RowItemModel(
         title: context.appString.languageKey,
         subtitle: context.appString.englishKey,
-        route: const ChangeLanguageRoute(),
+
       ),
       RowItemModel(
           title: context.appString.notificationsSettingsKey,
-          route:  NotificationSettingRoute(
-              orderStatus: loyaltyData?.orderStatus,
-              promotionOffers: loyaltyData?.promotionOffers,
-              loyalityPoints: loyaltyData?.loyalityPoints
-          ),
+
       ),
       RowItemModel(
-          title: context.appString.myAddressesKey, route: ListAddressRoute()),
+          title: context.appString.myAddressesKey, ),
      //# TODO in first phase we don't Gift card but in future its required
      /*RowItemModel(
         title: context.appString.giftCardsKey,
@@ -102,43 +98,35 @@ class LoginedUserProfile extends StatelessWidget {
       ),*/
       RowItemModel(
         title: context.appString.myReviewsAndRatingsKey,
-        route: const MyReviewRatingRoute(),
+
       ),
       RowItemModel(
         title: context.appString.referAFriendKey,
-        route: const ReferAFriendRoute(),
+
       ),
       RowItemModel(
         title: context.appString.contactUsKey,
-        route: const ContactUsRoute(),
+
       ),
       RowItemModel(
-        route: StoreLocationsRoute(),
+
         title: context.appString.storeLocationsKey,
       ),
       RowItemModel(
         title: context.appString.faqsKey,
-        route: ViewCmsRoute(
-            title: context.appString.faqsKey, url:
-        isLanguageAlignmentLTR ? AppConstant.faq : AppConstant.faq_ar
-        ),
+
       ),
       RowItemModel(
         title: context.appString.aboutAppKey,
-        route: ViewCmsRoute(
-            title: context.appString.aboutAppKey,
-            url: isLanguageAlignmentLTR ? AppConstant.about_us : AppConstant.about_us_ar
-        ),
+
       ),
       RowItemModel(
         title: context.appString.termsAndConditionsKey,
-        route: ViewCmsRoute(
-            title: context.appString.termsAndConditionsKey,
-            url: isLanguageAlignmentLTR ? AppConstant.term_conditions: AppConstant.term_conditions_ar),
+
       ),
       RowItemModel(
         title: context.appString.keyStoreReceiptKey,
-        route: const StoreReceiptRoute(),
+
       ),
       RowItemModel(
         title: context.appString.rateTheAppKey,

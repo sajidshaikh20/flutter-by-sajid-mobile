@@ -69,28 +69,9 @@ Future<void> performAsyncTask(
 bool isSmallDevice() =>
     !(MainConfig.context.height >= AppConstant.smallDeviceHeight);
 
-/// Calculates the completion percentage of reviews for a specific item.
-/// Returns a percentage value between 0 and 100.
-double calculatePercentage(List<Reviews>? reviews, int itemIndex) {
-  if (reviews == null || reviews.isEmpty) {
-    return 0; // Avoid division by zero
-  }
-  int completedItems = getCompletedItem(reviews, itemIndex);
-  int totalItems = reviews.length;
 
-  return totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
-}
 
-/// Counts reviews with stars matching the [itemIndex].
-///  Returns 0 if empty or null.
-int getCompletedItem(List<Reviews>? reviews, int itemIndex) {
-  if (reviews == null || reviews.isEmpty) {
-    return 0; // Return 0 if reviews is null or empty
-  }
-  return reviews
-      .where((Reviews review) => review.stars == itemIndex.toString())
-      .length;
-}
+
 
 /// Formats the given [date] string to match the pattern
 /// in [AppConstant.dateFormatPattern].
@@ -191,10 +172,10 @@ void handleRedirection({
         if (isInitialRoute) {
           unawaited(router.pushAll(<PageRouteInfo>[
             const DashboardRoute(),
-            ProductDetailsRoute(entityId: productId),
+
           ]));
         } else {
-          unawaited(router.push(ProductDetailsRoute(entityId: productId)));
+          //unawaited(router.push(ProductDetailsRoute(entityId: productId)));
         }
       }
 
@@ -204,10 +185,10 @@ void handleRedirection({
       if (isInitialRoute) {
         unawaited(router.pushAll(<PageRouteInfo>[
           const DashboardRoute(),
-          MyOrderDetailRoute(orderId: int.tryParse(orderId ?? '')),
+         // MyOrderDetailRoute(orderId: int.tryParse(orderId ?? '')),
         ]));
       } else {
-        unawaited(router.push(MyOrderDetailRoute(orderId: int.tryParse(orderId ?? ''))));
+        //unawaited(router.push(MyOrderDetailRoute(orderId: int.tryParse(orderId ?? ''))));
       }
 
     default:
@@ -374,57 +355,7 @@ Widget fadePageTransition(
     child: child,
   );
 }
-///showNationalityMenu
-Future<String?> showNationalityMenu(
-  BuildContext context,
-  GlobalKey key,
-) async
-{
-  final RenderBox renderBox =
-      key.currentContext!.findRenderObject() as RenderBox;
-  final RenderBox overlay =
-      Overlay.of(context).context.findRenderObject() as RenderBox;
 
-  final Offset offset = renderBox.localToGlobal(Offset.zero, ancestor: overlay);
-  final Size size = renderBox.size;
-
-  // Get country list from CountryService
-  final CountryService countryService = getIt<CountryService>();
-  final List<CountryList> countryList = countryService.getCountryList();
-
-  // If no countries from service, use fallback list
-  final List<CountryList> finalCountryList = countryList.isNotEmpty 
-      ? countryList 
-      : <CountryList>[];
-
-  return showMenu<String>(
-    context: context,
-    elevation: 2,
-    shadowColor: AppColors.grey,
-    constraints: BoxConstraints(
-      minWidth: size.width,
-      maxWidth: size.width,
-    ),
-    color: AppColors.whiteColor,
-    position: RelativeRect.fromLTRB(
-      offset.dx, // Align left with the TextField
-      offset.dy + size.height, // Below the TextField
-      offset.dx + size.width, // Align right with the TextField
-      0,
-    ),
-    items: finalCountryList.map<PopupMenuEntry<String>>((CountryList country) {
-      return PopupMenuItem<String>(
-        value: isLanguageAlignmentLTR ? country.countryName ?? "" :  country.arabicName??"" ,
-        child: SizedBox(
-          width: size.width, // Set width same as EditText
-          child: CustomTextLabelWidget(
-            label: isLanguageAlignmentLTR ? country.countryName ?? "" :  country.arabicName??""
-          ),
-        ),
-      );
-    }).toList(),
-  );
-}
 ///pickDate
 Future<String?> pickDate(BuildContext context) async {
   final DateTime? pickedDate = await showDatePicker(
