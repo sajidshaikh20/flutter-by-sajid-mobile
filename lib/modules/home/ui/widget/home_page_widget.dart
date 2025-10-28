@@ -56,7 +56,6 @@ class _HomePageContent extends BaseResponsiveView {
   final VoidCallback onHomeCubitInitialized;
 
   Widget buildViews(BuildContext context, ScreenType device) {
-    double viewportFraction = (context.width - Dimens.space20) / context.width;
 
     return NoInternetWidget(
       childWidget: Scaffold(
@@ -107,7 +106,7 @@ class _HomePageContent extends BaseResponsiveView {
                       homeState.apiCallForAddress != BaseStateStatus.success
                           ? const HomeAddressSelectionShimmer()
                           : const HomeAddressSelection(),
-                      ColoredBox(color: Colors.red)
+                   const   ColoredBox(color: Colors.red)
                     ],
                   ),
                   const Positioned(

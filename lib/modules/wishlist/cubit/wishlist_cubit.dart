@@ -38,7 +38,6 @@ class WishListCubit extends BaseCubit<WishListState>
 
 
 
-  final WishlistRepository _repository = WishlistRepositoryImpl();
 
   /// Stream subscription for global wishlist manager
   StreamSubscription<GlobalWishlistState>? _globalWishlistSubscription;

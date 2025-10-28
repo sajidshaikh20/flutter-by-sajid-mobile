@@ -162,7 +162,6 @@ class ProductCommonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     double widthOfTheCell = widthOfItem ?? Dimens.widthOfTheCell;
     double heightOfTheCell = heightOfItem ?? Dimens.heightOfTheCell;
-    double heightAndWidthOfTheImage = widthOfTheCell - (Dimens.paddingOfCell * 2);
     return Stack(children: <Widget>[
       Container(
         padding: Dimens.paddingOfCell.padding,

@@ -39,7 +39,7 @@ class HotDealsWidget extends StatelessWidget {
 
   /// Creates a [HotDealsWidget].
   ///
-  /// All callbacks are optional. [products] is required.
+  /// All callbacks are optional. [] is required.
   /// [cartCount] defaults to 0 if not provided.
   const HotDealsWidget({
     super.key,

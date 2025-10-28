@@ -31,15 +31,6 @@ class HomeCubit extends BaseCubit<HomeState> {
     // Business logic commented out for base template
   }
 
-  /// Simple sync with global wishlist - commented out for base template
-  void _syncWithGlobalWishlist() {
-    // Business logic commented out for base template
-  }
-
-  /// Sync home screen with global cart - commented out for base template
-  void _syncWithGlobalCart() {
-    // Business logic commented out for base template
-  }
 
   @override
   HomeState getResetErrorState() => state.copyWith(msg: '');

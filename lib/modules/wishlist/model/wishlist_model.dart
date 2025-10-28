@@ -1,4 +1,3 @@
-import '../../../utils/exports.dart';
 
 /// A model representing the data structure of a user's wish list.
 class WishlistModel {

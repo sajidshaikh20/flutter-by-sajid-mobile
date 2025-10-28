@@ -1,4 +1,3 @@
-import '/utils/exports.dart';
 
 /// Model class for deals response data.
 class DealsResponseModel {
@@ -35,7 +34,6 @@ class DealsResponseModel {
 
       if (productListData is List) {
         for (int i = 0; i < productListData.length; i++) {
-          final dynamic item = productListData[i];
 
 
         }

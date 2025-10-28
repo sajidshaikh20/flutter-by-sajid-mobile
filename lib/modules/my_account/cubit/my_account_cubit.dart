@@ -21,14 +21,7 @@ class MyAccountCubit extends Cubit<MyAccountState> {
     // await callAccountDetails();
   }
 
-  /// Check the actual login status - commented out for base template
-  void _checkLoginStatus() {
-    // Business logic commented out for base template
-    // bool isLoggedIn = SharedPref.instance.getBool(PrefsKey.isLoggedInKey, defValue: false);
-    // String userProfileData = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
-    // Update state based on actual login status
-    // emit(state.copyWith(isLoggedIn: isLoggedIn, userProfileData: userProfileData));
-  }
+
 
   /// Call loyalty points API - commented out for base template
   Future<void> callLoyaltyPointsApi() async {
@@ -40,10 +33,7 @@ class MyAccountCubit extends Cubit<MyAccountState> {
     // Business logic commented out for base template
   }
 
-  /// Call CMS API - commented out for base template
-  Future<void> _callCMSApi() async {
-    // Business logic commented out for base template
-  }
+
 
   /// Logout functionality - commented out for base template
   Future<void> logout() async {
