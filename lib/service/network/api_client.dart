@@ -461,7 +461,7 @@ class ApiClient {
     } else {
       return OnFailureResponse<T?>(
         error: ErrorResult(
-          errorMessage: MainConfig.dynamicString(JsonServiceString.keySomethingWentWrong),
+          errorMessage: "Something Went Wrong",
           type: DioExceptionType.unknown,
         ),
       );

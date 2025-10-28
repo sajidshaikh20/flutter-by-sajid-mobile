@@ -256,8 +256,8 @@ void showSuccessDialog({
   showCustomDialog(
     message,
     barrierDismissible: false,
-    title: MainConfig.dynamicString(JsonServiceString.keyAlokozayShop),
-    okBtnTitle: MainConfig.dynamicString(JsonServiceString.keyOk),
+    title: "Base app",
+    okBtnTitle: context.appString.okayKey,
     isDialogHideOnClick: true,
     onOkClicked: () async {
       // context.read<CartPageCubit>().

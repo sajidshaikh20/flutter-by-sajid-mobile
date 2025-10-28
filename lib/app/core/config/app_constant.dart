@@ -224,7 +224,7 @@ abstract class AppConstant {
 
   static const String locationPermission = "Location Permission";
   static const String Permission = "Permission";
-  static const String defaultLanguageFileName = "en.json";
+
 
   static const String cairoFontFamily = "cairo";
   static const String keyPleaseEnterYourQuantity = "Please enter your quantity";

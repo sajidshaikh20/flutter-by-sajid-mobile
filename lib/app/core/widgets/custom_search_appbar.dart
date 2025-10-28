@@ -145,9 +145,7 @@ class CustomSearchAppBar extends StatelessWidget
                         filled: true,
                         isDense: true,
                         fillColor: Colors.white,
-                        hintText: MainConfig.dynamicString(
-                          JsonServiceString.keySearch,
-                        ),
+                        hintText: context.appString.searchProductKey,
                         contentPadding: EdgeInsets.only(
                           right: isLanguageAlignmentLTR
                               ? 0

@@ -39,7 +39,7 @@ class SignUpForm extends StatelessWidget {
           displaySnackBar(state.msg ?? '', context);
         } else if (state.showDefaultErrMsg ?? false) {
           displaySnackBar(
-              MainConfig.dynamicString(JsonServiceString.keySomethingWentWrong),
+              "Something Went Wrong",
               context);
         }
       },
