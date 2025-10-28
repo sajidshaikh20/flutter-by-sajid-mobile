@@ -10,7 +10,7 @@ class HomeCategoryCubit extends Cubit<HomeCategoryState> {
           HomeCategoryState(),
         ) {
     _initializeScrollListener();
-    scheduleMicrotask(() async => callHomeCategory());
+   // scheduleMicrotask(() async => callHomeCategory());
 
   }
 

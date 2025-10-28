@@ -8,14 +8,14 @@ class WishListCubit extends BaseCubit<WishListState>
   WishListCubit()
       : super(
           WishListState(
-            status: BaseStateStatus.loading,
+            status: BaseStateStatus.success,
             scrollController: ScrollController(),
           ),
         ) {
     // Initialize the mixin's dependency here
 
-    unawaited(getWishlistData());
-    _setUpScrollListener();
+   // unawaited(getWishlistData());
+  //  _setUpScrollListener();
 
     // Listen to global wishlist and cart changes
     scheduleMicrotask(() {
@@ -25,7 +25,6 @@ class WishListCubit extends BaseCubit<WishListState>
         DebugLog.instance.d('🔄 WISHLIST: Global state changed, syncing wishlist and cart');
         // Always sync with cart changes (wishlist items need to show cart status)
         // But do it safely without interfering with ongoing operations
-
         // Only sync wishlist if wishlist data actually changed
       });
     });
