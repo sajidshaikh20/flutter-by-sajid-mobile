@@ -214,4 +214,5 @@ abstract class AppPaths {
 
   /// Store receipt page route.
   static const String storeReceipt = '/store_Receipt';
+
 }

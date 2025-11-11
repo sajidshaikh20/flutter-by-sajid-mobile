@@ -178,14 +178,6 @@ abstract class AppConstant {
   static const String invalidPassword = "INVALID_PASSWORD";
 
   static const String category = "category";
-  static const List<String> qtyDropdownItemsList = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "M"
-  ];
   static const List<String> imageExtensions = [
     'png',
     'jpg',
@@ -251,70 +243,7 @@ abstract class AppConstant {
     Assets.png.bgCarousalSample2.path
   ];
 
-  static final List<Map<String, dynamic>> dummyUnits = [
-    {
-      'isSelected': true,
-      'price': '6.50 KD',
-      'quantityLabel': 'Carton-18 Pieces',
-    },
-    {
-      'isSelected': false,
-      'price': '4.50 KD',
-      'quantityLabel': 'Pack Of 6',
-    },
-    {
-      'isSelected': false,
-      'price': '1.50 KD',
-      'quantityLabel': 'Pack Of 2',
-    },
-  ];
 
-  static List<CategoryResponseModel> categories = [
-    CategoryResponseModel(
-        categoryImage: Assets.png.imgCategoryDairy.path, categoryName: "Dairy"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryChocolate.path,
-        categoryName: "Chocolate"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryCulinary.path,
-        categoryName: "Culinary"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryIcecream.path,
-        categoryName: "Ice Cream"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryJuice.path, categoryName: "Juice"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryTea.path, categoryName: "Tea"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.imgCategoryDairy.path, categoryName: "Dairy"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryChocolate.path,
-        categoryName: "Chocolate"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryCulinary.path,
-        categoryName: "Culinary"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryIcecream.path,
-        categoryName: "Ice Cream"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryJuice.path, categoryName: "Juice"),
-    CategoryResponseModel(
-        categoryImage: Assets.png.bgCategoryTea.path, categoryName: "Tea"),
-  ];
-
-
-
-
-
-  static Map<String, SvgGenImage> nationalityFlags = {
-    'KSA': Assets.svgs.icKuwait,
-    'Kuwait': Assets.svgs.icKuwait,
-    'Qatar': Assets.svgs.icKuwait,
-    'Bahrain': Assets.svgs.icKuwait,
-    'Oman': Assets.svgs.icKuwait,
-    'UAE': Assets.svgs.icKuwait,
-    // Add more nationalities and their respective flag image paths
-  };
 
   static const String testingEmail = 'Test@gmail.com';
   static const String dummyProductMango =
@@ -366,9 +295,7 @@ abstract class AppConstant {
   // Grand Total details
   static const String totalFormattedValue = '20.44 KD';
 
-  // Discount message
-  static const String totalDiscountString =
-      'You will save 4.66 KD on this order';
+
 
   static const String transactionIdValue = '3546446115445';
   static const String orderId = "#45156322";

@@ -2,6 +2,8 @@ import '../../../utils/exports.dart';
 
 ///Home respository implementation
 class HomeRepositoryImpl extends HomeRepository {
+
+
   @override
   Future<ResponseHandler<BaseResponse<List<ListOfBrandsResponse>>>>
       getBrandsListing(BrandListRequest request) async {

@@ -1,6 +1,5 @@
 export 'dart:convert';
 
-export 'app_scroll_behaviour.dart';
 export 'context_extension.dart';
 export 'date_utils.dart';
 export 'debug_log.dart';
