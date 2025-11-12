@@ -1,9 +1,5 @@
-import 'package:intl/intl.dart';
 import '../../../utils/exports.dart';
-import '../cubit/task_cubit.dart';
-import '../cubit/task_state.dart';
-import '../model/task_model.dart';
-import '../repository/task_repository_impl.dart';
+
 
 @RoutePage()
 /// Unified page for adding or editing a task.
@@ -189,7 +185,7 @@ class _TaskFormViewState extends State<TaskFormView> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(Dimens.size16),
         child: Form(
           key: _formKey,
           child: Column(
@@ -211,7 +207,7 @@ class _TaskFormViewState extends State<TaskFormView> {
                 },
                 textCapitalization: TextCapitalization.sentences,
               ),
-              const SizedBox(height: 16),
+             const SizedBox(height: Dimens.size16),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -220,7 +216,7 @@ class _TaskFormViewState extends State<TaskFormView> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.description),
                 ),
-                maxLines: 4,
+                maxLines: Dimens.maxLength4,
                 validator: (String? value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter a task description';
@@ -229,34 +225,36 @@ class _TaskFormViewState extends State<TaskFormView> {
                 },
                 textCapitalization: TextCapitalization.sentences,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: Dimens.size16),
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(Dimens.size16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const CustomTextLabelWidget(
                         label: 'Due Date & Time',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: Dimens.fontSize16,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.start,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: Dimens.space12),
                       Row(
                         children: <Widget>[
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () => _selectDate(context),
-                              icon: const Icon(Icons.calendar_today),
+                              icon: const Icon(
+                                  color: Colors.black,
+                                  Icons.calendar_today),
                               label: CustomTextLabelWidget(
                                 label: DateFormat('MMM dd, yyyy').format(_selectedDate),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: Dimens.space12),
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () => _selectTime(context),
@@ -272,26 +270,28 @@ class _TaskFormViewState extends State<TaskFormView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: Dimens.space24),
               BlocBuilder<TaskCubit, TaskState>(
                 builder: (BuildContext context, TaskState state) {
-                  return ElevatedButton(
-                    onPressed: state.status == BaseStateStatus.loading
-                        ? null
-                        : _saveTask,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: state.status == BaseStateStatus.loading
+                  return CustomButtonWidget(
+                    title: state.status == BaseStateStatus.loading
+                        ? 'Please wait...'
+                        : (_isEditMode ? 'Update Task' : 'Save Task'),
+                    onTap: _saveTask,
+                    isButtonEnabled: state.status != BaseStateStatus.loading,
+                    icon: state.status == BaseStateStatus.loading
                         ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            height: Dimens.size20,
+                            width: Dimens.size20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: Dimens.size2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
                           )
-                        : CustomTextLabelWidget(
-                            label: _isEditMode ? 'Update Task' : 'Save Task',
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                        : null,
+                    titleTextStyle: const TextStyle(
+                        color: Colors.white,
+                        fontSize: Dimens.fontSize16),
                   );
                 },
               ),

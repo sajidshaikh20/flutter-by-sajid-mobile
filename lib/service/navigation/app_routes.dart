@@ -75,7 +75,6 @@ class AppRouter extends RootStackRouter {
         CustomRoute<dynamic>(
           page: TaskListRoute.page,
           path: AppPaths.taskManagement,
-          initial: false,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
@@ -92,7 +91,6 @@ class AppRouter extends RootStackRouter {
         CustomRoute<dynamic>(
           page: DashboardRoute.page,
           path: AppPaths.dashboard,
-          initial: false,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,

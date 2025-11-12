@@ -94,8 +94,8 @@ dependencies:
   http: 1.2.2
   flutter_native_splash: ^2.4.6
   nested: ^1.0.0
-
-
+  encrypt: any
+  vector_graphics: any
 
 
 dev_dependencies:
@@ -112,7 +112,6 @@ dev_dependencies:
   flutter_gen_runner: ^5.11.0
   json_serializable: ^6.7.1 # Generate model class using json
   auto_route_generator: ^9.0.0
-  encrypt: ^5.0.1
 
 
 dependency_overrides:

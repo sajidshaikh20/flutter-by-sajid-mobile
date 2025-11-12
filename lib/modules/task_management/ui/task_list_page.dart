@@ -1,8 +1,5 @@
 import '../../../utils/exports.dart';
-import '../cubit/task_cubit.dart';
-import '../cubit/task_state.dart';
-import '../repository/task_repository_impl.dart';
-import 'widget/task_item_widget.dart';
+
 
 @RoutePage()
 /// Main page displaying the list of tasks.
@@ -92,23 +89,23 @@ class TaskListView extends StatelessWidget {
                 children: <Widget>[
                   Icon(
                     Icons.task_alt,
-                    size: 64,
+                    size: Dimens.size64,
                     color: Colors.grey[400],
                   ),
-                  const SizedBox(height: 16),
+                 const SizedBox(height: Dimens.size16),
                   CustomTextLabelWidget(
                     label: 'No tasks found',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: Dimens.fontSize18,
                       color: Colors.grey[600],
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 8),
+              const    SizedBox(height: Dimens.size8),
                   CustomTextLabelWidget(
                     label: 'Tap the + button to add a new task',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: Dimens.fontSize14,
                       color: Colors.grey[500],
                     ),
                   ),
@@ -118,7 +115,12 @@ class TaskListView extends StatelessWidget {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+            padding: const EdgeInsets.fromLTRB(
+              Dimens.size16,
+              Dimens.size16,
+              Dimens.size16,
+              Dimens.size150,
+            ),
             itemCount: state.filteredAndSortedTasks.length,
             itemBuilder: (BuildContext context, int index) {
               final TaskModel task = state.filteredAndSortedTasks[index];

@@ -1,5 +1,4 @@
 import '../../../utils/exports.dart';
-import '../model/task_model.dart';
 
 /// Repository interface for task management operations.
 abstract class TaskRepository {
