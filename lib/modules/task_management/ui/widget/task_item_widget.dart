@@ -145,46 +145,47 @@ class TaskItemWidget extends StatelessWidget {
                       ),
                     ),
                   ],
-                ],
-              ),
-              const SizedBox(height: Dimens.space12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  if (task.isCompleted)
-                    ElevatedButton.icon(
-                      onPressed: () => onToggleComplete?.call(),
-                      icon: const Icon(Icons.refresh, size: Dimens.size16),
-                      label: const CustomTextLabelWidget(
-                        label: 'Pending',
-                        style: TextStyle(fontSize: Dimens.fontSize12),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Dimens.space12,
-                          vertical: Dimens.size8,
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      if (task.isCompleted)
+                        ElevatedButton.icon(
+                          onPressed: () => onToggleComplete?.call(),
+                          icon: const Icon(Icons.refresh, size: Dimens.size16),
+                          label: const CustomTextLabelWidget(
+                            label: 'Pending',
+                            style: TextStyle(fontSize: Dimens.fontSize12),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Dimens.space12,
+                              vertical: Dimens.size8,
+                            ),
+                          ),
+                        )
+                      else
+                        ElevatedButton.icon(
+                          onPressed: () => onToggleComplete?.call(),
+                          icon: const Icon(Icons.check_circle,
+                              size: Dimens.size16),
+                          label: const CustomTextLabelWidget(
+                            label: 'Complete',
+                            style: TextStyle(fontSize: Dimens.fontSize12),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Dimens.space12,
+                              vertical: Dimens.size8,
+                            ),
+                          ),
                         ),
-                      ),
-                    )
-                  else
-                    ElevatedButton.icon(
-                      onPressed: () => onToggleComplete?.call(),
-                      icon: const Icon(Icons.check_circle, size: Dimens.size16),
-                      label: const CustomTextLabelWidget(
-                        label: 'Complete',
-                        style: TextStyle(fontSize: Dimens.fontSize12),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Dimens.space12,
-                          vertical: Dimens.size8,
-                        ),
-                      ),
-                    ),
+                    ],
+                  ),
                 ],
               ),
             ],
