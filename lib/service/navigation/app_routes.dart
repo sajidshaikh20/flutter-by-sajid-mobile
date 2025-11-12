@@ -15,7 +15,7 @@ class AppRouter extends RootStackRouter {
             page: SplashRoute.page,
             path: AppPaths.splash,
             opaque: false,
-            initial: false,
+            initial: true,
             guards: <AutoRouteGuard>[MaintenanceMiddleware()],
             reverseDurationInMilliseconds: 0,
             transitionsBuilder: TransitionsBuilders.noTransition,
@@ -71,11 +71,28 @@ class AppRouter extends RootStackRouter {
           transitionsBuilder: fadePageTransition,
         ),
         
+        /// Task Management Routes
+        CustomRoute<dynamic>(
+          page: TaskListRoute.page,
+          path: AppPaths.taskManagement,
+          initial: false,
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
+        CustomRoute<dynamic>(
+          page: TaskFormRoute.page,
+          path: '/taskForm',
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
+        
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(
           page: DashboardRoute.page,
           path: AppPaths.dashboard,
-          initial: true,
+          initial: false,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,

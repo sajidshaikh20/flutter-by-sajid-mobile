@@ -55,4 +55,7 @@ abstract class AppPaths {
 
   /// Data not found placeholder page route.
   static const String dataNotFound = '/dataNotFound';
+
+  /// Task management module route.
+  static const String taskManagement = '/taskManagement';
 }

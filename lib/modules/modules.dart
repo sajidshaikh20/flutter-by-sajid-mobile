@@ -17,4 +17,5 @@ export 'select_language/language.dart';
 export 'sign_up/signup.dart';
 export 'social_login/social_login.dart';
 export 'splash/splash.dart';
+export 'task_management/task_management.dart';
 export 'wishlist/wishlist.dart';

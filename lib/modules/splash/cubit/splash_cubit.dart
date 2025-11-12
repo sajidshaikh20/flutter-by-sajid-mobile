@@ -38,43 +38,18 @@ class SplashCubit extends Cubit<SplashState> {
     // User is not logged in, proceed with normal flow
     await _fetchLanguageData();
 
-    if (isLoggedIn) {
-      // User is logged in, go directly to dashboard
-      await Future<void>.delayed(
-        const Duration(seconds: Dimens.seconds3),
-        () {
-          Locale locale = getLocale();
-          emit(state.copyWith(
-            languageAlignment: locale.languageCode == AppConstant.en
-                ? AppConstant.defaultLanguageAlignment
-                : AppConstant.rtlLanguageAlignment,
-            languageCode: locale.languageCode,
-            status: BaseStateStatus.success,
-            redirectPath: AppPaths.dashboard,
-          ));
-        },
-      );
-      return;
-    }
-    
-
-    // Introduce a delay of 3 seconds
+    // Navigate to task management module after splash
     await Future<void>.delayed(
       const Duration(seconds: Dimens.seconds3),
       () {
         Locale locale = getLocale();
-
         emit(state.copyWith(
           languageAlignment: locale.languageCode == AppConstant.en
               ? AppConstant.defaultLanguageAlignment
               : AppConstant.rtlLanguageAlignment,
           languageCode: locale.languageCode,
           status: BaseStateStatus.success,
-          redirectPath: SharedPref.instance.getBool(
-                  PrefsKey.isCountryAndLanguageSelectedKey,
-                  defValue: false)
-              ? AppPaths.socialLogin
-              : AppPaths.languageSelection,
+          redirectPath: AppPaths.taskManagement,
         ));
       },
     );
