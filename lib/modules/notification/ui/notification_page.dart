@@ -1,48 +1,35 @@
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../utils/exports.dart';
+import '../../../app/providers/providers.dart';
 
 @RoutePage()
 /// Page that displays the list of notifications with read/unread status.
-class NotificationPage extends BaseResponsiveView {
+class NotificationPage extends ConsumerWidget {
   /// Creates a notification page.
   const NotificationPage({super.key});
 
   @override
-  Widget buildDesktopWidget(BuildContext context) {
-    return buildViews(context,ScreenType.desktop);
-  }
-
-  @override
-  Widget buildMobileWidget(BuildContext context) {
-    return buildViews(context,ScreenType.mobile);
-  }
-
-  @override
-  Widget buildTabletWidget(BuildContext context) {
-    return buildViews(context,ScreenType.tablet);
-  }
-
-
-  /// Builds the notification view with BlocProvider for the specified device type.
-  Widget buildViews(BuildContext context,ScreenType device) {
-
-    return BlocProvider<NotificationCubit>(
-      create: (BuildContext context) => NotificationCubit(notificationRepository: NotificationRepositoryImpl()),
-      child:  _pageView(context,device),
-    );
-  }
-
-  Widget _pageView(BuildContext ctx,ScreenType device) {
-    return BlocListener<NotificationCubit, NotificationState>(
-      listenWhen: (NotificationState previous, NotificationState current) {
-        return current.status != previous.status;
-      },
-      listener: (BuildContext context, NotificationState state) {
-        if (state.msg.isNotNullOrEmpty) {
-          displaySnackBar(state.msg.toString(), context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Listen to state changes
+    ref.listen<NotificationState>(
+      notificationNotifierProvider,
+      (NotificationState? previous, NotificationState next) {
+        if (next.msg.isNotNullOrEmpty) {
+          displaySnackBar(next.msg.toString(), context);
         }
       },
-      child:  NotificationPageWidget(device: device),
+    );
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        ScreenType device = ScreenType.mobile;
+        if (constraints.maxWidth >= AppConstant.webPixelWidth) {
+          device = ScreenType.desktop;
+        } else if (constraints.maxWidth >= AppConstant.mobilePixelWidth) {
+          device = ScreenType.tablet;
+        }
+        return NotificationPageWidget(device: device);
+      },
     );
   }
 }

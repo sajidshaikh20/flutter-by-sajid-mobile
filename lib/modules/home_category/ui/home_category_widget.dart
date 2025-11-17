@@ -1,7 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../utils/exports.dart';
+import '../../../app/providers/providers.dart';
 
 /// Widget that displays the home categories in a grid layout with refresh functionality.
-class HomeCategoryWidget extends StatelessWidget {
+class HomeCategoryWidget extends ConsumerWidget {
   /// Creates a home category widget.
   ///
   /// [device] The screen type for responsive design.
@@ -11,7 +13,7 @@ class HomeCategoryWidget extends StatelessWidget {
   final ScreenType device;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return NoInternetWidget(
       childWidget: Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -21,9 +23,9 @@ class HomeCategoryWidget extends StatelessWidget {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () async {
-                  await context.read<HomeCategoryCubit>().refreshCategories();
+                  await ref.read(homeCategoryNotifierProvider.notifier).callHomeCategory();
                 },
-                child: _buildCategoryGrid(context, device),
+                child: _buildCategoryGrid(context, ref, device),
               ),
             ),
           ],
@@ -32,41 +34,30 @@ class HomeCategoryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryGrid(BuildContext ctx,ScreenType device) {
+  Widget _buildCategoryGrid(BuildContext ctx, WidgetRef ref, ScreenType device) {
+    final HomeCategoryState state = ref.watch(homeCategoryNotifierProvider);
+    final List<CategoryResponseModel> categoryResponseModels = _getCategoryResponseModelsFromHomeState(state);
 
-    return BlocBuilder<HomeCategoryCubit, HomeCategoryState>(
-      buildWhen: (HomeCategoryState previous, HomeCategoryState current) {
-        return (previous.categoryData != current.categoryData) ||
-            (previous.status != current.status) ||
-            (previous.categoriesModel != current.categoriesModel) ||
-            (previous.categoryList != current.categoryList) ||
-            (previous.isLoadingMore != current.isLoadingMore);
-      },
-      builder: (BuildContext context, HomeCategoryState state) {
-        final List<CategoryResponseModel> categoryResponseModels = _getCategoryResponseModelsFromHomeState(state);
+    if (state.status == BaseStateStatus.success) {
+      // ✅ Show No Data Widget if list is empty or null
+      if (categoryResponseModels.isEmpty) {
+        return CustomNoDataWidget(
+          key: ValueKey<String>('empty_categories_${state.hashCode}'),
+          message: ctx.appString.noCategoriesKey,
+          description: ctx.appString.noCategoriesDescKey,
+          buttonText: ctx.appString.tryAgainKey,
+          onButtonPressed: () async {
+            await ref.read(homeCategoryNotifierProvider.notifier).callHomeCategory();
+          },
+        );
+      }
 
-        if (state.status == BaseStateStatus.success) {
-          // ✅ Show No Data Widget if list is empty or null
-          if (categoryResponseModels.isEmpty) {
-            return CustomNoDataWidget(
-              key: ValueKey<String>('empty_categories_${state.hashCode}'),
-              message: context.appString.noCategoriesKey,
-              description: context.appString.noCategoriesDescKey,
-              buttonText: context.appString.tryAgainKey,
-              onButtonPressed: () async {
-                await context.read<HomeCategoryCubit>().refreshCategories();
-              },
-            );
-          }
+      // ✅ Show Category Grid when data exists
+      return _buildCategoryGridView(ctx, state);
+    }
 
-          // ✅ Show Category Grid when data exists
-          return _buildCategoryGridView(context, state);
-        }
-
-        // ✅ Show shimmer when loading
-        return const ShimmerCategoryWidget();
-      },
-    );
+    // ✅ Show shimmer when loading
+    return const ShimmerCategoryWidget();
   }
 
   /// Builds the category grid view using API data
@@ -108,13 +99,9 @@ class HomeCategoryWidget extends StatelessWidget {
           ),
         ),
         // Loading indicator for pagination
-        BlocBuilder<HomeCategoryCubit, HomeCategoryState>(
-          builder: (BuildContext context, HomeCategoryState state) {
-            return Visibility(
-              visible: state.isLoadingMore,
-              child: const CustomPaginationLoaderWidget(),
-            );
-          },
+        Visibility(
+          visible: state.isLoadingMore,
+          child: const CustomPaginationLoaderWidget(),
         ),
       ],
     );

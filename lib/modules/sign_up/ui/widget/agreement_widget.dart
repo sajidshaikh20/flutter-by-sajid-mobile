@@ -1,7 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
+import 'signup_state_helper.dart';
 
 /// Widget that displays terms and conditions agreement checkbox.
-class AgreementWidget extends StatelessWidget {
+class AgreementWidget extends ConsumerWidget {
   /// Creates an agreement widget.
   const AgreementWidget({super.key, this.device = ScreenType.mobile});
 
@@ -9,7 +12,10 @@ class AgreementWidget extends StatelessWidget {
   final ScreenType device;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final SignupState initialState = SignupStateHelper.createInitialState();
+    final SignupState state = ref.watch(signupNotifierProvider(initialState));
+    final SignupNotifier notifier = ref.read(signupNotifierProvider(initialState).notifier);
     double termsConditionFontSize = Dimens.fontSize14;
     switch (device) {
       case ScreenType.tablet:
@@ -30,28 +36,27 @@ class AgreementWidget extends StatelessWidget {
     );
     return Row(
       children: <Widget>[
-        BlocBuilder<SignupCubit, SignupState>(
-          buildWhen: (SignupState previous, SignupState current) {
-            // Only rebuild when checkbox state changes
-            return previous.isChecked != current.isChecked;
-          },
-          builder: (BuildContext context, SignupState state) {
-            return CustomCheckbox(
-              isChecked: state.isChecked,
-              onChanged: (bool value) {
-                context.read<SignupCubit>().toggleCheckbox(value: value);
-              },
-            );
+        CustomCheckbox(
+          isChecked: state.isAgreed,
+          onChanged: (bool value) {
+            notifier.toggleAgreement(value);
           },
         ),
         Dimens.size8.widthBox,
         Expanded(
-          child: BlocBuilder<SignupCubit, SignupState>(
-            buildWhen: (SignupState previous, SignupState current) {
-              // Only rebuild when checkbox state changes (affects text styling)
-              return previous.isChecked != current.isChecked;
-            },
-            builder: (BuildContext context, SignupState state) {
+          child: Consumer(
+            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+              final SignupState currentState = ref.watch(signupNotifierProvider(initialState));
+              final TextStyle? textStyle = context.textTheme.bodySmall?.copyWith(
+                color: MainConfig.appColors.textBlackColor,
+                fontSize: termsConditionFontSize,
+                fontWeight: FontWeight.w600,
+              );
+              final TextStyle? hyperLinkTextStyle = context.textTheme.bodySmall?.copyWith(
+                color: MainConfig.appColors.mainColor,
+                fontSize: termsConditionFontSize,
+                fontWeight: FontWeight.w600,
+              );
               return RichText(
                 maxLines: Dimens.maxLines03,
                 text: TextSpan(children: <TextSpan>[

@@ -1,7 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// Widget that displays a no internet connection screen with retry functionality.
-class NoInternetWidget extends StatelessWidget {
+class NoInternetWidget extends ConsumerWidget {
   /// Creates a no internet widget.
   const NoInternetWidget({
     required this.childWidget,
@@ -20,7 +22,7 @@ class NoInternetWidget extends StatelessWidget {
   final Widget childWidget;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     const double padding = Dimens.space16;
     const double tryAgainFontSize = Dimens.fontSize16;
     const double noInternetFontSize = Dimens.fontSize18;
@@ -38,8 +40,18 @@ class NoInternetWidget extends StatelessWidget {
       sizeMobTab23_35,
     );
 
-    return BlocConsumer<InternetCubit, NoInternetState>(
-      builder: (BuildContext context, NoInternetState state) => (!state.isInternetConnected)
+    // Listen to connectivity changes
+    ref.listen<NoInternetState>(
+      internetNotifierProvider,
+      (NoInternetState? previous, NoInternetState next) {
+        if (previous?.isInternetConnected != next.isInternetConnected && next.isInternetConnected) {
+          onTryAgain?.call();
+        }
+      },
+    );
+    
+    final NoInternetState state = ref.watch(internetNotifierProvider);
+    return (!state.isInternetConnected)
           ? ColoredBox(
               color: MainConfig.appColors.backgroundLightPinkColor,
               child: Center(
@@ -84,9 +96,8 @@ class NoInternetWidget extends StatelessWidget {
                           color: MainConfig.appColors.textWhiteColor,
                         ),
                         onTap: () async {
-                          if (await context
-                              .read<InternetCubit>()
-                              .checkConnectivity()) {
+                          final ProviderContainer container = ProviderScope.containerOf(context);
+                          if (await container.read(internetNotifierProvider.notifier).checkConnectivity()) {
                             onTryAgain?.call();
                           }
                         }, // Invoke the callback on button press
@@ -96,17 +107,7 @@ class NoInternetWidget extends StatelessWidget {
                 ),
               ),
             )
-          : childWidget,
-      buildWhen: (NoInternetState previous, NoInternetState current) =>
-          previous.isInternetConnected != current.isInternetConnected,
-      listener: (BuildContext context, NoInternetState state) {
-        if (state.isInternetConnected) {
-          onTryAgain?.call();
-        }
-      },
-      listenWhen: (NoInternetState previous, NoInternetState current) =>
-          previous.isInternetConnected != current.isInternetConnected,
-    );
+          : childWidget;
   }
 
   /// Adjusts dimensions based on the device type for responsive design.

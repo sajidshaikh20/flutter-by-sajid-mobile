@@ -29,15 +29,9 @@ FutureOr<void> setupLocator() {
     // Services — lazy unless required immediately
     ..registerLazySingleton<LanguageService>(LanguageService.new)
     ..registerLazySingleton<SocialLoginServices>(SocialLoginServices.new)
-    ..registerLazySingleton<UserProfileService>(UserProfileService.new)
+    ..registerLazySingleton<UserProfileService>(UserProfileService.new);
 
-
-  // Cubits / State management — register eagerly if used on home
-  // Cubits / State management — now lazy
-    ..registerLazySingleton<ForceUpdateUnderMaintenanceCubit>(
-      ForceUpdateUnderMaintenanceCubit.new,
-    )
-    ..registerLazySingleton<CartCountCubit>(CartCountCubit.new)
-    ..registerLazySingleton<GlobalWishlistManager>(GlobalWishlistManager.new);
+  // State management is now handled by Riverpod providers
+  // All Cubits have been converted to Riverpod Notifiers
 }
 

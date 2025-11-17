@@ -1,2 +1,1 @@
-export 'locale_cubit.dart';
-export 'locale_state.dart';
+export 'state/locale_state.dart';

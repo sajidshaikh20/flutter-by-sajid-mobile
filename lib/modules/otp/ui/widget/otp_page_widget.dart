@@ -1,8 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../utils/exports.dart';
+import '../../../../../app/providers/providers.dart';
 
 /// A widget that displays an OTP input screen for user verification.
 /// Handles OTP input, validation, and navigation after successful verification.
-class OtpPageWidget extends StatefulWidget {
+class OtpPageWidget extends ConsumerStatefulWidget {
   /// The email address associated with the OTP verification.
   final String email;
 
@@ -11,6 +13,9 @@ class OtpPageWidget extends StatefulWidget {
 
   /// The route to redirect to after successful OTP verification.
   final PageRouteInfo? redirectRoute;
+
+  /// Parameters for OTP notifier
+  final OtpNotifierParams params;
 
   /// Creates an [OtpPageWidget].
   ///
@@ -21,13 +26,14 @@ class OtpPageWidget extends StatefulWidget {
     required this.email,
     required this.prefix,
     this.redirectRoute,
+    required this.params,
   });
 
   @override
-  State<OtpPageWidget> createState() => _OtpPageWidgetState();
+  ConsumerState<OtpPageWidget> createState() => _OtpPageWidgetState();
 }
 
-class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserver {
+class _OtpPageWidgetState extends ConsumerState<OtpPageWidget> with WidgetsBindingObserver {
   bool _isFocusing = false; // Prevent multiple simultaneous focus attempts
 
   @override
@@ -92,7 +98,8 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
     if (_isFocusing || !mounted) return; // Prevent multiple simultaneous attempts and check if widget is still mounted
     
     try {
-      final OtpPinFieldState? otpState = context.read<OtpCubit>().otpPinFieldKey.currentState;
+      final OtpNotifier notifier = ref.read(otpNotifierProvider(widget.params).notifier);
+      final OtpPinFieldState? otpState = notifier.otpPinFieldKey.currentState;
       if (otpState != null && mounted) {
         _isFocusing = true;
         otpState.onFieldFocus();
@@ -163,10 +170,9 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
 
             Dimens.size33.heightBox,
             //otp text field
-            BlocBuilder<OtpCubit, OtpState>(
-              buildWhen: (OtpState previous, OtpState current) =>
-                  previous.otpNumber != current.otpNumber,
-              builder: (BuildContext context, OtpState state) {
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final OtpState state = ref.watch(otpNotifierProvider(widget.params));
                 return GestureDetector(
                   onTap: () {
                     // Simple focus without aggressive behavior
@@ -181,13 +187,13 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
                   child: OtpPinField(
                     fieldHeight: Dimens.size44,
                     fieldWidth: Dimens.size44,
-                    key: context.read<OtpCubit>().otpPinFieldKey,
+                    key: ref.read(otpNotifierProvider(widget.params).notifier).otpPinFieldKey,
                     phoneNumbersHint: true,
                     onSubmit: (String text) {
                       // OTP submitted - don't close keyboard
                     },
                     onChange: (String text) {
-                      context.read<OtpCubit>().otpChange(text);
+                      ref.read(otpNotifierProvider(widget.params).notifier).otpChange(text);
                       // Simple focus management - only if not already focusing
                       if (!_isFocusing && text.length < 4) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -224,10 +230,9 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
             ),
             Dimens.size20.heightBox,
             // required when we integrate api
-            BlocBuilder<OtpCubit, OtpState>(
-              buildWhen: (OtpState previous, OtpState current) =>
-                  previous.secondsRemaining != current.secondsRemaining,
-              builder: (BuildContext context, OtpState state) {
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final OtpState state = ref.watch(otpNotifierProvider(widget.params));
                 return CustomRichTextLabel(
                   primaryLabel: context.appString.resendOtpInKey,
                   primaryStyle: context.textTheme.bodyMedium?.copyWith(
@@ -249,18 +254,17 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
             Dimens.size24.heightBox,
 
             // required when we integrate api
-            BlocBuilder<OtpCubit, OtpState>(
-              buildWhen: (OtpState previous, OtpState current) =>
-                  previous.secondsRemaining != current.secondsRemaining,
-              builder: (BuildContext context, OtpState state) {
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final OtpState state = ref.watch(otpNotifierProvider(widget.params));
+                final OtpNotifier notifier = ref.read(otpNotifierProvider(widget.params).notifier);
+                
                 return CustomRichTextLabel(
                     onTapSecondaryLabel: () async {
-                      final OtpCubit otpCubit = context.read<OtpCubit>();
-                      final OtpState current = otpCubit.state;
-                      if (current.secondsRemaining == 0) {
-                        await otpCubit.resendOtp(
+                      if (state.secondsRemaining == 0) {
+                        await notifier.resendOtp(
                           mobileNumber: widget.email,
-                          email: current.flowType == OtpFlowType.updateEmail ? widget.email : null,
+                          email: state.flowType == OtpFlowType.updateEmail ? widget.email : null,
                         );
                       }
                     },
@@ -273,10 +277,10 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
               },
             ),
             const Spacer(),
-            BlocBuilder<OtpCubit, OtpState>(
-              buildWhen: (OtpState previous, OtpState current) =>
-                  previous.otpNumber != current.otpNumber,
-              builder: (BuildContext context, OtpState state) {
+            Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                final OtpState state = ref.watch(otpNotifierProvider(widget.params));
+                final OtpNotifier notifier = ref.read(otpNotifierProvider(widget.params).notifier);
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: Dimens.space20),
                   child: CustomGradientButtonWidget(
@@ -285,12 +289,10 @@ class _OtpPageWidgetState extends State<OtpPageWidget> with WidgetsBindingObserv
                         state.otpNumber.length == AppConstant.otpTextLength,
                     onTap: state.otpNumber.length == AppConstant.otpTextLength
                         ? () async {
-                           await context
-                                .read<OtpCubit>()
-                                .verifyOtp(
-                                  mobileNumber: widget.email,
-                                  redirectRoute: widget.redirectRoute,
-                                );
+                           await notifier.verifyOtp(
+                             mobileNumber: widget.email,
+                             redirectRoute: widget.redirectRoute,
+                           );
                           }
                         : () {},
                   ),

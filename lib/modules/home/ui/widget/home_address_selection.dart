@@ -1,25 +1,21 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// A widget to display the home address selection on the home screen.
 ///
 /// This widget shows a user's current home address and provides an indicator
 /// to select or change it.
-class HomeAddressSelection extends StatelessWidget {
+class HomeAddressSelection extends ConsumerWidget {
   ///HomeAddressSelection constructor
   const HomeAddressSelection({super.key});
 
   /// Builds the UI for the home address selection widget.
   /// It consists of a background, an icon, text labels and a down arrow.
   @override
-  Widget build(BuildContext context) {
-
-    return BlocListener<HomeCubit, HomeState>(
-        listener: (BuildContext context, HomeState state) {
-      // Reload saved address when address list is updated (e.g., during refresh)
-
-    }, child: BlocBuilder<HomeCubit, HomeState>(
-      builder: (BuildContext context, HomeState productHomeState) {
-        bool isPickup = productHomeState.deliveryType == 'pickup';
+  Widget build(BuildContext context, WidgetRef ref) {
+    final HomeState productHomeState = ref.watch(homeNotifierProvider);
+    bool isPickup = productHomeState.deliveryType == 'pickup';
         return GestureDetector(
             onTap: () async {
 
@@ -102,7 +98,5 @@ class HomeAddressSelection extends StatelessWidget {
                 ),
               ],
             ));
-      },
-    ));
   }
 }

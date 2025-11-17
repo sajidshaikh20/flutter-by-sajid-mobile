@@ -22,14 +22,7 @@ class MyAccountPage extends BaseResponsiveView {
   }
 
   Widget _buildView(BuildContext context,ScreenType device) {
-    return
-
-      BlocProvider<MyAccountCubit>(
-      create: (BuildContext ctx) => MyAccountCubit(
-        MyAccountRepositoryImpl(),
-        MyAccountState.init(),
-      ),
-      child:  MyAccountForm(device: device,),
-    );
+    // Riverpod provider is available globally, no need for BlocProvider
+    return MyAccountForm(device: device,);
   }
 }

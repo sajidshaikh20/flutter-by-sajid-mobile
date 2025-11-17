@@ -12,19 +12,7 @@ class LoginPage extends BaseResponsiveView {
   final bool? isFromCart;
 
   Widget _buildView(BuildContext context) {
-    return BlocProvider<LoginCubit>(
-      create: (BuildContext ctx) => LoginCubit(
-          isFromCart: isFromCart ?? false,
-          repository: LoginRepositoryImpl(),
-          initialState: LoginState(
-              status: BaseStateStatus.initial,
-              emailController: TextEditingController(),
-              passwordController: TextEditingController(),
-              formKey: GlobalKey<FormState>(),
-              emailFocusNode: FocusNode(),
-              passwordFocusNode: FocusNode())),
-      child: const LoginForm(),
-    );
+    return const LoginForm();
   }
 
   @override

@@ -1,122 +1,114 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// The main home page widget that displays banners, categories, products,
 /// and handles navigation and state management for the home screen.
-class HomePageWidget extends StatefulWidget {
+class HomePageWidget extends ConsumerStatefulWidget {
   /// Creates a [HomePageWidget].
   const HomePageWidget({super.key});
 
   @override
-  State<HomePageWidget> createState() => _HomePageWidgetState();
+  ConsumerState<HomePageWidget> createState() => _HomePageWidgetState();
 }
 
-class _HomePageWidgetState extends State<HomePageWidget> {
-  bool _hasInitializedHomeCubit = false;
+class _HomePageWidgetState extends ConsumerState<HomePageWidget> {
+  bool _hasInitializedHomeNotifier = false;
   bool _isNavigatingToSelectAddress = false;
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: <BlocListener<dynamic, dynamic>>[
-        BlocListener<HomeCubit, HomeState>(
-          listener: (BuildContext context, HomeState state) async {
-            // Navigate to select address page if address list is empty
-            // Only navigate if not already navigating to prevent multiple navigations
-            if (state.redirectRoute != null && !_isNavigatingToSelectAddress) {
-              _isNavigatingToSelectAddress = true;
-              await context.router.push(state.redirectRoute!);
-              // Clear the redirect route after navigation
-              if (context.mounted) {
-                _isNavigatingToSelectAddress = false;
-              }
-            }
-          },
-        ),
-      ],
-      child: _HomePageContent(
-        hasInitializedHomeCubit: _hasInitializedHomeCubit,
-        onHomeCubitInitialized: () {
-          setState(() {
-            _hasInitializedHomeCubit = true;
-          });
-        },
-      ),
+    // Listen to redirect route changes
+    ref.listen<HomeState>(
+      homeNotifierProvider,
+      (HomeState? previous, HomeState next) async {
+        // Navigate to select address page if address list is empty
+        // Only navigate if not already navigating to prevent multiple navigations
+        if (next.redirectRoute != null && !_isNavigatingToSelectAddress && context.mounted) {
+          _isNavigatingToSelectAddress = true;
+          await context.router.push(next.redirectRoute!);
+          // Clear the redirect route after navigation
+          if (context.mounted) {
+            _isNavigatingToSelectAddress = false;
+          }
+        }
+      },
+    );
+
+    return _HomePageContent(
+      hasInitializedHomeNotifier: _hasInitializedHomeNotifier,
+      onHomeNotifierInitialized: () {
+        setState(() {
+          _hasInitializedHomeNotifier = true;
+        });
+      },
     );
   }
 }
 
-class _HomePageContent extends BaseResponsiveView {
+class _HomePageContent extends ConsumerWidget {
   const _HomePageContent({
-    required this.hasInitializedHomeCubit,
-    required this.onHomeCubitInitialized,
+    required this.hasInitializedHomeNotifier,
+    required this.onHomeNotifierInitialized,
   });
 
-  final bool hasInitializedHomeCubit;
-  final VoidCallback onHomeCubitInitialized;
+  final bool hasInitializedHomeNotifier;
+  final VoidCallback onHomeNotifierInitialized;
 
-  Widget buildViews(BuildContext context, ScreenType device) {
+  Widget buildViews(BuildContext context, WidgetRef ref, ScreenType device) {
+    // Listen to message changes
+    ref.listen<HomeState>(
+      homeNotifierProvider,
+      (HomeState? previous, HomeState next) {
+        // Only listen when message changes and is not empty
+        if (previous?.msg != next.msg && (next.msg?.isNotEmpty ?? false)) {
+          displaySnackBar(next.msg!, context);
+        }
+      },
+    );
+
+    final HomeState homeState = ref.watch(homeNotifierProvider);
+    
     return NoInternetWidget(
       childWidget: Scaffold(
         backgroundColor: Colors.white,
-        body: MultiBlocListener(
-          listeners: <BlocListener<dynamic, dynamic>>[
-            BlocListener<HomeCubit, HomeState>(
-              listenWhen: (HomeState previous, HomeState current) {
-                // Only listen when message changes and is not empty
-                return previous.msg != current.msg &&
-                    (current.msg?.isNotEmpty ?? false);
-              },
-              listener: (BuildContext context, HomeState state) {
-                if (state.msg != null && state.msg!.isNotEmpty) {
-                  displaySnackBar(state.msg!, context);
-                }
-              },
-            ),
-          ],
-          child: BlocBuilder<HomeCubit, HomeState>(
-            buildWhen: (HomeState previous, HomeState current) {
-              // Only rebuild when relevant home data changes
-              return previous.apiCallForHomeBanners !=
-                      current.apiCallForHomeBanners ||
-                  previous.apiCallForHomeCategory !=
-                      current.apiCallForHomeCategory ||
-                  previous.apiCallForHomeDeals != current.apiCallForHomeDeals ||
-                  previous.apiCallForYouMayAlsoLikeDeals !=
-                      current.apiCallForYouMayAlsoLikeDeals ||
-                  previous.apiCallForLoyaltyPoints !=
-                      current.apiCallForLoyaltyPoints ||
-                  previous.bannersModel != current.bannersModel ||
-                  previous.categoriesModel != current.categoriesModel ||
-                  previous.dealsModel != current.dealsModel ||
-                  previous.youMayAlsoLikeDealsModel !=
-                      current.youMayAlsoLikeDealsModel ||
-                  previous.loyaltyPointsModel != current.loyaltyPointsModel ||
-                  previous.brandsList != current.brandsList ||
-                  previous.cartCount != current.cartCount ||
-                  previous.msg != current.msg;
-            },
-            builder: (BuildContext context, HomeState homeState) {
-              return Stack(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      const HomeAppbar(),
-                      /*homeState.apiCallForAddress != BaseStateStatus.success
-                          ? const HomeAddressSelectionShimmer()
-                          : const HomeAddressSelection(),*/
-                      Container(height: 200, color: Colors.red)
-                    ],
-                  ),
-                  const Positioned(
-                      bottom: Dimens.size16,
-                      right: Dimens.size16,
-                      child: HomeFaqWidget())
-                ],
-              );
-            },
-          ),
+        body: Builder(
+          builder: (BuildContext context) {
+            return Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    const HomeAppbar(),
+                    /*homeState.apiCallForAddress != BaseStateStatus.success
+                        ? const HomeAddressSelectionShimmer()
+                        : const HomeAddressSelection(),*/
+                    Container(height: 200, color: Colors.red)
+                  ],
+                ),
+                const Positioned(
+                    bottom: Dimens.size16,
+                    right: Dimens.size16,
+                    child: HomeFaqWidget())
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        ScreenType device = ScreenType.mobile;
+        if (constraints.maxWidth >= AppConstant.webPixelWidth) {
+          device = ScreenType.desktop;
+        } else if (constraints.maxWidth >= AppConstant.mobilePixelWidth) {
+          device = ScreenType.tablet;
+        }
+        return buildViews(context, ref, device);
+      },
     );
   }
 
@@ -148,18 +140,6 @@ class _HomePageContent extends BaseResponsiveView {
     );
   }
 
-  @override
-  Widget buildDesktopWidget(BuildContext context) {
-    return buildViews(context, ScreenType.desktop);
-  }
-
-  @override
-  Widget buildMobileWidget(BuildContext context) {
-    return buildViews(context, ScreenType.mobile);
-  }
-
-  @override
-  Widget buildTabletWidget(BuildContext context) {
-    return buildViews(context, ScreenType.tablet);
-  }
+  // Removed buildDesktopWidget, buildMobileWidget, buildTabletWidget
+  // as they're now handled in the build method with LayoutBuilder
 }

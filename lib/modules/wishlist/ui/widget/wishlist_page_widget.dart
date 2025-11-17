@@ -1,7 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// Widget that displays the wishlist page with products grid.
-class WishlistPageWidget extends StatelessWidget {
+class WishlistPageWidget extends ConsumerWidget {
   /// Creates a wishlist page widget.
   const WishlistPageWidget({super.key, this.device = ScreenType.mobile});
 
@@ -9,90 +11,82 @@ class WishlistPageWidget extends StatelessWidget {
   final ScreenType device;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     double crossAxisSpacing = Dimens.space11;
     final double itemWidth =
         (context.width - crossAxisSpacing - (Dimens.space10 * 2)) /
             2; // Width of each item
     final double itemHeight =
         itemWidth + Dimens.heightOfTheBottomContentWithOutImagePadding;
-    return MultiBlocListener(
-      listeners: <BlocListener<dynamic, dynamic>>[
-        BlocListener<WishListCubit, WishListState>(
-          listenWhen: (WishListState previous, WishListState current) {
-            // Listen for cart operation messages (when message changes and is not empty)
-            return previous.message != current.message &&
-                (current.message.isNotEmpty) &&
-                current.cartOperationStatus != BaseStateStatus.initial;
-          },
-          listener: (BuildContext context, WishListState state) {
-            if (state.message.isNotEmpty) {
-              displaySnackBar(state.message, context);
-              context.read<WishListCubit>().clearMessage();
-            }
-          },
+    
+    // Listen to state changes
+    ref.listen<WishListState>(
+      wishListNotifierProvider,
+      (WishListState? previous, WishListState next) {
+        // Listen for cart operation messages (when message changes and is not empty)
+        if (previous?.message != next.message &&
+            next.message.isNotEmpty &&
+            next.cartOperationStatus != BaseStateStatus.initial) {
+          displaySnackBar(next.message, context);
+          ref.read(wishListNotifierProvider.notifier).clearMessage();
+        }
+        
+        // Listen for specific wishlist actions
+        if (previous?.action != next.action) {
+          switch (next.action) {
+            case WishListAction.wishListDeletedSuccessfully:
+              if (next.message.isNotEmpty) {
+                displaySnackBar(next.message, context);
+                ref.read(wishListNotifierProvider.notifier).clearMessage();
+              }
+            case WishListAction.wishListNoData:
+              if (next.message.isNotEmpty) {
+                displaySnackBar(next.message, context);
+                ref.read(wishListNotifierProvider.notifier).clearMessage();
+              }
+            case WishListAction.wishListAddToCardProduct:
+             //   displaySnackBar(next.addToCartModel?.message.toString() ?? "", context);
+              ref.read(wishListNotifierProvider.notifier).clearMessage();
+            case WishListAction.wishListUpdateCardProduct:
+               // displaySnackBar(next.addToCartModel?.message.toString() ?? "", context);
+              ref.read(wishListNotifierProvider.notifier).clearMessage();
+            case WishListAction.wishListUpdateCardProductFailed:
+              displaySnackBar(next.error.toString(), context);
+              ref.read(wishListNotifierProvider.notifier).clearMessage();
+            default:
+              break;
+          }
+        }
+      },
+    );
+
+    final WishListState state = ref.watch(wishListNotifierProvider);
+    
+    return NoInternetWidget(
+      childWidget: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: <Widget>[
+            HomeAppbar(
+              isShadowDisplay: true,
+              title: context.appString.wishlistKey,
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await ref.read(wishListNotifierProvider.notifier).refreshWishlist();
+                },
+                child: _buildWishlistContent(
+                  context,
+                  state,
+                  itemWidth,
+                  itemHeight,
+                  crossAxisSpacing,
+                ),
+              ),
+            ),
+          ],
         ),
-        BlocListener<WishListCubit, WishListState>(
-          listenWhen: (WishListState previous, WishListState current) {
-            // Listen for specific wishlist actions
-            return previous.action != current.action;
-          },
-          listener: (BuildContext context, WishListState state) {
-            switch (state.action) {
-              case WishListAction.wishListDeletedSuccessfully:
-                if (state.message.isNotEmpty) {
-                  displaySnackBar(state.message, context);
-                  context.read<WishListCubit>().clearMessage();
-                }
-              case WishListAction.wishListNoData:
-                if (state.message.isNotEmpty) {
-                  displaySnackBar(state.message, context);
-                  context.read<WishListCubit>().clearMessage();
-                }
-              case WishListAction.wishListAddToCardProduct:
-             //   displaySnackBar(state.addToCartModel?.message.toString() ?? "", context);
-                context.read<WishListCubit>().clearMessage();
-              case WishListAction.wishListUpdateCardProduct:
-               // displaySnackBar(state.addToCartModel?.message.toString() ?? "", context);
-                context.read<WishListCubit>().clearMessage();
-              case WishListAction.wishListUpdateCardProductFailed:
-                displaySnackBar(state.error.toString(), context);
-                context.read<WishListCubit>().clearMessage();
-              default:
-                break;
-            }
-          },
-        ),
-      ],
-      child: BlocBuilder<WishListCubit, WishListState>(
-        builder: (BuildContext context, WishListState state) {
-          return NoInternetWidget(
-            childWidget: Scaffold(
-                resizeToAvoidBottomInset: false,
-                body: Column(
-                  children: <Widget>[
-                    HomeAppbar(
-                      isShadowDisplay: true,
-                      title: context.appString.wishlistKey,
-                    ),
-                    Expanded(
-                      child: RefreshIndicator(
-                        onRefresh: () async {
-                          await context.read<WishListCubit>().refreshWishlist();
-                        },
-                        child: _buildWishlistContent(
-                          context,
-                          state,
-                          itemWidth,
-                          itemHeight,
-                          crossAxisSpacing,
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-          );
-        },
       ),
     );
   }
@@ -107,7 +101,8 @@ class WishlistPageWidget extends StatelessWidget {
         description: context.appString.emptyWishlistDescKey,
         buttonText: context.appString.tryAgainKey,
         onButtonPressed: () async {
-          await context.read<WishListCubit>().refreshWishlist();
+          final ProviderContainer container = ProviderScope.containerOf(context);
+          await container.read(wishListNotifierProvider.notifier).refreshWishlist();
         },
       );
     }
@@ -119,7 +114,8 @@ class WishlistPageWidget extends StatelessWidget {
         description: context.appString.emptyWishlistDescKey,
         buttonText: context.appString.tryAgainKey,
         onButtonPressed: () async {
-          await context.read<WishListCubit>().refreshWishlist();
+          final ProviderContainer container = ProviderScope.containerOf(context);
+          await container.read(wishListNotifierProvider.notifier).refreshWishlist();
         },
       );
     }

@@ -1,28 +1,45 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../utils/exports.dart';
+import '../../../app/providers/providers.dart';
+import '../state/splash_state.dart';
 
 @RoutePage()
 /// Page that displays the splash screen with initialization logic.
-class SplashPage extends StatelessWidget {
+class SplashPage extends ConsumerStatefulWidget {
   /// Creates a splash page.
   const SplashPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<SplashCubit>(
-      create: (_) => SplashCubit(  repository: LanguageSelectionRepositoryImpl()),
-      child: BlocListener<SplashCubit, SplashState>(
-          listenWhen: (SplashState previous, SplashState current) => current.redirectPath.isNotEmpty,
-          listener: (BuildContext context, SplashState state) async {
-            if (state.redirectPath.isNotEmpty) {
-              await context.read<LocaleCubit>().changeLanguageOnInit(state.languageCode, state.languageAlignment);
+  ConsumerState<SplashPage> createState() => _SplashPageState();
+}
 
-            if(context.mounted) {
-                await context.router.replaceNamed(state.redirectPath);
-              }
+class _SplashPageState extends ConsumerState<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
-            }
-          },
-          child: const SplashViewWidget()),
+  Future<void> _handleNavigation(SplashState state) async {
+    await ref.read(localeNotifierProvider.notifier).changeLanguageOnInit(
+      state.languageCode,
+      state.languageAlignment,
     );
+
+    if (mounted) {
+      await context.router.replaceNamed(state.redirectPath);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Listen to splash state changes
+    // ref.listen must be called during the build phase, not in initState
+    ref.listen<SplashState>(splashNotifierProvider, (SplashState? previous, SplashState next) {
+      if (next.redirectPath.isNotEmpty && mounted) {
+        unawaited(_handleNavigation(next));
+      }
+    });
+    
+    return const SplashViewWidget();
   }
 }

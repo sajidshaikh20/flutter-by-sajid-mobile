@@ -34,10 +34,6 @@ extension CustomExtension on BuildContext {
   /// Returns the screen height for the current context.
   double get height => MediaQuery.of(this).size.height;
 
-  /// Reads an instance of type [T] from the context.
-  ///
-  /// Example: `context.instance<MyCubit>()`
-  T instance<T>() => read<T>();
 
   /// Returns `true` if the current text direction is left-to-right (LTR),
   /// which is typically used for English and other LTR languages.

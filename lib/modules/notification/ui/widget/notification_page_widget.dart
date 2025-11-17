@@ -1,4 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 import 'notification_permission_view.dart';
 
 /// A responsive widget that displays the notification page with permission handling
@@ -77,7 +79,8 @@ class _NotificationPageWidgetState extends State<NotificationPageWidget> {
               child: _isNotificationPermissionGranted
                   ? RefreshIndicator(
                 onRefresh: () async {
-                  await context.read<NotificationCubit>().getNotifications();
+                  final ProviderContainer container = ProviderScope.containerOf(context);
+                  await container.read(notificationNotifierProvider.notifier).getNotifications();
                 },
                 child: _buildNotificationList(context, widget.device),
               )
@@ -92,18 +95,14 @@ class _NotificationPageWidgetState extends State<NotificationPageWidget> {
   }
 
   Widget _buildNotificationList(BuildContext ctx, ScreenType device) {
-    return BlocBuilder<NotificationCubit, NotificationState>(
-      buildWhen: (NotificationState previous, NotificationState current) {
-        // Only rebuild when status changes or notification data changes
-        return previous.status != current.status ||
-            previous.listOfNotificationResponse !=
-                current.listOfNotificationResponse;
-      },
-      builder: (BuildContext context, NotificationState state) {
-        final List<ListOfNotificationResponse>? notificationResponseModels =
+    // This widget needs to be converted to ConsumerWidget, but since it's called from StatefulWidget,
+    // we'll use ProviderScope.containerOf to access the provider
+    final ProviderContainer container = ProviderScope.containerOf(ctx);
+    final NotificationState state = container.read(notificationNotifierProvider);
+    final List<ListOfNotificationResponse>? notificationResponseModels =
         _getListOfNotificationResponse(state);
 
-        if (state.status == BaseStateStatus.success) {
+    if (state.status == BaseStateStatus.success) {
           // ✅ Show No Data Widget if list is empty or null
           if (notificationResponseModels == null ||
               notificationResponseModels.isEmpty) {
@@ -122,7 +121,8 @@ class _NotificationPageWidgetState extends State<NotificationPageWidget> {
                         description: context.appString.emptyNotificationListDescKey,
                         buttonText: context.appString.tryAgainKey,
                         onButtonPressed: () async {
-                          await context.read<NotificationCubit>().getNotifications();
+                          final ProviderContainer container = ProviderScope.containerOf(context);
+                          await container.read(notificationNotifierProvider.notifier).getNotifications();
                         },
                       ),
                     ),
@@ -167,9 +167,10 @@ class _NotificationPageWidgetState extends State<NotificationPageWidget> {
                         final int? orderId = notificationListItem.orderId;
                         final String? entityId = notificationListItem.entityId;
                         final StackRouter router = context.router; // capture router reference
-                        final NotificationCubit cubit = context.read<NotificationCubit>(); // capture cubit reference
+                        final ProviderContainer container = ProviderScope.containerOf(context);
+                        final NotificationNotifier notifier = container.read(notificationNotifierProvider.notifier);
 
-                    //    await cubit.callNotificationReadAPI(notificationIds);
+                    //    await notifier.callNotificationReadAPI(notificationIds);
 
                         final NotificationType type = NotificationType.fromValue(notificationType);
 
@@ -191,12 +192,10 @@ class _NotificationPageWidgetState extends State<NotificationPageWidget> {
               },
             ),
           );
-        }
+    }
 
-        // ✅ Show shimmer when loading
-        return const ShimmerNotificationView();
-      },
-    );
+    // ✅ Show shimmer when loading
+    return const ShimmerNotificationView();
   }
 
   List<ListOfNotificationResponse>? _getListOfNotificationResponse(

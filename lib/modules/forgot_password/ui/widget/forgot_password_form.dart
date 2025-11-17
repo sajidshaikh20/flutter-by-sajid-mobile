@@ -1,8 +1,10 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../../app/providers/providers.dart';
 
-/// `ForgotPasswordForm` is a stateless widget that displays a form for users to
+/// `ForgotPasswordForm` is a widget that displays a form for users to
 /// request a password reset.
-class ForgotPasswordForm extends StatelessWidget {
+class ForgotPasswordForm extends ConsumerStatefulWidget {
   /// Constructor for the `ForgotPasswordForm` widget.
   const ForgotPasswordForm({super.key, this.device = ScreenType.mobile});
 
@@ -12,17 +14,50 @@ class ForgotPasswordForm extends StatelessWidget {
   final ScreenType device;
 
   @override
-  Widget build(BuildContext context) {
-    return _forgotPasswordForm(context);
+  ConsumerState<ForgotPasswordForm> createState() => _ForgotPasswordFormState();
+}
+
+class _ForgotPasswordFormState extends ConsumerState<ForgotPasswordForm> {
+  late ForgotPasswordState _initialState;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialState = ForgotPasswordState(
+      forgotPasswordFocusNode: FocusNode(),
+      status: BaseStateStatus.initial,
+      resetPasswordFieldController: TextEditingController(),
+      formKey: GlobalKey<FormState>(),
+    );
   }
 
-  BlocListener<ForgotPasswordCubit, ForgotPasswordState> _forgotPasswordForm(
-      BuildContext context) {
-    final ForgotPasswordCubit forgotPassCubit =
-        context.instance<ForgotPasswordCubit>();
+  @override
+  Widget build(BuildContext context) {
+    // Listen to state changes
+    ref.listen<ForgotPasswordState>(
+      forgotPasswordNotifierProvider(_initialState),
+      (ForgotPasswordState? previous, ForgotPasswordState next) {
+        if (next.successMsg.isNotEmpty) {
+          displaySnackBar(next.successMsg, context);
+          ref.read(forgotPasswordNotifierProvider(_initialState).notifier).resetSuccessMsg();
+        } else if (next.msg != null && (next.msg?.isNotEmpty ?? false)) {
+          displaySnackBar(next.msg ?? '', context);
+        }
+        if (next.shouldGoBack) {
+          goBack(context);
+          ref.read(forgotPasswordNotifierProvider(_initialState).notifier).resetSuccessMsg();
+        }
+        if (next.redirectRoute != null && context.mounted) {
+          unawaited(context.router.push(next.redirectRoute!));
+        }
+      },
+    );
+
+    final ForgotPasswordState state = ref.watch(forgotPasswordNotifierProvider(_initialState));
+    
     double horizontalPadding = Dimens.space16;
 
-    switch (device) {
+    switch (widget.device) {
       case ScreenType.tablet:
         horizontalPadding = Dimens.space90;
 
@@ -30,54 +65,27 @@ class ForgotPasswordForm extends StatelessWidget {
         break;
     }
 
-    return BlocListener<ForgotPasswordCubit, ForgotPasswordState>(
-      // Listen only when relevant state changes occur
-      listenWhen: (ForgotPasswordState previous, ForgotPasswordState current) {
-        return previous.successMsg != current.successMsg ||
-            previous.msg != current.msg ||
-            previous.shouldGoBack != current.shouldGoBack ||
-            previous.redirectRoute != current.redirectRoute;
-      },
-      listener: (BuildContext context, ForgotPasswordState state) async {
-        if (state.successMsg.isNotEmpty) {
-          displaySnackBar(state.successMsg, context);
-          forgotPassCubit.resetSuccessMsg();
-        } else if (state.msg != null && (state.msg?.isNotEmpty ?? false)) {
-          // Show Error Msg.
-          displaySnackBar(state.msg ?? '', context);
-        }
-        if (state.shouldGoBack) {
-          goBack(context);
-          forgotPassCubit.resetSuccessMsg();
-        }
-        if (state.redirectRoute != null) {
-          // Navigate to the redirect route (for mobile OTP verification)
-          if (context.mounted) {
-            await context.router.push(state.redirectRoute!);
-          }
-        }
-      },
-      child: NoInternetWidget(
-          childWidget: Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: CustomAppBar(
-            title: context.appString.forgotPasswordTitleKey,
-            isLogoVisible: false,
-            device: device,
-            onTap: () {
-              context.router.removeLast();
-            }),
-        body: Stack(
-          children: <Widget>[
-            // Background SVG
-            Positioned.fill(
-              child: Assets.svgs.bgFullscreenCommon.svg(
-                fit: BoxFit.fill,),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              child: Form(
-                key: forgotPassCubit.state.formKey,
+    return NoInternetWidget(
+        childWidget: Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: CustomAppBar(
+          title: context.appString.forgotPasswordTitleKey,
+          isLogoVisible: false,
+          device: widget.device,
+          onTap: () {
+            context.router.removeLast();
+          }),
+      body: Stack(
+        children: <Widget>[
+          // Background SVG
+          Positioned.fill(
+            child: Assets.svgs.bgFullscreenCommon.svg(
+              fit: BoxFit.fill,),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            child: Form(
+              key: state.formKey,
                 child: Column(
                   children: <Widget>[
                     Dimens.size15.heightBox,
@@ -94,45 +102,31 @@ class ForgotPasswordForm extends StatelessWidget {
                       ),
                     ),
                     Dimens.size33.heightBox,
-                    BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
-                      buildWhen: (ForgotPasswordState previous,
-                          ForgotPasswordState current) {
-                        // Only rebuild when selected segment index changes
-                        return previous.selectedSegmentIndex !=
-                            current.selectedSegmentIndex;
-                      },
-                      builder:
-                          (BuildContext context, ForgotPasswordState state) {
+                    Consumer(
+                      builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                        final ForgotPasswordState currentState = ref.watch(forgotPasswordNotifierProvider(_initialState));
+                        final ForgotPasswordNotifier currentNotifier = ref.read(forgotPasswordNotifierProvider(_initialState).notifier);
+                        
                         return SegmentedControl(
                           firstTitle: context.appString.mobileKey,
                           secondTitle: context.appString.emailKey,
-                          selectedIndex: state.selectedSegmentIndex ?? 0,
+                          selectedIndex: currentState.selectedSegmentIndex ?? 0,
                           onIndexChanged: (int value) {
-                            context
-                                .read<ForgotPasswordCubit>()
-                                .onSegmentChangedIndex(value);
-                            forgotPassCubit
-                                .handleValidationErrorMessageForEmailOrPhone(
-                                    '');
+                            currentNotifier.onSegmentChangedIndex(value);
+                            currentNotifier.handleValidationErrorMessageForEmailOrPhone('');
                           },
                         );
                       },
                     ),
                     Dimens.size31.heightBox,
-                    BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
-                      buildWhen: (ForgotPasswordState previous,
-                          ForgotPasswordState current) {
-                        // Only rebuild when segment index or email error message changes
-                        return previous.selectedSegmentIndex !=
-                                current.selectedSegmentIndex ||
-                            previous.emailErrorMessage !=
-                                current.emailErrorMessage;
-                      },
-                      builder:
-                          (BuildContext context, ForgotPasswordState state) {
+                    Consumer(
+                      builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                        final ForgotPasswordState currentState = ref.watch(forgotPasswordNotifierProvider(_initialState));
+                        final ForgotPasswordNotifier currentNotifier = ref.read(forgotPasswordNotifierProvider(_initialState).notifier);
+                        
                         return CommonTextFormFieldWidget(
-                          focusNode: state.forgotPasswordFocusNode,
-                          maxLength: state.selectedSegmentIndex == 0
+                          focusNode: currentState.forgotPasswordFocusNode,
+                          maxLength: currentState.selectedSegmentIndex == 0
                               ? Dimens.maxLength8
                               : Dimens.maxLength50,
                           prefixIconConstraints: const BoxConstraints(
@@ -141,7 +135,7 @@ class ForgotPasswordForm extends StatelessWidget {
                             maxWidth: Dimens.size62,
                             maxHeight: Dimens.size50,
                           ),
-                          prefixIcon: state.selectedSegmentIndex == 0
+                          prefixIcon: currentState.selectedSegmentIndex == 0
                               ? CustomTextLabelWidget(
                                   textDirection: TextDirection.ltr,
                                   label: context.appString.kuwaitCountryCodeKey,
@@ -152,124 +146,86 @@ class ForgotPasswordForm extends StatelessWidget {
                                       fontSize: Dimens.fontSize16),
                                 )
                               : null,
-                          device: device,
-                          errorMsg: state.emailErrorMessage,
-                          textInputType: state.selectedSegmentIndex == 0
+                          device: widget.device,
+                          errorMsg: currentState.emailErrorMessage,
+                          textInputType: currentState.selectedSegmentIndex == 0
                               ? TextInputType.number
                               : TextInputType.text,
-                          controller: forgotPassCubit
-                              .state.resetPasswordFieldController,
+                          controller: currentState.resetPasswordFieldController,
                           onChange: (String value) {
                             if (value.isEmpty) {
-                              forgotPassCubit
-                                  .handleValidationErrorMessageForEmailOrPhone(
-                                      '');
+                              currentNotifier.handleValidationErrorMessageForEmailOrPhone('');
                             }
-                            if (state.selectedSegmentIndex == 0) {
-                              if (value.validMobileBool(isRequired: true) ==
-                                  true) {
-                                forgotPassCubit
-                                    .handleValidationErrorMessageForEmailOrPhone(
-                                        '');
+                            if (currentState.selectedSegmentIndex == 0) {
+                              if (value.validMobileBool(isRequired: true) == true) {
+                                currentNotifier.handleValidationErrorMessageForEmailOrPhone('');
                               }
                             }
-                            if (state.selectedSegmentIndex == 1) {
+                            if (currentState.selectedSegmentIndex == 1) {
                               if (value.validateEmailBool() ?? false) {
-                                forgotPassCubit
-                                    .handleValidationErrorMessageForEmailOrPhone(
-                                        '');
+                                currentNotifier.handleValidationErrorMessageForEmailOrPhone('');
                               }
                             }
                           },
-                          label: state.selectedSegmentIndex == 0
+                          label: currentState.selectedSegmentIndex == 0
                               ? context.appString.mobileNumberKey
                               : context.appString.emailIdKey,
                         );
                       },
                     ),
                     const Spacer(),
-                    BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
-                      buildWhen: (ForgotPasswordState previous,
-                          ForgotPasswordState current) {
-                        // Only rebuild when segment index changes (affects button text)
-                        return previous.selectedSegmentIndex !=
-                            current.selectedSegmentIndex;
-                      },
-                      builder:
-                          (BuildContext context, ForgotPasswordState state) {
+                    Consumer(
+                      builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                        final ForgotPasswordState currentState = ref.watch(forgotPasswordNotifierProvider(_initialState));
+                        final ForgotPasswordNotifier currentNotifier = ref.read(forgotPasswordNotifierProvider(_initialState).notifier);
+                        
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: Dimens.space25),
                           child: CustomGradientButtonWidget(
-                            device: device,
-                            title: state.selectedSegmentIndex == 0
+                            device: widget.device,
+                            title: currentState.selectedSegmentIndex == 0
                                 ? context.appString.getOtpKey
                                 : context.appString.sendKey,
                             onTap: () async {
-                              final String resetPasswordText = forgotPassCubit
-                                  .state.resetPasswordFieldController.text
-                                  .trim();
+                              final String resetPasswordText = currentState.resetPasswordFieldController.text.trim();
 
-                              if (state.selectedSegmentIndex == 0) {
+                              if (currentState.selectedSegmentIndex == 0) {
                                 // Phone number validation
                                 if (resetPasswordText.isEmpty) {
-                                  forgotPassCubit
-                                      .handleValidationErrorMessageForEmailOrPhone(
-                                          context.appString
-                                              .pleaseEnterMobileNumberKey);
+                                  currentNotifier.handleValidationErrorMessageForEmailOrPhone(
+                                      context.appString.pleaseEnterMobileNumberKey);
                                   return;
                                 }
 
-                                final String? mobileError =
-                                    resetPasswordText.validMobileNo(
-                                        emptyMobileMsg: context.appString
-                                            .pleaseEnterMobileNumberKey,
-                                        onlyNumbersAllowedMsg: context
-                                            .appString.onlyNumbersAllowedKey,
-                                        invalidMobileMsg: context.appString
-                                            .enterValidMobileNumberKey);
+                                final String? mobileError = resetPasswordText.validMobileNo(
+                                    emptyMobileMsg: context.appString.pleaseEnterMobileNumberKey,
+                                    onlyNumbersAllowedMsg: context.appString.onlyNumbersAllowedKey,
+                                    invalidMobileMsg: context.appString.enterValidMobileNumberKey);
                                 if (mobileError?.isNotEmpty ?? false) {
-                                  forgotPassCubit
-                                      .handleValidationErrorMessageForEmailOrPhone(
-                                          mobileError ?? "");
-                                  return; // Stop further validation if mobile number is invalid
+                                  currentNotifier.handleValidationErrorMessageForEmailOrPhone(mobileError ?? "");
+                                  return;
                                 } else {
-                                  forgotPassCubit
-                                      .handleValidationErrorMessageForEmailOrPhone(
-                                          ""); // Clear mobile error if valid
+                                  currentNotifier.handleValidationErrorMessageForEmailOrPhone("");
                                 }
 
-                                // Call forgot password with mobile API
-                                await forgotPassCubit
-                                    .callForgotPasswordWithMobileApi();
+                                await currentNotifier.callForgotPasswordWithMobileApi();
                               } else {
                                 // Email validation
-                                final String? emailError =
-                                    resetPasswordText.validateEmail(
-                                        isOnlyEmail: true,
-                                        enterMobileOrNumberMsg: context
-                                            .appString
-                                            .pleaseEnterMobileOrNumberKey,
-                                        enterEmailMsg: context
-                                            .appString.pleaseEnterTheEmailKey,
-                                        validEmailMsg: context.appString
-                                            .pleaseEnterValidEmailKey);
+                                final String? emailError = resetPasswordText.validateEmail(
+                                    isOnlyEmail: true,
+                                    enterMobileOrNumberMsg: context.appString.pleaseEnterMobileOrNumberKey,
+                                    enterEmailMsg: context.appString.pleaseEnterTheEmailKey,
+                                    validEmailMsg: context.appString.pleaseEnterValidEmailKey);
                                 if (emailError?.isNotEmpty ?? false) {
-                                  forgotPassCubit
-                                      .handleValidationErrorMessageForEmailOrPhone(
-                                          emailError ?? "");
-                                  return; // Stop further validation if email is invalid
+                                  currentNotifier.handleValidationErrorMessageForEmailOrPhone(emailError ?? "");
+                                  return;
                                 } else {
-                                  forgotPassCubit
-                                      .handleValidationErrorMessageForEmailOrPhone(
-                                          ""); // Clear email error if valid
+                                  currentNotifier.handleValidationErrorMessageForEmailOrPhone("");
                                 }
 
-                                // Call forgot password with email API
-                                await forgotPassCubit
-                                    .callForgotPasswordWithEmailApi();
+                                await currentNotifier.callForgotPasswordWithEmailApi();
                               }
-                              // forgotPassCubit.callForgotPasswordApi();
                             },
                           ),
                         );
@@ -281,7 +237,7 @@ class ForgotPasswordForm extends StatelessWidget {
             )
           ],
         ),
-      )),
+      ),
     );
   }
 }

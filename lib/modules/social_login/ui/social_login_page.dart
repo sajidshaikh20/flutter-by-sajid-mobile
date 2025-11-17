@@ -1,30 +1,31 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../utils/exports.dart';
+import '../../../app/providers/providers.dart';
 
 @RoutePage()
 /// Page that displays social login options (Facebook, Google, Apple, Email).
-class SocialLoginPage extends BaseResponsiveView {
+class SocialLoginPage extends ConsumerWidget {
   /// Creates a social login page.
   const SocialLoginPage({super.key});
 
-  /// Builds the social login view with BlocProvider.
-  Widget buildView(BuildContext context) {
-    return BlocProvider<SocialLoginCubit>(
-      create: (BuildContext ctx) => SocialLoginCubit(
-        repository: LoginRepositoryImpl(),
-        initialState: const SocialLoginState(
-          status: BaseStateStatus.initial,
-        ),
-      ),
-      child: BlocConsumer<SocialLoginCubit, SocialLoginState>(
-        listener: (BuildContext context, SocialLoginState state) async {
-          DebugLog.instance.i('SocialLogin BlocListener - Status: ${state.status}, RedirectRoute: ${state.redirectRoute}');
-          
-          if (state.msg != null && (state.msg?.isNotEmpty ?? false)) {
-            displaySnackBar(state.msg ?? '', context);
-          }
-          
-          // Navigate on success status with a small delay
-          if (state.status == BaseStateStatus.success) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final SocialLoginState initialState = const SocialLoginState(
+      status: BaseStateStatus.initial,
+    );
+    
+    // Listen to state changes
+    ref.listen<SocialLoginState>(
+      socialLoginNotifierProvider(initialState),
+      (SocialLoginState? previous, SocialLoginState next) async {
+        DebugLog.instance.i('SocialLogin Listener - Status: ${next.status}, RedirectRoute: ${next.redirectRoute}');
+        
+        if (next.msg != null && (next.msg?.isNotEmpty ?? false)) {
+          displaySnackBar(next.msg ?? '', context);
+        }
+        
+        // Navigate on success status with a small delay
+        if (next.status == BaseStateStatus.success) {
             DebugLog.instance.i('Success status detected, attempting navigation...');
             // Add a small delay to ensure the state is fully processed
             await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -37,10 +38,14 @@ class SocialLoginPage extends BaseResponsiveView {
               DebugLog.instance.e('Navigation failed: $e');
             }
           }
-        },
-        builder: (BuildContext context, SocialLoginState state) {
-          DebugLog.instance.i('SocialLogin BlocBuilder - Status: ${state.status}, RedirectRoute: ${state.redirectRoute}');
-          return Scaffold(
+      },
+    );
+
+    final SocialLoginState state = ref.watch(socialLoginNotifierProvider(initialState));
+    final SocialLoginNotifier notifier = ref.read(socialLoginNotifierProvider(initialState).notifier);
+    
+    DebugLog.instance.i('SocialLogin Builder - Status: ${state.status}, RedirectRoute: ${state.redirectRoute}');
+    return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -80,8 +85,6 @@ class SocialLoginPage extends BaseResponsiveView {
                           title: context.appString.continueWithFacebookKey,
                           onTap: () async {
                             try {
-                              final SocialLoginCubit cubit =
-                                  context.read<SocialLoginCubit>();
                               DebugLog.instance
                                   .i('Starting Facebook Sign In process...');
 
@@ -104,7 +107,7 @@ class SocialLoginPage extends BaseResponsiveView {
                                     SocialLoginType.facebook.name,
                                   );
 
-                                  await cubit.socialLogin(
+                                  await notifier.socialLogin(
                                     email: email,
                                     socialLoginType: SocialLoginType.facebook.name,
                                     facebookToken: facebookToken,
@@ -150,8 +153,6 @@ class SocialLoginPage extends BaseResponsiveView {
                           title: context.appString.continueWithGoogleKey,
                           onTap: () async {
                             try {
-                              final SocialLoginCubit cubit =
-                                  context.read<SocialLoginCubit>();
                               DebugLog.instance
                                   .i('Starting Google Sign In process...');
                               GoogleSignInAccount? user =
@@ -172,7 +173,7 @@ class SocialLoginPage extends BaseResponsiveView {
                                   // Get Google authentication tokens
                                   final GoogleSignInAuthentication auth = await user.authentication;
 
-                                  await cubit.socialLogin(
+                                  await notifier.socialLogin(
                                     email: user.email,
                                     socialLoginType: SocialLoginType.google.name,
                                     googleToken: auth.accessToken, // Use accessToken for authentication
@@ -216,8 +217,6 @@ class SocialLoginPage extends BaseResponsiveView {
                             title: context.appString.continueWithAppleKey,
                             onTap: () async {
                               try {
-                                final SocialLoginCubit cubit =
-                                    context.read<SocialLoginCubit>();
                                 DebugLog.instance
                                     .i('Starting Apple Sign In process...');
 
@@ -242,7 +241,7 @@ class SocialLoginPage extends BaseResponsiveView {
                                     );
 
                                     // Call the social login API with Apple token
-                                    await cubit.socialLogin(
+                                    await notifier.socialLogin(
                                       email: user.email ?? '',
                                       socialLoginType: SocialLoginType.apple.name,
                                       appleToken: authorizationCode.isNotEmpty ? authorizationCode : '',
@@ -323,23 +322,5 @@ class SocialLoginPage extends BaseResponsiveView {
             ],
           ),
         );
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget buildDesktopWidget(BuildContext context) {
-    return buildView(context);
-  }
-
-  @override
-  Widget buildMobileWidget(BuildContext context) {
-    return buildView(context);
-  }
-
-  @override
-  Widget buildTabletWidget(BuildContext context) {
-    return buildView(context);
   }
 }

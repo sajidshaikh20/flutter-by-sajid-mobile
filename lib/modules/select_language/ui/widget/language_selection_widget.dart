@@ -1,4 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// Widget that displays language selection options with English and Arabic buttons.
 class LanguageSelectionWidget extends BaseResponsiveView {
@@ -71,9 +73,8 @@ class LanguageSelectionWidget extends BaseResponsiveView {
                   CustomGradientButtonWidget(
                       title: AppConstantString.englishText,
                       onTap: () async {
-                        context
-                            .read<LanguageSelectionCubit>()
-                            .navigateToLoginScreen(LanguageCode.en);
+                        final ProviderContainer container = ProviderScope.containerOf(context);
+                        await container.read(languageSelectionNotifierProvider.notifier).navigateToLoginScreen(LanguageCode.en);
                       }),
                   const SizedBox(
                     height: Dimens.size24,
@@ -81,9 +82,8 @@ class LanguageSelectionWidget extends BaseResponsiveView {
                   CustomGradientButtonWidget(
                       title: AppConstantString.arabicText,
                       onTap: () async {
-                        context
-                            .read<LanguageSelectionCubit>()
-                            .navigateToLoginScreen(LanguageCode.ar);
+                        final ProviderContainer container = ProviderScope.containerOf(context);
+                        await container.read(languageSelectionNotifierProvider.notifier).navigateToLoginScreen(LanguageCode.ar);
                       })
                 ],
               ),

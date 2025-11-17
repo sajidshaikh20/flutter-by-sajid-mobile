@@ -34,7 +34,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  flutter_bloc: ^9.0.0
+  flutter_riverpod: ^2.6.1
   awesome_dio_interceptor: ^1.2.0 # Network process logger (Logger interceptor), platform: All.
   async: ^2.11.0 #for making future function
   device_info_plus: ^11.5.0 # Get current device information from within the Flutter application.

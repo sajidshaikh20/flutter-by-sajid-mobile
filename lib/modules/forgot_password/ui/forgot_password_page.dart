@@ -1,4 +1,5 @@
 import '../../../../../utils/exports.dart';
+import '../../../../../app/providers/providers.dart';
 
 @RoutePage()
 /// Page that displays the forgot password form for password reset.
@@ -22,17 +23,9 @@ class ForgotPasswordPage extends BaseResponsiveView {
   }
 
   Widget _buildViews(BuildContext context, ScreenType device) {
-    return BlocProvider<ForgotPasswordCubit>(
-      create: (BuildContext ctx) => ForgotPasswordCubit(
-          repository: ForgotPasswordRepoImpl(),
-          initialState: ForgotPasswordState(
-              forgotPasswordFocusNode: FocusNode(),
-              status: BaseStateStatus.initial,
-              resetPasswordFieldController: TextEditingController(),
-              formKey: GlobalKey<FormState>())),
-      child: ForgotPasswordForm(
-        device: device,
-      ),
+    // Riverpod provider is available globally, no need for BlocProvider
+    return ForgotPasswordForm(
+      device: device,
     );
   }
 }

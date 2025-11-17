@@ -1,9 +1,10 @@
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// A reusable widget that displays categories in a grid layout with customizable
 /// spacing and scroll physics for different screen requirements.
-class CommonCategoryWidget extends StatelessWidget {
+class CommonCategoryWidget extends ConsumerWidget {
   /// The spacing between items along the cross axis (horizontal spacing).
   final double crossAxisSpacing;
 
@@ -30,7 +31,7 @@ class CommonCategoryWidget extends StatelessWidget {
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
    double deviceWidth=context.width;
     // Calculate the width of each item
     const int totalHorizontalSpacing = 10 * (4 - 1); // Total spacing for 4 columns
@@ -38,33 +39,25 @@ class CommonCategoryWidget extends StatelessWidget {
         (deviceWidth - totalHorizontalSpacing) / Dimens.crossAxisCount4; // Width of each item
    const double itemHeight = Dimens.size130;
    
-   return BlocBuilder<HomeCubit, HomeState>(
-     buildWhen: (HomeState previous, HomeState current) {
-       // Only rebuild when category API status or categories data changes
-       return previous.apiCallForHomeCategory != current.apiCallForHomeCategory ||
-              previous.categoriesModel != current.categoriesModel;
-     },
-     builder: (BuildContext context, HomeState state) {
-       // Get categories from HomeCubit state
-       final List<CategoryResponseModel> categoryResponseModels = _getCategoryResponseModelsFromHomeState(state);
+   final HomeState state = ref.watch(homeNotifierProvider);
+   // Get categories from HomeState
+   final List<CategoryResponseModel> categoryResponseModels = _getCategoryResponseModelsFromHomeState(state);
        
-       return GridView.builder(
-         shrinkWrap: true,
-         physics: physics?? const NeverScrollableScrollPhysics(),
-         padding: EdgeInsets.zero,
-         itemCount: categoryResponseModels.length,
-         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-           childAspectRatio: itemWidth / itemHeight,
-           crossAxisCount: Dimens.crossAxisCount4, // Fixed number of columns
-           crossAxisSpacing: crossAxisSpacing,
-           mainAxisSpacing: mainAxisSpacing, // Vertical space between items
-         ),
-         itemBuilder: (BuildContext context, int index) {
-           return HomeCategoryItem(
-             categoryModel: categoryResponseModels[index],
-             onTap: () => _onCategoryTap(context, categoryResponseModels, index),
-           );
-         },
+   return GridView.builder(
+     shrinkWrap: true,
+     physics: physics?? const NeverScrollableScrollPhysics(),
+     padding: EdgeInsets.zero,
+     itemCount: categoryResponseModels.length,
+     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+       childAspectRatio: itemWidth / itemHeight,
+       crossAxisCount: Dimens.crossAxisCount4, // Fixed number of columns
+       crossAxisSpacing: crossAxisSpacing,
+       mainAxisSpacing: mainAxisSpacing, // Vertical space between items
+     ),
+     itemBuilder: (BuildContext context, int index) {
+       return HomeCategoryItem(
+         categoryModel: categoryResponseModels[index],
+         onTap: () => _onCategoryTap(context, categoryResponseModels, index),
        );
      },
    );

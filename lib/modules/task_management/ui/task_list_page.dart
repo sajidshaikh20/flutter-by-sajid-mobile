@@ -1,32 +1,16 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../utils/exports.dart';
-
+import '../notifier/notifier.dart';
 
 @RoutePage()
 /// Main page displaying the list of tasks.
-class TaskListPage extends StatelessWidget {
+class TaskListPage extends ConsumerWidget {
   /// Creates a [TaskListPage].
   const TaskListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<TaskCubit>(
-      create: (BuildContext context) => TaskCubit(
-        repository: TaskRepositoryImpl(),
-      ),
-      child: const TaskListView(),
-    );
-  }
-}
-
-/// View widget for the task list.
-class TaskListView extends StatelessWidget {
-  /// Creates a [TaskListView].
-  const TaskListView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -40,14 +24,14 @@ class TaskListView extends StatelessWidget {
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort, color: Colors.black),
             onSelected: (String value) {
-              final TaskCubit cubit = context.read<TaskCubit>();
+              final TaskNotifier notifier = ref.read(taskNotifierProvider.notifier);
               switch (value) {
                 case 'sort_due_date':
-                  cubit.setSortType(TaskSortType.dueDate);
+                  notifier.setSortType(TaskSortType.dueDate);
                 case 'sort_title':
-                  cubit.setSortType(TaskSortType.title);
+                  notifier.setSortType(TaskSortType.title);
                 case 'sort_created':
-                  cubit.setSortType(TaskSortType.createdDate);
+                  notifier.setSortType(TaskSortType.createdDate);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -76,8 +60,10 @@ class TaskListView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<TaskCubit, TaskState>(
-        builder: (BuildContext context, TaskState state) {
+      body: Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? child) {
+          final TaskState state = ref.watch(taskNotifierProvider);
+          
           if (state.status == BaseStateStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -92,7 +78,7 @@ class TaskListView extends StatelessWidget {
                     size: Dimens.size64,
                     color: Colors.grey[400],
                   ),
-                 const SizedBox(height: Dimens.size16),
+                  const SizedBox(height: Dimens.size16),
                   CustomTextLabelWidget(
                     label: 'No tasks found',
                     style: TextStyle(
@@ -101,7 +87,7 @@ class TaskListView extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-              const    SizedBox(height: Dimens.size8),
+                  const SizedBox(height: Dimens.size8),
                   CustomTextLabelWidget(
                     label: 'Tap the + button to add a new task',
                     style: TextStyle(
@@ -131,18 +117,18 @@ class TaskListView extends StatelessWidget {
                     TaskFormRoute(task: task),
                   );
                   if (context.mounted && result == true) {
-                    await context.read<TaskCubit>().loadTasks();
+                    await ref.read(taskNotifierProvider.notifier).loadTasks();
                   }
                 },
                 onToggleComplete: () async {
                   if (!task.isCompleted) {
-                    await _showCompleteConfirmationDialog(context, task.id);
+                    await _showCompleteConfirmationDialog(context, ref, task.id);
                   } else {
-                    await context.read<TaskCubit>().toggleTaskCompletion(task.id);
+                    await ref.read(taskNotifierProvider.notifier).toggleTaskCompletion(task.id);
                   }
                 },
                 onDelete: () async {
-                  await _showDeleteDialog(context, task.id);
+                  await _showDeleteDialog(context, ref, task.id);
                 },
               );
             },
@@ -154,7 +140,7 @@ class TaskListView extends StatelessWidget {
         onPressed: () async {
           final Object? result = await context.router.push(TaskFormRoute());
           if (context.mounted && result == true) {
-            await context.read<TaskCubit>().loadTasks();
+            await ref.read(taskNotifierProvider.notifier).loadTasks();
           }
         },
         icon: const Icon(Icons.add),
@@ -166,8 +152,8 @@ class TaskListView extends StatelessWidget {
   }
 
   /// Shows a confirmation dialog before completing a task.
-  Future<void> _showCompleteConfirmationDialog(BuildContext context, String taskId) async {
-    final TaskCubit taskCubit = context.read<TaskCubit>();
+  Future<void> _showCompleteConfirmationDialog(BuildContext context, WidgetRef ref, String taskId) async {
+    final TaskNotifier notifier = ref.read(taskNotifierProvider.notifier);
     await showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
@@ -188,7 +174,7 @@ class TaskListView extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              unawaited(taskCubit.toggleTaskCompletion(taskId));
+              unawaited(notifier.toggleTaskCompletion(taskId));
               Navigator.of(dialogContext).pop();
             },
             child: const CustomTextLabelWidget(
@@ -202,8 +188,8 @@ class TaskListView extends StatelessWidget {
   }
 
   /// Shows a confirmation dialog before deleting a task.
-  Future<void> _showDeleteDialog(BuildContext context, String taskId) async {
-    final TaskCubit taskCubit = context.read<TaskCubit>();
+  Future<void> _showDeleteDialog(BuildContext context, WidgetRef ref, String taskId) async {
+    final TaskNotifier notifier = ref.read(taskNotifierProvider.notifier);
     await showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
@@ -224,7 +210,7 @@ class TaskListView extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              unawaited(taskCubit.deleteTask(taskId));
+              unawaited(notifier.deleteTask(taskId));
               Navigator.of(dialogContext).pop();
             },
             child: const CustomTextLabelWidget(

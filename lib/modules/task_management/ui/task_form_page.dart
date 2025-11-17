@@ -1,10 +1,11 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../utils/exports.dart';
-
+import '../notifier/notifier.dart';
 
 @RoutePage()
 /// Unified page for adding or editing a task.
 /// If [task] is null, it's in add mode. If [task] is provided, it's in edit mode.
-class TaskFormPage extends StatelessWidget {
+class TaskFormPage extends ConsumerWidget {
   /// Creates a [TaskFormPage].
   /// [task] is optional - null for add mode, provided for edit mode.
   const TaskFormPage({this.task, super.key});
@@ -13,18 +14,13 @@ class TaskFormPage extends StatelessWidget {
   final TaskModel? task;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<TaskCubit>(
-      create: (BuildContext context) => TaskCubit(
-        repository: TaskRepositoryImpl(),
-      ),
-      child: TaskFormView(task: task),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TaskFormView(task: task);
   }
 }
 
 /// View widget for the task form.
-class TaskFormView extends StatefulWidget {
+class TaskFormView extends ConsumerStatefulWidget {
   /// Creates a [TaskFormView].
   const TaskFormView({this.task, super.key});
 
@@ -32,10 +28,10 @@ class TaskFormView extends StatefulWidget {
   final TaskModel? task;
 
   @override
-  State<TaskFormView> createState() => _TaskFormViewState();
+  ConsumerState<TaskFormView> createState() => _TaskFormViewState();
 }
 
-class _TaskFormViewState extends State<TaskFormView> {
+class _TaskFormViewState extends ConsumerState<TaskFormView> {
   late final GlobalKey<FormState> _formKey;
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
@@ -142,13 +138,15 @@ class _TaskFormViewState extends State<TaskFormView> {
 
   Future<void> _saveTask() async {
     if (_formKey.currentState!.validate()) {
+      final TaskNotifier notifier = ref.read(taskNotifierProvider.notifier);
+      
       if (_isEditMode) {
         final TaskModel updatedTask = widget.task!.copyWith(
           title: _titleController.text.trim(),
           description: _descriptionController.text.trim(),
           dueDate: _selectedDate,
         );
-        await context.read<TaskCubit>().updateTask(updatedTask);
+        await notifier.updateTask(updatedTask);
       } else {
         final TaskModel newTask = TaskModel(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -157,7 +155,7 @@ class _TaskFormViewState extends State<TaskFormView> {
           dueDate: _selectedDate,
           createdAt: DateTime.now(),
         );
-        await context.read<TaskCubit>().addTask(newTask);
+        await notifier.addTask(newTask);
       }
 
       if (mounted) {
@@ -271,8 +269,9 @@ class _TaskFormViewState extends State<TaskFormView> {
                 ),
               ),
               const SizedBox(height: Dimens.space24),
-              BlocBuilder<TaskCubit, TaskState>(
-                builder: (BuildContext context, TaskState state) {
+              Consumer(
+                builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                  final TaskState state = ref.watch(taskNotifierProvider);
                   return CustomButtonWidget(
                     title: state.status == BaseStateStatus.loading
                         ? 'Please wait...'

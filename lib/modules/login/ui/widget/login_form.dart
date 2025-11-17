@@ -1,45 +1,47 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// A widget for the login form.
 ///
 /// OPTIMIZATION NOTES:
-/// - Uses BlocBuilder widgets only where necessary for reactive UI updates
-/// - Each BlocBuilder includes buildWhen conditions to minimize unnecessary rebuilds
-/// - Static elements (like buttons, spacing) remain outside BlocBuilder for performance
-class LoginForm extends StatelessWidget {
+/// - Uses Consumer widgets only where necessary for reactive UI updates
+/// - Static elements (like buttons, spacing) remain outside Consumer for performance
+class LoginForm extends ConsumerStatefulWidget {
   ///
   const LoginForm({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return _loginForm(context);
+  ConsumerState<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends ConsumerState<LoginForm> {
+  @override
+  void initState() {
+    super.initState();
+    // Listen to login state changes
+    ref.listen<LoginState>(loginNotifierProvider, (LoginState? previous, LoginState next) {
+      if (next.msg != null && (next.msg?.isNotEmpty ?? false)) {
+        displaySnackBar(next.msg ?? '', context);
+      }
+      if (next.redirectRoute != null && mounted) {
+        unawaited(context.router.replaceAll(<PageRouteInfo>[next.redirectRoute!]));
+      }
+    });
   }
 
-  BlocListener<LoginCubit, LoginState> _loginForm(BuildContext context) {
-    final LoginCubit loginCubit = context.instance<LoginCubit>();
-    return BlocListener<LoginCubit, LoginState>(
-      // Listen only when relevant state changes occur
-      listenWhen: (LoginState previous, LoginState current) {
-        return previous.redirectRoute != current.redirectRoute ||
-            previous.msg != current.msg;
-      },
-      listener: (BuildContext context, LoginState state) async {
-        if (state.msg != null && (state.msg?.isNotEmpty ?? false)) {
-          displaySnackBar(state.msg ?? '', context);
-        }
-        if (state.redirectRoute != null) {
-          await context.router
-              .replaceAll(<PageRouteInfo>[state.redirectRoute!]);
-        }
-      },
-      child: NoInternetWidget(
+  @override
+  Widget build(BuildContext context) {
+    final LoginState state = ref.watch(loginNotifierProvider);
+    
+    return NoInternetWidget(
         onTryAgain: () {},
         childWidget: Scaffold(
           resizeToAvoidBottomInset: true,
           body: Form(
-            key: loginCubit.state.formKey,
+          key: state.formKey,
             child: Column(
               children: <Widget>[
                 const TopViewOnboardingLogin(
@@ -63,24 +65,19 @@ class LoginForm extends StatelessWidget {
                           ),
                           Dimens.size40.heightBox,
 
-                          BlocBuilder<LoginCubit, LoginState>(
-                            buildWhen:
-                                (LoginState previous, LoginState current) {
-                              // Only rebuild when email-related state changes
-                              return previous.emailErrorMessage !=
-                                      current.emailErrorMessage ||
-                                  previous.isNumberConsidered !=
-                                      current.isNumberConsidered;
-                            },
-                            builder: (BuildContext context, LoginState state) {
+                          Consumer(
+                            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                              final LoginState currentState = ref.watch(loginNotifierProvider);
+                              final LoginNotifier currentNotifier = ref.read(loginNotifierProvider.notifier);
+                              
                               return CommonTextFormFieldWidget(
-                                controller: state.emailController,
+                                controller: currentState.emailController,
                                 label: context.appString.labelMobileOrMailKey,
                                 input: TextInputAction.next,
-                                focusNode: state.emailFocusNode,
-                                errorMsg: state.emailErrorMessage,
+                                focusNode: currentState.emailFocusNode,
+                                errorMsg: currentState.emailErrorMessage,
                                 prefixIconConstraints:
-                                    (state.isNumberConsidered ?? false)
+                                    (currentState.isNumberConsidered ?? false)
                                         ? const BoxConstraints(
                                             minWidth: Dimens.size24,
                                             minHeight: Dimens.size24,
@@ -88,7 +85,7 @@ class LoginForm extends StatelessWidget {
                                             maxHeight: Dimens.size50,
                                           )
                                         : null,
-                                prefixIcon: (state.isNumberConsidered ?? false)
+                                prefixIcon: (currentState.isNumberConsidered ?? false)
                                     ? CustomTextLabelWidget(
                                         textDirection: TextDirection.ltr,
                                         label: context
@@ -104,79 +101,65 @@ class LoginForm extends StatelessWidget {
                                     : null,
                                 onChange: (String value) {
                                   if (value.startsWithNumber()) {
-                                    context
-                                        .read<LoginCubit>()
-                                        .updateNumberConsideration(
+                                    currentNotifier.updateNumberConsideration(
                                             isNumber: true);
                                   }
                                   if (value.containsChar()) {
-                                    context
-                                        .read<LoginCubit>()
-                                        .updateNumberConsideration(
+                                    currentNotifier.updateNumberConsideration(
                                             isNumber: false);
                                   }
 
                                   if (value.isEmpty) {
-                                    loginCubit
+                                    currentNotifier
                                       ..handleValidationErrorMessageForEmail('')
                                       ..updateNumberConsideration(
                                           isNumber: false);
                                   }
                                   if (value.validateEmailBool() ?? true) {
-                                    loginCubit
+                                    currentNotifier
                                         .handleValidationErrorMessageForEmail(
                                             '');
                                   }
                                   if (value.validMobileBool() == true) {
-                                    loginCubit
+                                    currentNotifier
                                         .handleValidationErrorMessageForEmail(
                                             '');
                                   }
                                 },
-                                maxLength: (state.isNumberConsidered ?? false)
+                                maxLength: (currentState.isNumberConsidered ?? false)
                                     ? Dimens.maxLength8
                                     : Dimens.maxLength50,
                                 onTextSubmit: (_) {
-                                  loginCubit
-                                      .moveToNextField(state.passwordFocusNode);
+                                  currentNotifier
+                                      .moveToNextField(currentState.passwordFocusNode);
                                 },
                                 textCapitalization: TextCapitalization.none,
                               );
                             },
                           ),
                           Dimens.size16.heightBox,
-                          // BlocBuilder for Password input field
-                          // REQUIRED: Rebuilds when password visibility or error message changes
-                          // to update show/hide toggle and validation feedback
-                          BlocBuilder<LoginCubit, LoginState>(
-                            buildWhen:
-                                (LoginState previous, LoginState current) {
-                              // Only rebuild when password-related state changes
-                              return previous.passwordObscureText !=
-                                      current.passwordObscureText ||
-                                  previous.passwordErrorMessage !=
-                                      current.passwordErrorMessage;
-                            },
-                            builder: (BuildContext context, LoginState state) {
+                          Consumer(
+                            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                              final LoginState currentState = ref.watch(loginNotifierProvider);
+                              final LoginNotifier currentNotifier = ref.read(loginNotifierProvider.notifier);
+                              
                               return CommonTextFormFieldWidget(
-                                controller: loginCubit.state.passwordController,
+                                controller: currentState.passwordController,
                                 label: context.appString.passwordKey,
                                 input: TextInputAction.done,
-                                focusNode: state.passwordFocusNode,
-                                errorMsg: state.passwordErrorMessage,
+                                focusNode: currentState.passwordFocusNode,
+                                errorMsg: currentState.passwordErrorMessage,
                                 maxLength: Dimens.maxLength15,
-                                obscureText:
-                                    loginCubit.state.passwordObscureText,
+                                obscureText: currentState.passwordObscureText,
                                 onChange: (String value) {
                                   if (value.validatePasswordBool() ?? false) {
-                                    // If password is valid, clear the error message
-                                    loginCubit
+                                    currentNotifier
                                         .handleValidationErrorMessageForPassword(
                                             '');
                                   }
                                 },
                                 suffixIcon: CustomTextLabelWidget(
-                                  label: state.passwordObscureText
+                                  label: currentState.passwordObscureText
                                       ? context.appString.showKey
                                       : context.appString.hideKey,
                                   textAlign: TextAlign.start,
@@ -188,7 +171,7 @@ class LoginForm extends StatelessWidget {
                                           .appColors.textLightBlackColor,
                                       fontSize: Dimens.fontSize12),
                                   onTap: () {
-                                    loginCubit.toggleCurrentPassObscureText();
+                                    currentNotifier.toggleCurrentPassObscureText();
                                   },
                                 ),
                               );
@@ -197,27 +180,31 @@ class LoginForm extends StatelessWidget {
                           Dimens.size15.heightBox,
                           const OtherAuthView(),
                           Dimens.size16.heightBox,
-                          CustomGradientButtonWidget(
+                          Consumer(
+                            builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                              final LoginState currentState = ref.watch(loginNotifierProvider);
+                              final LoginNotifier currentNotifier = ref.read(loginNotifierProvider.notifier);
+                              
+                              return CustomGradientButtonWidget(
                               title: context.appString.loginKey,
                               onTap: () async {
-                                final String email = loginCubit
-                                    .state.emailController.text
+                                  final String email = currentState
+                                      .emailController.text
                                     .trim();
-                                final String password = loginCubit
-                                    .state.passwordController.text
+                                  final String password = currentState
+                                      .passwordController.text
                                     .trim();
-                                bool isValid =
-                                    true; //Flag for overall validation result
+                                  bool isValid = true;
 
                                 // Empty check
                                 if (email.isEmpty || password.isEmpty) {
                                   if (email.isEmpty) {
-                                    loginCubit.handleValidationErrorMessageForEmail(
+                                      currentNotifier.handleValidationErrorMessageForEmail(
                                         "${context.appString.pleaseEnterMobileOrNumberKey}.");
                                     isValid = false;
                                   }
                                   if (password.isEmpty) {
-                                    loginCubit
+                                      currentNotifier
                                         .handleValidationErrorMessageForPassword(
                                             "${context.appString.pleaseEnterThePasswordKey}.");
                                     isValid = false;
@@ -225,8 +212,8 @@ class LoginForm extends StatelessWidget {
                                 }
 
                                 // Validate Mobile Number
-                                if (email.isNotEmpty ) {
-                                  if(loginCubit.state.isNumberConsidered ?? false) {
+                                  if (email.isNotEmpty) {
+                                    if (currentState.isNumberConsidered ?? false) {
                                     final String? mobileError =
                                     email.validMobileNo(
                                         emptyMobileMsg: context.appString
@@ -236,21 +223,21 @@ class LoginForm extends StatelessWidget {
                                         invalidMobileMsg: context.appString
                                             .enterValidMobileNumberKey);
                                     if (mobileError?.isNotEmpty ?? false) {
-                                      loginCubit
+                                        currentNotifier
                                           .handleValidationErrorMessageForEmail(
                                           mobileError ?? "");
                                       isValid = false;
                                     } else {
-                                      loginCubit
+                                        currentNotifier
                                           .handleValidationErrorMessageForEmail(
-                                          ""); // Clear mobile error if valid
-                                    }
+                                            "");
+                                      }
                                   }
                                 }
 
                                 // Validate Email
                                 if (email.isNotEmpty && (email.startsWithLetter() ||
-                                    loginCubit.state.isNumberConsidered == false)) {
+                                      currentState.isNumberConsidered == false)) {
                                   final String? emailError =
                                       email.validateEmail(
                                           isOnlyEmail: true,
@@ -262,15 +249,15 @@ class LoginForm extends StatelessWidget {
                                           validEmailMsg: context.appString
                                               .pleaseEnterValidEmailKey);
                                   if (emailError?.isNotEmpty ?? false) {
-                                    loginCubit
+                                      currentNotifier
                                         .handleValidationErrorMessageForEmail(
                                             emailError ?? "");
                                     isValid = false;
                                   } else {
-                                    loginCubit
+                                      currentNotifier
                                         .handleValidationErrorMessageForEmail(
-                                            ""); // Clear email error if valid
-                                  }
+                                              "");
+                                    }
                                 }
 
                                 // Validate Password
@@ -285,25 +272,27 @@ class LoginForm extends StatelessWidget {
                                       invalidPasswordMsg: context
                                           .appString.passAllCriteriaKey);
                                   if (passwordError?.isNotEmpty ?? false) {
-                                    loginCubit
+                                      currentNotifier
                                         .handleValidationErrorMessageForPassword(
                                         passwordError ?? "");
                                     isValid = false;
                                   } else {
-                                    loginCubit
+                                      currentNotifier
                                         .handleValidationErrorMessageForPassword(
-                                        ""); // Clear password error if valid
-                                  }
+                                          "");
+                                    }
                                 }
 
                                 if (isValid) {
-                                  // Call login API
-                                  await loginCubit.login(
+                                    await currentNotifier.login(
                                     emailMobile: email,
                                     password: password,
                                   );
                                 }
-                              }),
+                                },
+                              );
+                            },
+                          ),
                           Dimens.size65.heightBox,
                           CustomTextLabelWidget(
                             onTap: () async {
@@ -334,13 +323,13 @@ class LoginForm extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )),
+                    ),
+                  ),
                 )
               ],
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }

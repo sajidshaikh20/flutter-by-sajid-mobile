@@ -1,7 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../utils/exports.dart';
+import '../../../../app/providers/providers.dart';
 
 /// Widget that displays the main account form with user options and settings.
-class MyAccountForm extends StatelessWidget {
+class MyAccountForm extends ConsumerWidget {
   /// Creates a my account form widget.
   const MyAccountForm({super.key, this.device = ScreenType.mobile});
 
@@ -9,46 +11,40 @@ class MyAccountForm extends StatelessWidget {
   final ScreenType device;
 
   @override
-  Widget build(BuildContext context) {
-    // Refresh login status when page is built to catch any changes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        //unawaited(context.read<MyAccountCubit>().refreshLoginStatus());
-      }
-    });
-
-    return BlocConsumer<MyAccountCubit, MyAccountState>(
-      listenWhen: (MyAccountState prev, MyAccountState curr) =>
-          prev.redirectRoute != curr.redirectRoute || prev.msg != curr.msg,
-      listener: (BuildContext context, MyAccountState state) async {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final MyAccountState initialState = MyAccountState.init();
+    
+    // Listen to state changes
+    ref.listen<MyAccountState>(
+      myAccountNotifierProvider(initialState),
+      (MyAccountState? previous, MyAccountState next) async {
         // Show the message if present
-        if (state.msg?.isNotEmpty ?? false) {
-          displaySnackBar(state.msg!, context);
+        if (next.msg?.isNotEmpty ?? false) {
+          displaySnackBar(next.msg!, context);
         }
 
         // Handle redirection centrally for logout & delete account
-        if (state.redirectRoute != null &&
-            (state.status == BaseStateStatus.success &&
-                state.logoutStatus == BaseStateStatus.success)) {
+        if (next.redirectRoute != null &&
+            (next.status == BaseStateStatus.success &&
+                next.logoutStatus == BaseStateStatus.success)) {
           final StackRouter router = context.router;
-
-          // Reset Cubit status to prevent repeated triggers
-       //   context.read<MyAccountCubit>().resetLogoutAndDeleteStatus();
 
           // Navigate first, then clear user data
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             if (!context.mounted) return;
 
             // Navigate to the redirect route
-            await router.replaceAll(<PageRouteInfo>[state.redirectRoute!]);
+            await router.replaceAll(<PageRouteInfo>[next.redirectRoute!]);
 
             // Clear user-specific data only (language, country, etc. remain intact)
             await SharedPref.instance.clearUserDataOnly();
           });
         }
       },
-      builder: (BuildContext context, MyAccountState state) {
-        return NoInternetWidget(
+    );
+
+    final MyAccountState state = ref.watch(myAccountNotifierProvider(initialState));
+    return NoInternetWidget(
           childWidget: Scaffold(
             backgroundColor: state.isUserLogin
                 ? MainConfig.appColors.backgroundLightPinkColor
@@ -209,8 +205,6 @@ class MyAccountForm extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
 
   /// Builds a list of login-related menu items.
