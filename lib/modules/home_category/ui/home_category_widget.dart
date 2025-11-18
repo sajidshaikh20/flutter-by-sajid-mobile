@@ -43,28 +43,24 @@ class HomeCategoryWidget extends StatelessWidget {
             (previous.isLoadingMore != current.isLoadingMore);
       },
       builder: (BuildContext context, HomeCategoryState state) {
+
         final List<CategoryResponseModel> categoryResponseModels = _getCategoryResponseModelsFromHomeState(state);
 
-        if (state.status == BaseStateStatus.success) {
-          // ✅ Show No Data Widget if list is empty or null
-          if (categoryResponseModels.isEmpty) {
-            return CustomNoDataWidget(
-              key: ValueKey<String>('empty_categories_${state.hashCode}'),
-              message: context.appString.noCategoriesKey,
-              description: context.appString.noCategoriesDescKey,
-              buttonText: context.appString.tryAgainKey,
-              onButtonPressed: () async {
-                await context.read<HomeCategoryCubit>().refreshCategories();
-              },
-            );
-          }
-
-          // ✅ Show Category Grid when data exists
-          return _buildCategoryGridView(context, state);
+        // ✅ Show No Data Widget directly (no shimmer, no API calls)
+        if (categoryResponseModels.isEmpty) {
+          return CustomNoDataWidget(
+            key: ValueKey<String>('empty_categories_${state.hashCode}'),
+            message: context.appString.noCategoriesKey,
+            description: context.appString.noCategoriesDescKey,
+            buttonText: context.appString.tryAgainKey,
+            onButtonPressed: () async {
+              await context.read<HomeCategoryCubit>().refreshCategories();
+            },
+          );
         }
 
-        // ✅ Show shimmer when loading
-        return const ShimmerCategoryWidget();
+        // ✅ Show Category Grid when data exists
+        return _buildCategoryGridView(context, state);
       },
     );
   }
@@ -87,23 +83,8 @@ class HomeCategoryWidget extends StatelessWidget {
               right: Dimens.space17,
               top: Dimens.space17,
             ),
-            child: GridView.builder(
-              controller: state.scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: categoryResponseModels.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: itemWidth / itemHeight,
-                crossAxisCount: Dimens.crossAxisCount4,
-                crossAxisSpacing: Dimens.space10,
-                mainAxisSpacing: Dimens.space10,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return HomeCategoryItem(
-                  categoryModel: categoryResponseModels[index],
-                  onTap: () => _onCategoryTap(context, categoryResponseModels, index),
-                );
-              },
+            child: Container(
+              height: 200,
             ),
           ),
         ),
