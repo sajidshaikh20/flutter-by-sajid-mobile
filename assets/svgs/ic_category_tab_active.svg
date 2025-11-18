@@ -1,7 +1,0 @@
-<svg id="Icon_2" data-name="Icon 2" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-    viewBox="0 0 24 24">
-    <rect id="Rectangle" width="24" height="24" fill="rgba(255,255,255,0)" />
-    <path id="Grid"
-        d="M14,22a2,2,0,0,1-2-2V14a2,2,0,0,1,2-2h6a2,2,0,0,1,2,2v6a2,2,0,0,1-2,2ZM2,22a2,2,0,0,1-2-2V14a2,2,0,0,1,2-2H8a2,2,0,0,1,2,2v6a2,2,0,0,1-2,2ZM14,10a2,2,0,0,1-2-2V2a2,2,0,0,1,2-2h6a2,2,0,0,1,2,2V8a2,2,0,0,1-2,2ZM2,10A2,2,0,0,1,0,8V2A2,2,0,0,1,2,0H8a2,2,0,0,1,2,2V8a2,2,0,0,1-2,2Z"
-        transform="translate(1 1)" fill="#09195d" />
-</svg>
