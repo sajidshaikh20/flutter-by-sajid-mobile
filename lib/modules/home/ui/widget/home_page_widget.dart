@@ -98,34 +98,6 @@ class _HomePageContent extends BaseResponsiveView {
     );
   }
 
-  Widget commonHeaderWithSizeBox(
-    String title, {
-    required bool isViewAllVisible,
-    Function()? viewAllOnclick,
-    required BuildContext context,
-    required ScreenType device,
-    required HomeState state,
-  }) {
-    return Column(
-      children: <Widget>[
-        const SizedBox(
-          height: Dimens.size25,
-        ),
-        HeaderWidget(
-          device: device,
-          mainHeader: title,
-          viewAll: context.appString.viewAllKey,
-          isPaddingNeed: true,
-          isViewAllVisible: isViewAllVisible,
-          viewAllOnclick: viewAllOnclick,
-        ),
-        const SizedBox(
-          height: Dimens.size18,
-        ),
-      ],
-    );
-  }
-
   @override
   Widget buildDesktopWidget(BuildContext context) {
     return buildViews(context, ScreenType.desktop);

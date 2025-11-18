@@ -131,23 +131,29 @@ class DashboardPage extends BaseResponsiveView {
                     label: 'Home',
                   ),
                   CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavHome.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavHome
-                        .svg(height: iconSize, width: iconSize),
+                    activeIcon: Icon(
+                      Icons.folder,
+                      size: iconSize,
+                      color: MainConfig.appColors.mainColor,
+                    ),
+                    icon: Icon(
+                      Icons.folder_outlined,
+                      size: iconSize,
+                      color: MainConfig.appColors.greyTextColor,
+                    ),
                     label: 'Files',
                   ),
                   CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavHome.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavHome
-                        .svg(height: iconSize, width: iconSize),
+                    activeIcon: Icon(
+                      Icons.view_list,
+                      size: iconSize,
+                      color: MainConfig.appColors.mainColor,
+                    ),
+                    icon: Icon(
+                      Icons.view_list_outlined,
+                      size: iconSize,
+                      color: MainConfig.appColors.greyTextColor,
+                    ),
                     label: 'Tabs',
                   ),
                   CustomBottomBarItems<Widget>(

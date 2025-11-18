@@ -62,18 +62,13 @@ dependencies:
   awesome_notifications: ^0.10.1
   firebase_messaging: ^16.0.0
   flutter_rating_bar: ^4.0.1
-  timeline_tile: ^2.0.0
-  google_maps_flutter: ^2.10.0
   flutter_html: ^3.0.0-beta.2
   share_plus: ^11.1.0
   google_places_flutter: ^2.0.9
-  geolocator: ^14.0.2
-  geocoding: ^4.0.0
   country_code_picker: ^3.1.0
   lottie: ^3.3.1
   shimmer: ^3.0.0
   collection: ^1.18.0 # Collections and utilities functions and classes related to collections, platforms: All
-  flutter_widget_from_html: ^0.17.0
   photo_view: ^0.15.0
   webview_flutter: ^4.9.0
   firebase_crashlytics: ^5.0.0
@@ -88,12 +83,10 @@ dependencies:
   badges: ^3.1.2
   network_cache_interceptor: ^2.3.5
   fast_cached_network_image: ^1.3.3+5
-  otp_pin_field:
-    path: ./dependency/otp_pin_field-1.3.2
   sensors_plus: ^6.1.2
-  http: 1.2.2
   flutter_native_splash: ^2.4.6
   nested: ^1.0.0
+  flutter_inappwebview: ^6.1.5
 
 
 
@@ -117,7 +110,6 @@ dev_dependencies:
 
 dependency_overrides:
   dart_style: ^3.0.0
-  http: 1.2.2
 
 flutter_gen:
   integrations:
