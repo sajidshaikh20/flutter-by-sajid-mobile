@@ -4,6 +4,7 @@ export 'package:package_info_plus/package_info_plus.dart';
 export 'base_config.dart';
 export 'base_responsive_view.dart';
 export 'base_state.dart';
+export 'base_state_notifier.dart';
 export 'main_config.dart';
 export 'singleton.dart';
 

@@ -270,6 +270,7 @@ class _TaskFormViewState extends ConsumerState<TaskFormView> {
               ),
               const SizedBox(height: Dimens.space24),
               Consumer(
+
                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
                   final TaskState state = ref.watch(taskNotifierProvider);
                   return CustomButtonWidget(
@@ -277,6 +278,7 @@ class _TaskFormViewState extends ConsumerState<TaskFormView> {
                         ? 'Please wait...'
                         : (_isEditMode ? 'Update Task' : 'Save Task'),
                     onTap: _saveTask,
+
                     isButtonEnabled: state.status != BaseStateStatus.loading,
                     icon: state.status == BaseStateStatus.loading
                         ? const SizedBox(
