@@ -55,31 +55,13 @@ class LoginedUserProfile extends StatelessWidget {
       RowItemModel(
         title: context.appString.myOrdersKey,
         subtitle: loyaltyData?.myOrderCounts?.toString() ?? '0',
-
       ),
-      //# TODO in first phase we don't give loyalty things but in future its required
-      /*RowItemModel(
-        title: context.appString.loyaltyPointsKey,
-        subtitle: loyaltyData?.totalLoyaltyPoints?.toString() ?? '0',
-        route: const LoyaltyPointsRoute(),
-      ),*/
-    /*  RowItemModel(
-        route: const MyWalletRoute(),
-        title: context.appString.myWalletKey,
-        subtitle: loyaltyData?.myWallet?.toString() ?? '0',
-      ),*/
     ];
   }
 
   /// Builds a list of settings items for account configuration.
   List<RowItemModel> settingsItems(BuildContext context) {
-
-    // Get loyalty points data from the state
-    final LoyaltyPointsResponseModel? loyaltyData = myAccountState.loyaltyPointsModel?.data?.isNotEmpty ?? false
-        ? myAccountState.loyaltyPointsModel!.data!.first
-        : null;
-
-   return <RowItemModel>[
+    return <RowItemModel>[
       RowItemModel(
         title: context.appString.languageKey,
         subtitle: context.appString.englishKey,
@@ -118,7 +100,9 @@ class LoginedUserProfile extends StatelessWidget {
       ),
       RowItemModel(
         title: context.appString.aboutAppKey,
-
+        route: CommonWebView(
+            title: context.appString.aboutAppKey, url:
+        isLanguageAlignmentLTR ? AppConstant.about_us : AppConstant.about_us_ar),
       ),
       RowItemModel(
         title: context.appString.termsAndConditionsKey,

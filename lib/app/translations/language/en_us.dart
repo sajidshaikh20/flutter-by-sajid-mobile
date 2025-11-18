@@ -669,7 +669,7 @@ class EnUS extends AppString {
   String get profileKey => "Profile";
 
   @override
-  String get welcomeToDukkanKey => 'Welcome to Dukkan';
+  String get welcomeToDukkanKey => 'Welcome to Sajid Base Codeal';
 
   @override
   String get profileMsgKey =>

@@ -201,7 +201,7 @@ abstract class AppPaths {
   static const String loyaltyPoints = '/loyaltyPoints';
 
   /// CMS (Content Management System) page route.
-  static const String cmspage = '/cmsPage';
+  static const String webView = '/webView';
 
   /// Notification settings page route.
   static const String notificationSetting = '/notificationSetting';

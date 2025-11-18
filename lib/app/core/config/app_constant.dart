@@ -305,7 +305,7 @@ abstract class AppConstant {
   static const String term_conditions_ar = 'https://stage-flutterbysajid.odoo.com/ar/terms-and-conditions';
   static const String privacy_policy = 'https://stage-flutterbysajid.odoo.com/privacy-policy';
   static const String privacy_policy_ar = 'https://stage-flutterbysajid.odoo.com/ar/privacy-policy';
-  static const String about_us = 'https://stage-flutterbysajid.odoo.com/about-us';
+  static const String about_us = 'https://www.kuvaka.io/about';
   static const String about_us_ar = 'https://stage-flutterbysajid.odoo.com/ar/about-us';
   static const String faq = 'https://stage-flutterbysajid.odoo.com/faq';
   static const String faq_ar = 'https://stage-flutterbysajid.odoo.com/ar/faq';

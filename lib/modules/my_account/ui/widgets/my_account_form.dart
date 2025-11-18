@@ -226,11 +226,12 @@ class MyAccountForm extends StatelessWidget {
         ),
         RowItemModel(
           title: context.appString.aboutAppKey,
-
+          route: CommonWebView(
+              title: context.appString.aboutAppKey, url:
+          isLanguageAlignmentLTR ? AppConstant.about_us : AppConstant.about_us_ar),
         ),
         RowItemModel(
           title: context.appString.termsAndConditionsKey,
-
         ),
         RowItemModel(
           title: context.appString.rateTheAppKey,
