@@ -236,12 +236,7 @@ abstract class AppConstant {
   static const googleSignInSuccess = "Google Sign in Complete";
   static const appleSignInSuccess = "Apple Sign in Complete";
 
-  static List<String> carousalImage = [
-    Assets.png.bgCarousalSample2.path,
-    Assets.png.bgCarousalSample1.path,
-    Assets.png.bgCarousalSample1.path,
-    Assets.png.bgCarousalSample2.path
-  ];
+
 
 
 
