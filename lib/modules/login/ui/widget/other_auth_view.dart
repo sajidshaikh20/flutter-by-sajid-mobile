@@ -10,23 +10,7 @@ class OtherAuthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double forgotPasswordText = Dimens.fontSize14;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        CustomTextLabelWidget(
-            label: context.appString.forgotPasswordKey,
-            style: context.textTheme.headlineMedium?.copyWith(
-              color: AppColors.blackColor,
-              height: Dimens.lineHeight20.toLineHeight(forgotPasswordText),
-              fontWeight: FontWeight.w600,
-              fontSize: forgotPasswordText,
-            ),
-            onTap: () async {
-              await context.router.push(const ForgotPasswordRoute());
-            }),
-      ],
-    );
+    // Forgot password removed - return empty widget
+    return const SizedBox.shrink();
   }
 }

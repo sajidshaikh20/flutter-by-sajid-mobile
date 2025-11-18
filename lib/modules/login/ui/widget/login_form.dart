@@ -320,9 +320,6 @@ class LoginForm extends StatelessWidget {
                             padding: const EdgeInsets.only(
                                 bottom: Dimens.space50, top: Dimens.size82),
                             child: CustomTextLabelWidget(
-                              onTap: () async {
-                                await context.router.push(const SignUpRoute());
-                              },
                               label: context.appString.dontHaveAccountKey,
                               style: context.textTheme.titleLarge?.copyWith(
                                   height: Dimens.lineHeight20

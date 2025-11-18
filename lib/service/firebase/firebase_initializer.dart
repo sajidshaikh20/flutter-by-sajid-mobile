@@ -20,7 +20,6 @@ class FirebaseInitializer {
         // Try to enable Firebase services
         try {
           await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-          await AnalyticsService.instance.init();
           DebugLog.instance.i("Firebase services enabled successfully");
         } on Exception catch (serviceError) {
           DebugLog.instance.e("Error enabling Firebase services: $serviceError");

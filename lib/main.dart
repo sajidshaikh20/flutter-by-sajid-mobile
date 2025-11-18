@@ -63,10 +63,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           lazy: false,
           create: (BuildContext context) => getIt<CartCountCubit>(),
         ),
-        BlocProvider<GlobalWishlistManager>(
-          lazy: false,
-          create: (BuildContext context) => getIt<GlobalWishlistManager>(),
-        ),
         BlocProvider<LocaleCubit>(
           create: (BuildContext context) => LocaleCubit.instance,
         ),
@@ -78,14 +74,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (BuildContext context) => HomeCubit(
               homeRepository: HomeRepositoryImpl(),
               countCubit: context.read<CartCountCubit>()),
-        ),
-        BlocProvider<SocialLoginCubit>(
-          create: (BuildContext context) => SocialLoginCubit(
-            repository: LoginRepositoryImpl(),
-            initialState: const SocialLoginState(
-              status: BaseStateStatus.initial,
-            ),
-          ),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(

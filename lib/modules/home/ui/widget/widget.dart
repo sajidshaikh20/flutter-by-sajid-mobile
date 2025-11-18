@@ -1,4 +1,3 @@
-export 'banner_carousel_widget.dart';
 export 'common_category_widget.dart';
 export 'common_item_search_cart.dart';
 export 'common_rating_widget.dart';

@@ -85,9 +85,6 @@ class HomeAppbar extends StatelessWidget {
                           secondTitle: context.appString.pickupKey,
                           selectedIndex: state.selectedSegmentIndex,
                           onIndexChanged: (int value) {
-                            /*context
-                                .read<ProductHomeCubit>()
-                                .onSegmentChangedIndex(value);*/
                           },
                         ),
                    Expanded(

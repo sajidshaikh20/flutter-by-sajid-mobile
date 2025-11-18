@@ -163,9 +163,9 @@ void handleRedirection({
     case AppConstant.promotion:
       if(data?['entity']== '0'){
         if (isInitialRoute) {
-          unawaited(router.pushAll(<PageRouteInfo>[const NotificationRoute()]));
+          unawaited(router.pushAll(<PageRouteInfo>[const DashboardRoute()]));
         } else {
-          unawaited(router.push(const NotificationRoute()));
+          unawaited(router.push(const DashboardRoute()));
         }
       }else{
         int productId = int.tryParse(data?['entity'] ?? '') ?? 0;
@@ -193,9 +193,9 @@ void handleRedirection({
 
     default:
       if (isInitialRoute) {
-        unawaited(router.pushAll(<PageRouteInfo>[const NotificationRoute()]));
+        unawaited(router.pushAll(<PageRouteInfo>[const DashboardRoute()]));
       } else {
-        unawaited(router.push(const NotificationRoute()));
+        unawaited(router.push(const DashboardRoute()));
       }
   }
   // Reset flag after navigation completes

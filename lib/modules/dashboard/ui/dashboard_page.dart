@@ -1,5 +1,3 @@
-import 'package:badges/badges.dart' as badges;
-
 import '../../../../utils/exports.dart';
 
 /// A responsive page that represents the main dashboard of the app.
@@ -77,10 +75,9 @@ class DashboardPage extends BaseResponsiveView {
       },
       routes: <PageRouteInfo>[
         HomeRoute(),
-        const HomeCategoryRoute(),
-        const NotificationRoute(),
-        const WishListRoute(),
-        const MyAccountRoute(),
+        const FilesRoute(),
+        const TabsRoute(),
+        const SettingsRoute(),
       ],
       builder: (BuildContext context, Widget child) {
         /* final tabsRouter = AutoTabsRouter.of(context);
@@ -131,57 +128,27 @@ class DashboardPage extends BaseResponsiveView {
                             MainConfig.appColors.mainColor, BlendMode.srcIn)),
                     icon: Assets.svgs.icNavHome
                         .svg(height: iconSize, width: iconSize),
-                    label: context.appString.navHomeKey,
+                    label: 'Home',
                   ),
                   CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavCategories.svg(
+                    activeIcon: Assets.svgs.icNavHome.svg(
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
                             MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavCategories
+                    icon: Assets.svgs.icNavHome
                         .svg(height: iconSize, width: iconSize),
-                    label: context.appString.navCategoriesKey,
+                    label: 'Files',
                   ),
                   CustomBottomBarItems<Widget>(
-                    icon:
-                    badges.Badge(
-                      badgeAnimation: const badges.BadgeAnimation.size(toAnimate: false),
-                      showBadge: false,
-                      badgeStyle: badges.BadgeStyle(
-                        padding: Dimens.space5.padding,
-                        badgeColor: MainConfig.appColors.redColor,
-                        elevation: 0,
-                      ),
-                      position: badges.BadgePosition.topEnd(end: -Dimens.space7),
-                      badgeContent: CustomTextLabelWidget(
-                        label: AppConstant.notificationCount.toString(),
-                        style: context.textTheme.headlineMedium?.copyWith(
-                            fontSize: Dimens.fontSize12,
-                            height: Dimens.lineHeight14
-                                .toLineHeight(Dimens.fontSize12),
-                            color: AppColors.whiteColor,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      child: Assets.svgs.icNavNotification
-                          .svg(height: Dimens.size24, width: Dimens.size24),
-                    ),
-                    activeIcon: Assets.svgs.icNavNotification.svg(
+                    activeIcon: Assets.svgs.icNavHome.svg(
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
                             MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    label: context.appString.navNotificationsKey,
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavWishlist.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavWishlist
+                    icon: Assets.svgs.icNavHome
                         .svg(height: iconSize, width: iconSize),
-                    label: context.appString.navWishlistKey,
+                    label: 'Tabs',
                   ),
                   CustomBottomBarItems<Widget>(
                     icon: Assets.svgs.icNavAccount
@@ -191,19 +158,14 @@ class DashboardPage extends BaseResponsiveView {
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
                             MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    label: context.appString.navAccountKey,
+                    label: 'Settings',
                   ),
                 ],
                 currentIndex: tabsRouter.activeIndex,
                 onTap: (int value) {
                   final TabState selectedTab = TabState.values[value];
-                  if (selectedTab == TabState.cart &&
-                      tabsRouter.activeIndex != value) {
-                  } else if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
+                  if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
                     context.read<HomeCubit>().refreshHomeData();
-                  } else if (selectedTab == TabState.offers &&
-                      tabsRouter.activeIndex != value) {
-                    /// Reset filters and reload offers when switching to the "offers" tab.
                   }
                   tabsRouter.setActiveIndex(value);
                 },

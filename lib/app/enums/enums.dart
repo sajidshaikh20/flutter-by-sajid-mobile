@@ -142,14 +142,12 @@ enum ProductListUpdateType {
 enum TabState {
   /// Home tab.
   home,
-  /// Cart tab.
-  category,
-  /// Wishlist tab.
-  offers,
-  /// Profile tab.
-  myAccount,
-  ///
-  cart,
+  /// Files tab.
+  files,
+  /// Tabs tab.
+  tabs,
+  /// Settings tab.
+  settings,
 }
 
 /// Enum representing different types of password fields.

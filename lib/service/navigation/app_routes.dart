@@ -22,14 +22,6 @@ class AppRouter extends RootStackRouter {
 
         /// Authentication Flow Routes
         CustomRoute<dynamic>(
-          page: SocialLoginRoute.page,
-          path: AppPaths.socialLogin,
-          opaque: false,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
           page: LoginRoute.page,
           maintainState: false,
           path: AppPaths.login,
@@ -38,27 +30,6 @@ class AppRouter extends RootStackRouter {
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
         ),
-        CustomRoute<dynamic>(
-          page: SignUpRoute.page,
-          path: AppPaths.signup,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-          page: ForgotPasswordRoute.page,
-          maintainState: false,
-          path: AppPaths.forgotPassword,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-            durationInMilliseconds: Dimens.milliseconds400,
-            reverseDurationInMilliseconds: Dimens.milliseconds400,
-            transitionsBuilder: fadePageTransition,
-            page: VerifyOtpRoute.page,
-            path: AppPaths.verifyOtp),
 
         /// Language Selection Routes
         CustomRoute<dynamic>(
@@ -89,32 +60,24 @@ class AppRouter extends RootStackRouter {
               transitionsBuilder: fadePageTransition,
             ),
             CustomRoute<dynamic>(
-              page: HomeCategoryRoute.page,
-              path: AppPaths.category,
+              page: FilesRoute.page,
+              path: AppPaths.files,
               maintainState: false,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,
               transitionsBuilder: fadePageTransition,
             ),
             CustomRoute<dynamic>(
-              page: NotificationRoute.page,
+              page: TabsRoute.page,
               maintainState: false,
-              path: AppPaths.notification,
+              path: AppPaths.tabs,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,
               transitionsBuilder: fadePageTransition,
             ),
             CustomRoute<dynamic>(
-              page: WishListRoute.page,
-              maintainState: false,
-              path: AppPaths.wishlist,
-              durationInMilliseconds: Dimens.milliseconds400,
-              reverseDurationInMilliseconds: Dimens.milliseconds400,
-              transitionsBuilder: fadePageTransition,
-            ),
-            CustomRoute<dynamic>(
-              page: MyAccountRoute.page,
-              path: AppPaths.account,
+              page: SettingsRoute.page,
+              path: AppPaths.settings,
               maintainState: false,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,

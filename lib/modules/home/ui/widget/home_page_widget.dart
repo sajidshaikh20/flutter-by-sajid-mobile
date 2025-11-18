@@ -74,36 +74,14 @@ class _HomePageContent extends BaseResponsiveView {
             ),
           ],
           child: BlocBuilder<HomeCubit, HomeState>(
-            buildWhen: (HomeState previous, HomeState current) {
-              // Only rebuild when relevant home data changes
-              return previous.apiCallForHomeBanners !=
-                      current.apiCallForHomeBanners ||
-                  previous.apiCallForHomeCategory !=
-                      current.apiCallForHomeCategory ||
-                  previous.apiCallForHomeDeals != current.apiCallForHomeDeals ||
-                  previous.apiCallForYouMayAlsoLikeDeals !=
-                      current.apiCallForYouMayAlsoLikeDeals ||
-                  previous.apiCallForLoyaltyPoints !=
-                      current.apiCallForLoyaltyPoints ||
-                  previous.bannersModel != current.bannersModel ||
-                  previous.categoriesModel != current.categoriesModel ||
-                  previous.dealsModel != current.dealsModel ||
-                  previous.youMayAlsoLikeDealsModel !=
-                      current.youMayAlsoLikeDealsModel ||
-                  previous.loyaltyPointsModel != current.loyaltyPointsModel ||
-                  previous.brandsList != current.brandsList ||
-                  previous.cartCount != current.cartCount ||
-                  previous.msg != current.msg;
-            },
             builder: (BuildContext context, HomeState homeState) {
               return Stack(
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      const HomeAppbar(),
-                      /*homeState.apiCallForAddress != BaseStateStatus.success
-                          ? const HomeAddressSelectionShimmer()
-                          : const HomeAddressSelection(),*/
+                      const HomeAppbar(
+                        title: "kuvakatech Flutter Assignment",
+                      ),
                       Container(height: 200, color: Colors.red)
                     ],
                   ),

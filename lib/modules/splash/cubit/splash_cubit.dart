@@ -73,7 +73,7 @@ class SplashCubit extends Cubit<SplashState> {
           redirectPath: SharedPref.instance.getBool(
                   PrefsKey.isCountryAndLanguageSelectedKey,
                   defValue: false)
-              ? AppPaths.socialLogin
+              ? AppPaths.login
               : AppPaths.languageSelection,
         ));
       },

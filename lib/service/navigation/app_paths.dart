@@ -68,8 +68,14 @@ abstract class AppPaths {
   /// Home page route (sub-path).
   static const String home = 'home';
 
-  /// Category page route (sub-path).
-  static const String category = 'category';
+  /// Files page route (sub-path).
+  static const String files = 'files';
+
+  /// Tabs page route (sub-path).
+  static const String tabs = 'tabs';
+
+  /// Settings page route (sub-path).
+  static const String settings = 'settings';
 
   /// Offers or promotions page route (sub-path).
   static const String offers = 'offers';
