@@ -18,7 +18,8 @@ class TabsPage extends StatefulWidget {
 
 class _TabsPageState extends State<TabsPage> {
   final TextEditingController _urlController = TextEditingController();
-  final Map<String, GlobalKey<WebViewContainerState>> _webViewKeys = <String, GlobalKey<WebViewContainerState>>{};
+  final Map<String, GlobalKey<WebViewContainerState>> _webViewKeys =
+      <String, GlobalKey<WebViewContainerState>>{};
   TabsCubit? _tabsCubit;
   AiSummaryCubit? _summaryCubit;
 
@@ -108,7 +109,7 @@ class _TabsPageState extends State<TabsPage> {
           body: BlocBuilder<TabsCubit, TabsState>(
             builder: (BuildContext context, TabsState state) {
               final BrowserTabModel? activeTab = state.activeTab;
-              
+
               // Update URL controller when active tab changes
               if (activeTab != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -117,40 +118,44 @@ class _TabsPageState extends State<TabsPage> {
                   }
                 });
               }
-        
+
               // Create web view keys for all tabs
               for (final BrowserTabModel tab in state.tabs) {
                 if (!_webViewKeys.containsKey(tab.id)) {
                   _webViewKeys[tab.id] = GlobalKey<WebViewContainerState>();
                 }
               }
-        
+
               // Remove keys for closed tabs
-              final Set<String> tabIds = state.tabs.map((BrowserTabModel t) => t.id).toSet();
-              _webViewKeys.removeWhere((String key, GlobalKey<WebViewContainerState> value) => !tabIds.contains(key));
-        
+              final Set<String> tabIds =
+                  state.tabs.map((BrowserTabModel t) => t.id).toSet();
+              _webViewKeys.removeWhere(
+                  (String key, GlobalKey<WebViewContainerState> value) =>
+                      !tabIds.contains(key));
+
               if (activeTab == null) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
-        
+
               return Column(
                 children: <Widget>[
-                  // Tab bar
+                  // Tab bar - wrapped with BlocBuilder for instant updates
                   BrowserTabBar(
-                    tabs: state.tabs,
-                    activeTabId: state.activeTabId,
                     onTabSelected: (String tabId) {
                       unawaited(_tabsCubit?.switchTab(tabId));
                     },
                     onTabClosed: (String tabId) {
-                      unawaited(_tabsCubit?.closeTab(tabId));
+                      // Remove key immediately for instant UI update
                       _webViewKeys.remove(tabId);
+                      // Close tab (state will update instantly)
+                      unawaited(_tabsCubit?.closeTab(tabId));
                     },
-                  onNewTabPressed: () {
-                    unawaited(_tabsCubit?.createNewTab('https://www.kuvaka.io/'));
-                  },
+                    onNewTabPressed: () {
+                      // Create new tab (state will update instantly)
+                      unawaited(_tabsCubit?.createNewTab('https://www.google.com'));
+                    },
                   ),
                   // Toolbar
                   BrowserToolbar(
@@ -173,7 +178,8 @@ class _TabsPageState extends State<TabsPage> {
                   ),
                   // Summary Panel
                   BlocBuilder<AiSummaryCubit, AiSummaryState>(
-                    builder: (BuildContext context, AiSummaryState summaryState) {
+                    builder:
+                        (BuildContext context, AiSummaryState summaryState) {
                       if (summaryState.summary != null) {
                         return SummaryPanel(
                           summary: summaryState.summary!,
@@ -193,7 +199,7 @@ class _TabsPageState extends State<TabsPage> {
             builder: (BuildContext context, TabsState state) {
               final BrowserTabModel? activeTab = state.activeTab;
               if (activeTab == null) return const SizedBox.shrink();
-              
+
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -206,15 +212,11 @@ class _TabsPageState extends State<TabsPage> {
                     tooltip: 'Summarize Page',
                   ),
                   const SizedBox(height: Dimens.space8),
-                  // Download button (only show for downloadable URLs)
-                  if (activeTab.url.toLowerCase().contains('.pdf') ||
-                      activeTab.url.toLowerCase().contains('.docx') ||
-                      activeTab.url.toLowerCase().contains('.pptx') ||
-                      activeTab.url.toLowerCase().contains('.xlsx'))
-                    DownloadButton(
-                      url: activeTab.url,
-                      fileName: _getFileNameFromUrl(activeTab.url),
-                    ),
+                  // Download button (shown for all pages, will check if downloadable)
+                  DownloadButton(
+                    url: activeTab.url,
+                    fileName: _getFileNameFromUrl(activeTab.url),
+                  ),
                 ],
               );
             },

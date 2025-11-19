@@ -11,6 +11,7 @@ class WebViewContainer extends StatefulWidget {
     required this.tab,
     required this.cubit,
   });
+
   final BrowserTabModel tab;
   final TabsCubit cubit;
 
@@ -33,15 +34,31 @@ class WebViewContainerState extends State<WebViewContainer> {
   @override
   void didUpdateWidget(WebViewContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // When tab changes, load the new URL if different
-    if (oldWidget.tab.id != widget.tab.id || oldWidget.tab.url != widget.tab.url) {
+    
+    // Only handle URL changes if it's a different tab or different URL
+    if (oldWidget.tab.id != widget.tab.id) {
+      // Different tab - update controller and load if needed
       _urlController.text = widget.tab.url;
-      // Load URL if it's different from what's currently loaded
-      if (_webViewController != null && _lastLoadedUrl != widget.tab.url) {
+      if (_lastLoadedUrl != widget.tab.url && _webViewController != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           unawaited(_loadUrlForTab(widget.tab.url));
         });
       }
+    } else if (oldWidget.tab.url != widget.tab.url && _webViewController != null) {
+      // Same tab but URL changed - load new URL
+      _urlController.text = widget.tab.url;
+      if (_lastLoadedUrl != widget.tab.url) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          unawaited(_loadUrlForTab(widget.tab.url));
+        });
+      }
+    }
+    
+    // Always update navigation state when switching tabs
+    if (oldWidget.tab.id != widget.tab.id && _webViewController != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(_updateNavigationState());
+      });
     }
   }
 
@@ -53,16 +70,9 @@ class WebViewContainerState extends State<WebViewContainer> {
 
   Future<void> _loadUrlForTab(String url) async {
     if (_webViewController == null) return;
-    
-    String finalUrl = url;
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      if (url.contains('.') && !url.contains(' ')) {
-        finalUrl = 'https://$url';
-      } else {
-        finalUrl = 'https://www.kuvaka.io/search?q=${Uri.encodeComponent(url)}';
-      }
-    }
-    
+
+    final String finalUrl = _validateAndFormatUrl(url);
+
     try {
       await _webViewController?.loadUrl(
         urlRequest: URLRequest(url: WebUri(finalUrl)),
@@ -70,6 +80,9 @@ class WebViewContainerState extends State<WebViewContainer> {
       _lastLoadedUrl = finalUrl;
     } on Exception catch (e) {
       DebugLog.instance.e('Error loading URL: $e');
+      if (mounted) {
+        displaySnackBar('Failed to load URL: $e', context);
+      }
     }
   }
 
@@ -148,6 +161,8 @@ class WebViewContainerState extends State<WebViewContainer> {
             onWebViewCreated: (InAppWebViewController controller) {
               _webViewController = controller;
               _lastLoadedUrl = widget.tab.url;
+              // Initialize navigation state
+              unawaited(_updateNavigationStateFromController(controller));
               // Load URL if it's different from initial
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (_lastLoadedUrl != widget.tab.url) {
@@ -159,53 +174,125 @@ class WebViewContainerState extends State<WebViewContainer> {
               if (url != null) {
                 final String urlString = url.toString();
                 _lastLoadedUrl = urlString;
+                // Reset progress when loading starts
+                unawaited(widget.cubit.updateTabProgress(widget.tab.id, 0.0));
                 unawaited(widget.cubit.updateTabUrl(widget.tab.id, urlString));
-                unawaited(widget.cubit.updateTabLoading(widget.tab.id, isLoading: true));
+                unawaited(widget.cubit
+                    .updateTabLoading(widget.tab.id, isLoading: true));
                 _urlController.text = urlString;
+                // Update navigation state when loading starts
+                unawaited(_updateNavigationStateFromController(controller));
               }
             },
             onLoadStop: (InAppWebViewController controller, WebUri? url) async {
               if (url != null) {
-                await widget.cubit.updateTabUrl(widget.tab.id, url.toString());
-                await widget.cubit.updateTabLoading(widget.tab.id, isLoading: false);
-                _urlController.text = url.toString();
+                final String urlString = url.toString();
+                _lastLoadedUrl = urlString;
+                await widget.cubit.updateTabUrl(widget.tab.id, urlString);
+                // Reset progress to 0 and set loading to false when page finishes
+                await widget.cubit.updateTabProgress(widget.tab.id, 0.0);
+                await widget.cubit
+                    .updateTabLoading(widget.tab.id, isLoading: false);
+                _urlController.text = urlString;
 
                 // Get page title
                 final String? title = await controller.getTitle();
-                if (title != null) {
+                if (title != null && title.isNotEmpty) {
                   await widget.cubit.updateTabTitle(widget.tab.id, title);
                 }
 
                 // Update navigation state
-                final bool canGoBack = await controller.canGoBack();
-                final bool canGoForward = await controller.canGoForward();
-                await widget.cubit.updateNavigationState(
-                  widget.tab.id,
-                  canGoBack: canGoBack,
-                  canGoForward: canGoForward,
-                );
+                await _updateNavigationStateFromController(controller);
               }
             },
-            onProgressChanged: (InAppWebViewController controller, int progress) {
+            onUpdateVisitedHistory: (InAppWebViewController controller, WebUri? url, bool? isReload) async {
+              // This is called when navigation history is updated (e.g., when clicking links)
+              if (url != null) {
+                final String urlString = url.toString();
+                _lastLoadedUrl = urlString;
+                await widget.cubit.updateTabUrl(widget.tab.id, urlString);
+                _urlController.text = urlString;
+                
+                // Update navigation state after history change
+                await _updateNavigationStateFromController(controller);
+              }
+            },
+            shouldOverrideUrlLoading: (InAppWebViewController controller, inapp.NavigationAction navigationAction) async {
+              // Allow all navigation - don't block any URLs
+              final WebUri? uri = navigationAction.request.url;
+              if (uri != null) {
+                final String urlString = uri.toString();
+                DebugLog.instance.d('Navigating to: $urlString');
+                // Update URL immediately when navigation is triggered
+                unawaited(widget.cubit.updateTabUrl(widget.tab.id, urlString));
+              }
+              return inapp.NavigationActionPolicy.ALLOW;
+            },
+            onProgressChanged:
+                (InAppWebViewController controller, int progress) {
               final double progressValue = progress / 100.0;
               unawaited(widget.cubit.updateTabProgress(
                 widget.tab.id,
                 progressValue,
               ));
-              // Set loading to false when progress reaches 100%
+              // Set loading to false and reset progress when progress reaches 100%
               if (progress == 100) {
-                unawaited(widget.cubit.updateTabLoading(widget.tab.id, isLoading: false));
+                unawaited(widget.cubit
+                    .updateTabLoading(widget.tab.id, isLoading: false));
+                // Update navigation state when page finishes loading
+                unawaited(_updateNavigationStateFromController(controller));
+                // Reset progress after a short delay to hide the progress bar
+                Future<void>.delayed(const Duration(milliseconds: 300), () {
+                  unawaited(widget.cubit.updateTabProgress(widget.tab.id, 0.0));
+                });
               }
             },
-            onReceivedError: (InAppWebViewController controller, inapp.WebResourceRequest request, inapp.WebResourceError error) {
-              // Set loading to false when error occurs
-              unawaited(widget.cubit.updateTabLoading(widget.tab.id, isLoading: false));
+            onReceivedError: (InAppWebViewController controller,
+                inapp.WebResourceRequest request,
+                inapp.WebResourceError error) {
+              // Set loading to false and reset progress when error occurs
+              unawaited(widget.cubit
+                  .updateTabLoading(widget.tab.id, isLoading: false));
+              unawaited(widget.cubit.updateTabProgress(widget.tab.id, 0.0));
+              
+              // Log error details
               DebugLog.instance.e('WebView error: ${error.description}');
+              DebugLog.instance.e('Error type: ${error.type}');
+              
+              // Show user-friendly error message
+              final String errorMessage = _getErrorMessage(error);
+              if (errorMessage.isNotEmpty && mounted) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    displaySnackBar(errorMessage, context);
+                  }
+                });
+              }
             },
-            onReceivedHttpError: (InAppWebViewController controller, inapp.WebResourceRequest request, inapp.WebResourceResponse errorResponse) {
-              // Set loading to false when HTTP error occurs
-              unawaited(widget.cubit.updateTabLoading(widget.tab.id, isLoading: false));
-              DebugLog.instance.e('WebView HTTP error: ${errorResponse.statusCode}');
+            onReceivedHttpError: (InAppWebViewController controller,
+                inapp.WebResourceRequest request,
+                inapp.WebResourceResponse errorResponse) {
+              // Set loading to false and reset progress when HTTP error occurs
+              unawaited(widget.cubit
+                  .updateTabLoading(widget.tab.id, isLoading: false));
+              unawaited(widget.cubit.updateTabProgress(widget.tab.id, 0.0));
+              
+              // Log HTTP error
+              DebugLog.instance
+                  .e('WebView HTTP error: ${errorResponse.statusCode}');
+              
+              // Show user-friendly error message
+              final int? statusCode = errorResponse.statusCode;
+              if (statusCode != null) {
+                final String errorMessage = _getHttpErrorMessage(statusCode);
+                if (errorMessage.isNotEmpty && mounted) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      displaySnackBar(errorMessage, context);
+                    }
+                  });
+                }
+              }
             },
           ),
         ),
@@ -214,14 +301,47 @@ class WebViewContainerState extends State<WebViewContainer> {
   }
 
   Future<void> goBack() async {
-    if (await _webViewController?.canGoBack() ?? false) {
-      await _webViewController?.goBack();
+    if (_webViewController != null) {
+      final bool canGoBack = await _webViewController!.canGoBack();
+      if (canGoBack) {
+        await _webViewController!.goBack();
+        // Wait a bit for navigation to complete, then update state
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await _updateNavigationState();
+      }
     }
   }
 
   Future<void> goForward() async {
-    if (await _webViewController?.canGoForward() ?? false) {
-      await _webViewController?.goForward();
+    if (_webViewController != null) {
+      final bool canGoForward = await _webViewController!.canGoForward();
+      if (canGoForward) {
+        await _webViewController!.goForward();
+        // Wait a bit for navigation to complete, then update state
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        await _updateNavigationState();
+      }
+    }
+  }
+
+  Future<void> _updateNavigationState() async {
+    if (_webViewController != null) {
+      await _updateNavigationStateFromController(_webViewController!);
+    }
+  }
+
+  Future<void> _updateNavigationStateFromController(
+      InAppWebViewController controller) async {
+    try {
+      final bool canGoBack = await controller.canGoBack();
+      final bool canGoForward = await controller.canGoForward();
+      await widget.cubit.updateNavigationState(
+        widget.tab.id,
+        canGoBack: canGoBack,
+        canGoForward: canGoForward,
+      );
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error updating navigation state: $e');
     }
   }
 
@@ -229,20 +349,41 @@ class WebViewContainerState extends State<WebViewContainer> {
     await _webViewController?.reload();
   }
 
-  Future<void> loadUrl(String url) async {
-    String finalUrl = url;
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      // Check if it's a search query or domain
-      if (url.contains('.') && !url.contains(' ')) {
-        finalUrl = 'https://$url';
+  String _validateAndFormatUrl(String url) {
+    if (url.isEmpty) return 'https://www.google.com';
+    
+    String formattedUrl = url.trim();
+    
+    // Add protocol if missing
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      // Check if it looks like a domain
+      if (formattedUrl.contains('.') && !formattedUrl.contains(' ')) {
+        formattedUrl = 'https://$formattedUrl';
       } else {
-        // Use kuvaka.io for search queries
-        finalUrl = 'https://www.kuvaka.io/search?q=${Uri.encodeComponent(url)}';
+        // Treat as search query
+        formattedUrl = 'https://www.google.com/search?q=${Uri.encodeComponent(formattedUrl)}';
       }
     }
-    await _webViewController?.loadUrl(
-      urlRequest: URLRequest(url: WebUri(finalUrl)),
-    );
+    
+    return formattedUrl;
+  }
+
+  Future<void> loadUrl(String url) async {
+    if (url.isEmpty) return;
+    
+    final String finalUrl = _validateAndFormatUrl(url);
+    
+    try {
+      await _webViewController?.loadUrl(
+        urlRequest: URLRequest(url: WebUri(finalUrl)),
+      );
+      _lastLoadedUrl = finalUrl;
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error loading URL: $e');
+      if (mounted) {
+        displaySnackBar('Failed to load URL: $e', context);
+      }
+    }
   }
 
   Future<String?> extractPageText() async {
@@ -253,11 +394,51 @@ class WebViewContainerState extends State<WebViewContainer> {
           return text.trim();
         })();
       ''';
-      final dynamic result = await _webViewController?.evaluateJavascript(source: script);
+      final dynamic result =
+          await _webViewController?.evaluateJavascript(source: script);
       return result?.toString();
     } on Exception catch (e) {
       DebugLog.instance.e('Error extracting page text: $e');
       return null;
     }
   }
+
+  String _getErrorMessage(inapp.WebResourceError error) {
+    // Map error types to user-friendly messages
+    final String description = error.description.toLowerCase();
+    
+    if (description.contains('host lookup') || description.contains('dns')) {
+      return 'Unable to connect. Please check your internet connection.';
+    } else if (description.contains('timeout')) {
+      return 'Connection timeout. Please try again.';
+    } else if (description.contains('connect') || description.contains('connection')) {
+      return 'Failed to connect to server. Please check your internet connection.';
+    } else if (description.contains('network') || description.contains('unreachable')) {
+      return 'Network error. Please check your internet connection.';
+    } else {
+      return 'Failed to load page. Please try again.';
+    }
+  }
+
+  String _getHttpErrorMessage(int statusCode) {
+    switch (statusCode) {
+      case 400:
+        return 'Bad request. The server could not understand your request.';
+      case 401:
+        return 'Unauthorized. Please check your credentials.';
+      case 403:
+        return "Access forbidden. You don't have permission to access this resource.";
+      case 404:
+        return 'Page not found. The requested page does not exist.';
+      case 500:
+        return 'Server error. The server encountered an error.';
+      case 502:
+        return 'Bad gateway. The server is temporarily unavailable.';
+      case 503:
+        return 'Service unavailable. The server is temporarily down.';
+      default:
+        return 'HTTP error $statusCode. Please try again later.';
+    }
+  }
 }
+
