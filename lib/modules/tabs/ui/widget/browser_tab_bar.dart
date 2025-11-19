@@ -46,7 +46,6 @@ class BrowserTabBar extends StatelessWidget {
                   key: ValueKey<int>(tabs.length), // Force rebuild when tab count changes
                   scrollDirection: Axis.horizontal,
                   physics: const ClampingScrollPhysics(),
-                  shrinkWrap: false,
                   itemCount: tabs.length,
                   itemBuilder: (BuildContext context, int index) {
                     final BrowserTabModel tab = tabs[index];
@@ -95,81 +94,77 @@ class _TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(Dimens.radius8),
-        child: Container(
-          width: Dimens.size150,
-          margin: const EdgeInsets.only(
-            left: Dimens.space4,
-            top: Dimens.space4,
-            bottom: Dimens.space4,
-          ),
-          decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: Dimens.size150,
+        margin: const EdgeInsets.only(
+          left: Dimens.space4,
+          top: Dimens.space4,
+          bottom: Dimens.space4,
+        ),
+        decoration: BoxDecoration(
+          color: isActive
+              ? MainConfig.appColors.backgroundWhiteColor
+              : MainConfig.appColors.backgroundLightPinkColor,
+          borderRadius: BorderRadius.circular(Dimens.radius8),
+          border: Border.all(
             color: isActive
-                ? MainConfig.appColors.backgroundWhiteColor
-                : MainConfig.appColors.backgroundLightPinkColor,
-            borderRadius: BorderRadius.circular(Dimens.radius8),
-            border: Border.all(
-              color: isActive
-                  ? MainConfig.appColors.mainColor
-                  : Colors.transparent,
-              width: 2,
+                ? MainConfig.appColors.mainColor
+                : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Row(
+        children: <Widget>[
+          const SizedBox(width: Dimens.space8),
+          // Favicon or loading indicator
+          if (tab.isLoading)
+            const SizedBox(
+              width: Dimens.size16,
+              height: Dimens.size16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            )
+          else
+            Icon(
+              Icons.language,
+              size: Dimens.size16,
+              color: MainConfig.appColors.mainColor,
+            ),
+          const SizedBox(width: Dimens.space8),
+          // Tab title
+          Expanded(
+            child: Text(
+              tab.title ?? _getDomainFromUrl(tab.url),
+              style: context.textTheme.bodySmall?.copyWith(
+                color: isActive
+                    ? MainConfig.appColors.mainColor
+                    : MainConfig.appColors.textMediumDarkBlueColor,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
-          child: Row(
-          children: <Widget>[
-            const SizedBox(width: Dimens.space8),
-            // Favicon or loading indicator
-            if (tab.isLoading)
-              const SizedBox(
-                width: Dimens.size16,
-                height: Dimens.size16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
-              )
-            else
-              Icon(
-                Icons.language,
+          const SizedBox(width: Dimens.space4),
+          // Close button - use GestureDetector to stop tap propagation
+          GestureDetector(
+            onTap: () => onClose(),
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              padding: const EdgeInsets.all(Dimens.space4),
+              child: Icon(
+                Icons.close,
                 size: Dimens.size16,
-                color: MainConfig.appColors.mainColor,
-              ),
-            const SizedBox(width: Dimens.space8),
-            // Tab title
-            Expanded(
-              child: Text(
-                tab.title ?? _getDomainFromUrl(tab.url),
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: isActive
-                      ? MainConfig.appColors.mainColor
-                      : MainConfig.appColors.textMediumDarkBlueColor,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+                color: MainConfig.appColors.greyTextColor,
               ),
             ),
-            const SizedBox(width: Dimens.space4),
-            // Close button - use GestureDetector to stop tap propagation
-            GestureDetector(
-              onTap: () => onClose(),
-              behavior: HitTestBehavior.opaque,
-              child: Container(
-                padding: const EdgeInsets.all(Dimens.space4),
-                child: Icon(
-                  Icons.close,
-                  size: Dimens.size16,
-                  color: MainConfig.appColors.greyTextColor,
-                ),
-              ),
-            ),
-            const SizedBox(width: Dimens.space4),
-          ],
-        ),
-        ),
+          ),
+          const SizedBox(width: Dimens.space4),
+        ],
+      ),
       ),
     );
   }

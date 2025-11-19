@@ -84,7 +84,7 @@ class BrowserToolbar extends StatelessWidget {
               height: Dimens.size40,
               decoration: BoxDecoration(
                 color: MainConfig.appColors.backgroundLightPinkColor,
-                borderRadius: BorderRadius.circular(Dimens.radius20),
+                borderRadius: BorderRadius.circular(Dimens.radius10),
               ),
               child: TextField(
                 controller: urlController,

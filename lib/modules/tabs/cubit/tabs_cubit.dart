@@ -40,10 +40,6 @@ class TabsCubit extends BaseCubit<TabsState> {
       final BrowserTabModel newTab = BrowserTabModel(
         id: _uuid.v4(),
         url: url,
-        isLoading: false, // Start as false, will be set to true when loading starts
-        progress: 0.0,
-        canGoBack: false,
-        canGoForward: false,
       );
 
       final List<BrowserTabModel> updatedTabs = <BrowserTabModel>[...state.tabs, newTab];

@@ -12,7 +12,7 @@ class HomeFaqWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-       await context.router.push(CommonWebView(title: "dummy", url: AppConstant.about_us));
+       await context.router.push(CommonWebView(title: "Common web view Screen", url: AppConstant.about_us));
       },
       child: Container(
         height: Dimens.size52,
