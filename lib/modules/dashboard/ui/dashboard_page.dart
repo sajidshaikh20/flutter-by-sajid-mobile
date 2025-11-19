@@ -100,81 +100,93 @@ class DashboardPage extends BaseResponsiveView {
           },
           child:  Scaffold(
               body: child,
-              bottomNavigationBar: CustomLineIndicatorBottomNavbar(
-                splashColor: Colors.transparent,
-                selectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
-                    fontSize: selectedUnSelectedFontSize,
-                    height: Dimens.lineHeight18Point74
-                        .toLineHeight(selectedUnSelectedFontSize),
-                    color: MainConfig.appColors.mainColor,
-                    fontWeight: FontWeight.normal),
-                unselectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
-                    fontSize: selectedUnSelectedFontSize,
-                    color: MainConfig.appColors.greyTextColor,
-                    height: Dimens.lineHeight18Point74
-                        .toLineHeight(selectedUnSelectedFontSize),
-                    fontWeight: FontWeight.normal),
-                // selectedItemColor: AppColors.mainColor,
-                // unselectedItemColor: AppColors.greyTextColor,
-                selectedColor: MainConfig.appColors.mainColor,
-                backgroundColor: Colors.white,
-                unSelectedColor: MainConfig.appColors.greyTextColor,
-                customBottomBarItems: <CustomBottomBarItems<Widget>>[
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavHome.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavHome
-                        .svg(height: iconSize, width: iconSize),
-                    label: 'Home',
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Icon(
-                      Icons.folder,
-                      size: iconSize,
+              bottomNavigationBar: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, -4), // shadow above
+                    ),
+                  ],
+                ),
+                child: CustomLineIndicatorBottomNavbar(
+                  splashColor: Colors.transparent,
+                  selectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
+                      fontSize: selectedUnSelectedFontSize,
+                      height: Dimens.lineHeight18Point74
+                          .toLineHeight(selectedUnSelectedFontSize),
                       color: MainConfig.appColors.mainColor,
-                    ),
-                    icon: Icon(
-                      Icons.folder_outlined,
-                      size: iconSize,
+                      fontWeight: FontWeight.normal),
+                  unselectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
+                      fontSize: selectedUnSelectedFontSize,
                       color: MainConfig.appColors.greyTextColor,
+                      height: Dimens.lineHeight18Point74
+                          .toLineHeight(selectedUnSelectedFontSize),
+                      fontWeight: FontWeight.normal),
+                  // selectedItemColor: AppColors.mainColor,
+                  // unselectedItemColor: AppColors.greyTextColor,
+                  selectedColor: MainConfig.appColors.mainColor,
+                  backgroundColor: Colors.white,
+                  unSelectedColor: MainConfig.appColors.greyTextColor,
+                  customBottomBarItems: <CustomBottomBarItems<Widget>>[
+                    CustomBottomBarItems<Widget>(
+                      activeIcon: Assets.svgs.icNavHome.svg(
+                          height: iconSize,
+                          width: iconSize,
+                          colorFilter:  ColorFilter.mode(
+                              MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                      icon: Assets.svgs.icNavHome
+                          .svg(height: iconSize, width: iconSize),
+                      label: 'Home',
                     ),
-                    label: 'Files',
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Icon(
-                      Icons.view_list,
-                      size: iconSize,
-                      color: MainConfig.appColors.mainColor,
+                    CustomBottomBarItems<Widget>(
+                      activeIcon: Icon(
+                        Icons.folder,
+                        size: iconSize,
+                        color: MainConfig.appColors.mainColor,
+                      ),
+                      icon: Icon(
+                        Icons.folder_outlined,
+                        size: iconSize,
+                        color: MainConfig.appColors.greyTextColor,
+                      ),
+                      label: 'Files',
                     ),
-                    icon: Icon(
-                      Icons.view_list_outlined,
-                      size: iconSize,
-                      color: MainConfig.appColors.greyTextColor,
+                    CustomBottomBarItems<Widget>(
+                      activeIcon: Icon(
+                        Icons.view_list,
+                        size: iconSize,
+                        color: MainConfig.appColors.mainColor,
+                      ),
+                      icon: Icon(
+                        Icons.view_list_outlined,
+                        size: iconSize,
+                        color: MainConfig.appColors.greyTextColor,
+                      ),
+                      label: 'Tabs',
                     ),
-                    label: 'Tabs',
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    icon: Assets.svgs.icNavAccount
-                        .svg(height: iconSize, width: iconSize),
-                    activeIcon: Assets.svgs.icNavAccount.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
-                    label: 'Settings',
-                  ),
-                ],
-                currentIndex: tabsRouter.activeIndex,
-                onTap: (int value) {
-                  final TabState selectedTab = TabState.values[value];
-                  if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
-                    context.read<HomeCubit>().refreshHomeData();
-                  }
-                  tabsRouter.setActiveIndex(value);
-                },
+                    CustomBottomBarItems<Widget>(
+                      icon: Assets.svgs.icNavAccount
+                          .svg(height: iconSize, width: iconSize),
+                      activeIcon: Assets.svgs.icNavAccount.svg(
+                          height: iconSize,
+                          width: iconSize,
+                          colorFilter:  ColorFilter.mode(
+                              MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                      label: 'Settings',
+                    ),
+                  ],
+                  currentIndex: tabsRouter.activeIndex,
+                  onTap: (int value) {
+                    final TabState selectedTab = TabState.values[value];
+                    if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
+                      context.read<HomeCubit>().refreshHomeData();
+                    }
+                    tabsRouter.setActiveIndex(value);
+                  },
+                ),
               ),
             ),
         );
