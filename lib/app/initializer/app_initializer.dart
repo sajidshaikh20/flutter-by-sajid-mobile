@@ -1,4 +1,5 @@
 import '../../utils/exports.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // final remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -137,13 +138,15 @@ class AppInitializer {
   }
 
   Future<void> _getPackageAndDeviceInfo() async {
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidDeviceInfo =
-      await DeviceInfoPlugin().androidInfo;
-      getIt<MainConfig>().androidInfo = androidDeviceInfo;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
-      getIt<MainConfig>().iosDeviceInfo = iosDeviceInfo;
+    if (!kIsWeb) {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidDeviceInfo =
+        await DeviceInfoPlugin().androidInfo;
+        getIt<MainConfig>().androidInfo = androidDeviceInfo;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
+        getIt<MainConfig>().iosDeviceInfo = iosDeviceInfo;
+      }
     }
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();

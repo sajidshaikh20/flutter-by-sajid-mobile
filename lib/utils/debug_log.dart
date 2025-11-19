@@ -1,4 +1,5 @@
 import 'exports.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// A utility class for logging messages to both the console and a log file.
 // ignore: avoid_classes_with_only_static_members // This is because our base structure follows certain rules which are needed for readability
@@ -10,15 +11,32 @@ class DebugLog {
   Logger? _logger;
 
   ///generate file
-  Future<File> _getDirectoryForLogRecord() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    File file = File('${directory.path}/logger.txt');
-    return file;
+  Future<File?> _getDirectoryForLogRecord() async {
+    if (kIsWeb) {
+      // Web platform doesn't support file system access
+      return null;
+    }
+    try {
+      Directory directory = await getApplicationDocumentsDirectory();
+      File file = File('${directory.path}/logger.txt');
+      return file;
+    } on Exception {
+      // If file system access fails, return null
+      return null;
+    }
   }
 
   ///write log in file
   Future<List<LogOutput>> _writeLogInFile() async {
-    File file = await _getDirectoryForLogRecord();
+    if (kIsWeb) {
+      // On web, only use console output
+      return <LogOutput>[ConsoleOutput()];
+    }
+    File? file = await _getDirectoryForLogRecord();
+    if (file == null) {
+      // Fallback to console only if file creation fails
+      return <LogOutput>[ConsoleOutput()];
+    }
     FileOutput fileOutPut = FileOutput(file: file);
     ConsoleOutput consoleOutput = ConsoleOutput();
     return <LogOutput>[fileOutPut, consoleOutput];

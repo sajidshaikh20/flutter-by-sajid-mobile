@@ -1,4 +1,5 @@
 import '../../utils/exports.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Utility class for Permission asking and granting.
 ///
@@ -46,7 +47,7 @@ class PermissionManager {
   //----------------------------------------------------------------
   /// Check OS version of Android is 33 or Greater
   FutureOr<bool> isAndroidOSVersionIS13() async {
-    if(Platform.isAndroid.isFalse ?? false) return false;
+    if (kIsWeb || !Platform.isAndroid) return false;
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     if (androidInfo.version.sdkInt > 32) {
@@ -331,6 +332,7 @@ class PermissionManager {
 
   /// Check speech recognition permission
   FutureOr<bool> checkSpeechPermission() async {
+    if (kIsWeb) return true; // Web doesn't need speech permission
     if (Platform.isIOS) {
       PermissionStatus status = await Permission.speech.status;
       if (status.isGranted) {
@@ -346,6 +348,7 @@ class PermissionManager {
 
   /// Request speech recognition permission
   FutureOr<bool> requestSpeechPermission() async {
+    if (kIsWeb) return true; // Web doesn't need speech permission
     if (Platform.isIOS) {
       PermissionStatus status = await Permission.speech.request();
       if (status == PermissionStatus.granted) {

@@ -47,18 +47,18 @@ class WebViewContainerState extends State<WebViewContainer> {
     } else if (oldWidget.tab.url != widget.tab.url && _webViewController != null) {
       // Same tab but URL changed - load new URL
       _urlController.text = widget.tab.url;
-      if (_lastLoadedUrl != widget.tab.url) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          unawaited(_loadUrlForTab(widget.tab.url));
-        });
+        if (_lastLoadedUrl != widget.tab.url) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            unawaited(_loadUrlForTab(widget.tab.url));
+          });
       }
     }
     
     // Always update navigation state when switching tabs
     if (oldWidget.tab.id != widget.tab.id && _webViewController != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(_updateNavigationState());
-      });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            unawaited(_updateNavigationState());
+          });
     }
   }
 
@@ -142,6 +142,11 @@ class WebViewContainerState extends State<WebViewContainer> {
 
   @override
   Widget build(BuildContext context) {
+    // On web, show a fallback UI since InAppWebView has CORS limitations
+    if (kIsWeb) {
+      return _buildWebFallback(context);
+    }
+
     return Column(
       children: <Widget>[
         // Progress indicator
@@ -307,7 +312,7 @@ class WebViewContainerState extends State<WebViewContainer> {
         await _webViewController!.goBack();
         // Wait a bit for navigation to complete, then update state
         await Future<void>.delayed(const Duration(milliseconds: 100));
-        await _updateNavigationState();
+      await _updateNavigationState();
       }
     }
   }
@@ -319,7 +324,7 @@ class WebViewContainerState extends State<WebViewContainer> {
         await _webViewController!.goForward();
         // Wait a bit for navigation to complete, then update state
         await Future<void>.delayed(const Duration(milliseconds: 100));
-        await _updateNavigationState();
+      await _updateNavigationState();
       }
     }
   }
@@ -374,9 +379,9 @@ class WebViewContainerState extends State<WebViewContainer> {
     final String finalUrl = _validateAndFormatUrl(url);
     
     try {
-      await _webViewController?.loadUrl(
-        urlRequest: URLRequest(url: WebUri(finalUrl)),
-      );
+    await _webViewController?.loadUrl(
+      urlRequest: URLRequest(url: WebUri(finalUrl)),
+    );
       _lastLoadedUrl = finalUrl;
     } on Exception catch (e) {
       DebugLog.instance.e('Error loading URL: $e');
@@ -439,6 +444,110 @@ class WebViewContainerState extends State<WebViewContainer> {
       default:
         return 'HTTP error $statusCode. Please try again later.';
     }
+  }
+
+  /// Build fallback UI for web platform
+  /// Since InAppWebView on web has CORS limitations, we provide
+  /// an option to open URLs in a new browser tab
+  Widget _buildWebFallback(BuildContext context) {
+    final String url = widget.tab.url;
+    final String displayUrl = url.isEmpty ? 'https://www.google.com' : url;
+    
+    return Column(
+      children: <Widget>[
+        // Progress indicator (always hidden on web fallback)
+        const SizedBox.shrink(),
+        // Web fallback content
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(Dimens.space24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.language,
+                    size: Dimens.size64,
+                    color: MainConfig.appColors.mainColor,
+                  ),
+                  const SizedBox(height: Dimens.space24),
+                  Text(
+                    'In-App Browser on Web',
+                    style: context.textTheme.headlineSmall?.copyWith(
+                      color: MainConfig.appColors.textBlackColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: Dimens.space16),
+                  Text(
+                    'Due to browser security restrictions, external websites cannot be loaded in an in-app webview on web platforms.',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: MainConfig.appColors.textMediumDarkBlueColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: Dimens.space32),
+                  Container(
+                    padding: const EdgeInsets.all(Dimens.space16),
+                    decoration: BoxDecoration(
+                      color: MainConfig.appColors.backgroundLightPinkColor,
+                      borderRadius: BorderRadius.circular(Dimens.radius12),
+                      border: Border.all(
+                        color: MainConfig.appColors.mainColor.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            displayUrl,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: MainConfig.appColors.textBlackColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: Dimens.space32),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final String finalUrl = _validateAndFormatUrl(displayUrl);
+                      try {
+                        await launchUrl(
+                          Uri.parse(finalUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } on Exception catch (e) {
+                        if (!mounted) return;
+                        // Using this.context after mounted check is safe
+                        // ignore: use_build_context_synchronously
+                        displaySnackBar(
+                          'Failed to open URL: $e',
+                          this.context,
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.open_in_new),
+                    label: const Text('Open in Browser'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MainConfig.appColors.mainColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Dimens.space24,
+                        vertical: Dimens.space16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
