@@ -137,8 +137,7 @@ class MyAccountForm extends StatelessWidget {
                                                   Expanded(
                                                     child: CustomTextLabelWidget(
                                                       textAlign: TextAlign.start,
-                                                      label: context.appString
-                                                          .profileMsgKey,
+                                                      label: "sajid",
                                                       maxLines: Dimens.maxLines02,
                                                       overflow:
                                                           TextOverflow.ellipsis,

@@ -225,32 +225,36 @@ class LoginForm extends StatelessWidget {
                                 }
 
                                 // Validate Mobile Number
-                                if (email.isNotEmpty ) {
-                                  if(loginCubit.state.isNumberConsidered ?? false) {
-                                    final String? mobileError =
-                                    email.validMobileNo(
-                                        emptyMobileMsg: context.appString
-                                            .pleaseEnterMobileNumberKey,
-                                        onlyNumbersAllowedMsg: context
-                                            .appString.onlyNumbersAllowedKey,
-                                        invalidMobileMsg: context.appString
-                                            .enterValidMobileNumberKey);
+                                if (email.isNotEmpty) {
+                                  if (loginCubit.state.isNumberConsidered ??
+                                      false) {
+                                    final String? mobileError = email
+                                        .validMobileNo(
+                                            emptyMobileMsg:
+                                                "Please Enter Valid Mobie",
+                                            onlyNumbersAllowedMsg: context
+                                                .appString
+                                                .onlyNumbersAllowedKey,
+                                            invalidMobileMsg:
+                                                "Please Enter Valid Mobile");
                                     if (mobileError?.isNotEmpty ?? false) {
                                       loginCubit
                                           .handleValidationErrorMessageForEmail(
-                                          mobileError ?? "");
+                                              mobileError ?? "");
                                       isValid = false;
                                     } else {
                                       loginCubit
                                           .handleValidationErrorMessageForEmail(
-                                          ""); // Clear mobile error if valid
+                                              ""); // Clear mobile error if valid
                                     }
                                   }
                                 }
 
                                 // Validate Email
-                                if (email.isNotEmpty && (email.startsWithLetter() ||
-                                    loginCubit.state.isNumberConsidered == false)) {
+                                if (email.isNotEmpty &&
+                                    (email.startsWithLetter() ||
+                                        loginCubit.state.isNumberConsidered ==
+                                            false)) {
                                   final String? emailError =
                                       email.validateEmail(
                                           isOnlyEmail: true,
@@ -259,8 +263,8 @@ class LoginForm extends StatelessWidget {
                                               .pleaseEnterMobileOrNumberKey,
                                           enterEmailMsg: context
                                               .appString.pleaseEnterTheEmailKey,
-                                          validEmailMsg: context.appString
-                                              .pleaseEnterValidEmailKey);
+                                          validEmailMsg:
+                                              "Please Enter Valid Email");
                                   if (emailError?.isNotEmpty ?? false) {
                                     loginCubit
                                         .handleValidationErrorMessageForEmail(
@@ -275,24 +279,24 @@ class LoginForm extends StatelessWidget {
 
                                 // Validate Password
                                 if (password.isNotEmpty) {
-                                  final String? passwordError = password
-                                      .validatePassword(
-                                      isNewPassword: true,
-                                      customError: context.appString
-                                          .pleaseEnterThePasswordKey,
-                                      emptyPasswordMsg: context.appString
-                                          .pleaseEnterThePasswordKey,
-                                      invalidPasswordMsg: context
-                                          .appString.passAllCriteriaKey);
+                                  final String? passwordError =
+                                      password.validatePassword(
+                                          isNewPassword: true,
+                                          customError: context.appString
+                                              .pleaseEnterThePasswordKey,
+                                          emptyPasswordMsg: context.appString
+                                              .pleaseEnterThePasswordKey,
+                                          invalidPasswordMsg: context
+                                              .appString.passAllCriteriaKey);
                                   if (passwordError?.isNotEmpty ?? false) {
                                     loginCubit
                                         .handleValidationErrorMessageForPassword(
-                                        passwordError ?? "");
+                                            passwordError ?? "");
                                     isValid = false;
                                   } else {
                                     loginCubit
                                         .handleValidationErrorMessageForPassword(
-                                        ""); // Clear password error if valid
+                                            ""); // Clear password error if valid
                                   }
                                 }
 
@@ -307,7 +311,7 @@ class LoginForm extends StatelessWidget {
                           Dimens.size65.heightBox,
                           CustomTextLabelWidget(
                             onTap: () async {
-                             // await context.router.replace(const DashboardRoute());
+                              // await context.router.replace(const DashboardRoute());
                             },
                             label: context.appString.continueGuestKey,
                             style: context.textTheme.titleLarge?.copyWith(
