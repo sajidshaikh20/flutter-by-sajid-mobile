@@ -111,25 +111,17 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Dimens.size17.heightBox,
-            type == FileType.jsonFile
-                ? CommonLottieAnimation(
-              repeat: true,
-              height: Dimens.size92,
-              width: Dimens.size92,
-              assetPath: widget.lottieAnimationFilePath,
-            )
-                : Image.asset(
-              widget.lottieAnimationFilePath,
-              height: Dimens.size92,
-              width: Dimens.size92,
-            ),
+             Image.asset(
+                    widget.lottieAnimationFilePath,
+                    height: Dimens.size92,
+                    width: Dimens.size92,
+                  ),
             Dimens.size2.heightBox,
             Visibility(
               visible: widget.title1.isNotNullOrBlank,
               child: CustomTextLabelWidget(
                 style: context.textTheme.titleLarge?.copyWith(
-                    height: Dimens.lineHeight24
-                        .toLineHeight(Dimens.fontSize16),
+                    height: Dimens.lineHeight24.toLineHeight(Dimens.fontSize16),
                     fontWeight: FontWeight.w700,
                     fontSize: Dimens.fontSize16),
                 label: widget.title1 ?? '',
@@ -237,28 +229,27 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
 /// The dialog will be shown using [MainConfig.context] and will optionally
 /// call [onBack] when dismissed.
 Future<void> showCustomDialogWithLottie(
-    String message, {
-      String? title1,
-      String? title2,
-      String? title3,
-      String? okBtnTitle,
-      String? cancelBtnTitle,
-      Function()? onOkClicked,
-      Function()? onCancelClicked,
-      Function(dynamic)? onBack,
-      Key? key,
-      bool? isDialogHideOnClick,
-      TextStyle? titleStyle,
-      TextStyle? titleStyle3,
-      TextStyle? okBtnTitleStyle,
-      Widget? contentWidget,
-      bool barrierDismissible = true,
-      ScreenType device = ScreenType.mobile,
-      TextAlign? textAlign,
-      Widget? child,
-      required String lottieAnimationFilePath,
-    })
-{
+  String message, {
+  String? title1,
+  String? title2,
+  String? title3,
+  String? okBtnTitle,
+  String? cancelBtnTitle,
+  Function()? onOkClicked,
+  Function()? onCancelClicked,
+  Function(dynamic)? onBack,
+  Key? key,
+  bool? isDialogHideOnClick,
+  TextStyle? titleStyle,
+  TextStyle? titleStyle3,
+  TextStyle? okBtnTitleStyle,
+  Widget? contentWidget,
+  bool barrierDismissible = true,
+  ScreenType device = ScreenType.mobile,
+  TextAlign? textAlign,
+  Widget? child,
+  required String lottieAnimationFilePath,
+}) {
   return showDialog(
     context: MainConfig.context,
     barrierDismissible: barrierDismissible,

@@ -118,6 +118,7 @@ class AppInitializer {
   FutureOr<void> _initStorage() async {
     await GetStorage.init();
     await SharedPref.instance.init();
+    await StorageService.instance.init();
   }
 
   Future<void> _initScreenPreference() async {

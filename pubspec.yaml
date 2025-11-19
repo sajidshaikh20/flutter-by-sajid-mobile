@@ -87,6 +87,14 @@ dependencies:
   flutter_native_splash: ^2.4.6
   nested: ^1.0.0
   flutter_inappwebview: ^6.1.5
+  file_picker: ^8.1.2
+  open_filex: ^4.3.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  syncfusion_flutter_pdfviewer: ^31.1.21
+  http: ^1.2.2
+  uuid: ^4.5.1
+  crypto: ^3.0.6
 
 
 

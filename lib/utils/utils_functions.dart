@@ -448,7 +448,7 @@ Widget createSpannableText({
 }
 ///getFileType
   FileType getFileType(String fileName) {
-    String extension = fileName.split('.').last.toLowerCase();
+    final String extension = fileName.split('.').last.toLowerCase();
 
     if (AppConstant.imageExtensions.contains(extension)) {
       return FileType.image;

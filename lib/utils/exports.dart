@@ -40,6 +40,14 @@ export 'package:shimmer/shimmer.dart';
 export 'package:sign_in_with_apple/sign_in_with_apple.dart' hide IconAlignment;
 export 'package:url_launcher/url_launcher.dart';
 export 'package:webview_flutter/webview_flutter.dart';
+export 'package:http/http.dart' show http;
+export 'package:crypto/crypto.dart';
+export 'package:file_picker/file_picker.dart' hide FileType;
+export 'package:open_filex/open_filex.dart';
+export 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+export 'package:uuid/uuid.dart';
+export 'package:hive_flutter/hive_flutter.dart';
+export 'package:flutter_inappwebview/flutter_inappwebview.dart' hide X509Certificate, WebResourceError, WebResourceErrorType, WebResourceRequest, WebResourceResponse, Cookie, Disposable;
 
 export '../../app/app.dart' hide X509Certificate;
 export '../../base/base.dart';

@@ -2,6 +2,7 @@ export 'package:flutter_bloc/flutter_bloc.dart';
 export 'package:intl/intl.dart' hide TextDirection;
 export 'package:lottie/lottie.dart' hide Marker;
 
+export 'ai_summary/ai_summary.dart';
 export 'dashboard/dashboard.dart';
 export 'files/files.dart';
 export 'force_update_under_maintenance/force_update_under_maintenance.dart';
