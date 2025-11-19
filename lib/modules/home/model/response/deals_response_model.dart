@@ -1,4 +1,3 @@
-import '/utils/exports.dart';
 
 /// Model class for deals response data.
 class DealsResponseModel {
@@ -15,7 +14,7 @@ class DealsResponseModel {
   final String? redirectUrl;
 
   /// List of products associated with the deal.
-  final List<ProductListingResponse> productListModel;
+
 
   /// Creates an instance of [DealsResponseModel].
   DealsResponseModel({
@@ -23,24 +22,20 @@ class DealsResponseModel {
     this.type,
     this.label,
     this.redirectUrl,
-    this.productListModel = const <ProductListingResponse>[],
+
   });
 
 ///fromJson
   factory DealsResponseModel.fromJson(Map<String, dynamic> json) {
-    List<ProductListingResponse> productList = <ProductListingResponse>[];
+
 
     if (json['productList'] != null) {
       final dynamic productListData = json['productList'];
 
       if (productListData is List) {
         for (int i = 0; i < productListData.length; i++) {
-          final dynamic item = productListData[i];
 
-          if (item is Map<String, dynamic>) {
-            final ProductListingResponse product = ProductListingResponse.fromJson(item);
-            productList.add(product);
-          }
+
         }
       }
     }
@@ -49,7 +44,7 @@ class DealsResponseModel {
       type: json['type'] as String?,
       label: json['label'] as String?,
       redirectUrl: json['redirectUrl'] as String?,
-      productListModel: productList,
+
     );
   }
 }

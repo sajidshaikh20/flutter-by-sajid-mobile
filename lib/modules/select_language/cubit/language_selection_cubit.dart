@@ -60,7 +60,7 @@ class LanguageSelectionCubit extends Cubit<LanguageSelectionState> {
           languageAlignment: languageCode==LanguageCode.en ?
               AppConstant.defaultLanguageAlignment : AppConstant.rtlLanguageAlignment,
           status: BaseStateStatus.success,
-          redirectRoute:  const SocialLoginRoute(),
+          redirectRoute: LoginRoute(),
         ));
       });
     } on Exception catch (e) {
@@ -75,7 +75,7 @@ class LanguageSelectionCubit extends Cubit<LanguageSelectionState> {
           languageAlignment: languageCode==LanguageCode.en ?
               AppConstant.defaultLanguageAlignment : AppConstant.rtlLanguageAlignment,
           status: BaseStateStatus.success,
-          redirectRoute:  const SocialLoginRoute(),
+          redirectRoute: LoginRoute(),
         ));
       });
     }

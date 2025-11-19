@@ -17,44 +17,34 @@ class ErrorResult {
       switch (exception.type) {
         case DioExceptionType.cancel:
           return ErrorResult(
-            errorMessage: MainConfig.dynamicString(JsonServiceString.keyCancel),
+            errorMessage: "Cancel",
             type: DioExceptionType.cancel,
           );
 
         case DioExceptionType.connectionTimeout:
           return ErrorResult(
-            errorMessage: MainConfig.dynamicString(
-              JsonServiceString.keySomethingWentWrong,
-            ),
+            errorMessage: "Something Went Wrong",
             type: DioExceptionType.connectionTimeout,
           );
         case DioExceptionType.sendTimeout:
           return ErrorResult(
-            errorMessage: MainConfig.dynamicString(
-              JsonServiceString.keySomethingWentWrong,
-            ),
+            errorMessage: "Something Went Wrong",
             type: DioExceptionType.sendTimeout,
           );
         case DioExceptionType.receiveTimeout:
           return ErrorResult(
-            errorMessage: MainConfig.dynamicString(
-              JsonServiceString.keySomethingWentWrong,
-            ),
+            errorMessage: "Something Went Wrong",
             type: DioExceptionType.receiveTimeout,
           );
         case DioExceptionType.badResponse:
           return ErrorResult(
-            errorMessage: MainConfig.dynamicString(
-              JsonServiceString.keySomethingWentWrong,
-            ),
+            errorMessage: "Something Went Wrong",
             type: DioExceptionType.badResponse,
           );
 
         case DioExceptionType.unknown:
           return ErrorResult(
-            errorMessage: MainConfig.dynamicString(
-              JsonServiceString.keySomethingWentWrong,
-            ),
+            errorMessage: "Something Went Wrong",
             type: DioExceptionType.connectionError,
           );
         // default:
@@ -68,24 +58,20 @@ class ErrorResult {
         case DioExceptionType.badCertificate:
           return ErrorResult(
             errorMessage: exception.message ??
-                MainConfig.dynamicString(
-                  JsonServiceString.keySomethingWentWrong,
-                ),
+                "Something Went Wrong",
             type: DioExceptionType.badCertificate,
           );
         case DioExceptionType.connectionError:
           return ErrorResult(
             errorMessage: exception.message ??
-                MainConfig.dynamicString(
-                  JsonServiceString.keySomethingWentWrong,
-                ),
+                "Something Went Wrong",
             type: DioExceptionType.connectionError,
           );
       }
     } else {
       return ErrorResult(
         errorMessage: (exception is DioException ? exception.message : null) ??
-            MainConfig.dynamicString(JsonServiceString.keySomethingWentWrong),
+            "Something Went Wrong",
         type: DioExceptionType.unknown,
       );
     }

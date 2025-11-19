@@ -111,25 +111,17 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Dimens.size17.heightBox,
-            type == FileType.jsonFile
-                ? CommonLottieAnimation(
-              repeat: true,
-              height: Dimens.size92,
-              width: Dimens.size92,
-              assetPath: widget.lottieAnimationFilePath,
-            )
-                : Image.asset(
-              widget.lottieAnimationFilePath,
-              height: Dimens.size92,
-              width: Dimens.size92,
-            ),
+             Image.asset(
+                    widget.lottieAnimationFilePath,
+                    height: Dimens.size92,
+                    width: Dimens.size92,
+                  ),
             Dimens.size2.heightBox,
             Visibility(
               visible: widget.title1.isNotNullOrBlank,
               child: CustomTextLabelWidget(
                 style: context.textTheme.titleLarge?.copyWith(
-                    height: Dimens.lineHeight24
-                        .toLineHeight(Dimens.fontSize16),
+                    height: Dimens.lineHeight24.toLineHeight(Dimens.fontSize16),
                     fontWeight: FontWeight.w700,
                     fontSize: Dimens.fontSize16),
                 label: widget.title1 ?? '',
@@ -237,28 +229,27 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
 /// The dialog will be shown using [MainConfig.context] and will optionally
 /// call [onBack] when dismissed.
 Future<void> showCustomDialogWithLottie(
-    String message, {
-      String? title1,
-      String? title2,
-      String? title3,
-      String? okBtnTitle,
-      String? cancelBtnTitle,
-      Function()? onOkClicked,
-      Function()? onCancelClicked,
-      Function(dynamic)? onBack,
-      Key? key,
-      bool? isDialogHideOnClick,
-      TextStyle? titleStyle,
-      TextStyle? titleStyle3,
-      TextStyle? okBtnTitleStyle,
-      Widget? contentWidget,
-      bool barrierDismissible = true,
-      ScreenType device = ScreenType.mobile,
-      TextAlign? textAlign,
-      Widget? child,
-      required String lottieAnimationFilePath,
-    })
-{
+  String message, {
+  String? title1,
+  String? title2,
+  String? title3,
+  String? okBtnTitle,
+  String? cancelBtnTitle,
+  Function()? onOkClicked,
+  Function()? onCancelClicked,
+  Function(dynamic)? onBack,
+  Key? key,
+  bool? isDialogHideOnClick,
+  TextStyle? titleStyle,
+  TextStyle? titleStyle3,
+  TextStyle? okBtnTitleStyle,
+  Widget? contentWidget,
+  bool barrierDismissible = true,
+  ScreenType device = ScreenType.mobile,
+  TextAlign? textAlign,
+  Widget? child,
+  required String lottieAnimationFilePath,
+}) {
   return showDialog(
     context: MainConfig.context,
     barrierDismissible: barrierDismissible,
@@ -285,83 +276,4 @@ Future<void> showCustomDialogWithLottie(
       );
     },
   ).then((dynamic value) => onBack?.call(value));
-}
-
-/// Displays a Free Gift dialog with Lottie, using localized strings and a list of free gifts.
-Future<void> showFreeGiftDialog({
-  required List<ProductListingResponse> freeGifts,
-  bool barrierDismissible = true,
-  ScreenType device = ScreenType.mobile,
-}) {
-  showCustomDialog(
-    '',
-    title: MainConfig.context.appString.yayFreeGiftAddedKey,
-    device: device,
-    contentWidget: Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.space40),
-          child: Directionality(
-            textDirection: isRTLText(MainConfig.context.appString.freeGiftAddedSubtitleKey)
-                ? TextDirection.rtl
-                : TextDirection.ltr,
-            child: CustomTextLabelWidget(
-              label: MainConfig.context.appString.freeGiftAddedSubtitleKey,
-              style: MainConfig.context.textTheme.titleLarge?.copyWith(
-                height: Dimens.lineHeight18
-                    .toLineHeight(Dimens.fontSize14),
-                fontWeight: FontWeight.w400,
-                fontSize: Dimens.fontSize14,
-              ),
-            ),
-          ),
-        ),
-        Dimens.size7.heightBox,
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: MainConfig.appColors.iceBlueColor,
-              borderRadius: Dimens.radius12.borderRadius,
-            ),
-            child: CustomListView(
-              scrollPhysics: const NeverScrollableScrollPhysics(),
-              isPadding: true,
-              itemBuilder: (BuildContext context, int index) {
-                final ProductListingResponse product = freeGifts[index];
-                final bool isLast = index == freeGifts.length - 1;
-                return CartFreeGiftItemView(product: product, index: index, isLast: isLast);
-              },
-              itemCount: freeGifts.length,
-            ),
-          ),
-        ),
-        Dimens.size22.heightBox,
-        const CustomDivider(
-          height: 1,
-          color: AppColors.deviderBorderColor,
-        ),
-        Dimens.size5.heightBox,
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: Dimens.space10),
-          child: CustomTextLabelWidget(
-            style: MainConfig.context.textTheme.titleLarge?.copyWith(
-                height: Dimens.lineHeight24
-                    .toLineHeight(Dimens.fontSize16),
-                fontWeight: FontWeight.w400,
-                color: MainConfig.appColors.mainColor,
-                fontSize: Dimens.fontSize16),
-            label: MainConfig.context.appString.thanksKey,
-            onTap: () {
-              goBack(MainConfig.context);
-            },
-          ),
-        ),
-        Dimens.size5.heightBox,
-      ],
-    ),
-    okBtnTitle: '',
-    barrierDismissible: barrierDismissible,
-  );
-  return Future<void>.value();
 }

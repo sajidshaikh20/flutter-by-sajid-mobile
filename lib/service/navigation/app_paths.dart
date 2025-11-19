@@ -68,8 +68,14 @@ abstract class AppPaths {
   /// Home page route (sub-path).
   static const String home = 'home';
 
-  /// Category page route (sub-path).
-  static const String category = 'category';
+  /// Files page route (sub-path).
+  static const String files = 'files';
+
+  /// Tabs page route (sub-path).
+  static const String tabs = 'tabs';
+
+  /// Settings page route (sub-path).
+  static const String settings = 'settings';
 
   /// Offers or promotions page route (sub-path).
   static const String offers = 'offers';
@@ -201,7 +207,7 @@ abstract class AppPaths {
   static const String loyaltyPoints = '/loyaltyPoints';
 
   /// CMS (Content Management System) page route.
-  static const String cmspage = '/cmsPage';
+  static const String webView = '/webView';
 
   /// Notification settings page route.
   static const String notificationSetting = '/notificationSetting';
@@ -214,4 +220,5 @@ abstract class AppPaths {
 
   /// Store receipt page route.
   static const String storeReceipt = '/store_Receipt';
+
 }

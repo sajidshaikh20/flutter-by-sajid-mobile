@@ -377,7 +377,20 @@ class ApiClient {
   }) async {
     try {
       await _showLoading(showLoader);
-      // Get the directory to save the file
+      
+      // Web platform doesn't support local file system access
+      if (kIsWeb) {
+        // On web, trigger browser download
+        try {
+          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+          return fileName;
+        } on Exception catch (e) {
+          DebugLog.instance.e('Error launching URL on web: $e');
+          return '';
+        }
+      }
+      
+      // Get the directory to save the file (mobile platforms only)
       Directory directory = await getApplicationDocumentsDirectory();
       String filePath = '${directory.path}/$fileName';
 
@@ -461,7 +474,7 @@ class ApiClient {
     } else {
       return OnFailureResponse<T?>(
         error: ErrorResult(
-          errorMessage: MainConfig.dynamicString(JsonServiceString.keySomethingWentWrong),
+          errorMessage: "Something Went Wrong",
           type: DioExceptionType.unknown,
         ),
       );

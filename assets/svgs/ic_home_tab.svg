@@ -1,7 +1,0 @@
-<svg id="Icon_1" data-name="Icon 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-    viewBox="0 0 24 24">
-    <rect id="Rectangle" width="24" height="24" fill="rgba(255,255,255,0)" />
-    <path id="Home"
-        d="M19.685,23.53h-16a2,2,0,0,1-2-2v-8H0L11.685,0,23.37,13.53H21.685v8A2,2,0,0,1,19.685,23.53Zm-10-10a1,1,0,0,0,0,2h4a1,1,0,1,0,0-2Z"
-        transform="translate(0.315 0.47)" fill="#D0D0D0" />
-</svg>

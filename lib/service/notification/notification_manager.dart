@@ -43,8 +43,7 @@ class NotificationManager {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
       
       // Initialize Analytics
-      await AnalyticsService.instance.init();
-      
+
       DebugLog.instance.i("Firebase initialized successfully");
     } on Exception catch (e) {
       String errorMessage = e.toString();
@@ -53,7 +52,6 @@ class NotificationManager {
         // Try to enable services even if app already exists
         try {
           await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-          await AnalyticsService.instance.init();
         }on Exception catch (serviceError) {
           DebugLog.instance.e("Error enabling Firebase services: $serviceError");
         }

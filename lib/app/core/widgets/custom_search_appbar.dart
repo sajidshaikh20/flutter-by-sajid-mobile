@@ -133,7 +133,7 @@ class CustomSearchAppBar extends StatelessWidget
                     overlayColor:
                     WidgetStateProperty.all(Colors.transparent),
                     onTap: () async {
-                      await context.router.push(const SearchRoute());
+                    //  await context.router.push(const SearchRoute());
                     },
                     child: CustomTextFormFieldWidget(
                       decoration: InputDecoration(
@@ -145,9 +145,7 @@ class CustomSearchAppBar extends StatelessWidget
                         filled: true,
                         isDense: true,
                         fillColor: Colors.white,
-                        hintText: MainConfig.dynamicString(
-                          JsonServiceString.keySearch,
-                        ),
+                        hintText: context.appString.searchProductKey,
                         contentPadding: EdgeInsets.only(
                           right: isLanguageAlignmentLTR
                               ? 0

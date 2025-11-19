@@ -1,1 +1,0 @@
-export 'store_receipt_model.dart';

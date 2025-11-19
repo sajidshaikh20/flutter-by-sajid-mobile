@@ -23,25 +23,20 @@ FutureOr<void> setupLocator() {
   // Utilities — lazy unless used instantly
     ..registerLazySingleton<AESEncryption>(AESEncryption.new)
     ..registerLazySingleton<RegExpressions>(RegExpressions.new)
-    ..registerLazySingleton<AnalyticsService>(AnalyticsService.new)
     ..registerLazySingleton<TabRouterService>(TabRouterService.new)
 
-  // Services — lazy unless required immediately
-    ..registerLazySingleton<CountryService>(CountryService.new)
+    // Services — lazy unless required immediately
     ..registerLazySingleton<LanguageService>(LanguageService.new)
     ..registerLazySingleton<SocialLoginServices>(SocialLoginServices.new)
     ..registerLazySingleton<UserProfileService>(UserProfileService.new)
-    ..registerLazySingleton<AddressService>(AddressService.new)
+    ..registerSingleton<StorageService>(StorageService.instance)
 
-  // Address styles — lazy singleton
-    ..registerLazySingleton<AddressStyles>(AddressStyles.new)
 
   // Cubits / State management — register eagerly if used on home
   // Cubits / State management — now lazy
     ..registerLazySingleton<ForceUpdateUnderMaintenanceCubit>(
       ForceUpdateUnderMaintenanceCubit.new,
     )
-    ..registerLazySingleton<CartCountCubit>(CartCountCubit.new)
-    ..registerLazySingleton<GlobalWishlistManager>(GlobalWishlistManager.new);
+    ..registerLazySingleton<CartCountCubit>(CartCountCubit.new);
 }
 

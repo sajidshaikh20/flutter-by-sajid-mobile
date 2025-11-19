@@ -1,0 +1,241 @@
+import 'package:uuid/uuid.dart';
+import '../../../utils/exports.dart';
+import '../model/browser_tab_model.dart';
+import '../repo/tabs_repository.dart';
+import 'tabs_state.dart';
+
+class TabsCubit extends BaseCubit<TabsState> {
+  TabsCubit({required this.tabsRepository})
+      : super(TabsState.initial()) {
+    unawaited(_loadSavedTabs());
+  }
+
+  final TabsRepository tabsRepository;
+  final Uuid _uuid = const Uuid();
+
+  Future<void> _loadSavedTabs() async {
+    try {
+      final List<Map<String, dynamic>>? savedTabs = await tabsRepository.getSavedTabs();
+      if (savedTabs != null && savedTabs.isNotEmpty) {
+        final List<BrowserTabModel> tabs = savedTabs.map((Map<String, dynamic> map) => BrowserTabModelExtension.fromMap(map)).toList();
+        emit(state.copyWith(
+          tabs: tabs,
+          activeTabId: tabs.first.id,
+          currentUrl: tabs.first.url,
+          status: BaseStateStatus.success,
+        ));
+      } else {
+        // Create initial tab with Google
+        await createNewTab('https://www.google.com');
+      }
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error loading saved tabs: $e');
+      await createNewTab('https://www.google.com');
+    }
+  }
+
+  Future<void> createNewTab(String url) async {
+    try {
+      DebugLog.instance.i('Creating new tab with URL: $url');
+      final BrowserTabModel newTab = BrowserTabModel(
+        id: _uuid.v4(),
+        url: url,
+      );
+
+      final List<BrowserTabModel> updatedTabs = <BrowserTabModel>[...state.tabs, newTab];
+      DebugLog.instance.i('New tab created. Total tabs: ${updatedTabs.length}, New tab ID: ${newTab.id}');
+      
+      // Emit state immediately for instant UI update
+      emit(state.copyWith(
+        tabs: updatedTabs,
+        activeTabId: newTab.id,
+        currentUrl: url,
+        status: BaseStateStatus.success,
+      ));
+
+      // Save to storage in background (don't await - let it happen async)
+      unawaited(tabsRepository.saveTabs(updatedTabs).then((_) {
+        DebugLog.instance.i('Tab saved successfully');
+      }).catchError((Object e) {
+        DebugLog.instance.e('Error saving tab: $e');
+      }));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error creating new tab: $e');
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'Failed to create new tab: $e',
+      ));
+    }
+  }
+
+  Future<void> closeTab(String tabId) async {
+    try {
+      DebugLog.instance.i("Closing tab: $tabId");
+      final List<BrowserTabModel> updatedTabs =
+      state.tabs.where((BrowserTabModel tab) => tab.id != tabId).toList();
+
+      if (updatedTabs.isEmpty) {
+        // If no tabs left, create a new one with Google
+        await createNewTab('https://www.google.com');
+        return; // Add return to prevent further execution
+      }
+
+      String? newActiveTabId = state.activeTabId;
+      BrowserTabModel? newActiveTab;
+
+      if (tabId == state.activeTabId) {
+        // If closing active tab, switch to first available
+        newActiveTabId = updatedTabs.isNotEmpty ? updatedTabs.first.id : null;
+        newActiveTab = updatedTabs.isNotEmpty ? updatedTabs.first : null;
+      } else {
+        // Keep the current active tab if it still exists
+        newActiveTab = updatedTabs.firstWhere(
+              (BrowserTabModel t) => t.id == newActiveTabId,
+          orElse: () => updatedTabs.first,
+        );
+        newActiveTabId = newActiveTab.id;
+      }
+
+      // Ensure we have a valid active tab
+      if (newActiveTabId == null && updatedTabs.isNotEmpty) {
+        newActiveTabId = updatedTabs.first.id;
+        newActiveTab = updatedTabs.first;
+      }
+
+      // Emit state immediately for instant UI update
+      emit(state.copyWith(
+        tabs: updatedTabs,
+        activeTabId: newActiveTabId,
+        currentUrl: newActiveTab?.url ?? 'https://www.google.com',
+        status: BaseStateStatus.success,
+      ));
+
+      // Save to storage in background (don't await - let it happen async)
+      unawaited(tabsRepository.saveTabs(updatedTabs).then((_) {
+        DebugLog.instance.i('Tab closed and saved successfully');
+      }).catchError((Object e) {
+        DebugLog.instance.e('Error saving tabs after close: $e');
+      }));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error closing tab: $e');
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'Failed to close tab: $e',
+      ));
+    }
+  }
+
+  Future<void> switchTab(String tabId) async {
+    try {
+      // Don't switch if already active
+      if (state.activeTabId == tabId) {
+        return;
+      }
+      
+      final BrowserTabModel tab = state.tabs.firstWhere(
+        (BrowserTabModel t) => t.id == tabId,
+        orElse: () => state.tabs.first,
+      );
+      
+      emit(state.copyWith(
+        activeTabId: tabId,
+        currentUrl: tab.url,
+      ));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error switching tab: $e');
+    }
+  }
+
+  Future<void> updateTabUrl(String tabId, String url) async {
+    try {
+      final List<BrowserTabModel> updatedTabs = state.tabs.map((BrowserTabModel tab) {
+        if (tab.id == tabId) {
+          return tab.copyWith(url: url);
+        }
+        return tab;
+      }).toList();
+
+      emit(state.copyWith(
+        tabs: updatedTabs,
+        currentUrl: url,
+      ));
+
+      // Save to storage in background
+      unawaited(tabsRepository.saveTabs(updatedTabs));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error updating tab URL: $e');
+    }
+  }
+
+  Future<void> updateTabTitle(String tabId, String? title) async {
+    try {
+      final List<BrowserTabModel> updatedTabs = state.tabs.map((BrowserTabModel tab) {
+        if (tab.id == tabId) {
+          return tab.copyWith(title: title);
+        }
+        return tab;
+      }).toList();
+
+      emit(state.copyWith(tabs: updatedTabs));
+      // Save to storage in background
+      unawaited(tabsRepository.saveTabs(updatedTabs));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error updating tab title: $e');
+    }
+  }
+
+  Future<void> updateTabLoading(String tabId, {required bool isLoading}) async {
+    try {
+      final List<BrowserTabModel> updatedTabs = state.tabs.map((BrowserTabModel tab) {
+        if (tab.id == tabId) {
+          return tab.copyWith(isLoading: isLoading);
+        }
+        return tab;
+      }).toList();
+
+      emit(state.copyWith(tabs: updatedTabs));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error updating tab loading: $e');
+    }
+  }
+
+  Future<void> updateTabProgress(String tabId, double progress) async {
+    try {
+      final List<BrowserTabModel> updatedTabs = state.tabs.map((BrowserTabModel tab) {
+        if (tab.id == tabId) {
+          return tab.copyWith(progress: progress);
+        }
+        return tab;
+      }).toList();
+
+      emit(state.copyWith(tabs: updatedTabs));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error updating tab progress: $e');
+    }
+  }
+
+  Future<void> updateNavigationState(String tabId, {bool? canGoBack, bool? canGoForward}) async {
+    try {
+      final List<BrowserTabModel> updatedTabs = state.tabs.map((BrowserTabModel tab) {
+        if (tab.id == tabId) {
+          return tab.copyWith(
+            canGoBack: canGoBack ?? tab.canGoBack,
+            canGoForward: canGoForward ?? tab.canGoForward,
+          );
+        }
+        return tab;
+      }).toList();
+
+      emit(state.copyWith(tabs: updatedTabs));
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error updating navigation state: $e');
+    }
+  }
+
+  @override
+  TabsState getResetErrorState() => state.copyWith(msg: '');
+
+  @override
+  TabsState getResetRedirectionState() => state.copyWith();
+}
+

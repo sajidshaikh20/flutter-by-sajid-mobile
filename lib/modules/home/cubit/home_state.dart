@@ -16,8 +16,6 @@ class HomeState extends BaseState {
     super.msg = '',
     super.redirectRoute,
     this.cartCount,
-    this.addressList = const <MyAddressListingResponse>[],
-    this.selectedAddress,
     /* this.isSnackBarDisplay = false,
     this.displayMessage,*/
     this.apiCallForHome = BaseStateStatus.initial,
@@ -64,11 +62,6 @@ class HomeState extends BaseState {
   /// The cart count.
   final int? cartCount;
 
-  /// The list of user addresses.
-  final List<MyAddressListingResponse> addressList;
-
-  /// The currently selected address.
-  final SelectedAddressModel? selectedAddress;
 
   /// The status of the address API call.
   final BaseStateStatus apiCallForAddress;
@@ -125,8 +118,7 @@ class HomeState extends BaseState {
     bool? detailsNotFound,
     PageRouteInfo? redirectRoute,
     int? cartCount,
-    List<MyAddressListingResponse>? addressList,
-    SelectedAddressModel? selectedAddress,
+
     BaseStateStatus? apiCallForHome,
     BaseStateStatus? apiCallForNotice,
     BaseStateStatus? apiCallForBanner,
@@ -157,8 +149,7 @@ class HomeState extends BaseState {
         msg: msg,
         redirectRoute: redirectRoute ?? this.redirectRoute,
         cartCount: cartCount ?? this.cartCount,
-        addressList: addressList ?? this.addressList,
-        selectedAddress: selectedAddress ?? this.selectedAddress,
+
         /*  isSnackBarDisplay: isSnackBarDisplay ?? this.isSnackBarDisplay,
         displayMessage: displayMessage ?? this.displayMessage,*/
         apiCallForHome: apiCallForHome ?? this.apiCallForHome,
@@ -190,8 +181,6 @@ class HomeState extends BaseState {
         detailsNotFound,
         redirectRoute,
         cartCount,
-        addressList,
-        selectedAddress,
         apiCallForHome,
         apiCallForNotice,
         apiCallForBanner,

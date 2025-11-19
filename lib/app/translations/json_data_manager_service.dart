@@ -1,4 +1,5 @@
 import '../../utils/exports.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Service class for managing JSON data operations.
 class JsonDataManagerService {
@@ -26,10 +27,19 @@ class JsonDataManagerService {
   /// Checks if a file exists at the specified path in
   /// the application's document directory.
   Future<bool> checkFileFromPath(String fileName) async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String filePath = '${directory.path}/$fileName';
-    File file = File(filePath);
-    return file.existsSync();
+    if (kIsWeb) {
+      // On web, files are not stored locally, always return false
+      // Language files are loaded from assets on web
+      return false;
+    }
+    try {
+      Directory directory = await getApplicationDocumentsDirectory();
+      String filePath = '${directory.path}/$fileName';
+      File file = File(filePath);
+      return file.existsSync();
+    } on Exception {
+      return false;
+    }
   }
 
   /// Load the JSON file and parse it into a Map.
@@ -43,6 +53,11 @@ class JsonDataManagerService {
       return true;
     } else {
       try {
+        if (kIsWeb) {
+          // On web, always load from assets (no local file system)
+          await loadDefaultEnglishLanguage();
+          return true;
+        }
         Directory directory = await getApplicationDocumentsDirectory();
         String filePath = '${directory.path}/$fileName';
 

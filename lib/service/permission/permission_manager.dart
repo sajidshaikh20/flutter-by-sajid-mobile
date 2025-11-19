@@ -1,4 +1,5 @@
 import '../../utils/exports.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// Utility class for Permission asking and granting.
 ///
@@ -46,7 +47,7 @@ class PermissionManager {
   //----------------------------------------------------------------
   /// Check OS version of Android is 33 or Greater
   FutureOr<bool> isAndroidOSVersionIS13() async {
-    if(Platform.isAndroid.isFalse ?? false) return false;
+    if (kIsWeb || !Platform.isAndroid) return false;
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     if (androidInfo.version.sdkInt > 32) {
@@ -56,45 +57,9 @@ class PermissionManager {
     }
   }
 
-  /// Check Location permission (enhanced)
-  FutureOr<bool> checkLocationPermissionEnhanced() async {
-    try {
-      // First check if location services are enabled
-      bool serviceEnabled = await checkLocationServiceEnabled();
-      if (!serviceEnabled) {
-        DebugLog.instance.d('Location services are disabled');
-        return false;
-      }
 
-      // Then check permission status
-      PermissionStatus status = await Permission.location.status;
-      if (status.isGranted) {
-        DebugLog.instance.d('Location permission is granted');
-        return true;
-      } else {
-        DebugLog.instance.d('Location permission is not granted: ${status.toString()}');
-        return false;
-      }
-    } on Exception catch (e) {
-      DebugLog.instance.e('Error checking location permission: $e');
-      return false;
-    }
-  }
 
-  /// Check if location services are enabled
-  FutureOr<bool> checkLocationServiceEnabled() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        DebugLog.instance.d('Location services are disabled');
-        return false;
-      }
-      return true;
-    } on Exception catch (e) {
-      DebugLog.instance.e('Error checking location service: $e');
-      return false;
-    }
-  }
+
 
   /// Check Location permission (legacy method for backward compatibility)
   FutureOr<bool> checkLocationPermission() async {
@@ -367,6 +332,7 @@ class PermissionManager {
 
   /// Check speech recognition permission
   FutureOr<bool> checkSpeechPermission() async {
+    if (kIsWeb) return true; // Web doesn't need speech permission
     if (Platform.isIOS) {
       PermissionStatus status = await Permission.speech.status;
       if (status.isGranted) {
@@ -382,6 +348,7 @@ class PermissionManager {
 
   /// Request speech recognition permission
   FutureOr<bool> requestSpeechPermission() async {
+    if (kIsWeb) return true; // Web doesn't need speech permission
     if (Platform.isIOS) {
       PermissionStatus status = await Permission.speech.request();
       if (status == PermissionStatus.granted) {

@@ -107,10 +107,8 @@ class CustomMobileInputWidget extends StatelessWidget {
         ],
         validator: (dynamic value) {
           return value.toString().validateMobileField(
-            emptyErrorMessage: MainConfig.dynamicString(
-                JsonServiceString.keyPleaseEnterMobileNumber),
-            lengthErrorMessage: MainConfig.dynamicString(JsonServiceString
-                .keyPleaseEnterMinimum8AndMaximum14DigitMobileNumber),
+            emptyErrorMessage: "Enter valid number",
+            lengthErrorMessage: "Please Enter Minimum 8 And Maximum 14 Digit Mobile Number",
           );
         },
         textCapitalization: TextCapitalization.none,

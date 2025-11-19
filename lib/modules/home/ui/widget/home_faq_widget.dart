@@ -12,9 +12,7 @@ class HomeFaqWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        await context.router.push(ViewCmsRoute(
-            title: context.appString.termsAndConditionKey,
-            url: AppConstant.term_conditions));
+       await context.router.push(CommonWebView(title: "Common web view Screen", url: AppConstant.about_us));
       },
       child: Container(
         height: Dimens.size52,

@@ -229,12 +229,10 @@ class LoginForm extends StatelessWidget {
                                   if(loginCubit.state.isNumberConsidered ?? false) {
                                     final String? mobileError =
                                     email.validMobileNo(
-                                        emptyMobileMsg: context.appString
-                                            .pleaseEnterMobileNumberKey,
+                                        emptyMobileMsg: "Please Enter Valid Mobie",
                                         onlyNumbersAllowedMsg: context
                                             .appString.onlyNumbersAllowedKey,
-                                        invalidMobileMsg: context.appString
-                                            .enterValidMobileNumberKey);
+                                        invalidMobileMsg: "Please Enter Valid Mobile");
                                     if (mobileError?.isNotEmpty ?? false) {
                                       loginCubit
                                           .handleValidationErrorMessageForEmail(
@@ -259,8 +257,8 @@ class LoginForm extends StatelessWidget {
                                               .pleaseEnterMobileOrNumberKey,
                                           enterEmailMsg: context
                                               .appString.pleaseEnterTheEmailKey,
-                                          validEmailMsg: context.appString
-                                              .pleaseEnterValidEmailKey);
+                                          validEmailMsg:
+                                              "Please Enter Valid Email");
                                   if (emailError?.isNotEmpty ?? false) {
                                     loginCubit
                                         .handleValidationErrorMessageForEmail(
@@ -320,9 +318,6 @@ class LoginForm extends StatelessWidget {
                             padding: const EdgeInsets.only(
                                 bottom: Dimens.space50, top: Dimens.size82),
                             child: CustomTextLabelWidget(
-                              onTap: () async {
-                                await context.router.push(const SignUpRoute());
-                              },
                               label: context.appString.dontHaveAccountKey,
                               style: context.textTheme.titleLarge?.copyWith(
                                   height: Dimens.lineHeight20

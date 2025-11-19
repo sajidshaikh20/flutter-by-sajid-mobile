@@ -1,7 +1,0 @@
-<svg id="Button" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <ellipse id="Oval" cx="12" cy="12" rx="12" ry="12" transform="translate(0 0)" fill="#f6f6f6"/>
-  <g id="Icon">
-    <rect id="Rectangle" width="24" height="24" fill="rgba(255,255,255,0)"/>
-    <path id="Ok" d="M1.158,5.1a.706.706,0,1,0-.9,1.084L4.488,9.717A.706.706,0,0,0,5.5,9.6l6.352-8.469A.706.706,0,0,0,10.727.282L4.821,8.157Z" transform="translate(6.501 7.06)" fill="#bababa"/>
-  </g>
-</svg>

@@ -73,7 +73,7 @@ class SplashCubit extends Cubit<SplashState> {
           redirectPath: SharedPref.instance.getBool(
                   PrefsKey.isCountryAndLanguageSelectedKey,
                   defValue: false)
-              ? AppPaths.socialLogin
+              ? AppPaths.login
               : AppPaths.languageSelection,
         ));
       },
@@ -148,63 +148,10 @@ class SplashCubit extends Cubit<SplashState> {
 
     if (response.countryList.isNotEmpty) {
       // Store the complete country list in CountryService
-      await getIt<CountryService>().storeCountryList(response.countryList);
+     // await getIt<CountryService>().storeCountryList(response.countryList);
 
       // If there's already a selected country, update it with the correct store value from API
-      final CountryService countryService = getIt<CountryService>();
 
-      if (countryService.countryId != null) {
-        final CountryList? selectedCountryFromApi = response.countryList.firstWhereOrNull(
-          (CountryList country) => country.countryId == countryService.countryId,
-        );
-
-        if (selectedCountryFromApi != null) {
-          // Create a CountryModel with the correct store value from API
-          final CountryModel updatedCountryModel = CountryModel(
-            websiteId: selectedCountryFromApi.websiteId,
-            countryId: selectedCountryFromApi.countryId,
-            countryName: selectedCountryFromApi.countryName,
-            countryFlag: selectedCountryFromApi.countryFlag,
-            contactUs: selectedCountryFromApi.contactUs != null 
-                ? ContactUsModel(
-                    phone: selectedCountryFromApi.contactUs!.phone,
-                    email: selectedCountryFromApi.contactUs!.email,
-                    whatsapp: selectedCountryFromApi.contactUs!.whatsapp,
-                  )
-                : null,
-            countryCode: selectedCountryFromApi.countryCode,
-          );
-          
-          // Save the updated country data with correct store value
-          await countryService.saveCountryData(updatedCountryModel);
-          DebugLog.instance.d('Updated country data with correct store value: ${selectedCountryFromApi.store}');
-        } else {
-          DebugLog.instance.d('Selected country not found in API response, keeping existing data');
-        }
-      } else {
-        DebugLog.instance.d('No country selected yet, auto-selecting first country');
-        // Auto-select the first country if none is selected
-        if (response.countryList.isNotEmpty) {
-          final CountryList firstCountry = response.countryList.first;
-          final CountryModel autoSelectedCountry = CountryModel(
-            websiteId: firstCountry.websiteId,
-            countryId: firstCountry.countryId,
-            countryName: firstCountry.countryName,
-            countryFlag: firstCountry.countryFlag,
-            arabicName: firstCountry.arabicName,
-            contactUs: firstCountry.contactUs != null
-                ? ContactUsModel(
-                    phone: firstCountry.contactUs!.phone,
-                    email: firstCountry.contactUs!.email,
-                    whatsapp: firstCountry.contactUs!.whatsapp,
-                  )
-                : null,
-            countryCode: firstCountry.countryCode,
-          );
-
-          await countryService.saveCountryData(autoSelectedCountry);
-        }
-      }
     } else {
       DebugLog.instance.d('No country list received from API');
     }

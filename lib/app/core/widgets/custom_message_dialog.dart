@@ -85,7 +85,7 @@ Future<void> showCustomMessageDialog(BuildContext context, String message,
     barrierDismissible: barrierDismissible,
     builder: (BuildContext context) {
       return CustomMessageDialog(
-        title: MainConfig.dynamicString(JsonServiceString.keyAlokozayShop),
+        title: "Base Structure",
         message: message,
         onConfirm: () async {
           await context.router.maybePop();

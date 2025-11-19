@@ -1,0 +1,12 @@
+{
+  "base_url": "https://google.com",
+  "envKey": "stage",
+  "androidAppId": "1:537817253607:android:e22032e3cc4ac65020c442",
+  "iosAppId": "1:537817253607:android:e22032e3cc4ac65020c442",
+  "messagingSenderId": "537817253607",
+  "projectId": "flutterbysajid",
+  "iosApiKey": "",
+  "androidApiKey": "",
+  "sentryDSN": "",
+  "googleApiKey": ""
+}

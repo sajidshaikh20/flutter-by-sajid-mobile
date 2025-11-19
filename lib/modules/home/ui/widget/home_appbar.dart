@@ -63,8 +63,8 @@ class HomeAppbar extends StatelessWidget {
                               left: isLanguageAlignmentLTR ? Dimens.size16 : 0,
                               right:
                                   isLanguageAlignmentLTR ? 0 : Dimens.size16),
-                          child: Assets.svgs.icDukanSplashLogo
-                              .svg(height: Dimens.size33, width: Dimens.size60),
+                          child: Assets.png.flutterOriginal512px
+                              .image(height: Dimens.size33, width: Dimens.size60),
                         ),
                       ],
                     ),
@@ -85,9 +85,6 @@ class HomeAppbar extends StatelessWidget {
                           secondTitle: context.appString.pickupKey,
                           selectedIndex: state.selectedSegmentIndex,
                           onIndexChanged: (int value) {
-                            /*context
-                                .read<ProductHomeCubit>()
-                                .onSegmentChangedIndex(value);*/
                           },
                         ),
                    Expanded(

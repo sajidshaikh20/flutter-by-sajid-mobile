@@ -123,18 +123,6 @@ class LanguageService {
     DebugLog.instance.d('Selected language stored: ${selectedLanguage.languageName} (ID: ${selectedLanguage.languageId})');
   }
 
-  /// Store the selected language by language ID from the stored language list
-  Future<void> storeSelectedLanguageById(String languageId) async {
-    List<LanguageList> languageList = await getLanguageList();
-    LanguageList? selectedLanguage = languageList.firstWhereOrNull(
-      (LanguageList lang) => lang.languageId == languageId,
-    );
-    
-    if (selectedLanguage != null) {
-      await storeSelectedLanguage(selectedLanguage);
-    } else {
-      DebugLog.instance.e('Language with ID $languageId not found in stored language list');
-    }
-  }
+
 
 }

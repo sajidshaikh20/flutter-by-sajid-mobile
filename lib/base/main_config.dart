@@ -34,9 +34,6 @@ class MainConfig {
   static JsonDataManagerService get jsonServiceManager =>
       getIt<JsonDataManagerService>();
 
-  /// Provides the [AnalyticsService] instance.
-  static AnalyticsService get analyticsService => getIt<AnalyticsService>();
-
   /// Retrieves a dynamic string value by name from the JsonDataManagerService.
   static String dynamicString(String name) =>
       getIt<JsonDataManagerService>().getValue(name);

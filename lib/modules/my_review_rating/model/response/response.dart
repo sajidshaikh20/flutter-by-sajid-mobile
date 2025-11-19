@@ -1,1 +1,0 @@
-export 'list_of_my_reviews_rating_response_model.dart';

@@ -1,4 +1,5 @@
 import '../../utils/exports.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // final remoteConfig = FirebaseRemoteConfig.instance;
 
@@ -75,7 +76,7 @@ class AppInitializer {
       // Load data services with comprehensive logging
       DebugLog.instance.i('AppInitializer: Starting service data loading...');
 
-      await getIt<CountryService>().loadCountryData();
+
       DebugLog.instance.i('AppInitializer: CountryService loaded');
 
       await getIt<LanguageService>().loadLanguageData();
@@ -86,13 +87,13 @@ class AppInitializer {
 
       // Verify services are properly loaded
       final UserProfileService userService = getIt<UserProfileService>();
-      final CountryService countryService = getIt<CountryService>();
+      //final CountryService countryService = getIt<CountryService>();
       final LanguageService languageService = getIt<LanguageService>();
 
       DebugLog.instance.i('AppInitializer: Service verification:');
       DebugLog.instance.i('  - UserProfileService.isDataLoaded: ${userService.isDataLoaded}');
       DebugLog.instance.i('  - UserProfileService.customerToken: "${userService.customerToken}" (length: ${userService.customerToken.length})');
-      DebugLog.instance.i('  - CountryService.countryId: "${countryService.countryId}"');
+    //  DebugLog.instance.i('  - CountryService.countryId: "${countryService.countryId}"');
       DebugLog.instance.i('  - LanguageService.languageId: "${languageService.languageId}"');
 
       unawaited(NotificationManager.instance.init());
@@ -118,6 +119,7 @@ class AppInitializer {
   FutureOr<void> _initStorage() async {
     await GetStorage.init();
     await SharedPref.instance.init();
+    await StorageService.instance.init();
   }
 
   Future<void> _initScreenPreference() async {
@@ -136,13 +138,15 @@ class AppInitializer {
   }
 
   Future<void> _getPackageAndDeviceInfo() async {
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidDeviceInfo =
-      await DeviceInfoPlugin().androidInfo;
-      getIt<MainConfig>().androidInfo = androidDeviceInfo;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
-      getIt<MainConfig>().iosDeviceInfo = iosDeviceInfo;
+    if (!kIsWeb) {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidDeviceInfo =
+        await DeviceInfoPlugin().androidInfo;
+        getIt<MainConfig>().androidInfo = androidDeviceInfo;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
+        getIt<MainConfig>().iosDeviceInfo = iosDeviceInfo;
+      }
     }
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
