@@ -42,6 +42,14 @@ class TabsState extends BaseState {
     }
   }
 
+  @override
+  List<Object?> get props => <Object?>[
+    ...super.props,
+    tabs,
+    activeTabId,
+    currentUrl,
+  ];
+
   static TabsState initial() {
     return const TabsState(
       status: BaseStateStatus.initial,

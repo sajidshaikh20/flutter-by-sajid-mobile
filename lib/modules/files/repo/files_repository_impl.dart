@@ -10,8 +10,8 @@ class FilesRepositoryImpl extends FilesRepository {
   Future<List<FileModel>> getAllFiles() async {
     try {
       final List<Map<String, dynamic>> filesData = getIt<StorageService>().getAllFiles();
-      final List<FileModel> files = filesData.map((Map<String, dynamic> map) => FileModel.fromMap(map)).toList();
-      files.sort((FileModel a, FileModel b) => b.dateCreated.compareTo(a.dateCreated));
+      final List<FileModel> files = filesData.map((Map<String, dynamic> map) => FileModel.fromMap(map)).toList()
+      ..sort((FileModel a, FileModel b) => b.dateCreated.compareTo(a.dateCreated));
       return files;
     } on Exception catch (e) {
       DebugLog.instance.e('Error getting all files: $e');

@@ -1,60 +1,87 @@
 import '../../../../utils/exports.dart';
 import '../../model/browser_tab_model.dart';
+import '../../cubit/tabs_cubit.dart';
+import '../../cubit/tabs_state.dart';
 
 class BrowserTabBar extends StatelessWidget {
   const BrowserTabBar({
     super.key,
-    required this.tabs,
-    required this.activeTabId,
     required this.onTabSelected,
     required this.onTabClosed,
     required this.onNewTabPressed,
   });
 
-  final List<BrowserTabModel> tabs;
-  final String? activeTabId;
   final ValueChanged<String> onTabSelected;
   final ValueChanged<String> onTabClosed;
   final VoidCallback onNewTabPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Dimens.size48,
-      color: MainConfig.appColors.backgroundWhiteColor,
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: tabs.length,
-              itemBuilder: (BuildContext context, int index) {
-                final BrowserTabModel tab = tabs[index];
-                final bool isActive = tab.id == activeTabId;
-                return _TabItem(
-                  tab: tab,
-                  isActive: isActive,
-                  onTap: () => onTabSelected(tab.id),
-                  onClose: () => onTabClosed(tab.id),
-                );
-              },
-            ),
+    return BlocBuilder<TabsCubit, TabsState>(
+      buildWhen: (TabsState previous, TabsState current) {
+        // Rebuild when tabs list changes or activeTabId changes
+        final bool tabsChanged = previous.tabs.length != current.tabs.length ||
+            previous.activeTabId != current.activeTabId;
+        
+        // Also check if tab IDs changed (for when tabs are replaced)
+        if (!tabsChanged && previous.tabs.length == current.tabs.length) {
+          final Set<String> previousIds = previous.tabs.map((BrowserTabModel t) => t.id).toSet();
+          final Set<String> currentIds = current.tabs.map((BrowserTabModel t) => t.id).toSet();
+          return previousIds != currentIds;
+        }
+        
+        return tabsChanged;
+      },
+      builder: (BuildContext context, TabsState state) {
+        final List<BrowserTabModel> tabs = state.tabs;
+        final String? activeTabId = state.activeTabId;
+        DebugLog.instance.d('BrowserTabBar rebuild: ${tabs.length} tabs, active: $activeTabId');
+        return Container(
+          height: Dimens.size48,
+          color: MainConfig.appColors.backgroundWhiteColor,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: ListView.builder(
+                  key: ValueKey<int>(tabs.length), // Force rebuild when tab count changes
+                  scrollDirection: Axis.horizontal,
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: false,
+                  itemCount: tabs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final BrowserTabModel tab = tabs[index];
+                    final bool isActive = tab.id == activeTabId;
+                    return _TabItem(
+                      key: ValueKey<String>(tab.id), // Unique key for each tab to force rebuild
+                      tab: tab,
+                      isActive: isActive,
+                      onTap: () {
+                        // Ensure tab switching happens
+                        onTabSelected(tab.id);
+                      },
+                      onClose: () => onTabClosed(tab.id),
+                    );
+                  },
+                ),
+              ),
+              // New tab button
+              IconButton(
+                icon: const Icon(Icons.add),
+                color: MainConfig.appColors.mainColor,
+                onPressed: onNewTabPressed,
+                tooltip: 'New Tab',
+              ),
+            ],
           ),
-          // New tab button
-          IconButton(
-            icon: const Icon(Icons.add),
-            color: MainConfig.appColors.mainColor,
-            onPressed: onNewTabPressed,
-            tooltip: 'New Tab',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
 class _TabItem extends StatelessWidget {
   const _TabItem({
+    super.key,
     required this.tab,
     required this.isActive,
     required this.onTap,
@@ -68,28 +95,31 @@ class _TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: Dimens.size150,
-        margin: const EdgeInsets.only(
-          left: Dimens.space4,
-          top: Dimens.space4,
-          bottom: Dimens.space4,
-        ),
-        decoration: BoxDecoration(
-          color: isActive
-              ? MainConfig.appColors.backgroundWhiteColor
-              : MainConfig.appColors.backgroundLightPinkColor,
-          borderRadius: BorderRadius.circular(Dimens.radius8),
-          border: Border.all(
-            color: isActive
-                ? MainConfig.appColors.mainColor
-                : Colors.transparent,
-            width: 2,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimens.radius8),
+        child: Container(
+          width: Dimens.size150,
+          margin: const EdgeInsets.only(
+            left: Dimens.space4,
+            top: Dimens.space4,
+            bottom: Dimens.space4,
           ),
-        ),
-        child: Row(
+          decoration: BoxDecoration(
+            color: isActive
+                ? MainConfig.appColors.backgroundWhiteColor
+                : MainConfig.appColors.backgroundLightPinkColor,
+            borderRadius: BorderRadius.circular(Dimens.radius8),
+            border: Border.all(
+              color: isActive
+                  ? MainConfig.appColors.mainColor
+                  : Colors.transparent,
+              width: 2,
+            ),
+          ),
+          child: Row(
           children: <Widget>[
             const SizedBox(width: Dimens.space8),
             // Favicon or loading indicator
@@ -123,9 +153,10 @@ class _TabItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: Dimens.space4),
-            // Close button
+            // Close button - use GestureDetector to stop tap propagation
             GestureDetector(
-              onTap: onClose,
+              onTap: () => onClose(),
+              behavior: HitTestBehavior.opaque,
               child: Container(
                 padding: const EdgeInsets.all(Dimens.space4),
                 child: Icon(
@@ -137,6 +168,7 @@ class _TabItem extends StatelessWidget {
             ),
             const SizedBox(width: Dimens.space4),
           ],
+        ),
         ),
       ),
     );
