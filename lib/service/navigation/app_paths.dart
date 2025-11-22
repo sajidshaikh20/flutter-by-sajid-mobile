@@ -212,13 +212,4 @@ abstract class AppPaths {
   /// Notification settings page route.
   static const String notificationSetting = '/notificationSetting';
 
-  /// Points history page route.
-  static const String pointsHistory = '/pointsHistory';
-
-  /// Change language page route.
-  static const String changeLanguage = '/changeLanguage';
-
-  /// Store receipt page route.
-  static const String storeReceipt = '/store_Receipt';
-
 }
