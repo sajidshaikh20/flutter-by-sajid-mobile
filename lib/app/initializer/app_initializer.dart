@@ -78,7 +78,7 @@ class AppInitializer {
 
       DebugLog.instance.i('AppInitializer: CountryService loaded');
 
-      await getIt<LanguageService>().loadLanguageData();
+
       DebugLog.instance.i('AppInitializer: LanguageService loaded');
 
       await getIt<UserProfileService>().loadUserData();
@@ -87,14 +87,12 @@ class AppInitializer {
       // Verify services are properly loaded
       final UserProfileService userService = getIt<UserProfileService>();
       //final CountryService countryService = getIt<CountryService>();
-      final LanguageService languageService = getIt<LanguageService>();
+
 
       DebugLog.instance.i('AppInitializer: Service verification:');
       DebugLog.instance.i('  - UserProfileService.isDataLoaded: ${userService.isDataLoaded}');
       DebugLog.instance.i('  - UserProfileService.customerToken: "${userService.customerToken}" (length: ${userService.customerToken.length})');
     //  DebugLog.instance.i('  - CountryService.countryId: "${countryService.countryId}"');
-      DebugLog.instance.i('  - LanguageService.languageId: "${languageService.languageId}"');
-
       unawaited(NotificationManager.instance.init());
 
       // Request notification permission on app start (non-blocking)
@@ -136,15 +134,16 @@ class AppInitializer {
   }
 
   Future<void> _getPackageAndDeviceInfo() async {
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidDeviceInfo =
-      await DeviceInfoPlugin().androidInfo;
-      getIt<MainConfig>().androidInfo = androidDeviceInfo;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
-      getIt<MainConfig>().iosDeviceInfo = iosDeviceInfo;
+    if (!kIsWeb) {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidDeviceInfo =
+            await DeviceInfoPlugin().androidInfo;
+        getIt<MainConfig>().androidInfo = androidDeviceInfo;
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
+        getIt<MainConfig>().iosDeviceInfo = iosDeviceInfo;
+      }
     }
-
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     getIt<MainConfig>().packageInfo = packageInfo;
   }

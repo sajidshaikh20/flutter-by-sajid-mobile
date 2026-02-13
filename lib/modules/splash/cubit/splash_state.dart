@@ -1,41 +1,20 @@
 import '../../../utils/exports.dart';
 
-/// Immutable state for the splash screen.
-class SplashState extends BaseState {
+/// State for the splash screen.
+class SplashState extends Equatable {
   /// Creates a [SplashState].
-  const SplashState({
-    required super.status,
-    this.redirectPath = '',
-    this.languageAlignment = AppConstant.defaultLanguageAlignment,
-    this.languageCode = AppConstant.en,
-    super.msg = '',
-  });
+  const SplashState({this.redirectPath = ''});
 
-  /// The next route path to navigate to after splash.
+  /// Route path to navigate to after splash (e.g. AppPaths.main).
   final String redirectPath;
-  /// Language alignment to apply before navigation.
-  final String languageAlignment;
-  /// Current language code derived during splash.
-  final String languageCode;
 
   /// Returns a copy with updated fields.
-  SplashState copyWith({
-    BaseStateStatus? status,
-    String? redirectPath,
-    String? languageAlignment,
-    String? languageCode,
-    String? msg,
-  }) {
+  SplashState copyWith({String? redirectPath}) {
     return SplashState(
-      status: status ?? this.status,
       redirectPath: redirectPath ?? this.redirectPath,
-      languageAlignment: languageAlignment ?? this.languageAlignment,
-      languageCode: languageCode ?? this.languageCode,
-      msg: msg ?? this.msg,
     );
   }
 
   @override
-  List<Object?> get props =>
-      <Object?>[...super.props, languageAlignment, languageCode, msg];
+  List<Object?> get props => <Object?>[redirectPath];
 }

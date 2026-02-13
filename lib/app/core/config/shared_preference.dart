@@ -5,7 +5,6 @@ class PrefsKey {
   /// Key to check if the user is logged in.
   static const String isLoggedInKey = 'isLoggedInKey';
 
-
   /// Key for the currently selected locale.
   static const String currentLocaleKey = 'currentLocaleKey';
 
@@ -78,16 +77,17 @@ class PrefsKey {
 
   /// Key for Facebook URL.
   static const String facebookUrlKey = 'facebookUrlKey';
-  
+
   /// Key for Instagram URL.
   static const String instagramUrlKey = 'instagramUrlKey';
-  
+
   /// Key for YouTube URL.
   static const String youTubeUrlKey = 'youTubeUrlKey';
 
   /// Key indicating whether we have already asked for notification permission
   /// at least once. Used to avoid auto-request loops on subsequent launches.
-  static const String notificationPermissionAskedKey = 'notificationPermissionAskedKey';
+  static const String notificationPermissionAskedKey =
+      'notificationPermissionAskedKey';
 }
 
 /// A class to manage shared preferences with encryption support.
@@ -106,7 +106,6 @@ class SharedPref {
 
   /// Initializes the shared preferences instance and sets encryption keys.
   Future<void> init() async {
-
     _prefsInstance ??= GetStorage();
 
     _getEncryptionKey();
@@ -161,10 +160,10 @@ class SharedPref {
   /// Sets a value in shared preferences with optional encryption.
   /// Sets a value in shared preferences with optional encryption.
   Future<void> setValue(
-      String key,
-      dynamic value, {
-        bool isNeedToAwait = false,
-      }) async {
+    String key,
+    dynamic value, {
+    bool isNeedToAwait = false,
+  }) async {
     String encrypted = AESEncryption.instance.encryptCode(
       encryptKey,
       encryptIv,
@@ -184,75 +183,26 @@ class SharedPref {
     return value.isNotNullOrEmpty ? value! : defValue ?? '';
   }
 
-
-
-  /// This function will store all the required selected biometric data
-  Future<void> storeBioMetricLogin(BiometricModel bioModel) async {
-    String jsonString = jsonEncode(bioModel.toJson());
-    await setValue(PrefsKey.isBioMetricModelKey, jsonString);
-  }
-
-  /// Retrieves biometric login data from shared preferences.
-  Future<BiometricModel?> getBioMetricLoginData() async {
-    BiometricModel? bioMetricModel;
-    String? jsonString =
-    await getValue(PrefsKey.isBioMetricModelKey);
-    if (jsonString != null && jsonString.isNotEmpty) {
-      Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-      bioMetricModel = BiometricModel.fromJson(jsonMap);
-    } else {
-      bioMetricModel = null;
-    }
-    return bioMetricModel;
-  }
-
-  /// This function will store all the required selected language data
-  Future<void> storeLanguageData(LanguageList languageList) async {
-    String jsonString = jsonEncode(languageList.toJson());
-    await setValue(PrefsKey.languageDataKey, jsonString);
-    await getIt<LanguageService>().loadLanguageData();
-  }
-
-
   /// Completes with true once the user
   ///   preferences for the app has been cleared.
   Future<void> clearData() async {
-
-    BiometricModel? bioModel = await getBioMetricLoginData();
-
-    LanguageList languageData = LanguageList(
-      defaultCurrency: getIt<LanguageService>().defaultCurrency,
-      languageSortCode: getIt<LanguageService>().languageSortCode,
-      // code: getIt<LanguageService>().code,
-      url: getIt<LanguageService>().url,
-      languageId: getIt<LanguageService>().languageId,
-      languageName: getIt<LanguageService>().languageName,
-    );
     String type = getString(PrefsKey.offerTypeKey, '');
     String quoteId = getIt<UserProfileService>().quoteId;
     bool isEnglishLanguageLoaded =
-    getBool(PrefsKey.isEnglishLanguageLoadedKey, defValue: true);
-    String offerCategoryIdKey =
-    getString(PrefsKey.offerCategoryIdKey, '');
+        getBool(PrefsKey.isEnglishLanguageLoadedKey, defValue: true);
+    String offerCategoryIdKey = getString(PrefsKey.offerCategoryIdKey, '');
     await _prefsInstance?.erase();
 
     await Future.wait(
       <Future<void>>[
-        storeLanguageData(languageData),
         setValue(PrefsKey.isCountryAndLanguageSelectedKey, true),
         setValue(PrefsKey.offerTypeKey, type),
         setValue(PrefsKey.offerCategoryIdKey, offerCategoryIdKey),
         setValue(PrefsKey.quoteIdKey, quoteId),
-
-        getIt<LanguageService>().loadLanguageData(),
         getIt<UserProfileService>().loadUserData(),
-
         setValue(
           PrefsKey.isEnglishLanguageLoadedKey,
           isEnglishLanguageLoaded,
-        ),
-        storeBioMetricLogin(
-          bioModel ?? BiometricModel(),
         ),
       ],
     );
@@ -269,7 +219,8 @@ class SharedPref {
     if (_prefsInstance?.read(key) != null) {
       dynamic value = _prefsInstance?.read(key);
       if (value.toString().trim().isNotEmpty) {
-        return AESEncryption.instance.decryptCode(encryptKey, encryptIv, text: value);
+        return AESEncryption.instance
+            .decryptCode(encryptKey, encryptIv, text: value);
       } else {
         return '';
       }
@@ -293,15 +244,6 @@ class SharedPref {
   }
 
   ///Save login up response data with mapping User profile
-  Future<void> saveLoginData(LoginUserResponse accountResponse) async {
-    UserProfileModel userProfile = accountResponse.signInToUserProfile();
-    String jsonString = jsonEncode(userProfile.toJson());
-    await setValue(PrefsKey.userProfileKey, jsonString);
-    await getIt<UserProfileService>().loadUserData();
-    DebugLog.instance.i('saveLoginData: User profile data saved - customerName: ${userProfile.customerName}, token: ${userProfile.customerToken}');
-  }
-
-
 
   /// Clear selected address data from SharedPreferences
   Future<void> clearSelectedAddress() async {
@@ -320,23 +262,18 @@ class SharedPref {
 
   /// Get delivery type (delivery/pickup) from SharedPreferences
   String getDeliveryType() {
-    return getString(PrefsKey.deliveryTypeKey, 'delivery'); // Default to delivery
+    return getString(
+        PrefsKey.deliveryTypeKey, 'delivery'); // Default to delivery
   }
-
 
   /// Check if CountryService data is stored
   bool isCountryServiceStored() {
     String countryData = getString(PrefsKey.countryDataKey, '');
     String countryListData = getString(PrefsKey.countryListKey, '');
     bool isStored = countryData.isNotEmpty || countryListData.isNotEmpty;
-    DebugLog.instance.i('CountryService storage check: $isStored (data: ${countryData.isNotEmpty}, list: ${countryListData.isNotEmpty})');
+    DebugLog.instance.i(
+        'CountryService storage check: $isStored (data: ${countryData.isNotEmpty}, list: ${countryListData.isNotEmpty})');
     return isStored;
-  }
-
-  /// Load and store LanguageService data
-  Future<void> loadAndStoreLanguageService() async {
-    await getIt<LanguageService>().loadLanguageData();
-    DebugLog.instance.i('LanguageService data loaded from SharedPreferences');
   }
 
   /// Check if LanguageService data is stored
@@ -344,17 +281,17 @@ class SharedPref {
     String languageData = getString(PrefsKey.languageDataKey, '');
     String languageListData = getString(PrefsKey.languageListKey, '');
     bool isStored = languageData.isNotEmpty || languageListData.isNotEmpty;
-    DebugLog.instance.i('LanguageService storage check: $isStored (data: ${languageData.isNotEmpty}, list: ${languageListData.isNotEmpty})');
+    DebugLog.instance.i(
+        'LanguageService storage check: $isStored (data: ${languageData.isNotEmpty}, list: ${languageListData.isNotEmpty})');
     return isStored;
   }
 
   /// Load and store UserProfileService data
   Future<void> loadAndStoreUserProfileService() async {
     await getIt<UserProfileService>().loadUserData();
-    DebugLog.instance.i('UserProfileService data loaded from SharedPreferences');
+    DebugLog.instance
+        .i('UserProfileService data loaded from SharedPreferences');
   }
-
-
 
   /// Clear only user-related data from SharedPreferences
   Future<void> clearUserDataOnly() async {
@@ -381,7 +318,7 @@ class SharedPref {
     // Reload user profile service after clearing
     await getIt<UserProfileService>().loadUserData();
 
-    DebugLog.instance.i("SharedPref: Cleared only user-related data successfully");
+    DebugLog.instance
+        .i("SharedPref: Cleared only user-related data successfully");
   }
-
 }

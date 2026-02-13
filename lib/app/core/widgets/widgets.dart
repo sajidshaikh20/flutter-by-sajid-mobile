@@ -41,7 +41,6 @@ export 'form_field/emoji_block_formatter.dart';
 export 'main_appbar/main_appbar_title_widget.dart';
 export 'main_appbar/main_appbar_widget.dart';
 export 'password_field_widget.dart';
-export 'product_details_app_bar.dart';
 export 'progress_bar/custom_progress_bar.dart';
 export 'rotated_icon.dart';
 export 'segmented_control.dart';

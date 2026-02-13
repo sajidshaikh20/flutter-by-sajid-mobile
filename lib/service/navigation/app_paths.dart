@@ -35,6 +35,9 @@ abstract class AppPaths {
   /// Splash screen route.
   static const String splash = '/splash';
 
+  /// Main screen route (first screen after splash).
+  static const String main = '/main';
+
   /// Social login screen route.
   static const String socialLogin = '/socialLogin';
 

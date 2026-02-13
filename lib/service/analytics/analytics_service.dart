@@ -68,51 +68,6 @@ class AnalyticsService {
     );
   }
 
-  /// Logs a view item list event.
-  ///
-  /// [productDetails]: A list of products in the item list.
-  /// [itemListName]: The name of the item list being viewed.
-  Future<void> viewItemListFirebaseEvent({
-    required List<ProductList>? productDetails,
-    required String itemListName,
-  }) async {
-    if (productDetails == null || productDetails.isEmpty) {
-      return;
-    }
-
-    List<Map<String, Object?>> itemDetails = productDetails
-        .map(
-          (ProductList product) => <String, Object?>{
-            AppAnalyticsConstant.itemName: product.name,
-            AppAnalyticsConstant.itemId: product.sku,
-            AppAnalyticsConstant.price: product.price,
-          },
-        )
-        .toList();
-
-    Map<String, Object> eventParams = <String, Object>{
-      AppAnalyticsConstant.items: itemDetails, // Pass the list directly
-      AppAnalyticsConstant.currency: getIt<LanguageService>().defaultCurrency,
-    };
-
-    await logCustomEvent(
-      name: AppAnalyticsConstant.viewItemList,
-      parameters: eventParams,
-    );
-  }
-
-  /// Logs a view cart event.
-  ///
-  /// [cartViewModel]: The cart details
-  /// including items, names, SKUs, and prices.
-
-
-
-
-
-
-
-
   /// Logs a remove-from-cart event.
   ///
   /// [itemName]: The name of the item being removed from the cart.

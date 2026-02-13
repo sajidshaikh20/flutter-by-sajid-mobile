@@ -6,7 +6,6 @@ export 'debug_log.dart';
 export 'dotted_line.dart';
 export 'encryption_utils.dart';
 export 'extensions.dart';
-export 'otp_extractor.dart';
 export 'reg_expressions.dart';
 export 'string_extension.dart';
 export 'utils_functions.dart';

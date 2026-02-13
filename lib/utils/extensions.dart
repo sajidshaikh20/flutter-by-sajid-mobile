@@ -96,36 +96,7 @@ extension RxnBoolExt on bool? {
   }
 }
 
-/// Extension on [LoginUserResponse] to convert it into a [UserProfileModel].
-extension SignInAccountResponseMapping on LoginUserResponse {
-  /// Maps [LoginUserResponse] data into a [UserProfileModel].
-  UserProfileModel signInToUserProfile() {
-    return UserProfileModel(
-      phoneNumber: phoneNumber ?? '',
-      mobileNumber: phoneNumber ?? '',
-      prefix: prefix ?? AppConstant.defaultCountryCodeInt,
-      customerName: customerName ?? '',
-      customerEmail: customerEmail ?? '',
-      customerId: customerId,
-      customerToken: customerToken ?? '',
-      lastName: customerName?.split(" ").last,
-      firstName: customerName?.split(" ").first,
-      cartCount: cartCount ?? 0,
-      quoteId: quoteId ?? '',
-      totalOrderValue: totalOrderValue ?? '',
-      lastOrderDate: lastOrderDate ?? '',
-      storeCredit: walletBalance ?? '',
-      rewardPoints: loyaltyPoints ?? '',
-      totalOrder: totalOrder ?? 0,
-      referralCode: referralCode ?? '',
-      fcmToken:  '',
-      gender: gender ?? '',
-      birthday: birthday ?? '',
-      nationality: nationality ?? '',
-      arabicNationality: arabicNationality ?? '',
-    );
-  }
-}
+
 
 
 

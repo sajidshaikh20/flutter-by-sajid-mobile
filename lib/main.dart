@@ -53,85 +53,44 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: <BlocProvider<dynamic>>[
-        BlocProvider<InternetCubit>(
-          lazy: false,
-          create: (BuildContext context) => InternetCubit(Connectivity()),
-        ),
-        BlocProvider<CartCountCubit>(
-          lazy: false,
-          create: (BuildContext context) => getIt<CartCountCubit>(),
-        ),
-        BlocProvider<GlobalWishlistManager>(
-          lazy: false,
-          create: (BuildContext context) => getIt<GlobalWishlistManager>(),
-        ),
-        BlocProvider<LocaleCubit>(
-          create: (BuildContext context) => LocaleCubit.instance,
-        ),
-        BlocProvider<ForceUpdateUnderMaintenanceCubit>(
-          create: (BuildContext context) =>
-              ForceUpdateUnderMaintenanceCubit.instance(),
-        ),
-        BlocProvider<HomeCubit>(
-          create: (BuildContext context) => HomeCubit(
-              homeRepository: HomeRepositoryImpl(),
-              countCubit: context.read<CartCountCubit>()),
-        ),
-        BlocProvider<SocialLoginCubit>(
-          create: (BuildContext context) => SocialLoginCubit(
-            repository: LoginRepositoryImpl(),
-            initialState: const SocialLoginState(
-              status: BaseStateStatus.initial,
-            ),
-          ),
-        ),
-      ],
-      child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
-        builder: (BuildContext context, ChangeLocaleState state) {
-          bool isLtr = SharedPref.instance
-              .getBool(PrefsKey.isEnglishLanguageLoadedKey, defValue: true);
-          final AppRouter appRouter = GetIt.instance<AppRouter>();
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            builder: EasyLoading.init(
-                builder: (BuildContext context, Widget? child) {
-              configLoader();
-              return child ?? const SizedBox();
-            }),
-            routerConfig: appRouter.config(
-              navigatorObservers: () => <NavigatorObserver>[
-                CustomNavigationObserver(),
-                // SentryNavigatorObserver(),
-               //if (kDebugMode) ChuckerFlutter.navigatorObserver,
-              ],
-            ),
-            title: AppConstant.appName,
-            locale: getLocale(),
-            supportedLocales: const <Locale>[
-              Locale(AppConstant.en, ''),
-              Locale(AppConstant.ar, ''),
-            ],
-            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-              AppLocalizationsDelegate(),
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            localeResolutionCallback:
-                (Locale? locale, Iterable<Locale> supportedLocales) {
-              for (final Locale supportedLocale in supportedLocales) {
-                if (supportedLocale.languageCode == locale?.languageCode) {
-                  return supportedLocale;
-                }
-              }
-              return supportedLocales.first;
-            },
-            theme: MainConfig.appTheme.theme(isLtr: isLtr),
-          );
-        },
+    final bool isLtr = SharedPref.instance
+        .getBool(PrefsKey.isEnglishLanguageLoadedKey, defValue: true);
+    final AppRouter appRouter = GetIt.instance<AppRouter>();
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      builder: EasyLoading.init(builder: (BuildContext context, Widget? child) {
+        configLoader();
+        return child ?? const SizedBox();
+      }),
+      routerConfig: appRouter.config(
+        navigatorObservers: () => <NavigatorObserver>[
+          CustomNavigationObserver(),
+          // SentryNavigatorObserver(),
+          //if (kDebugMode) ChuckerFlutter.navigatorObserver,
+        ],
       ),
+      title: AppConstant.appName,
+      locale: getLocale(),
+      supportedLocales: const <Locale>[
+        Locale(AppConstant.en, ''),
+        Locale(AppConstant.ar, ''),
+      ],
+      localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback:
+          (Locale? locale, Iterable<Locale> supportedLocales) {
+        for (final Locale supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        return supportedLocales.first;
+      },
+      theme: MainConfig.appTheme.theme(isLtr: isLtr),
     );
   }
 }

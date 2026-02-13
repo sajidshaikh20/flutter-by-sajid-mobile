@@ -5,7 +5,6 @@ export 'package:firebase_messaging/firebase_messaging.dart';
 
 export 'analytics/analytics.dart';
 export 'firebase/firebase.dart';
-export 'global_wishlist_manager.dart';
 export 'local/local.dart';
 export 'navigation/navigation.dart';
 export 'network/network.dart';
