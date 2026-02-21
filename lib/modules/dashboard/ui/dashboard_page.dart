@@ -109,7 +109,7 @@ class DashboardPage extends BaseResponsiveView {
                     fontSize: selectedUnSelectedFontSize,
                     height: Dimens.lineHeight18Point74
                         .toLineHeight(selectedUnSelectedFontSize),
-                    color: MainConfig.appColors.mainColor,
+                    color: MainConfig.appColors.primary,
                     fontWeight: FontWeight.normal),
                 unselectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
                     fontSize: selectedUnSelectedFontSize,
@@ -119,7 +119,7 @@ class DashboardPage extends BaseResponsiveView {
                     fontWeight: FontWeight.normal),
                 // selectedItemColor: AppColors.mainColor,
                 // unselectedItemColor: AppColors.greyTextColor,
-                selectedColor: MainConfig.appColors.mainColor,
+                selectedColor: MainConfig.appColors.primary,
                 backgroundColor: Colors.white,
                 unSelectedColor: MainConfig.appColors.greyTextColor,
                 customBottomBarItems: <CustomBottomBarItems<Widget>>[
@@ -128,7 +128,7 @@ class DashboardPage extends BaseResponsiveView {
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                            MainConfig.appColors.primary, BlendMode.srcIn)),
                     icon: Assets.svgs.icNavHome
                         .svg(height: iconSize, width: iconSize),
                     label: context.appString.navHomeKey,
@@ -138,7 +138,7 @@ class DashboardPage extends BaseResponsiveView {
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                            MainConfig.appColors.primary, BlendMode.srcIn)),
                     icon: Assets.svgs.icNavCategories
                         .svg(height: iconSize, width: iconSize),
                     label: context.appString.navCategoriesKey,
@@ -170,7 +170,7 @@ class DashboardPage extends BaseResponsiveView {
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                            MainConfig.appColors.primary, BlendMode.srcIn)),
                     label: context.appString.navNotificationsKey,
                   ),
                   CustomBottomBarItems<Widget>(
@@ -178,7 +178,7 @@ class DashboardPage extends BaseResponsiveView {
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                            MainConfig.appColors.primary, BlendMode.srcIn)),
                     icon: Assets.svgs.icNavWishlist
                         .svg(height: iconSize, width: iconSize),
                     label: context.appString.navWishlistKey,
@@ -190,7 +190,7 @@ class DashboardPage extends BaseResponsiveView {
                         height: iconSize,
                         width: iconSize,
                         colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.mainColor, BlendMode.srcIn)),
+                            MainConfig.appColors.primary, BlendMode.srcIn)),
                     label: context.appString.navAccountKey,
                   ),
                 ],

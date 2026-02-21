@@ -133,7 +133,7 @@ class AppColors {
   /// DUKAN app color
   ///
   /// Represents the main brand color, typically a shade of dark blue.
-  Color mainColor = const Color(0xFF00387B);
+  Color mainColor = const Color(0xFF3AB557);
   /// Represents a secondary brand color, often used for accents.
   Color secondaryColor = const Color(0xFFC4618C);
   /// Represents an ice blue color, commonly used for backgrounds or highlights.
@@ -219,10 +219,10 @@ class AppColors {
   // mainColor=Color(0xFF00387B);
 
   /// Primary color.
-  Color primary = blackColor;
+  Color primary = const Color(0xFF3AB557);
 
   /// Color on primary color.
-  Color onPrimary = blackColor;
+  Color onPrimary = whiteColor;
 
   /// Primary container color.
   Color primaryContainer = blackColor;

@@ -32,8 +32,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Initialize shake detector for debug features
-    //unawaited(_initializeShakeDetector());
 
   }
 
@@ -60,6 +58,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<ForceUpdateUnderMaintenanceCubit>(
           create: (BuildContext context) =>
               ForceUpdateUnderMaintenanceCubit.instance(),
+        ),
+        BlocProvider<HomeCubit>(
+          create: (BuildContext context) => HomeCubit(),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
