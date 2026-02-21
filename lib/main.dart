@@ -76,16 +76,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider<HomeCubit>(
           create: (BuildContext context) => HomeCubit(
-              homeRepository: HomeRepositoryImpl(),
               countCubit: context.read<CartCountCubit>()),
-        ),
-        BlocProvider<SocialLoginCubit>(
-          create: (BuildContext context) => SocialLoginCubit(
-            repository: LoginRepositoryImpl(),
-            initialState: const SocialLoginState(
-              status: BaseStateStatus.initial,
-            ),
-          ),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(

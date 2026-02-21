@@ -61,7 +61,7 @@ class ProductDetailsAppBar extends StatelessWidget {
   /// A list of tab labels for displaying a [TabBar] below the title row.
   ///
   /// If null, no tab bar is displayed.
-  /// Can contain either [CategoryResponseModel] or [ChildCategoryModel] objects.
+  /// Tab label data as Map/dynamic (e.g. categoryName).
   final List<dynamic>? tabLabels;
 
   /// Callback when the "Clear All" text or right-side widget is tapped.
@@ -164,7 +164,7 @@ class ProductDetailsAppBar extends StatelessWidget {
                   ),
                 ),
               )
-                  : const CommonItemSearchCart()
+                  : const SizedBox.shrink()
                   : const SizedBox.shrink()
             ],
           ),
@@ -212,14 +212,12 @@ class ProductDetailsAppBar extends StatelessWidget {
                   labelColor: MainConfig.appColors.mainColor,
                   unselectedLabelColor: AppColors.blackColor,
                   tabs: tabLabels!
-                      .map((dynamic subCategory) => Tab(
-                    iconMargin: EdgeInsets.zero,
-                    child: Text(subCategory is CategoryResponseModel
-                        ? subCategory.categoryName.toString()
-                        : subCategory is ChildCategoryModel
-                            ? subCategory.categoryName.toString()
-                            : 'Unknown'),
-                  ))
+                      .map((dynamic subCategory) {
+                    final String label = subCategory is Map
+                        ? (subCategory['categoryName']?.toString() ?? '')
+                        : subCategory?.toString() ?? 'Unknown';
+                    return Tab(iconMargin: EdgeInsets.zero, child: Text(label));
+                  })
                       .toList(),
                 ),
               ),

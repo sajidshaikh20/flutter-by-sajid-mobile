@@ -1,32 +1,23 @@
 import '../../../utils/exports.dart';
 
 @RoutePage()
-/// Page that displays the user's wishlist.
 class WishListPage extends BaseResponsiveView {
-  /// Creates a wishlist page.
   const WishListPage({super.key});
 
   @override
-  Widget buildDesktopWidget(BuildContext context) {
-    return buildViews(context, ScreenType.desktop);
-  }
-
+  Widget buildDesktopWidget(BuildContext context) => _build(context);
   @override
-  Widget buildMobileWidget(BuildContext context) {
-    return buildViews(context, ScreenType.mobile);
-  }
-
+  Widget buildTabletWidget(BuildContext context) => _build(context);
   @override
-  Widget buildTabletWidget(BuildContext context) {
-    return buildViews(context, ScreenType.tablet);
-  }
+  Widget buildMobileWidget(BuildContext context) => _build(context);
 
-  /// Builds the wishlist view with BlocProvider for the specified device type.
-  Widget buildViews(BuildContext context, ScreenType device) {
+  Widget _build(BuildContext context) {
     return BlocProvider<WishListCubit>(
-        create: (BuildContext c) => WishListCubit(),
-        child: WishlistPageWidget(
-          device: device,
-        ));
+      create: (BuildContext c) => WishListCubit(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(context.appString.navWishlistKey)),
+        body: const Center(child: Text('Wishlist')),
+      ),
+    );
   }
 }

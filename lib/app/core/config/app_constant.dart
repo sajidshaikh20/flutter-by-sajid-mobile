@@ -316,8 +316,7 @@ abstract class AppConstant {
   static const String dummyTime = '12:56 PM';
   static const String dummyTrackOrderDate = "14 Dec 2024";
 
-  static const List<CategoryResponseModel>? tabLabels =
-      <CategoryResponseModel>[];
+  static const List<dynamic>? tabLabels = <dynamic>[];
   static const String all = 'All';
   static const String dairy = 'Dairy';
   static const String pointsHistory = "8000 Pt = 80KD";

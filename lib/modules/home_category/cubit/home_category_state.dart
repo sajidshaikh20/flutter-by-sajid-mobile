@@ -1,15 +1,14 @@
 import '../../../utils/exports.dart';
 
-/// State for managing home category data and the status of the request.
+/// Home category state. No model types — dynamic only.
 class HomeCategoryState extends BaseState {
-  /// Constructor for managing home category data and the status of the request.
   HomeCategoryState({
     super.status = BaseStateStatus.initial,
     this.categoryData,
     this.categoriesModel,
     super.msg = '',
     super.redirectRoute,
-    this.categoryList = const <CategoryResponseModel>[],
+    this.categoryList = const <dynamic>[],
     this.totalCount = 0,
     this.currentPage = 1,
     this.hasMore = true,
@@ -17,38 +16,22 @@ class HomeCategoryState extends BaseState {
     ScrollController? scrollController,
   }) : scrollController = scrollController ?? ScrollController();
 
-  /// The home category data, if available, after a successful API call.
-  final HomeCategoriesModel? categoryData;
-  
-  /// The categories data from API response
-  final BaseResponse<List<CategoryResponseModel>>? categoriesModel;
-
-  /// List of all loaded categories for pagination
-  final List<CategoryResponseModel> categoryList;
-
-  /// Total count of categories from API
+  final dynamic categoryData;
+  final dynamic categoriesModel;
+  final List<dynamic> categoryList;
   final int totalCount;
-
-  /// Current page number for pagination
   final int currentPage;
-
-  /// Whether there are more categories to load
   final bool hasMore;
-
-  /// Whether currently loading more categories
   final bool isLoadingMore;
-
-  /// Scroll controller for pagination
   final ScrollController scrollController;
 
-  /// Creates a copy of the current state with optional modifications.
   HomeCategoryState copyWith({
     BaseStateStatus? status,
     String? msg,
     PageRouteInfo? redirectRoute,
-    HomeCategoriesModel? categoryData,
-    BaseResponse<List<CategoryResponseModel>>? categoriesModel,
-    List<CategoryResponseModel>? categoryList,
+    dynamic categoryData,
+    dynamic categoriesModel,
+    List<dynamic>? categoryList,
     int? totalCount,
     int? currentPage,
     bool? hasMore,

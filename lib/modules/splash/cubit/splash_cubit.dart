@@ -32,9 +32,6 @@ class SplashCubit extends Cubit<SplashState> {
     // Load existing LanguageService data from SharedPreferences
     await SharedPref.instance.loadAndStoreLanguageService();
 
-    // Load existing UserProfileService data from SharedPreferences
-    await SharedPref.instance.loadAndStoreUserProfileService();
-
     // User is not logged in, proceed with normal flow
     await _fetchLanguageData();
 
@@ -70,11 +67,7 @@ class SplashCubit extends Cubit<SplashState> {
               : AppConstant.rtlLanguageAlignment,
           languageCode: locale.languageCode,
           status: BaseStateStatus.success,
-          redirectPath: SharedPref.instance.getBool(
-                  PrefsKey.isCountryAndLanguageSelectedKey,
-                  defValue: false)
-              ? AppPaths.socialLogin
-              : AppPaths.languageSelection,
+          redirectPath: AppPaths.dashboard,
         ));
       },
     );
@@ -122,11 +115,7 @@ class SplashCubit extends Cubit<SplashState> {
               ? AppConstant.defaultLanguageAlignment
               : AppConstant.rtlLanguageAlignment,
           languageCode: locale.languageCode,
-          redirectPath: SharedPref.instance.getBool(
-              PrefsKey.isCountryAndLanguageSelectedKey,
-              defValue: false)
-              ? AppPaths.socialLogin
-              : AppPaths.languageSelection,
+          redirectPath: AppPaths.dashboard,
         ));
       }
     } else {

@@ -1,26 +1,22 @@
 import '../../../utils/exports.dart';
 
-/// Simplified NotificationCubit for base template - UI only, no business logic
+/// UI-only NotificationCubit. No repository, no model types.
 class NotificationCubit extends BaseCubit<NotificationState> {
-  /// Initializes the cubit and loads notifications asynchronously.
-  NotificationCubit({required this.notificationRepository}) : super(NotificationState.initial()) {
-    // Business logic commented out for base template
-    // displayShimmer();
-    // scheduleMicrotask(() async => getNotifications());
+  NotificationCubit() : super(NotificationState.initial()) {
+    scheduleMicrotask(() => getNotifications());
   }
 
-  /// The repository used for notification operations.
-  final NotificationRepository notificationRepository;
-
-  /// Fetches notifications - commented out for base template
   Future<void> getNotifications() async {
-    // Business logic commented out for base template
-    // emit(state.copyWith(status: BaseStateStatus.loading));
-    // await notificationRepository.getNotificationList(...)
+    emit(state.copyWith(status: BaseStateStatus.loading));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    emit(state.copyWith(
+      status: BaseStateStatus.success,
+      listOfNotificationResponse: <Map<String, dynamic>>[],
+      msg: '',
+    ));
   }
 
   @override
-  /// Resets the error message in the state.
   NotificationState getResetErrorState() => state.copyWith(msg: '');
 
   @override

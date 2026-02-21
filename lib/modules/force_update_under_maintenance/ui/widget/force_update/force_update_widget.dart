@@ -121,7 +121,7 @@ class ForceUpdateWidget extends BaseResponsiveView {
                     await ctx.router.pushAndPopUntil(
                       isCountryAndLanguageSelected
                           ? const DashboardRoute()
-                          : const LanguageSelectionRoute(),
+                          : const DashboardRoute(),
                       predicate: (Route<dynamic> route) => false,
                     );
                   },

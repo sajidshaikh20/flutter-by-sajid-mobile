@@ -1,9 +1,7 @@
 import '../../../utils/exports.dart';
 
-/// Represents the state for notifications, extending `BaseState`.
+/// State for the notification screen. No model types — list of maps only.
 class NotificationState extends BaseState {
-  /// Creates a `NotificationState` with an optional
-  /// `listOfNotificationResponse`.
   const NotificationState({
     required super.status,
     super.msg = '',
@@ -11,33 +9,28 @@ class NotificationState extends BaseState {
     this.listOfNotificationResponse,
   });
 
-  /// Holds the notification response data.
-  final List<ListOfNotificationResponse>? listOfNotificationResponse;
+  final List<Map<String, dynamic>>? listOfNotificationResponse;
 
-  /// Returns a new instance of `NotificationState`
-  /// with updated properties.
   NotificationState copyWith({
     BaseStateStatus? status,
     PageRouteInfo? redirectRoute,
     String? msg,
-    List<ListOfNotificationResponse>? listOfNotificationResponse,
+    List<Map<String, dynamic>>? listOfNotificationResponse,
   }) =>
       NotificationState(
         status: status ?? this.status,
         redirectRoute: redirectRoute,
         msg: msg,
         listOfNotificationResponse:
-        listOfNotificationResponse ?? this.listOfNotificationResponse,
+            listOfNotificationResponse ?? this.listOfNotificationResponse,
       );
 
   @override
-  /// Properties used for state comparison.
   List<Object?> get props => <Object?>[
-    ...super.props,
-    listOfNotificationResponse,
-  ];
+        ...super.props,
+        listOfNotificationResponse,
+      ];
 
-  /// Creates an initial state instance.
   factory NotificationState.initial() {
     return const NotificationState(
       status: BaseStateStatus.initial,

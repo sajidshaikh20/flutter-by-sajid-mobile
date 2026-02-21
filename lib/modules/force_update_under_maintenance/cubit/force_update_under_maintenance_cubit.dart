@@ -69,7 +69,7 @@ class ForceUpdateUnderMaintenanceCubit
               underMaintenanceType: UnderMaintenanceType.none,
               redirectRoute: isCountryAndLanguageSelected
                   ? const DashboardRoute()
-                  : const LanguageSelectionRoute(),
+                  : const DashboardRoute(),
               status: BaseStateStatus.success,
             ),
           );

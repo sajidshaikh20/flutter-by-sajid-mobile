@@ -5,15 +5,9 @@
 ///
 /// Example usage:
 /// ```dart
-/// context.router.pushNamed(AppPaths.login);
+/// context.router.pushNamed(AppPaths.dashboard);
 /// ```
 abstract class AppPaths {
-  /// Login screen route.
-  static const String login = '/login';
-
-  /// New login screen route.
-  static const String loginNew = '/LoginNew';
-
   /// Dashboard or main landing page route.
   static const String dashboard = '/dashboard';
 
@@ -50,14 +44,8 @@ abstract class AppPaths {
   /// Password changed confirmation route.
   static const String changedPassword = '/changedPassword';
 
-  /// Signup or registration page route.
-  static const String signup = '/signup';
-
   /// Country selection screen route.
   static const String countrySelection = '/selectCountry';
-
-  /// Language selection screen route.
-  static const String languageSelection = '/selectLanguage';
 
   /// Edit profile page route.
   static const String editProfile = '/editProfile';

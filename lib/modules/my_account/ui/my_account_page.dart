@@ -1,35 +1,23 @@
 import '../../../utils/exports.dart';
 
 @RoutePage()
-/// Page that displays user account information and settings.
 class MyAccountPage extends BaseResponsiveView {
-  /// Creates a my account page.
   const MyAccountPage({super.key});
 
   @override
-  Widget buildDesktopWidget(BuildContext context) {
-    return _buildView(context,ScreenType.desktop);
-  }
-
+  Widget buildDesktopWidget(BuildContext context) => _build(context);
   @override
-  Widget buildMobileWidget(BuildContext context) {
-    return _buildView(context,ScreenType.mobile);
-  }
-
+  Widget buildTabletWidget(BuildContext context) => _build(context);
   @override
-  Widget buildTabletWidget(BuildContext context) {
-    return _buildView(context,ScreenType.tablet);
-  }
+  Widget buildMobileWidget(BuildContext context) => _build(context);
 
-  Widget _buildView(BuildContext context,ScreenType device) {
-    return
-
-      BlocProvider<MyAccountCubit>(
-      create: (BuildContext ctx) => MyAccountCubit(
-        MyAccountRepositoryImpl(),
-        MyAccountState.init(),
+  Widget _build(BuildContext context) {
+    return BlocProvider<MyAccountCubit>(
+      create: (BuildContext ctx) => MyAccountCubit(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(context.appString.navAccountKey)),
+        body: const Center(child: Text('My Account')),
       ),
-      child:  MyAccountForm(device: device,),
     );
   }
 }

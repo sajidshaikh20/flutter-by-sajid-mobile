@@ -1,8 +1,7 @@
 import '../../../utils/exports.dart';
 
-/// Immutable state for the My Account screen.
+/// My Account state. No model types — dynamic only.
 class MyAccountState extends BaseState {
-  /// Creates an instance of [MyAccountState].
   const MyAccountState({
     required super.status,
     super.msg,
@@ -21,40 +20,17 @@ class MyAccountState extends BaseState {
     this.isNavigating = false,
   });
 
-  /// Summary info such as counts and wallet amount.
-  final MyAccountInfoModel myAccountInfoModel;
-
-  /// CMS blocks to display in the account screen.
-  final CmsResponseModel cmsResponseModel;
-
-  /// Account address related menu items.
-  final List<OrderModel>? accountAddressList;
-
-  /// Contact us related menu items.
-  final List<OrderModel>? accountContactUsList;
-
-  /// Country selection related menu items.
-  final List<OrderModel>? countryList;
-
-  /// Orders related menu items.
-  final List<OrderModel>? accountOrderItemList;
-
-  /// Menu items when the user is not logged in.
-  final List<OrderModel>? userWithoutLogin;
-
-  /// Status of the logout action.
+  final dynamic myAccountInfoModel;
+  final dynamic cmsResponseModel;
+  final List<dynamic>? accountAddressList;
+  final List<dynamic>? accountContactUsList;
+  final List<dynamic>? countryList;
+  final List<dynamic>? accountOrderItemList;
+  final List<dynamic>? userWithoutLogin;
   final BaseStateStatus logoutStatus;
-
-  /// Whether the user is currently logged in.
   final bool isUserLogin;
-
-  /// The loyalty points model data.
-  final BaseResponse<List<LoyaltyPointsResponseModel>>? loyaltyPointsModel;
-
-  /// The status of the API call for the loyalty points data.
+  final dynamic loyaltyPointsModel;
   final BaseStateStatus apiCallForLoyaltyPoints;
-
-  /// Whether navigation is currently in progress to prevent multiple simultaneous navigations.
   final bool isNavigating;
 
   @override
@@ -74,28 +50,27 @@ class MyAccountState extends BaseState {
         isNavigating,
       ];
 
-  /// Returns a copy with updated fields.
   MyAccountState copyWith({
-    required BaseStateStatus? status,
+    BaseStateStatus? status,
     PageRouteInfo? redirectRoute,
     String? msg,
-    MyAccountInfoModel? myAccountInfoModel,
-    CmsResponseModel? cmsResponseModel,
-    List<OrderModel>? accountAddressList,
-    List<OrderModel>? accountContactUsList,
-    List<OrderModel>? countryList,
-    List<OrderModel>? accountOrderItemList,
-    List<OrderModel>? userWithoutLogin,
+    dynamic myAccountInfoModel,
+    dynamic cmsResponseModel,
+    List<dynamic>? accountAddressList,
+    List<dynamic>? accountContactUsList,
+    List<dynamic>? countryList,
+    List<dynamic>? accountOrderItemList,
+    List<dynamic>? userWithoutLogin,
     BaseStateStatus? logoutStatus,
     bool? isUserLogin,
-    BaseResponse<List<LoyaltyPointsResponseModel>>? loyaltyPointsModel,
+    dynamic loyaltyPointsModel,
     BaseStateStatus? apiCallForLoyaltyPoints,
     bool? isNavigating,
   }) {
     return MyAccountState(
       status: status ?? this.status,
       msg: msg ?? this.msg,
-      redirectRoute: redirectRoute,
+      redirectRoute: redirectRoute ?? this.redirectRoute,
       myAccountInfoModel: myAccountInfoModel ?? this.myAccountInfoModel,
       cmsResponseModel: cmsResponseModel ?? this.cmsResponseModel,
       accountAddressList: accountAddressList ?? this.accountAddressList,
@@ -106,18 +81,22 @@ class MyAccountState extends BaseState {
       logoutStatus: logoutStatus ?? this.logoutStatus,
       isUserLogin: isUserLogin ?? this.isUserLogin,
       loyaltyPointsModel: loyaltyPointsModel ?? this.loyaltyPointsModel,
-      apiCallForLoyaltyPoints: apiCallForLoyaltyPoints ?? this.apiCallForLoyaltyPoints,
+      apiCallForLoyaltyPoints:
+          apiCallForLoyaltyPoints ?? this.apiCallForLoyaltyPoints,
       isNavigating: isNavigating ?? this.isNavigating,
     );
   }
 
-  /// Creates an initial state instance.
   factory MyAccountState.init() {
     return MyAccountState(
-        status: BaseStateStatus.initial,
-        myAccountInfoModel:
-            MyAccountInfoModel(orderTotal: 0, returnTotal: 0, walletAmount: 0),
-        cmsResponseModel: CmsResponseModel(),
-        logoutStatus: BaseStateStatus.initial);
+      status: BaseStateStatus.initial,
+      myAccountInfoModel: <String, dynamic>{
+        'orderTotal': 0,
+        'returnTotal': 0,
+        'walletAmount': 0,
+      },
+      cmsResponseModel: <String, dynamic>{},
+      logoutStatus: BaseStateStatus.initial,
+    );
   }
 }

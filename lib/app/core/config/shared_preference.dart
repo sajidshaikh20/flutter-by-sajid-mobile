@@ -90,6 +90,13 @@ class PrefsKey {
   static const String notificationPermissionAskedKey = 'notificationPermissionAskedKey';
 }
 
+/// Minimal model for storing biometric login data in SharedPreferences.
+class BiometricModel {
+  BiometricModel();
+  factory BiometricModel.fromJson(Map<String, dynamic> _) => BiometricModel();
+  Map<String, dynamic> toJson() => <String, dynamic>{};
+}
+
 /// A class to manage shared preferences with encryption support.
 class SharedPref {
   ///Instance of sharedPref
@@ -229,7 +236,7 @@ class SharedPref {
       languageName: getIt<LanguageService>().languageName,
     );
     String type = getString(PrefsKey.offerTypeKey, '');
-    String quoteId = getIt<UserProfileService>().quoteId;
+    String quoteId = getString(PrefsKey.quoteIdKey, '');
     bool isEnglishLanguageLoaded =
     getBool(PrefsKey.isEnglishLanguageLoadedKey, defValue: true);
     String offerCategoryIdKey =
@@ -245,7 +252,6 @@ class SharedPref {
         setValue(PrefsKey.quoteIdKey, quoteId),
 
         getIt<LanguageService>().loadLanguageData(),
-        getIt<UserProfileService>().loadUserData(),
 
         setValue(
           PrefsKey.isEnglishLanguageLoadedKey,
@@ -292,17 +298,6 @@ class SharedPref {
     }
   }
 
-  ///Save login up response data with mapping User profile
-  Future<void> saveLoginData(LoginUserResponse accountResponse) async {
-    UserProfileModel userProfile = accountResponse.signInToUserProfile();
-    String jsonString = jsonEncode(userProfile.toJson());
-    await setValue(PrefsKey.userProfileKey, jsonString);
-    await getIt<UserProfileService>().loadUserData();
-    DebugLog.instance.i('saveLoginData: User profile data saved - customerName: ${userProfile.customerName}, token: ${userProfile.customerToken}');
-  }
-
-
-
   /// Clear selected address data from SharedPreferences
   Future<void> clearSelectedAddress() async {
     await remove(PrefsKey.selectedAddressKey);
@@ -348,14 +343,6 @@ class SharedPref {
     return isStored;
   }
 
-  /// Load and store UserProfileService data
-  Future<void> loadAndStoreUserProfileService() async {
-    await getIt<UserProfileService>().loadUserData();
-    DebugLog.instance.i('UserProfileService data loaded from SharedPreferences');
-  }
-
-
-
   /// Clear only user-related data from SharedPreferences
   Future<void> clearUserDataOnly() async {
     // Keys related to user session, login, and personal info
@@ -377,9 +364,6 @@ class SharedPref {
     for (final String key in userRelatedKeys) {
       await remove(key);
     }
-
-    // Reload user profile service after clearing
-    await getIt<UserProfileService>().loadUserData();
 
     DebugLog.instance.i("SharedPref: Cleared only user-related data successfully");
   }

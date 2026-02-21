@@ -609,18 +609,32 @@ class HttpHandleInterceptor extends Interceptor {
     }
   }
 
+  static String _tokenFromProfileJson(String jsonStr) {
+    if (jsonStr.isEmpty) return '';
+    try {
+      final Map<String, dynamic> map = jsonDecode(jsonStr) as Map<String, dynamic>;
+      return map['customerToken'] as String? ?? '';
+    } on Object catch (_) {
+      return '';
+    }
+  }
+
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
     if (options.path == Apis.reviewAndPayment) {
-      options.headers.addAll(<String,dynamic >{'Authorization': getIt<UserProfileService>().customerToken});
+      final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+      final String authToken = _tokenFromProfileJson(profileJson);
+      options.headers.addAll(<String,dynamic>{'Authorization': authToken});
     } else if (options.path == Apis.placeOrder) {
+      final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+      final String authToken = _tokenFromProfileJson(profileJson);
       options.headers.clear();
-      options.headers.addAll(<String,dynamic >{
+      options.headers.addAll(<String,dynamic>{
         'Content-Type': APIConstant.contentType,
-        'Authorization': getIt<UserProfileService>().customerToken,
+        'Authorization': authToken,
         'Cookie': APIConstant.cookie,
       });
     }

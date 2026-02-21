@@ -21,56 +21,8 @@ class AppRouter extends RootStackRouter {
             transitionsBuilder: TransitionsBuilders.noTransition,
             durationInMilliseconds: 0),
         
-        /// Authentication Flow Routes
-        CustomRoute<dynamic>(
-          page: SocialLoginRoute.page,
-          path: AppPaths.socialLogin,
-          opaque: false,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-          page: LoginRoute.page,
-          maintainState: false,
-          path: AppPaths.login,
-          guards: <AutoRouteGuard>[AuthenticationMiddleWare()],
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-          page: SignUpRoute.page,
-          path: AppPaths.signup,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-          page: ForgotPasswordRoute.page,
-          maintainState: false,
-          path: AppPaths.forgotPassword,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-            durationInMilliseconds: Dimens.milliseconds400,
-            reverseDurationInMilliseconds: Dimens.milliseconds400,
-            transitionsBuilder: fadePageTransition,
-            page: VerifyOtpRoute.page, 
-            path: AppPaths.verifyOtp),
-        
-        /// Language Selection Routes
-        CustomRoute<dynamic>(
-          page: LanguageSelectionRoute.page,
-          maintainState: false,
-          path: AppPaths.languageSelection,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        
+
+
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(
           page: DashboardRoute.page,

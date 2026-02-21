@@ -25,7 +25,19 @@ class AnalyticsService {
 
   /// Sets the user ID for Firebase Analytics.
   Future<void> setUserId() async {
-    await _analytics.setUserId(id: getIt<UserProfileService>().customerName);
+    final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+    final String name = _nameFromProfileJson(profileJson);
+    await _analytics.setUserId(id: name.isEmpty ? 'guest' : name);
+  }
+
+  static String _nameFromProfileJson(String jsonStr) {
+    if (jsonStr.isEmpty) return '';
+    try {
+      final Map<String, dynamic> map = jsonDecode(jsonStr) as Map<String, dynamic>;
+      return map['customerName'] as String? ?? '';
+    } on Object catch (_) {
+      return '';
+    }
   }
 
   /// Logs a Firebase login event.
@@ -70,24 +82,22 @@ class AnalyticsService {
 
   /// Logs a view item list event.
   ///
-  /// [productDetails]: A list of products in the item list.
+  /// [productDetails]: List of product maps (e.g. name, sku, price).
   /// [itemListName]: The name of the item list being viewed.
   Future<void> viewItemListFirebaseEvent({
-    required List<ProductList>? productDetails,
+    required List<dynamic>? productDetails,
     required String itemListName,
   }) async {
     if (productDetails == null || productDetails.isEmpty) {
       return;
     }
 
-    List<Map<String, Object?>> itemDetails = productDetails
-        .map(
-          (ProductList product) => <String, Object?>{
-            AppAnalyticsConstant.itemName: product.name,
-            AppAnalyticsConstant.itemId: product.sku,
-            AppAnalyticsConstant.price: product.price,
-          },
-        )
+    final List<Map<String, Object?>> itemDetails = productDetails
+        .map((dynamic product) => <String, Object?>{
+          AppAnalyticsConstant.itemName: product is Map ? product['name'] : (product as dynamic).name,
+          AppAnalyticsConstant.itemId: product is Map ? product['sku'] : (product as dynamic).sku,
+          AppAnalyticsConstant.price: product is Map ? product['price'] : (product as dynamic).price,
+        })
         .toList();
 
     Map<String, Object> eventParams = <String, Object>{

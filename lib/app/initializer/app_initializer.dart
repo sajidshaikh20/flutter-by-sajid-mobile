@@ -81,18 +81,10 @@ class AppInitializer {
       await getIt<LanguageService>().loadLanguageData();
       DebugLog.instance.i('AppInitializer: LanguageService loaded');
 
-      await getIt<UserProfileService>().loadUserData();
-      DebugLog.instance.i('AppInitializer: UserProfileService loaded');
-
       // Verify services are properly loaded
-      final UserProfileService userService = getIt<UserProfileService>();
-      //final CountryService countryService = getIt<CountryService>();
       final LanguageService languageService = getIt<LanguageService>();
 
       DebugLog.instance.i('AppInitializer: Service verification:');
-      DebugLog.instance.i('  - UserProfileService.isDataLoaded: ${userService.isDataLoaded}');
-      DebugLog.instance.i('  - UserProfileService.customerToken: "${userService.customerToken}" (length: ${userService.customerToken.length})');
-    //  DebugLog.instance.i('  - CountryService.countryId: "${countryService.countryId}"');
       DebugLog.instance.i('  - LanguageService.languageId: "${languageService.languageId}"');
 
       unawaited(NotificationManager.instance.init());
