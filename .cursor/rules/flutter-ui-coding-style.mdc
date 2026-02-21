@@ -1,0 +1,93 @@
+---
+description: Flutter UI and widget coding style for this project (design lives in widgets)
+globs: lib/modules/**/*.dart
+alwaysApply: false
+---
+
+# Flutter UI Coding Style (flutter-by-sajid-mobile)
+
+Use this when creating or editing **pages** and **widgets** in `lib/modules/`. Only **files** were removed for a clean slate; **package and widget structure** stay. New UI design should go **inside widget files**.
+
+## Module structure (keep as-is)
+
+- **Page** = route target, thin: provides `BlocProvider` and a single root widget.
+- **Widget** = where the actual UI layout and design live (screens, lists, cards, forms).
+- One page per feature (e.g. `home_page.dart`, `my_account_page.dart`). All visual content is built in **widgets** under that module’s `ui/` (e.g. `ui/widget/` or `ui/widgets/`).
+
+## Imports
+
+- Use the project barrel: `import '../../../utils/exports.dart';` (adjust depth by file location).
+- Prefer this over importing many individual packages in UI files.
+
+## Pages (route targets)
+
+- Annotate with `@RoutePage()`.
+- Use `BaseResponsiveView` when the screen must adapt to mobile/tablet/desktop; implement:
+  - `buildMobileWidget(BuildContext context)`
+  - `buildTabletWidget(BuildContext context)`
+  - `buildDesktopWidget(BuildContext context)`
+- For simple screens, a single `Scaffold` in `build()` is fine.
+- Provide the feature Cubit at the page level:
+  - `BlocProvider<FeatureCubit>(create: (context) => FeatureCubit(), child: ...)`
+- Use `context.appString.*Key` for all user-visible text (e.g. `context.appString.navHomeKey`, `context.appString.navAccountKey`).
+
+Example page pattern:
+
+```dart
+import '../../../utils/exports.dart';
+
+@RoutePage()
+class HomeCategoryPage extends BaseResponsiveView {
+  const HomeCategoryPage({super.key});
+
+  @override
+  Widget buildDesktopWidget(BuildContext context) => _build(context);
+  @override
+  Widget buildTabletWidget(BuildContext context) => _build(context);
+  @override
+  Widget buildMobileWidget(BuildContext context) => _build(context);
+
+  Widget _build(BuildContext context) {
+    return BlocProvider<HomeCategoryCubit>(
+      create: (BuildContext c) => HomeCategoryCubit(),
+      child: Scaffold(
+        appBar: AppBar(title: Text(context.appString.navCategoriesKey)),
+        body: const Center(child: Text('Categories')), // or your widget
+      ),
+    );
+  }
+}
+```
+
+## Widgets (where UI design goes)
+
+- Put **all UI design and layout** in widget files (e.g. under `lib/modules/<module>/ui/widget/` or `ui/widgets/`).
+- Use project design tokens:
+  - **Spacing/sizing:** `Dimens.*` (e.g. `Dimens.space16`, `Dimens.size24`, `Dimens.radius8`, `Dimens.fontSize16`, `Dimens.maxLines01`).
+  - **Colors:** `AppColors.*` or `MainConfig.appColors.*` (e.g. `AppColors.whiteColor`, `MainConfig.appColors.mainColor`, `MainConfig.appColors.transparent`).
+  - **Text:** `context.textTheme.headlineMedium?.copyWith(fontSize: Dimens.fontSize16, color: ..., fontWeight: ...)`.
+- Use extensions where available: `Dimens.size16.widthBox`, `Dimens.size24.heightBox`, `Dimens.radius8.borderRadius`.
+- Splash/highlight for taps: `splashColor: MainConfig.appColors.transparent`, `highlightColor: MainConfig.appColors.transparent`, `splashFactory: NoSplash.splashFactory` when you want no splash.
+- Prefer `const` constructors where possible.
+
+## Naming
+
+- **Pages:** `*Page` (e.g. `HomePage`, `MyAccountPage`).
+- **Widgets:** descriptive name + `Widget` or `*Widget` (e.g. `HomeCategoryWidget`, `NotificationPageWidget`).
+- **Cubits:** `*Cubit`; **State:** `*State`.
+
+## Responsive / device type
+
+- Use `ScreenType` (e.g. `ScreenType.mobile`, `ScreenType.tablet`, `ScreenType.desktop`) when a widget needs to branch on device.
+- `MainConfig.isTabletSupport` controls whether tablet/desktop layouts are used; otherwise only mobile is shown.
+
+## Bloc/Cubit usage in widgets
+
+- `BlocProvider` at page level; in widgets use `context.read<FeatureCubit>()` or `BlocBuilder<FeatureCubit, FeatureState>` / `BlocListener<...>` as needed.
+- Prefer `buildWhen` / `listenWhen` to limit rebuilds.
+
+## Summary
+
+- **Only files were removed** for a clean slate; **packages and widget concept are unchanged**.
+- **New UI design belongs in widget files** under each module’s `ui/`.
+- Pages stay thin (route + BlocProvider + root widget); widgets hold layout, styling, and UI logic.

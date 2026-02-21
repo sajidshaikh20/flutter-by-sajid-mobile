@@ -59,6 +59,15 @@ abstract class AppPaths {
   /// Category page route (sub-path).
   static const String category = 'category';
 
+  /// Transaction history page route (sub-path).
+  static const String transactionHistory = 'transaction_history';
+
+  /// Bank transfer page route (sub-path).
+  static const String bankTransfer = 'bank_transfer';
+
+  /// Chat support page route (sub-path).
+  static const String chatSupport = 'chat_support';
+
   /// Offers or promotions page route (sub-path).
   static const String offers = 'offers';
 

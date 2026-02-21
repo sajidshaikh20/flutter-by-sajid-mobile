@@ -1,5 +1,3 @@
-import 'package:badges/badges.dart' as badges;
-
 import '../../../../utils/exports.dart';
 
 /// A responsive page that represents the main dashboard of the app.
@@ -52,15 +50,9 @@ class DashboardPage extends BaseResponsiveView {
   }
 
   Widget _buildView(BuildContext context, ScreenType device) {
-    double selectedUnSelectedFontSize = Dimens.fontSize10;
     double iconSize = Dimens.size24;
-    switch (device) {
-      case ScreenType.tablet:
-        selectedUnSelectedFontSize = Dimens.fontSize16;
-        iconSize = Dimens.size30;
-
-      default:
-        break;
+    if (device == ScreenType.tablet) {
+      iconSize = Dimens.size30;
     }
 
     return AutoTabsRouter(
@@ -77,10 +69,9 @@ class DashboardPage extends BaseResponsiveView {
       },
       routes: <PageRouteInfo>[
         HomeRoute(),
-        const HomeCategoryRoute(),
-        const NotificationRoute(),
-        const WishListRoute(),
-        const MyAccountRoute(),
+        const TransactionHistoryRoute(),
+        const BankTransferRoute(),
+        const ChatSupportRoute(),
       ],
       builder: (BuildContext context, Widget child) {
         /* final tabsRouter = AutoTabsRouter.of(context);
@@ -101,112 +92,101 @@ class DashboardPage extends BaseResponsiveView {
           onPopInvokedWithResult: (bool didPop, Object? result) async {
             await systemBackButtonPressed(tabsRouter, canPop: didPop);
           },
-          child:  Scaffold(
+          child: Scaffold(
               body: child,
-              bottomNavigationBar: CustomLineIndicatorBottomNavbar(
-                splashColor: Colors.transparent,
-                selectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
-                    fontSize: selectedUnSelectedFontSize,
-                    height: Dimens.lineHeight18Point74
-                        .toLineHeight(selectedUnSelectedFontSize),
-                    color: MainConfig.appColors.primary,
-                    fontWeight: FontWeight.normal),
-                unselectedLabelStyle: context.textTheme.headlineMedium?.copyWith(
-                    fontSize: selectedUnSelectedFontSize,
-                    color: MainConfig.appColors.greyTextColor,
-                    height: Dimens.lineHeight18Point74
-                        .toLineHeight(selectedUnSelectedFontSize),
-                    fontWeight: FontWeight.normal),
-                // selectedItemColor: AppColors.mainColor,
-                // unselectedItemColor: AppColors.greyTextColor,
-                selectedColor: MainConfig.appColors.primary,
-                backgroundColor: Colors.white,
-                unSelectedColor: MainConfig.appColors.greyTextColor,
-                customBottomBarItems: <CustomBottomBarItems<Widget>>[
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavHome.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.primary, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavHome
-                        .svg(height: iconSize, width: iconSize),
-                    label: context.appString.navHomeKey,
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavCategories.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.primary, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavCategories
-                        .svg(height: iconSize, width: iconSize),
-                    label: context.appString.navCategoriesKey,
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    icon:
-                    badges.Badge(
-                      badgeAnimation: const badges.BadgeAnimation.size(toAnimate: false),
-                      showBadge: false,
-                      badgeStyle: badges.BadgeStyle(
-                        padding: Dimens.space5.padding,
-                        badgeColor: MainConfig.appColors.redColor,
-                        elevation: 0,
-                      ),
-                      position: badges.BadgePosition.topEnd(end: -Dimens.space7),
-                      badgeContent: CustomTextLabelWidget(
-                        label: AppConstant.notificationCount.toString(),
-                        style: context.textTheme.headlineMedium?.copyWith(
-                            fontSize: Dimens.fontSize12,
-                            height: Dimens.lineHeight14
-                                .toLineHeight(Dimens.fontSize12),
-                            color: AppColors.whiteColor,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      child: Assets.svgs.icNavNotification
-                          .svg(height: Dimens.size24, width: Dimens.size24),
-                    ),
-                    activeIcon: Assets.svgs.icNavNotification.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.primary, BlendMode.srcIn)),
-                    label: context.appString.navNotificationsKey,
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    activeIcon: Assets.svgs.icNavWishlist.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.primary, BlendMode.srcIn)),
-                    icon: Assets.svgs.icNavWishlist
-                        .svg(height: iconSize, width: iconSize),
-                    label: context.appString.navWishlistKey,
-                  ),
-                  CustomBottomBarItems<Widget>(
-                    icon: Assets.svgs.icNavAccount
-                        .svg(height: iconSize, width: iconSize),
-                    activeIcon: Assets.svgs.icNavAccount.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter:  ColorFilter.mode(
-                            MainConfig.appColors.primary, BlendMode.srcIn)),
-                    label: context.appString.navAccountKey,
-                  ),
-                ],
+              bottomNavigationBar: CustomBottomNavBar(
                 currentIndex: tabsRouter.activeIndex,
                 onTap: (int value) {
                   final TabState selectedTab = TabState.values[value];
-                  if (selectedTab == TabState.cart &&
-                      tabsRouter.activeIndex != value) {
-                  } else if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
+                  if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
                     context.read<HomeCubit>().refreshHomeData();
-                  } else if (selectedTab == TabState.offers &&
-                      tabsRouter.activeIndex != value) {
-                    /// Reset filters and reload offers when switching to the "offers" tab.
+                  } else if (selectedTab == TabState.bankTransfer && tabsRouter.activeIndex != value) {
+                    /// Reset when switching to bank transfer tab.
                   }
                   tabsRouter.setActiveIndex(value);
                 },
+                items: <CustomBottomNavBarItem>[
+                  CustomBottomNavBarItem(
+                    activeIcon: Assets.svgs.icHome.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    inactiveIcon: Assets.svgs.icHome.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: ColorFilter.mode(
+                        MainConfig.appColors.greyTextColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    routeName: AppPaths.home,
+                    label: 'Home',
+                  ),
+                  CustomBottomNavBarItem(
+                    activeIcon: Assets.svgs.icTransactionHistory.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    inactiveIcon: Assets.svgs.icTransactionHistory.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: ColorFilter.mode(
+                        MainConfig.appColors.greyTextColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    routeName: AppPaths.transactionHistory,
+                    label: 'Transaction History',
+                  ),
+                  CustomBottomNavBarItem(
+                    activeIcon: Assets.svgs.icBankTransfer.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    inactiveIcon: Assets.svgs.icBankTransfer.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: ColorFilter.mode(
+                        MainConfig.appColors.greyTextColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    routeName: AppPaths.bankTransfer,
+                    label: 'Bank Transfer',
+                  ),
+                  CustomBottomNavBarItem(
+                    activeIcon: Assets.svgs.icChatSupport.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    inactiveIcon: Assets.svgs.icChatSupport.svg(
+                      height: iconSize,
+                      width: iconSize,
+                      colorFilter: ColorFilter.mode(
+                        MainConfig.appColors.greyTextColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    routeName: AppPaths.chatSupport,
+                    label: 'Chat Support',
+                  ),
+                ],
               ),
             ),
         );

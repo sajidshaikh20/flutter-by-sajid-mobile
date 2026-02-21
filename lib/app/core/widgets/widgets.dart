@@ -5,6 +5,7 @@ export 'package:flutter/gestures.dart';
 
 export 'animated_bottom_sheet_content.dart';
 export 'bottom_nav_with_indicator/custom_line_indicator_bottom_navbar.dart';
+export 'custom_bottom_nav_bar/custom_bottom_nav_bar.dart';
 export 'button/custom_button_widget.dart';
 export 'button/custom_gradient_button_widget.dart';
 export 'button/custom_radio_button_cart_widget.dart';

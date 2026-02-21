@@ -1,0 +1,22 @@
+import '../../../utils/exports.dart';
+
+@RoutePage()
+class TransactionHistoryPage extends BaseResponsiveView {
+  const TransactionHistoryPage({super.key});
+
+  @override
+  Widget buildDesktopWidget(BuildContext context) => _build(context);
+  @override
+  Widget buildTabletWidget(BuildContext context) => _build(context);
+  @override
+  Widget buildMobileWidget(BuildContext context) => _build(context);
+
+  Widget _build(BuildContext context) {
+    return BlocProvider<TransactionHistoryCubit>(
+      create: (BuildContext c) => TransactionHistoryCubit(),
+      child: const Scaffold(
+        body: Center(child: Text('Transaction History')),
+      ),
+    );
+  }
+}

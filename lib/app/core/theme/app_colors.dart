@@ -95,6 +95,8 @@ class AppColors {
   /// Represents an extra light blue color.
   static const Color extraLightBlueColor = Color(0xFFF9FAFF);
 
+  static const Color defaultInactiveBackgroundColor = Color(0xFFF5F5F0);
+
   /// Represents a dark sky blue color.
   static const Color skyBlueDarkColor = Color(0xFF0C65FF);
 
@@ -176,7 +178,7 @@ class AppColors {
   Color lightestGreyColor = const Color(0xFFF8F8F8);
 
   /// Represents a gray color for text.
-  Color greyTextColor = const Color(0xFF737373);
+  Color greyTextColor = const Color(0xFFA0A0A0);
   /// Represents a gray color for unselected items.
   Color unselectedGreyColor = const Color(0xFFBBBBBB);
   /// Represents a gray color for backgrounds.

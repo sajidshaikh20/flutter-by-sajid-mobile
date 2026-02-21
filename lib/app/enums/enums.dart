@@ -142,13 +142,19 @@ enum ProductListUpdateType {
 enum TabState {
   /// Home tab.
   home,
-  /// Cart tab.
+  /// Transaction history tab.
+  transactionHistory,
+  /// Bank transfer tab.
+  bankTransfer,
+  /// Chat support tab.
+  chatSupport,
+  /// Legacy: category (kept for compatibility).
   category,
-  /// Wishlist tab.
+  /// Legacy: offers (kept for compatibility).
   offers,
-  /// Profile tab.
+  /// Legacy: profile tab (kept for compatibility).
   myAccount,
-  ///
+  /// Cart tab.
   cart,
 }
 
