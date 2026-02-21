@@ -19,14 +19,7 @@ class WishListCubit extends BaseCubit<WishListState>
 
     // Listen to global wishlist and cart changes
     scheduleMicrotask(() {
-      final GlobalWishlistManager globalWishlistManager =
-          getIt<GlobalWishlistManager>();
-      _globalWishlistSubscription = globalWishlistManager.stream.listen((GlobalWishlistState newState) {
-        DebugLog.instance.d('🔄 WISHLIST: Global state changed, syncing wishlist and cart');
-        // Always sync with cart changes (wishlist items need to show cart status)
-        // But do it safely without interfering with ongoing operations
-        // Only sync wishlist if wishlist data actually changed
-      });
+
     });
   }
 
@@ -38,8 +31,6 @@ class WishListCubit extends BaseCubit<WishListState>
 
 
 
-  /// Stream subscription for global wishlist manager
-  StreamSubscription<GlobalWishlistState>? _globalWishlistSubscription;
 
 
 
@@ -124,7 +115,6 @@ class WishListCubit extends BaseCubit<WishListState>
   /// Disposes resources when the cubit is closed.
   @override
   Future<void> close() async {
-    await _globalWishlistSubscription?.cancel();
     state.scrollController.dispose();
     await super.close();
   }

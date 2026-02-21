@@ -14,9 +14,9 @@ class MyAccountPage extends BaseResponsiveView {
   Widget _build(BuildContext context) {
     return BlocProvider<MyAccountCubit>(
       create: (BuildContext ctx) => MyAccountCubit(),
-      child: Scaffold(
-        appBar: AppBar(title: Text(context.appString.navAccountKey)),
-        body: const Center(child: Text('My Account')),
+      child: const Scaffold(
+
+        body: Center(child: Text('My Account')),
       ),
     );
   }

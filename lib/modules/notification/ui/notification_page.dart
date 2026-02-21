@@ -14,9 +14,8 @@ class NotificationPage extends BaseResponsiveView {
   Widget _build(BuildContext context) {
     return BlocProvider<NotificationCubit>(
       create: (BuildContext context) => NotificationCubit(),
-      child: Scaffold(
-        appBar: AppBar(title: Text(context.appString.navNotificationsKey)),
-        body: const Center(child: Text('Notifications')),
+      child: const Scaffold(
+        body: Center(child: Text('Notifications')),
       ),
     );
   }

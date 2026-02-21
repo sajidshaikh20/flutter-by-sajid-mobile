@@ -14,9 +14,8 @@ class HomeCategoryPage extends BaseResponsiveView {
   Widget _build(BuildContext context) {
     return BlocProvider<HomeCategoryCubit>(
       create: (BuildContext c) => HomeCategoryCubit(),
-      child: Scaffold(
-        appBar: AppBar(title: Text(context.appString.navCategoriesKey)),
-        body: const Center(child: Text('Categories')),
+      child: const Scaffold(
+        body: Center(child: Text('Categories')),
       ),
     );
   }

@@ -8,9 +8,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(context.appString.navHomeKey)),
-      body: const Center(child: Text('Home')),
+    return const Scaffold(
+      body: Center(child: Text('Home')),
     );
   }
 }

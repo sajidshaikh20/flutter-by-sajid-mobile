@@ -2,9 +2,9 @@ import '../../../utils/exports.dart';
 
 /// UI-only HomeCubit. No repository, no API, no business logic.
 class HomeCubit extends BaseCubit<HomeState> {
-  HomeCubit({required this.countCubit}) : super(HomeState.initial());
+  HomeCubit() : super(HomeState.initial());
 
-  final CartCountCubit countCubit;
+
 
   void initData() {}
 

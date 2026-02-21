@@ -46,6 +46,7 @@ export '../../base/base.dart';
 export '../../gen/assets.gen.dart';
 export '../../gen/fonts.gen.dart';
 export '../../modules/modules.dart' hide HtmlWidget;
+export '../../modules/select_language/language.dart';
 export '../../service/service.dart'
     hide binarySearch, mergeSort, ProgressCallback;
 export '../base/base_state.dart';

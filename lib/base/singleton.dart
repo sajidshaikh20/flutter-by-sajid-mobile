@@ -35,8 +35,7 @@ FutureOr<void> setupLocator() {
   // Cubits / State management — now lazy
     ..registerLazySingleton<ForceUpdateUnderMaintenanceCubit>(
       ForceUpdateUnderMaintenanceCubit.new,
-    )
-    ..registerLazySingleton<CartCountCubit>(CartCountCubit.new)
-    ..registerLazySingleton<GlobalWishlistManager>(GlobalWishlistManager.new);
+    );
+
 }
 

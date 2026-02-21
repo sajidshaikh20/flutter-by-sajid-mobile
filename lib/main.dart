@@ -8,10 +8,8 @@ Future<void> firebaseBackground(RemoteMessage message) async {
 }
 
 Future<void> main() async {
-
   mainDelegate();
 }
-
 
 ///Main delegate
 void mainDelegate() => AppInitializer.instance.init(
@@ -34,12 +32,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
     // Initialize shake detector for debug features
     //unawaited(_initializeShakeDetector());
 
-    // Hive is already initialized in AppInitializer, so we don't need to call openHiveBox again
-    // unawaited(getIt<HiveDbService>().openHiveBox());
   }
 
   @override
@@ -59,24 +54,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           lazy: false,
           create: (BuildContext context) => InternetCubit(Connectivity()),
         ),
-        BlocProvider<CartCountCubit>(
-          lazy: false,
-          create: (BuildContext context) => getIt<CartCountCubit>(),
-        ),
-        BlocProvider<GlobalWishlistManager>(
-          lazy: false,
-          create: (BuildContext context) => getIt<GlobalWishlistManager>(),
-        ),
         BlocProvider<LocaleCubit>(
           create: (BuildContext context) => LocaleCubit.instance,
         ),
         BlocProvider<ForceUpdateUnderMaintenanceCubit>(
           create: (BuildContext context) =>
               ForceUpdateUnderMaintenanceCubit.instance(),
-        ),
-        BlocProvider<HomeCubit>(
-          create: (BuildContext context) => HomeCubit(
-              countCubit: context.read<CartCountCubit>()),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
@@ -95,7 +78,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               navigatorObservers: () => <NavigatorObserver>[
                 CustomNavigationObserver(),
                 // SentryNavigatorObserver(),
-               //if (kDebugMode) ChuckerFlutter.navigatorObserver,
+                //if (kDebugMode) ChuckerFlutter.navigatorObserver,
               ],
             ),
             title: AppConstant.appName,

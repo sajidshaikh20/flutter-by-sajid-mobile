@@ -14,9 +14,8 @@ class WishListPage extends BaseResponsiveView {
   Widget _build(BuildContext context) {
     return BlocProvider<WishListCubit>(
       create: (BuildContext c) => WishListCubit(),
-      child: Scaffold(
-        appBar: AppBar(title: Text(context.appString.navWishlistKey)),
-        body: const Center(child: Text('Wishlist')),
+      child: const Scaffold(
+        body: Center(child: Text('Wishlist')),
       ),
     );
   }

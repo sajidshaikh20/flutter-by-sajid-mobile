@@ -10,6 +10,5 @@ export 'localization/localization.dart';
 export 'my_account/my_account.dart';
 export 'no_internet/no_internet.dart';
 export 'notification/notification.dart';
-export 'select_language/language.dart';
 export 'splash/splash.dart';
 export 'wishlist/wishlist.dart';
