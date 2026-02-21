@@ -1,5 +1,10 @@
 import '../../../../utils/exports.dart';
 
+import 'model/model.dart';
+import 'widget/widget.dart';
+
+export 'model/model.dart';
+
 /// Custom bottom navigation bar with pill-shaped container and animated tab items.
 ///
 /// Features:
@@ -71,6 +76,9 @@ class CustomBottomNavBar extends StatelessWidget {
   /// Default bottom margin.
   static const double _defaultBottomMargin = 24;
 
+  /// Spacing between nav bar items (horizontal gap).
+  static const double _itemSpacing = 8;
+
   /// Active item background (green per design).
   static final Color _defaultActiveColor = MainConfig.appColors.primary;
 
@@ -91,13 +99,19 @@ class CustomBottomNavBar extends StatelessWidget {
         animationDuration ?? const Duration(milliseconds: Dimens.milliseconds300);
 
     Widget itemBuilder(int index) => Expanded(
-          child: _NavBarItem(
-            item: items[index],
-            isSelected: index == currentIndex,
-            activeBackgroundColor: activeBg,
-            inactiveBackgroundColor: inactiveBg,
-            animationDuration: duration,
-            onTap: () => onTap(index),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: index == 0 ? 0 : _itemSpacing / 2,
+              right: index == _itemCount - 1 ? 0 : _itemSpacing / 2,
+            ),
+            child: NavBarItemWidget(
+              item: items[index],
+              isSelected: index == currentIndex,
+              activeBackgroundColor: activeBg,
+              inactiveBackgroundColor: inactiveBg,
+              animationDuration: duration,
+              onTap: () => onTap(index),
+            ),
           ),
         );
 
@@ -118,9 +132,9 @@ class CustomBottomNavBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius ?? Dimens.radius30),
           boxShadow: <BoxShadow>[
             const BoxShadow(
-              color: AppColors.blackWithDarkerShade,
-              blurRadius: Dimens.blurRadius4,
-              offset: Offset(0, Dimens.offset4),
+              color: AppColors.showdowGrey,
+              offset: Offset(Dimens.offset0, Dimens.offset4),
+              blurRadius: Dimens.blurRadius14,
             ),
           ],
         ),
@@ -138,80 +152,4 @@ class CustomBottomNavBar extends StatelessWidget {
     ),
     );
   }
-}
-
-/// Single tab item with animated pill and icon.
-class _NavBarItem extends StatelessWidget {
-  const _NavBarItem({
-    required this.item,
-    required this.isSelected,
-    required this.activeBackgroundColor,
-    required this.inactiveBackgroundColor,
-    required this.animationDuration,
-    required this.onTap,
-  });
-
-  final CustomBottomNavBarItem item;
-  final bool isSelected;
-  final Color activeBackgroundColor;
-  final Color inactiveBackgroundColor;
-  final Duration animationDuration;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(Dimens.radius20),
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        child: Center(
-          child: AnimatedContainer(
-            duration: animationDuration,
-            curve: Curves.easeInOut,
-            height: Dimens.size40,
-            width:Dimens.size68 ,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeBackgroundColor
-                  : inactiveBackgroundColor,
-              borderRadius: BorderRadius.circular(Dimens.radius20),
-            ),
-            child: Center(
-              child: isSelected ? item.activeIcon : item.inactiveIcon,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Data model for one bottom nav bar item.
-///
-/// [activeIcon] is shown when the item is selected (e.g. white icon).
-/// [inactiveIcon] is shown when not selected (e.g. grey icon).
-/// Use [routeName] for navigation or analytics; [label] is optional.
-class CustomBottomNavBarItem {
-  /// Creates a bottom nav item with [activeIcon] and [inactiveIcon] widgets.
-  const CustomBottomNavBarItem({
-    required this.activeIcon,
-    required this.inactiveIcon,
-    this.routeName,
-    this.label,
-  });
-
-  /// Icon widget when the item is selected (e.g. white icon on green).
-  final Widget activeIcon;
-
-  /// Icon widget when the item is not selected (e.g. grey icon).
-  final Widget inactiveIcon;
-
-  /// Optional route or identifier for navigation.
-  final String? routeName;
-
-  /// Optional label for accessibility or debugging.
-  final String? label;
 }

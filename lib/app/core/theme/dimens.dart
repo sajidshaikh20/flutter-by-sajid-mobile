@@ -560,6 +560,7 @@ abstract class Dimens {
   static const double blurRadius4 = 4.0;
   static const double blurRadius8 = 8.0;
   static const double blurRadius10 = 10.0;
+  static const double blurRadius14 = 14.0;
 
 // spread radius
   static const double spreadRadius1 = 1.0;
