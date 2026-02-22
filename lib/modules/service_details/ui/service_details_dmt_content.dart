@@ -1,7 +1,8 @@
 import '../../../../utils/exports.dart';
+import 'widget/dmt_form_bottom_sheet.dart';
 import 'widget/service_details_grid_content.dart';
 
-/// DMT grid items: DMT-1, DMT-2, DMT-3 (same grid layout as AEPS).
+/// DMT grid items: DMT-1, DMT-2 (same grid layout as AEPS).
 final List<ServiceItemModel> dmtGridItems = <ServiceItemModel>[
   ServiceItemModel(
     label: 'DMT-1',
@@ -13,7 +14,7 @@ final List<ServiceItemModel> dmtGridItems = <ServiceItemModel>[
   ),
 ];
 
-/// DMT flow content: grid of DMT-1, DMT-2, DMT-3.
+/// DMT flow content: grid of DMT-1, DMT-2. Tapping opens DMT form bottom sheet.
 class ServiceDetailsDmtContent extends StatelessWidget {
   const ServiceDetailsDmtContent({super.key});
 
@@ -21,8 +22,8 @@ class ServiceDetailsDmtContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return ServiceDetailsGridContent(
       services: dmtGridItems,
-      onItemTap: (BuildContext context, ServiceItemModel item) {
-        displaySnackBar('${item.label} – coming soon', context);
+      onItemTap: (BuildContext context, ServiceItemModel item) async {
+        await showDmtFormBottomSheet(context, dmtLabel: item.label);
       },
     );
   }

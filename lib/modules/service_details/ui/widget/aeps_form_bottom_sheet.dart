@@ -143,21 +143,21 @@ class _AepsFormContent extends StatelessWidget {
             onChanged: onBankChanged,
           ),
           Dimens.space14.heightBox,
-          AepsFormTextField(
+          CommonFormTextField(
             controller: aadhaarController,
             hint: 'Aadhaar Number',
             keyboardType: TextInputType.number,
             maxLength: Dimens.maxLength10,
           ),
           Dimens.space14.heightBox,
-          AepsFormTextField(
+          CommonFormTextField(
             controller: mobileController,
             hint: 'Mobile Number',
             keyboardType: TextInputType.phone,
             maxLength: Dimens.maxLength10,
           ),
           Dimens.space14.heightBox,
-          AepsFormTextField(
+          CommonFormTextField(
             controller: amountController,
             hint: 'Amount',
             keyboardType: const TextInputType.numberWithOptions(

@@ -31,6 +31,7 @@ export 'dialog_utils.dart';
 export 'dialog_utils_with_lottie.dart';
 export 'dropdown/custom_dropdown_widget.dart';
 export 'flippable_svg_background.dart';
+export 'form_field/common_form_text_field.dart';
 export 'form_field/common_text_form_field_widget.dart';
 export 'form_field/custom_text_form_field_widget.dart';
 export 'form_field/custom_text_form_field_with_label_widget.dart';

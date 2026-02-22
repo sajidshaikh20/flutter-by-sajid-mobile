@@ -16,8 +16,8 @@ class AepsFormHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Text(
-          title,
+        CustomTextLabelWidget(
+          label: title,
           style: context.textTheme.headlineSmall?.copyWith(
             fontSize: Dimens.fontSize18,
             fontWeight: FontWeight.w500,
@@ -26,8 +26,8 @@ class AepsFormHeader extends StatelessWidget {
         ),
         GestureDetector(
           onTap: onClearTap,
-          child: Text(
-            'Clear All',
+          child: CustomTextLabelWidget(
+            label: 'Clear All',
             style: context.textTheme.titleSmall?.copyWith(
               fontSize: Dimens.fontSize14,
               color: AppColors.greenTextColor,

@@ -1,16 +1,17 @@
 import '../../../../utils/exports.dart';
 
-/// AEPS form text field – UI only. Parent passes [controller] and callbacks.
-class AepsFormTextField extends StatelessWidget {
-  const AepsFormTextField({
+/// Common form text field – same styling for AEPS, DMT, and all service forms.
+/// Use [controller] when parent manages state; omit for stateless (TextField manages internally).
+class CommonFormTextField extends StatelessWidget {
+  const CommonFormTextField({
     super.key,
-    required this.controller,
+    this.controller,
     required this.hint,
     this.keyboardType = TextInputType.text,
     this.maxLength,
   });
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String hint;
   final TextInputType keyboardType;
   final int? maxLength;
