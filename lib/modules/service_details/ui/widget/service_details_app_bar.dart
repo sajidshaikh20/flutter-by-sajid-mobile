@@ -52,8 +52,10 @@ class ServiceDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             ),
             Dimens.space20.widthBox,
             CustomTextLabelWidget(
+              maxLines: Dimens.maxLines01,
+              overflow: TextOverflow.ellipsis,
               label:
-              label.toUpperCase(),
+              label.toTitleCaseConvert,
               style: context.textTheme.titleMedium?.copyWith(
                 fontSize: Dimens.fontSize18,
                 fontWeight: FontWeight.w600,
@@ -64,7 +66,7 @@ class ServiceDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             if (showRightIcon)
               ServiceDetailsAppBarRightIconButton(onTap: onRightIconTap)
             else
-              Dimens.size44.widthBox,
+              Dimens.size20.widthBox,
           ],
         ),
       ),

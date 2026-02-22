@@ -16,7 +16,7 @@ extension ServiceDetailTypeExtension on ServiceDetailType {
       case ServiceDetailType.aepsAadhaarPay:
         return 'AEPS';
       case ServiceDetailType.dmt:
-        return 'DMT';
+        return 'Domestic Money Transfer';
     }
   }
 }

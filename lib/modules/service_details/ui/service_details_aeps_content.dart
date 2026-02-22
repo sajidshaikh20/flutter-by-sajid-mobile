@@ -1,7 +1,8 @@
 import '../../../../utils/exports.dart';
 
+
 /// Dummy data for AEPS grid (AEPS-1, AEPS-2) – same UI as home grid.
-final List<ServiceItemModel> _aepsGridItems = <ServiceItemModel>[
+final List<ServiceItemModel> aepsGridItems = <ServiceItemModel>[
   ServiceItemModel(
     label: 'AEPS-1',
     icon: Assets.svgs.icStreamlineColorFingerprint2.svg(),
@@ -18,13 +19,11 @@ class ServiceDetailsAepsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          vertical: Dimens.space38,
-          horizontal: Dimens.space20),
-      child: ServicesDetailsGridview(
-        services: _aepsGridItems,
-      ),
+    return ServiceDetailsGridContent(
+      services: aepsGridItems,
+      onItemTap: (BuildContext context, ServiceItemModel item) async {
+      await  showSelectBankBottomSheet(context, aepsLabel: item.label);
+      },
     );
   }
 }
