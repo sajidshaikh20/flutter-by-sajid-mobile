@@ -42,8 +42,7 @@ export 'rotated_icon.dart';
 export 'segmented_control.dart';
 export 'selection_item_widget.dart';
 export 'shimmer/shimmer_effect_widget.dart';
-export 'social_auth/model/apple_decode_model.dart';
-export 'social_auth/social_auth.dart';
+
 export 'switch/advance_switch.dart';
 export 'text_label/custom_html_text_widget.dart';
 export 'text_label/custom_no_data_widget.dart';

@@ -28,7 +28,7 @@ FutureOr<void> setupLocator() {
 
     // Services — lazy unless required immediately
     ..registerLazySingleton<LanguageService>(LanguageService.new)
-    ..registerLazySingleton<SocialLoginServices>(SocialLoginServices.new)
+
 
 
   // Cubits / State management — register eagerly if used on home
