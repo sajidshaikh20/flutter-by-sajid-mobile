@@ -1,3 +1,4 @@
+export 'all_services_widget.dart';
 export 'banner_card_widget.dart';
 export 'banner_carousel_widget.dart';
 export 'custom_home_app_bar.dart';
@@ -11,3 +12,4 @@ export 'view_button_widget.dart';
 export 'wallet_cards_widget.dart';
 export 'wallet_fund_transfer_widget.dart';
 export 'wallet_item_widget.dart';
+export 'services_container_widget.dart';

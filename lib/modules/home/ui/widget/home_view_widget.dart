@@ -11,34 +11,48 @@ class HomeViewWidget extends StatelessWidget {
     final Color gradientEnd = MainConfig.appColors.primaryDark;
 
     return Container(
-    width: double.infinity,
-    height: Dimens.size463,
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: <Color>[gradientStart, gradientEnd],
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[gradientStart, gradientEnd],
+        ),
       ),
-    ),
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: Dimens.space20,
-
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Dimens.space20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Dimens.space10.heightBox,
+                  const UserGreetingWidget(),
+                  Dimens.space20.heightBox,
+                  const BannerCarouselWidget(),
+                  Dimens.space18.heightBox,
+                  const WalletCardsWidget(),
+                  Dimens.space16.heightBox,
+                  const WalletFundTransferWidget(),
+                ],
+              ),
+            ),
+            Dimens.space20.heightBox,
+            const ServicesContainerWidget(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    right: Dimens.space20,
+                    left: Dimens.space20,
+                    top: Dimens.space44),
+                child: AllServicesWidget(),
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Dimens.space10.heightBox,
-          const UserGreetingWidget(),
-          Dimens.space20.heightBox,
-          const BannerCarouselWidget(),
-          Dimens.space18.heightBox,
-          const WalletCardsWidget(),
-          Dimens.space16.heightBox,
-          const WalletFundTransferWidget(),
-        ],
-      ),
-    ),
-        );
+    );
   }
 }

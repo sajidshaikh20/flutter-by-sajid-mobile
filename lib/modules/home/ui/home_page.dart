@@ -12,6 +12,7 @@ class HomePage extends StatelessWidget {
       create: (BuildContext c) => HomeCubit(),
       child: const SafeArea(
         child: Scaffold(
+          backgroundColor: Colors.black87,
           body: HomeViewWidget(),
         ),
       ),
