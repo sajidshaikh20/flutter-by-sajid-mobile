@@ -87,6 +87,7 @@ abstract class Dimens {
   static const double space35 = 35;
   static const double space36 = 36;
   static const double space37 = 37;
+  static const double space38 = 38;
   static const double space39 = 39;
   static const double space40 = 40;
   static const double space44 = 44;

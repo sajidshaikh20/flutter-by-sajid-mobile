@@ -1,20 +1,29 @@
 import '../../../../utils/exports.dart';
 
-/// AEPS Aadhaar Pay flow content for the service details screen.
+/// Dummy data for AEPS grid (AEPS-1, AEPS-2) – same UI as home grid.
+final List<ServiceItemModel> _aepsGridItems = <ServiceItemModel>[
+  ServiceItemModel(
+    label: 'AEPS-1',
+    icon: Assets.svgs.icStreamlineColorFingerprint2.svg(),
+  ),
+  ServiceItemModel(
+    label: 'AEPS-2',
+    icon: Assets.svgs.icStreamlineColorFingerprint2.svg(),
+  ),
+];
+
+/// AEPS Aadhaar Pay flow content: grid of AEPS-1 and AEPS-2 (same UI as home grid).
 class ServiceDetailsAepsContent extends StatelessWidget {
   const ServiceDetailsAepsContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(Dimens.space20),
-        child: CustomTextLabelWidget(
-          label: 'AEPS Aadhaar Pay flow – add your screens here.',
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: MainConfig.appColors.textBlackColor,
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          vertical: Dimens.space38,
+          horizontal: Dimens.space20),
+      child: ServicesDetailsGridview(
+        services: _aepsGridItems,
       ),
     );
   }

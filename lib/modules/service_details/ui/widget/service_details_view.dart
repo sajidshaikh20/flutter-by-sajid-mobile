@@ -17,6 +17,7 @@ class ServiceDetailsView extends StatelessWidget {
         return Scaffold(
           backgroundColor: MainConfig.appColors.backgroundWhiteColor,
           body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ServiceDetailsAppBar(
                 label: state.serviceType.displayLabel,

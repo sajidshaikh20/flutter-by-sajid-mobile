@@ -26,7 +26,7 @@ class TourTravelContentWidget extends StatelessWidget {
                 ),
               ),
               Dimens.space12.widthBox,
-               Expanded(
+               const Expanded(
                 flex: Dimens.flex2,
                 child: TourTravelPlaneBannerWidget(),
               ),
