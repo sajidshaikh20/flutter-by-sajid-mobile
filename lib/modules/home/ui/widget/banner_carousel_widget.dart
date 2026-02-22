@@ -10,11 +10,6 @@ class BannerCarouselWidget extends StatelessWidget {
     Assets.png.icHomeBanner2.path,
   ];
 
-  static const List<double> _bannerWidths = <double>[
-    Dimens.size262,
-    Dimens.size262,
-  ];
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -29,7 +24,6 @@ class BannerCarouselWidget extends StatelessWidget {
               right: index < _bannerImages.length - 1 ? Dimens.space10 : 0,
             ),
             child: BannerCardWidget(
-              width: _bannerWidths[index],
               imagePath: _bannerImages[index],
             ),
           );

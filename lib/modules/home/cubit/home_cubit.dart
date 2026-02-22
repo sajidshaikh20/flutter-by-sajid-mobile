@@ -12,6 +12,11 @@ class HomeCubit extends BaseCubit<HomeState> {
 
   void refreshHomeData() {}
 
+  /// Toggles the visibility of the available balance.
+  void toggleBalanceVisibility() {
+    emit(state.copyWith(isBalanceVisible: !state.isBalanceVisible));
+  }
+
   @override
   HomeState getResetErrorState() => state.copyWith(msg: '');
 

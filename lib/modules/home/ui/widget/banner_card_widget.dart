@@ -5,13 +5,13 @@ class BannerCardWidget extends StatelessWidget {
   /// Creates a banner card widget.
   const BannerCardWidget({
     super.key,
-    required this.width,
+     this.width=Dimens.size262,
     required this.imagePath,
     this.height = Dimens.size100,
   });
 
   /// Width of the banner card.
-  final double width;
+  final double? width;
 
   /// Asset path of the banner image.
   final String imagePath;
