@@ -51,7 +51,6 @@ export '../../service/service.dart'
     hide binarySearch, mergeSort, ProgressCallback;
 export '../base/base_state.dart';
 export '../main.dart';
-export 'language_utils.dart';
 export 'utils.dart';
 
 
