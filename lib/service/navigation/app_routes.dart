@@ -1,7 +1,6 @@
 import '../../utils/exports.dart';
 
 @AutoRouterConfig()
-///AppRouter
 class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => <AutoRoute>[
@@ -20,9 +19,14 @@ class AppRouter extends RootStackRouter {
             reverseDurationInMilliseconds: 0,
             transitionsBuilder: TransitionsBuilders.noTransition,
             durationInMilliseconds: 0),
-        
 
-
+        CustomRoute<dynamic>(
+          page: ServiceDetailsRoute.page,
+          path: AppPaths.serviceDetails,
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
 
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(
@@ -36,28 +40,21 @@ class AppRouter extends RootStackRouter {
             /// Home tab shell (AutoRouter); children show inside tab so bottom nav stays visible.
             CustomRoute<dynamic>(
               initial: true,
+              page: HomeRoute.page,
+              path: AppPaths.home,
+              durationInMilliseconds: Dimens.milliseconds400,
+              reverseDurationInMilliseconds: Dimens.milliseconds400,
+              transitionsBuilder: fadePageTransition,
+            ),
+            /*CustomRoute<dynamic>(
+              initial: true,
               page: HomeWithBottomPageRoute.page,
               path: AppPaths.home,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,
               transitionsBuilder: fadePageTransition,
-              children: <AutoRoute>[
-                CustomRoute<dynamic>(
-                  initial: true,
-                  page: HomeRoute.page,
-                  durationInMilliseconds: Dimens.milliseconds400,
-                  reverseDurationInMilliseconds: Dimens.milliseconds400,
-                  transitionsBuilder: fadePageTransition,
-                ),
-                CustomRoute<dynamic>(
-                  page: ServiceDetailsRoute.page,
-                  path: AppPaths.serviceDetails,
-                  durationInMilliseconds: Dimens.milliseconds400,
-                  reverseDurationInMilliseconds: Dimens.milliseconds400,
-                  transitionsBuilder: fadePageTransition,
-                ),
-              ],
-            ),
+
+            ),*/
             CustomRoute<dynamic>(
               page: TransactionHistoryRoute.page,
               path: AppPaths.transactionHistory,

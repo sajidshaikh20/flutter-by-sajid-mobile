@@ -30,5 +30,5 @@ abstract class AppPaths {
   static const String chatSupport = 'chat_support';
 
   /// Store receipt page route.
-  static const String serviceDetails = 'service_details';
+  static const String serviceDetails = '/service_details';
 }
