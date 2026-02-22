@@ -28,6 +28,13 @@ class ServicesGridWidget extends StatelessWidget {
         return ServiceGridItemWidget(
           label: item.label,
           icon: item.icon,
+          onTap: item.serviceDetailType != null
+              ? () async {
+                  await context.router.push(
+                    ServiceDetailsRoute(serviceType: item.serviceDetailType!),
+                  );
+                }
+              : null,
         );
       },
     );

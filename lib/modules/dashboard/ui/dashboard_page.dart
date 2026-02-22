@@ -68,7 +68,7 @@ class DashboardPage extends BaseResponsiveView {
         );
       },
       routes: <PageRouteInfo>[
-        HomeRoute(),
+        const HomeWithBottomPageRoute(),
         const TransactionHistoryRoute(),
         const BankTransferRoute(),
         const ChatSupportRoute(),

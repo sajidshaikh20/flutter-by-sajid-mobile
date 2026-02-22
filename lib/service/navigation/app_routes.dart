@@ -23,6 +23,7 @@ class AppRouter extends RootStackRouter {
         
 
 
+
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(
           page: DashboardRoute.page,
@@ -32,17 +33,30 @@ class AppRouter extends RootStackRouter {
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
           children: <AutoRoute>[
+            /// Home tab shell (AutoRouter); children show inside tab so bottom nav stays visible.
             CustomRoute<dynamic>(
               initial: true,
-              page: HomeRoute.page,
+              page: HomeWithBottomPageRoute.page,
               path: AppPaths.home,
-              maintainState: false,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,
-              children: <AutoRoute>[
-
-              ],
               transitionsBuilder: fadePageTransition,
+              children: <AutoRoute>[
+                CustomRoute<dynamic>(
+                  initial: true,
+                  page: HomeRoute.page,
+                  durationInMilliseconds: Dimens.milliseconds400,
+                  reverseDurationInMilliseconds: Dimens.milliseconds400,
+                  transitionsBuilder: fadePageTransition,
+                ),
+                CustomRoute<dynamic>(
+                  page: ServiceDetailsRoute.page,
+                  path: AppPaths.serviceDetails,
+                  durationInMilliseconds: Dimens.milliseconds400,
+                  reverseDurationInMilliseconds: Dimens.milliseconds400,
+                  transitionsBuilder: fadePageTransition,
+                ),
+              ],
             ),
             CustomRoute<dynamic>(
               page: TransactionHistoryRoute.page,

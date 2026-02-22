@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../service_details/service_details.dart';
 
 /// Model representing a single service item in the All Services grid.
 class ServiceItemModel {
-  /// Creates a [ServiceItemModel] with the given label and icon.
+  /// Creates a [ServiceItemModel] with the given label, icon and optional [serviceDetailType].
   const ServiceItemModel({
     required this.label,
-     this.icon,
+    this.icon,
+    this.serviceDetailType,
   });
 
   /// Display label for the service.
@@ -16,15 +18,25 @@ class ServiceItemModel {
   /// Icon for the service.
   final Widget? icon;
 
+  /// When non-null, the item is clickable and navigates to service details for this type.
+  final ServiceDetailType? serviceDetailType;
 
-  /// Banking services list.
-  static  List<ServiceItemModel> bankingServices = <ServiceItemModel>[
-    ServiceItemModel(label: 'AEPS Aadhaar Pay', icon:Assets.svgs.icStreamlineColorFingerprint2.svg()),
+  /// Banking services list. Only AEPS Aadhaar Pay and DMT are clickable ([serviceDetailType] set).
+  static List<ServiceItemModel> bankingServices = <ServiceItemModel>[
+    ServiceItemModel(
+      label: 'AEPS Aadhaar Pay',
+      icon: Assets.svgs.icStreamlineColorFingerprint2.svg(),
+      serviceDetailType: ServiceDetailType.aepsAadhaarPay,
+    ),
     ServiceItemModel(label: 'MATM', icon: Assets.svgs.icMatm.svg()),
-    ServiceItemModel(label: 'DMT', icon:  Assets.svgs.icDmt.svg()),
-    ServiceItemModel(label: 'Credit Card', icon:  Assets.svgs.icCreditCard.svg()),
-    ServiceItemModel(label: 'Account Open', icon: Assets.svgs.icAccountOpen.svg() ),
-    ServiceItemModel(label: 'Loan', icon: Assets.svgs.icLoan.svg() ),
+    ServiceItemModel(
+      label: 'DMT',
+      icon: Assets.svgs.icDmt.svg(),
+      serviceDetailType: ServiceDetailType.dmt,
+    ),
+    ServiceItemModel(label: 'Credit Card', icon: Assets.svgs.icCreditCard.svg()),
+    ServiceItemModel(label: 'Account Open', icon: Assets.svgs.icAccountOpen.svg()),
+    ServiceItemModel(label: 'Loan', icon: Assets.svgs.icLoan.svg()),
   ];
 
   /// Recharge and bill pay services list.

@@ -7,6 +7,7 @@ export 'chat_support/chat_support.dart';
 export 'dashboard/dashboard.dart';
 export 'force_update_under_maintenance/force_update_under_maintenance.dart';
 export 'home/home.dart';
+export 'service_details/service_details.dart';
 
 export 'localization/localization.dart';
 export 'no_internet/no_internet.dart';
