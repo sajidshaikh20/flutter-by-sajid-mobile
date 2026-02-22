@@ -1,13 +1,13 @@
 import '../../../../utils/exports.dart';
 
 @RoutePage()
-class HomePage extends StatelessWidget {
+class HomePage extends BaseResponsiveView {
   const HomePage({super.key, this.isFromNotification = false});
 
   final bool? isFromNotification;
 
-  @override
-  Widget build(BuildContext context) {
+
+  Widget buildview(BuildContext context) {
     return BlocProvider<HomeCubit>(
       create: (BuildContext c) => HomeCubit(),
       child: const SafeArea(
@@ -16,5 +16,20 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  Widget buildDesktopWidget(BuildContext context) {
+    return buildview(context);
+  }
+
+  @override
+  Widget buildMobileWidget(BuildContext context) {
+    return buildview(context);
+  }
+
+  @override
+  Widget buildTabletWidget(BuildContext context) {
+    return buildview(context);
   }
 }

@@ -204,21 +204,6 @@ void handleRedirection({
   }));
 }
 
-/// Replaces the suffix 'route' in [routeName] with a custom page identifier.
-String replaceRouteSuffix(String? routeName) {
-  if (routeName == null || routeName.isEmpty) {
-    return AppConstant.pageNotFound; // Default fallback
-  }
-
-  // Check if the route name ends with 'route' (case insensitive)
-  if (routeName.toLowerCase().endsWith('route')) {
-    String trimmedRouteName = routeName.substring(0, routeName.length - 5);
-    return '$trimmedRouteName${AppAnalyticsConstant.page}';
-  }
-
-  // Return the original route name if no match
-  return routeName;
-}
 
 /// Calculates the height of the screen
 /// excluding the status bar, toolbar, tab bar,

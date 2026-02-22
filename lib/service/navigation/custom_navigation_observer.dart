@@ -5,15 +5,8 @@ class CustomNavigationObserver extends AutoRouterObserver {
   /// Called when a new route is pushed onto the stack.
   /// Logs the route name and sends an event to the analytics service.
   @override
-  Future<void> didPush(Route<dynamic> route, Route<dynamic>? previousRoute) async {
-    // Get the original route name
-    String? routeName = route.settings.name;
-
-    // Replace "route" at the end of the route name with "page"
-    String updatedRouteName = replaceRouteSuffix(routeName);
-
-    DebugLog.instance.d('New route pushed: $updatedRouteName');
-
+  Future<void> didPush(
+      Route<dynamic> route, Route<dynamic>? previousRoute) async {
     // Only log analytics if Firebase is initialized
     // Log the original route name
     DebugLog.instance.d('New route pushed: ${route.settings.name}');
@@ -40,12 +33,6 @@ class CustomNavigationObserver extends AutoRouterObserver {
   @override
   Future<void> didInitTabRoute(
       TabPageRoute route, TabPageRoute? previousRoute) async {
-    // Get the original route name
-    String routeName = route.name;
-
-    // Replace "route" at the end of the route name with "page"
-    String updatedRouteName = replaceRouteSuffix(routeName);
-    DebugLog.instance.d('New route pushed: $updatedRouteName');
     // Only log analytics if Firebase is initialized
     DebugLog.instance.d('Tab route visited: ${route.name}');
   }

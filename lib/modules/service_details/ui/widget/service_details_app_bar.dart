@@ -46,7 +46,9 @@ class ServiceDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
         child: Row(
           children: <Widget>[
             ServiceDetailsAppBarBackButton(
-              onTap: onBackTap ?? context.router.back,
+              onTap: (){
+                unawaited(context.router.maybePop());
+              },
             ),
             Dimens.space20.widthBox,
             CustomTextLabelWidget(
