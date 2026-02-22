@@ -17,6 +17,11 @@ class HomeCubit extends BaseCubit<HomeState> {
     emit(state.copyWith(isBalanceVisible: !state.isBalanceVisible));
   }
 
+  /// Toggles the visibility of the Postpaid wallet balance.
+  void togglePostpaidVisibility() {
+    emit(state.copyWith(isPostpaidVisible: !state.isPostpaidVisible));
+  }
+
   @override
   HomeState getResetErrorState() => state.copyWith(msg: '');
 

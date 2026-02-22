@@ -4,6 +4,7 @@ import '../../../utils/exports.dart';
 class HomeState extends BaseState {
   const HomeState({
     this.isBalanceVisible = true,
+    this.isPostpaidVisible = false,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -14,17 +15,22 @@ class HomeState extends BaseState {
   /// Whether the available balance is visible (default: true).
   final bool isBalanceVisible;
 
+  /// Whether the Postpaid wallet balance is visible (default: false).
+  final bool isPostpaidVisible;
+
   HomeState copyWith({
     BaseStateStatus? status,
     String? msg,
     PageRouteInfo? redirectRoute,
     bool? isBalanceVisible,
+    bool? isPostpaidVisible,
   }) =>
       HomeState(
         status: status ?? this.status,
         msg: msg ?? this.msg,
         redirectRoute: redirectRoute ?? this.redirectRoute,
         isBalanceVisible: isBalanceVisible ?? this.isBalanceVisible,
+        isPostpaidVisible: isPostpaidVisible ?? this.isPostpaidVisible,
       );
 
   @override
@@ -33,5 +39,6 @@ class HomeState extends BaseState {
         msg,
         redirectRoute,
         isBalanceVisible,
+        isPostpaidVisible,
       ];
 }

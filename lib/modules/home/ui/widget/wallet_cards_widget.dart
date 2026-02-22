@@ -7,95 +7,66 @@ class WalletCardsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: Dimens.space20,
-        vertical: Dimens.space14,
-      ),
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
-        borderRadius: Dimens.radius6.borderRadius,
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children:  <Widget>[
-          _WalletItem(label: 'Postpaid Wallet', showView: false),
-          _WalletItem(label: 'Prepaid Wallet', showView: true),
-          _WalletItem(label: 'Payout Wallet', showView: true),
+        borderRadius: Dimens.radius16.borderRadius,
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: AppColors.blackColor.withValues(alpha: Dimens.opacity02),
+            blurRadius: Dimens.blurRadius10,
+            offset: const Offset(Dimens.offset0, Dimens.offset4),
+          ),
         ],
       ),
-    );
-  }
-}
-
-class _WalletItem extends StatelessWidget {
-  const _WalletItem({
-    required this.label,
-    required this.showView,
-  });
-
-  final String label;
-  final bool showView;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        CustomTextLabelWidget(
-          label: label,
-          textAlign: TextAlign.start,
-          style: context.textTheme.labelSmall?.copyWith(
-            fontSize: Dimens.fontSize10,
-            fontWeight: FontWeight.w400,
-            color: MainConfig.appColors.textBlackColor
+      child: ClipRRect(
+        borderRadius: Dimens.radius16.borderRadius,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: BlocBuilder<HomeCubit, HomeState>(
+                  buildWhen: (HomeState p, HomeState c) =>
+                      p.isPostpaidVisible != c.isPostpaidVisible,
+                  builder: (BuildContext context, HomeState state) {
+                    return WalletItemWidget(
+                      title: 'Postpaid Wallet',
+                      showViewButton: false,
+                      isVisible: state.isPostpaidVisible,
+                      onToggle: () =>
+                          context.read<HomeCubit>().togglePostpaidVisibility(),
+                    );
+                  },
+                ),
+              ),
+              _verticalDivider(),
+              const Expanded(
+                child: WalletItemWidget(
+                  title: 'Prepaid Wallet',
+                  showViewButton: true,
+                  isVisible: false,
+                ),
+              ),
+              _verticalDivider(),
+              const Expanded(
+                child: WalletItemWidget(
+                  title: 'Payout Wallet',
+                  showViewButton: true,
+                  isVisible: false,
+                ),
+              ),
+            ],
           ),
         ),
-        Dimens.space7.heightBox,
-        Row(
-          children: <Widget>[
-            CustomTextLabelWidget(
-              label: '₹****',
-              textAlign: TextAlign.start,
-              style: context.textTheme.headlineSmall?.copyWith(
-                fontSize: Dimens.fontSize14,
-                fontWeight: FontWeight.w600,
-                color: MainConfig.appColors.textBlackColor
-              ),
-            ),
-            Dimens.space12.widthBox,
-            if (!showView)
-              Assets.svgs.icVisibilityPrimary.svg(),
-            if (showView) _ViewButton(),
-          ],
-        ),
-      ],
+      ),
     );
   }
-}
 
-class _ViewButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _verticalDivider() {
     return Container(
-      padding: const EdgeInsets.all(
-      Dimens.space5,
-      ),
-      decoration: BoxDecoration(
-       border: Border.all(
-         color: MainConfig.appColors.primary,
-         width: Dimens.borderWidth05
-       ),
-        borderRadius: Dimens.radius6.borderRadius,
-      ),
-      child: CustomTextLabelWidget(
-        label: 'View',
-        style: context.textTheme.labelMedium?.copyWith(
-          color: MainConfig.appColors.primary,
-          fontSize: Dimens.fontSize7,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      width: Dimens.borderWidth1,
+      color: AppColors.greyBorder,
     );
   }
 }
