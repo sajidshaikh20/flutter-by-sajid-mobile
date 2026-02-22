@@ -47,11 +47,16 @@ class ServiceGridItemWidget extends StatelessWidget {
                   Container(
                     height: Dimens.size44,
                     width: Dimens.size44,
+                    clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: AppColors.whiteColor,
                       borderRadius: BorderRadius.circular(Dimens.radius10),
                     ),
-                    child: Center(child: icon),
+                    child: Center(
+                      child: SizedBox(
+                        child: icon,
+                      ),
+                    ),
                   ),
                   Dimens.space8.heightBox,
                   Expanded(
