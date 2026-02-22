@@ -1,20 +1,26 @@
 import '../../../../utils/exports.dart';
 
 /// One row for the Select Bank list: fingerprint icon, [name], enabled/disabled arrow.
-/// Used inside [showSelectBankBottomSheet].
+/// When enabled and tapped (row or arrow), [onBankSelected] is called with the bank name.
 class SelectBankListItem extends StatelessWidget {
   const SelectBankListItem({
     super.key,
     required this.name,
     required this.enabled,
+    this.onBankSelected,
   });
 
   final String name;
   final bool enabled;
+  final void Function(String bankName)? onBankSelected;
 
   @override
   Widget build(BuildContext context) {
-    return _SelectBankListItemContent(name: name, enabled: enabled);
+    return _SelectBankListItemContent(
+      name: name,
+      enabled: enabled,
+      onBankSelected: onBankSelected,
+    );
   }
 }
 
@@ -23,10 +29,12 @@ class _SelectBankListItemContent extends StatelessWidget {
   const _SelectBankListItemContent({
     required this.name,
     required this.enabled,
+    this.onBankSelected,
   });
 
   final String name;
   final bool enabled;
+  final void Function(String bankName)? onBankSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +43,12 @@ class _SelectBankListItemContent extends StatelessWidget {
       child: InkWell(
         onTap: enabled
             ? () {
-                Navigator.of(context).pop();
-                displaySnackBar('$name selected', context);
+                if (onBankSelected != null) {
+                  onBankSelected!(name);
+                } else {
+                  Navigator.of(context).pop();
+                  displaySnackBar('$name selected', context);
+                }
               }
             : () {
                 displaySnackBar('$name is not available', context);

@@ -59,7 +59,7 @@ class _DragHandle extends StatelessWidget {
         width: Dimens.size30,
         height: Dimens.size2,
         decoration: BoxDecoration(
-          color: AppColors.greyBorderColor,
+          color: AppColors.blackColor,
           borderRadius: BorderRadius.circular(2),
         ),
       ),

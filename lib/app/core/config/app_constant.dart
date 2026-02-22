@@ -46,6 +46,21 @@ abstract class AppConstant {
   ];
   static const List<String> jsonExtensions = <String>['json'];
 
+
+
+  static const List<String> methods = <String>[
+    'Cash Withdrawal',
+    'Balance Enquiry',
+    'Mini Statement',
+    'Aadhaar Pay',
+  ];
+
+  static const List<String> banks = <String>[
+    'FINO',
+    'NSDL',
+    'CITY UNION',
+  ];
+
   // Navigation / routing (utils_functions)
   static const String promotion = "promotion";
   static const String order = "order";

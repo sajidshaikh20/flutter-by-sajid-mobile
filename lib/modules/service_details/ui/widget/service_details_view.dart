@@ -20,7 +20,7 @@ class ServiceDetailsView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               ServiceDetailsAppBar(
-                label: state.serviceType.displayLabel,
+                label: state.serviceType.displayLabel.toUpperCase(),
                 showRightIcon: showRightIcon,
                 onRightIconTap: onRightIconTap,
               ),

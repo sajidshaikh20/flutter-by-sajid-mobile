@@ -27,7 +27,7 @@ class ServicesDetailsGridview extends StatelessWidget {
         return ServiceGridItemWidget(
           label: item.label,
           icon: item.icon,
-          onTap: () => showSelectBankBottomSheet(context),
+          onTap: () => showSelectBankBottomSheet(context, aepsLabel: item.label),
         );
       },
     );

@@ -13,15 +13,22 @@ class _BankItem {
 }
 
 /// Shows the "Select Bank" modal bottom sheet (FINO, NSDL, CITY UNION).
-/// Uses [showCommonBottomSheet] with drag handle + custom list UI.
-Future<void> showSelectBankBottomSheet(BuildContext context) async {
+/// [aepsLabel] is the AEPS option label (e.g. "AEPS-1", "AEPS-2") used when opening the form sheet on bank select.
+Future<void> showSelectBankBottomSheet(
+  BuildContext context, {
+  required String aepsLabel,
+}) async {
   await showCommonBottomSheet<void>(
     context: context,
-    child: _SelectBankContent(),
+    child: _SelectBankContent(aepsLabel: aepsLabel),
   );
 }
 
 class _SelectBankContent extends StatelessWidget {
+  const _SelectBankContent({required this.aepsLabel});
+
+  final String aepsLabel;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -62,6 +69,16 @@ class _SelectBankContent extends StatelessWidget {
             return SelectBankListItem(
               name: bank.name,
               enabled: bank.enabled,
+              onBankSelected: bank.enabled
+                  ? (String name) async {
+                      Navigator.of(context).pop();
+                      await showAepsFormBottomSheet(
+                        context,
+                        aepsLabel: aepsLabel,
+                        bankName: name,
+                      );
+                    }
+                  : null,
             );
           },
         ),

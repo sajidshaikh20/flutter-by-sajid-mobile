@@ -53,7 +53,7 @@ class ServiceDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             Dimens.space20.widthBox,
             CustomTextLabelWidget(
               label:
-              label.toTitleCaseConvert,
+              label.toUpperCase(),
               style: context.textTheme.titleMedium?.copyWith(
                 fontSize: Dimens.fontSize18,
                 fontWeight: FontWeight.w600,
