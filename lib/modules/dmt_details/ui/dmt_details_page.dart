@@ -1,4 +1,5 @@
 import '../../../../utils/exports.dart';
+import 'widget/beneficiary_tab_content.dart';
 
 /// Domestic Money Transfer details screen.
 ///
@@ -50,7 +51,7 @@ class DmtDetailsPage extends StatelessWidget {
             const Expanded(
               child: TabBarView(
                 children: <Widget>[
-                  _PlaceholderTabContent(label: 'Beneficiary'),
+                  BeneficiaryTabContent(),
                   _PlaceholderTabContent(label: 'Customer Info'),
                 ],
               ),
