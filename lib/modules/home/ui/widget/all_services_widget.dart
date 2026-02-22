@@ -106,6 +106,22 @@ class AllServicesWidget extends StatelessWidget {
               ),
             ),
             Dimens.space20.heightBox,
+            SizedBox(
+              height: Dimens.space47,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                      margin:  EdgeInsets.only(
+                      left: index ==0 ? Dimens.space20:0,
+                  right: Dimens.space10),
+                    child: const SendMoneyCard(),
+                  );
+                },
+              ),
+            ),
+            Dimens.space20.heightBox,
           ],
         );
       },
