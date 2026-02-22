@@ -27,6 +27,13 @@ class AppRouter extends RootStackRouter {
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
         ),
+        CustomRoute<dynamic>(
+          page: DmtDetailsRoute.page,
+          path: AppPaths.dmtDetails,
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
 
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(

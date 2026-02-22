@@ -29,6 +29,9 @@ abstract class AppPaths {
   /// Chat support page route (sub-path).
   static const String chatSupport = 'chat_support';
 
-  /// Store receipt page route.
+  /// Service details page route.
   static const String serviceDetails = '/service_details';
+
+  /// DMT (Domestic Money Transfer) details screen – beneficiary & customer info tabs.
+  static const String dmtDetails = '/dmt_details';
 }

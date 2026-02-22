@@ -90,7 +90,8 @@ class DmtFormContent extends StatelessWidget {
                   fontWeight: FontWeight.w500),
               title: "Search",
               onTap: () {
-                Navigator.of(context).pop();
+                unawaited(context.router.maybePop());
+                unawaited(context.router.push(const DmtDetailsRoute()));
               }),
           Dimens.space24.heightBox,
         ],
