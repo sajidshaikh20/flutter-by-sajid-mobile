@@ -223,6 +223,9 @@ class AppColors {
   /// Primary color.
   Color primary = const Color(0xFF3AB557);
 
+  /// Dark shade of primary for gradients (e.g. wallet home background).
+  Color primaryDark = const Color(0xFF1D542A);
+
   /// Color on primary color.
   Color onPrimary = whiteColor;
 

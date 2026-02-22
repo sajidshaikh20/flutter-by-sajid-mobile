@@ -8,8 +8,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Home')),
+    return BlocProvider<HomeCubit>(
+      create: (BuildContext c) => HomeCubit(),
+      child: const SafeArea(
+        child: Scaffold(
+          body: HomeViewWidget(),
+        ),
+      ),
     );
   }
 }
