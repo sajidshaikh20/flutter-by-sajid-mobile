@@ -120,9 +120,9 @@ class MyAppTheme {
     return SystemUiOverlayStyle(
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: MainConfig.appColors.transparent,
-      systemNavigationBarDividerColor: MainConfig.appColors.transparent,
+      statusBarColor: MainConfig.appColors.primary,
+      systemNavigationBarColor: AppColors.whiteColor,
+      systemNavigationBarDividerColor: AppColors.whiteColor,
       systemNavigationBarIconBrightness: Brightness.dark,
       systemStatusBarContrastEnforced: false,
     );

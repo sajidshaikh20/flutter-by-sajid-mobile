@@ -10,8 +10,9 @@ class WalletFundTransferWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Wallet And Fund Transfer',
+        CustomTextLabelWidget(
+          label: 'Wallet And Fund Transfer',
+          textAlign: TextAlign.start,
           style: context.textTheme.headlineSmall?.copyWith(
             color: MainConfig.appColors.textWhiteColor,
             fontSize: Dimens.fontSize16,
@@ -91,8 +92,8 @@ class _TransferItem extends StatelessWidget {
           ),
         ),
         Dimens.space8.heightBox,
-        Text(
-          label,
+        CustomTextLabelWidget(
+          label: label,
           textAlign: TextAlign.center,
           style: context.textTheme.labelMedium?.copyWith(
             color: MainConfig.appColors.textWhiteColor,

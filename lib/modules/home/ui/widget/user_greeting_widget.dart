@@ -27,94 +27,13 @@ class UserGreetingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        _buildAvatar(context),
-        Dimens.space12.widthBox,
+        UserGreetingAvatarWidget(profileImagePath: profileImagePath),
+        Dimens.space10.widthBox,
         Expanded(
-          child: _buildUserInfo(context),
+          child: UserGreetingInfoWidget(userName: userName, balance: balance),
         ),
-        _buildNotificationButton(context),
+        UserGreetingNotificationButtonWidget(onTap: onNotificationTap),
       ],
-    );
-  }
-
-  Widget _buildAvatar(BuildContext context) {
-    return Container(
-      width: Dimens.size56,
-      height: Dimens.size56,
-      decoration: BoxDecoration(
-        color: MainConfig.appColors.imageBgColor,
-        shape: BoxShape.circle,
-      ),
-      child: profileImagePath != null
-          ? ClipOval(
-              child: Image.asset(
-                profileImagePath!,
-                width: Dimens.size56,
-                height: Dimens.size56,
-                fit: BoxFit.cover,
-              ),
-            )
-          : Icon(
-              Icons.person,
-              size: Dimens.size34,
-              color: MainConfig.appColors.textWhiteColor,
-            ),
-    );
-  }
-
-  Widget _buildUserInfo(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          userName != null ? 'Hi, $userName' : 'Hi, Wade Warren',
-          style: context.textTheme.headlineSmall?.copyWith(
-            color: MainConfig.appColors.textWhiteColor,
-            fontSize: Dimens.fontSize18,
-            fontWeight: FontWeight.w700,
-            height: Dimens.lineHeight22.toLineHeight(Dimens.fontSize18),
-          ),
-        ),
-        Dimens.space4.heightBox,
-        Row(
-          children: <Widget>[
-            Text(
-              balance != null
-                  ? 'Available Balance $balance'
-                  : 'Available Balance ₹2000.00',
-              style: context.textTheme.labelSmall?.copyWith(
-                color: MainConfig.appColors.textWhiteColor
-                    .withValues(alpha: Dimens.opacity08),
-                fontSize: Dimens.fontSize13,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Dimens.space6.widthBox,
-            Icon(
-              Icons.visibility_off,
-              color: MainConfig.appColors.textWhiteColor
-                  .withValues(alpha: Dimens.opacity06),
-              size: Dimens.size16,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNotificationButton(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: MainConfig.appColors.textWhiteColor
-            .withValues(alpha: Dimens.opacity025),
-        shape: BoxShape.circle,
-      ),
-      padding: EdgeInsets.all(Dimens.space8),
-      child: Icon(
-        Icons.notifications_outlined,
-        color: MainConfig.appColors.textWhiteColor,
-        size: Dimens.size22,
-      ),
     );
   }
 }

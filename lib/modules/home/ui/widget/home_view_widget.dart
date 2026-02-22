@@ -10,42 +10,35 @@ class HomeViewWidget extends StatelessWidget {
     final Color gradientStart = MainConfig.appColors.primary;
     final Color gradientEnd = MainConfig.appColors.primaryDark;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: MainConfig.appColors.primary,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-      ),
-      child: Container(
-      width: double.infinity,
-      height: 463,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: <Color>[gradientStart, gradientEnd],
-        ),
-      ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Dimens.space16,
-          vertical: Dimens.space12,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Dimens.space16.heightBox,
-            const UserGreetingWidget(),
-            Dimens.space16.heightBox,
-            const BannerCarouselWidget(),
-            Dimens.space16.heightBox,
-            const WalletCardsWidget(),
-            Dimens.space16.heightBox,
-            const WalletFundTransferWidget(),
-          ],
-        ),
+    return Container(
+    width: double.infinity,
+    height: Dimens.size463,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[gradientStart, gradientEnd],
       ),
     ),
-    );
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Dimens.space20,
+
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Dimens.space10.heightBox,
+          const UserGreetingWidget(),
+          Dimens.space16.heightBox,
+          const BannerCarouselWidget(),
+          Dimens.space16.heightBox,
+          const WalletCardsWidget(),
+          Dimens.space16.heightBox,
+          const WalletFundTransferWidget(),
+        ],
+      ),
+    ),
+        );
   }
 }

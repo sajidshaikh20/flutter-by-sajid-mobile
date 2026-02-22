@@ -42,8 +42,9 @@ class _WalletItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          label,
+        CustomTextLabelWidget(
+          label: label,
+          textAlign: TextAlign.start,
           style: context.textTheme.labelSmall?.copyWith(
             fontSize: Dimens.fontSize11,
             color: MainConfig.appColors.textBlackColor
@@ -53,8 +54,9 @@ class _WalletItem extends StatelessWidget {
         Dimens.space6.heightBox,
         Row(
           children: <Widget>[
-            Text(
-              '₹****',
+            CustomTextLabelWidget(
+              label: '₹****',
+              textAlign: TextAlign.start,
               style: context.textTheme.headlineSmall?.copyWith(
                 fontSize: Dimens.fontSize14,
                 fontWeight: FontWeight.w700,
@@ -90,8 +92,8 @@ class _ViewButton extends StatelessWidget {
         color: MainConfig.appColors.mainColor,
         borderRadius: Dimens.radius6.borderRadius,
       ),
-      child: Text(
-        'View',
+      child: CustomTextLabelWidget(
+        label: 'View',
         style: context.textTheme.labelMedium?.copyWith(
           color: MainConfig.appColors.textWhiteColor,
           fontSize: Dimens.fontSize11,

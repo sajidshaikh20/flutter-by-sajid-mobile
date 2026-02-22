@@ -476,6 +476,7 @@ abstract class Dimens {
 
   static const double size375 = 375;
   static const double size400 = 400;
+  static const double size463 = 463;
   static const double size500 = 500;
 
   static const double borderWidth2 = 2.0;

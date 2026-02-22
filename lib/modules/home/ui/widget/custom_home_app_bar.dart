@@ -106,8 +106,9 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          userName != null ? 'Hi, $userName' : 'Hi, Wade Warren',
+        CustomTextLabelWidget(
+          label: userName != null ? 'Hi, $userName' : 'Hi, Wade Warren',
+          textAlign: TextAlign.start,
           style: context.textTheme.headlineSmall?.copyWith(
             color: textColorValue,
             fontSize: Dimens.fontSize18,
@@ -115,10 +116,11 @@ class CustomHomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             height: Dimens.lineHeight22.toLineHeight(Dimens.fontSize18),
           ),
         ),
-        Text(
-          balance != null
+        CustomTextLabelWidget(
+          label: balance != null
               ? 'Available Balance $balance'
               : 'Available Balance ₹2000.00',
+          textAlign: TextAlign.start,
           style: context.textTheme.labelSmall?.copyWith(
             color: textColorValue.withValues(alpha: Dimens.opacity08),
             fontSize: Dimens.fontSize13,

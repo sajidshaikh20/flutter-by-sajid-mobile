@@ -36,8 +36,9 @@ class BannerCarouselWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'WHERE\nDO YOU WANT TO',
+                      CustomTextLabelWidget(
+                        label: 'WHERE\nDO YOU WANT TO',
+                        textAlign: TextAlign.start,
                         style: context.textTheme.labelSmall?.copyWith(
                           color: MainConfig.appColors.textWhiteColor
                               .withValues(alpha: Dimens.opacity073),
@@ -46,8 +47,9 @@ class BannerCarouselWidget extends StatelessWidget {
                         ),
                       ),
                       Dimens.space2.heightBox,
-                      Text(
-                        'EXPLORE',
+                      CustomTextLabelWidget(
+                        label: 'EXPLORE',
+                        textAlign: TextAlign.start,
                         style: context.textTheme.titleLarge?.copyWith(
                           color: MainConfig.appColors.textWhiteColor,
                           fontSize: Dimens.fontSize22,
