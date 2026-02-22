@@ -25,58 +25,17 @@ class _ServiceDetailsView extends StatelessWidget {
     return BlocBuilder<ServiceDetailsCubit, ServiceDetailsState>(
       builder: (BuildContext context, ServiceDetailsState state) {
         return Scaffold(
-          appBar: AppBar(
-            title: Text(_title(state.serviceType)),
-          ),
           body: _buildContent(context, state.serviceType),
         );
       },
     );
   }
-
-  String _title(ServiceDetailType type) {
-    switch (type) {
-      case ServiceDetailType.aepsAadhaarPay:
-        return 'AEPS Aadhaar Pay';
-      case ServiceDetailType.dmt:
-        return 'DMT';
-    }
-  }
-
   Widget _buildContent(BuildContext context, ServiceDetailType type) {
     switch (type) {
       case ServiceDetailType.aepsAadhaarPay:
-        return _buildAepsContent(context);
+        return const ServiceDetailsAepsContent();
       case ServiceDetailType.dmt:
-        return _buildDmtContent(context);
+        return const ServiceDetailsDmtContent();
     }
-  }
-
-  Widget _buildAepsContent(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(Dimens.space20),
-        child: CustomTextLabelWidget(
-          label: 'AEPS Aadhaar Pay flow – add your screens here.',
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: MainConfig.appColors.textBlackColor,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDmtContent(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(Dimens.space20),
-        child: CustomTextLabelWidget(
-          label: 'DMT flow – add your screens here.',
-          style: context.textTheme.bodyMedium?.copyWith(
-            color: MainConfig.appColors.textBlackColor,
-          ),
-        ),
-      ),
-    );
   }
 }

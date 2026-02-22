@@ -34,7 +34,9 @@ class ServicesGridWidget extends StatelessWidget {
                     ServiceDetailsRoute(serviceType: item.serviceDetailType!),
                   );
                 }
-              : null,
+              : (){
+            displaySnackBar("coming soon", context);
+          },
         );
       },
     );
