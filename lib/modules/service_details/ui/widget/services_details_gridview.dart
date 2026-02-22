@@ -12,7 +12,7 @@ class ServicesDetailsGridview extends StatelessWidget {
   /// List of service items to display.
   final List<ServiceItemModel> services;
 
-  /// Called when a grid item is tapped. Pass [context] and the tapped [ServiceItemModel].
+  /// Called when a grid item is tapped. Pass [] and the tapped [ServiceItemModel].
   final void Function(BuildContext context, ServiceItemModel item) onItemTap;
 
   @override

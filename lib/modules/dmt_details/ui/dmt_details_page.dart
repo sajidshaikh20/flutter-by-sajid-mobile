@@ -1,5 +1,5 @@
 import '../../../../utils/exports.dart';
-import 'widget/beneficiary_tab_content.dart';
+
 
 /// Domestic Money Transfer details screen.
 ///
@@ -24,13 +24,15 @@ class DmtDetailsPage extends StatelessWidget {
         ),
         body: Column(
           children: <Widget>[
-            ColoredBox(
+            Material(
               color: AppColors.whiteColor,
+              elevation: Dimens.space0,
               child: TabBar(
                 labelColor: AppColors.blackColor,
                 unselectedLabelColor: greyText,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorColor: MainConfig.appColors.primary,
+                dividerColor: AppColors.grey,
                 padding: const EdgeInsets.symmetric(horizontal: Dimens.space20),
                 labelStyle: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
@@ -52,29 +54,11 @@ class DmtDetailsPage extends StatelessWidget {
               child: TabBarView(
                 children: <Widget>[
                   BeneficiaryTabContent(),
-                  _PlaceholderTabContent(label: 'Customer Info'),
+                  CustomerInfoTabContent(),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderTabContent extends StatelessWidget {
-  const _PlaceholderTabContent({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CustomTextLabelWidget(
-        label: '$label content',
-        style: context.textTheme.bodyLarge?.copyWith(
-          color: MainConfig.appColors.greyTextColor,
         ),
       ),
     );

@@ -31,7 +31,7 @@ class AepsFormDropdownField extends StatelessWidget {
           hint: CustomTextLabelWidget(
             label:
             hint,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.greyMediumColor,
               fontSize: Dimens.fontSize14,
             ),
@@ -48,7 +48,7 @@ class AepsFormDropdownField extends StatelessWidget {
                   child: CustomTextLabelWidget(
                     label:
                     item,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: Dimens.fontSize14,
                       color: AppColors.colorBlackBastille,
                     ),

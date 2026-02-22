@@ -8,9 +8,8 @@ export 'dashboard/dashboard.dart';
 export 'dmt_details/dmt_details.dart';
 export 'force_update_under_maintenance/force_update_under_maintenance.dart';
 export 'home/home.dart';
-export 'service_details/service_details.dart';
-
 export 'localization/localization.dart';
 export 'no_internet/no_internet.dart';
+export 'service_details/service_details.dart';
 export 'splash/splash.dart';
 export 'transaction_history/transaction_history.dart';

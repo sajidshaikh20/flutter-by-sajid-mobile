@@ -1,5 +1,4 @@
 import '../../../../utils/exports.dart';
-import 'widget/service_details_app_bar.dart';
 
 /// Service details page; content depends on [serviceType] (e.g. AEPS Aadhaar Pay or DMT flow).
 @RoutePage()

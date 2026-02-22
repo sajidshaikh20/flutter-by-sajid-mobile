@@ -20,7 +20,7 @@ class StatusPillWidget extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: Dimens.space12,
+        horizontal: Dimens.space6,
         vertical: Dimens.space4,
       ),
       decoration: BoxDecoration(

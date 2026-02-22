@@ -12,12 +12,14 @@ class BeneficiaryTabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-        horizontal: Dimens.space20,
-        vertical: Dimens.space16,
-      ),
-      child: Column(
+    return ColoredBox(
+      color: AppColors.greyExtraLight.withOpacity(0.10),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.space20,
+          vertical: Dimens.space16,
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const AddNewBeneficiaryButton(),
@@ -38,6 +40,7 @@ class BeneficiaryTabContent extends StatelessWidget {
             },
           ),
         ],
+        ),
       ),
     );
   }

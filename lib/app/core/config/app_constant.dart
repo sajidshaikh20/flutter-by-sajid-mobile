@@ -1,3 +1,4 @@
+import '../../../utils/exports.dart';
 /// Constants used across the app (non-localized).
 /// Localization-dependent strings belong in AppStrings / l10n.
 abstract class AppConstant {

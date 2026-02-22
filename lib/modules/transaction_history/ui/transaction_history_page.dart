@@ -17,9 +17,8 @@ class TransactionHistoryPage extends BaseResponsiveView {
       child:  Scaffold(
         body: Center(child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text('Transaction History'),
+            const Text('Transaction History'),
             Assets.svgs.icLoan.svg(
               height: 20,
               color: Colors.red

@@ -83,7 +83,6 @@ class _AepsFormStatefulState extends State<_AepsFormStateful> {
 /// AEPS form UI – stateless. State is held by [_AepsFormStateful].
 class _AepsFormContent extends StatelessWidget {
   const _AepsFormContent({
-    super.key,
     required this.aepsLabel,
     required this.selectedMethod,
     required this.selectedBank,

@@ -17,7 +17,9 @@ class AepsMachineButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  /// Background color when selected. Defaults to [MainConfig.appColors.primaryDark].
+  /**
+   * Background color when selected. Defaults to [MainConfig.appColors.primaryDark].
+   */
   final Color? selectedColor;
 
   /// Background color when not selected. Defaults to [AppColors.greyLight].
