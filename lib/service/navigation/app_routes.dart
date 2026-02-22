@@ -39,6 +39,9 @@ class AppRouter extends RootStackRouter {
               maintainState: false,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,
+              children: <AutoRoute>[
+
+              ],
               transitionsBuilder: fadePageTransition,
             ),
             CustomRoute<dynamic>(
