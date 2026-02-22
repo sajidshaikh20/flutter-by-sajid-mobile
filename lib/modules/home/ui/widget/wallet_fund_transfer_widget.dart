@@ -19,38 +19,25 @@ class WalletFundTransferWidget extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        Dimens.space14.heightBox,
+        Dimens.space16.heightBox,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TransferItem(
-              icon: Assets.svgs.icSelfTransfer.svg(
-                width: Dimens.size30,
-                height: Dimens.size30,
-              ),
+              icon: Assets.svgs.icSelfTransfer.svg(),
               label: 'Self\nTransfer',
             ),
             TransferItem(
-              icon: Assets.svgs.icLoadWallet.svg(
-                width: Dimens.size30,
-                height: Dimens.size30,
-              ),
+              icon: Assets.svgs.icLoadWallet.svg(),
               label: 'Load\nWallet',
             ),
             TransferItem(
-              icon: Assets.svgs.icTopUp.svg(
-                width: Dimens.size30,
-                height: Dimens.size30,
-
-              ),
+              icon: Assets.svgs.icTopUp.svg(),
               label: 'Top Up',
             ),
             TransferItem(
-              icon: Assets.svgs.icLinkPayment.svg(
-                width: Dimens.size30,
-                height: Dimens.size30,
-              ),
+              icon: Assets.svgs.icLinkPayment.svg(),
               label: 'Link\nPayment',
             ),
           ],
@@ -59,5 +46,3 @@ class WalletFundTransferWidget extends StatelessWidget {
     );
   }
 }
-
-
