@@ -218,7 +218,7 @@ abstract class AppConstant {
   static const String Permission = "Permission";
 
 
-  static const String cairoFontFamily = "cairo";
+  static const String interFontFamily = "inter";
   static const String keyPleaseEnterYourQuantity = "Please enter your quantity";
 
   static const int youMaxLikeCellMainIndex = 0;

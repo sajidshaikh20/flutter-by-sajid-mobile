@@ -40,7 +40,7 @@ class HomeViewWidget extends StatelessWidget {
             const BannerCarouselWidget(),
             Dimens.space16.heightBox,
             const WalletCardsWidget(),
-            Dimens.space20.heightBox,
+            Dimens.space16.heightBox,
             const WalletFundTransferWidget(),
           ],
         ),

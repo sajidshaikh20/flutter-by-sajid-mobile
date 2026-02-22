@@ -153,23 +153,25 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: cairo
+    - family: inter
       fonts:
-        - asset: fonts/cairo_extralight.ttf
+        - asset: fonts/Inter-Thin-BETA.otf
+          weight: 100
+        - asset: fonts/Inter-ExtraLight-BETA.otf
           weight: 200
-        - asset: fonts/cairo_light.ttf
+        - asset: fonts/Inter-Light-BETA.otf
           weight: 300
-        - asset: fonts/cairo_regular.ttf
+        - asset: fonts/Inter-Regular.otf
           weight: 400
-        - asset: fonts/cairo_medium.ttf
+        - asset: fonts/Inter-Medium.otf
           weight: 500
-        - asset: fonts/cairo_semibold.ttf
+        - asset: fonts/Inter-SemiBold.otf
           weight: 600
-        - asset: fonts/cairo_bold.ttf
+        - asset: fonts/Inter-Bold.otf
           weight: 700
-        - asset: fonts/cairo_extrabold.ttf
+        - asset: fonts/Inter-ExtraBold.otf
           weight: 800
-        - asset: fonts/cairo_black.ttf
+        - asset: fonts/Inter-Black.otf
           weight: 900
 
 

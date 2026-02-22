@@ -79,7 +79,7 @@ import '../../../utils/exports.dart';
    static final  TextStyle _textStyle = TextStyle(
       color: MainConfig.appColors.textBlackColor,
       fontSize: Dimens.fontSize14,
-    fontFamily: AppConstant.cairoFontFamily
+    fontFamily: AppConstant.interFontFamily
       );
 
    /// Text style used for error messages.
