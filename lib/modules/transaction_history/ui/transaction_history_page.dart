@@ -14,8 +14,18 @@ class TransactionHistoryPage extends BaseResponsiveView {
   Widget _build(BuildContext context) {
     return BlocProvider<TransactionHistoryCubit>(
       create: (BuildContext c) => TransactionHistoryCubit(),
-      child: const Scaffold(
-        body: Center(child: Text('Transaction History')),
+      child:  Scaffold(
+        body: Center(child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text('Transaction History'),
+            Assets.svgs.icLoan.svg(
+              height: 20,
+              color: Colors.red
+            )
+          ],
+        )),
       ),
     );
   }

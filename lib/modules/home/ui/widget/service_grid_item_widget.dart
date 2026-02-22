@@ -6,45 +6,82 @@ class ServiceGridItemWidget extends StatelessWidget {
   const ServiceGridItemWidget({
     super.key,
     required this.label,
-    required this.icon,
+    this.icon,
+    this.onTap,
   });
 
   /// Display label for the service.
   final String label;
 
-  /// Icon for the service.
-  final IconData icon;
+  /// Icon for the service (optional).
+  final Widget? icon;
+
+  /// Optional tap callback.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-          width: Dimens.size60,
-          height: Dimens.size60,
-          decoration: BoxDecoration(
-            color: MainConfig.appColors.mainColor
-                .withValues(alpha: Dimens.ratio015),
-            borderRadius: Dimens.radius12.borderRadius,
-          ),
-          child: Icon(
-            icon,
-            color: MainConfig.appColors.mainColor,
-            size: Dimens.size28,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: Dimens.space10,
+          horizontal: Dimens.space8,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Dimens.radius10),
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              AppColors.serviceGridGradientLight,
+              AppColors.serviceGridGradientDark,
+            ],
           ),
         ),
-        Dimens.space8.heightBox,
-        CustomTextLabelWidget(
-          label: label,
-          maxLines: 2,
-          style: context.textTheme.labelSmall?.copyWith(
-            fontSize: Dimens.fontSize11,
-            fontWeight: FontWeight.w500,
-            color: MainConfig.appColors.textBlackColor,
-          ),
-        ),
-      ],
+        child: icon != null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    height: Dimens.size44,
+                    width: Dimens.size44,
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(Dimens.radius10),
+                    ),
+                    child: Center(child: icon),
+                  ),
+                  Dimens.space8.heightBox,
+                  Expanded(
+                    child: CustomTextLabelWidget(
+                      label: label,
+                      maxLines: Dimens.maxLines02,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        fontSize: Dimens.fontSize12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.blackColor,
+                        height: Dimens.lineHeight14.toLineHeight(Dimens.fontSize12),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Center(
+                child: CustomTextLabelWidget(
+                  label: label,
+                  maxLines: Dimens.maxLines03,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.labelSmall?.copyWith(
+                    fontSize: Dimens.fontSize12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.blackColor,
+                  ),
+                ),
+              ),
+      ),
     );
   }
 }

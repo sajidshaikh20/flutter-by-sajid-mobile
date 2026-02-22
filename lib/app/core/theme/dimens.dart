@@ -124,6 +124,7 @@ abstract class Dimens {
   static const double space110 = 110;
 
   static const double space112 = 112;
+  static const double space117 = 117;
   static const double space120 = 120;
   static const double space124 = 124;
   static const double space125 = 125;
@@ -283,6 +284,8 @@ abstract class Dimens {
   static const double ratio065 = 0.65;
   static const double ratio068 = 0.67;
   static const double ratio07 = 0.7;
+  /// Service grid card aspect ratio (width / height), e.g. 109 / 117.
+  static const double serviceGridChildAspectRatio = 109 / 117;
   static const double ratio005 = 0.05;
   static const double ratio030 = 0.30;
   static const double ratio036 = 0.36;

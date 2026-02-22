@@ -5,6 +5,7 @@ class HomeState extends BaseState {
   const HomeState({
     this.isBalanceVisible = true,
     this.isPostpaidVisible = false,
+    this.selectedServiceTab = ServiceCategoryTab.bankingServices,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -18,12 +19,16 @@ class HomeState extends BaseState {
   /// Whether the Postpaid wallet balance is visible (default: false).
   final bool isPostpaidVisible;
 
+  /// Currently selected All Services tab.
+  final ServiceCategoryTab selectedServiceTab;
+
   HomeState copyWith({
     BaseStateStatus? status,
     String? msg,
     PageRouteInfo? redirectRoute,
     bool? isBalanceVisible,
     bool? isPostpaidVisible,
+    ServiceCategoryTab? selectedServiceTab,
   }) =>
       HomeState(
         status: status ?? this.status,
@@ -31,6 +36,7 @@ class HomeState extends BaseState {
         redirectRoute: redirectRoute ?? this.redirectRoute,
         isBalanceVisible: isBalanceVisible ?? this.isBalanceVisible,
         isPostpaidVisible: isPostpaidVisible ?? this.isPostpaidVisible,
+        selectedServiceTab: selectedServiceTab ?? this.selectedServiceTab,
       );
 
   @override
@@ -40,5 +46,6 @@ class HomeState extends BaseState {
         redirectRoute,
         isBalanceVisible,
         isPostpaidVisible,
+        selectedServiceTab,
       ];
 }

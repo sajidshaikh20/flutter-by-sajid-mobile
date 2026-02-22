@@ -199,6 +199,12 @@ class AppColors {
   /// Represents a light green color.
   Color lightGreen = const Color(0xFFE8FFF0);
 
+  /// Light mint background for service grid cards (gradient start).
+  static const Color serviceGridGradientLight = Color(0xFFF4FFF7);
+
+  /// Light mint background for service grid cards (gradient end).
+  static const Color serviceGridGradientDark = Color(0xFFDBFDE2);
+
   /// Represents a color used for the background of search icons.
   Color backgroundSearchIcon = const Color(0xFF555555);
   /// Represents a light pink color for backgrounds.

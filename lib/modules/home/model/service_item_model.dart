@@ -1,26 +1,51 @@
 import 'package:flutter/material.dart';
 
+import '../../../gen/assets.gen.dart';
+
 /// Model representing a single service item in the All Services grid.
 class ServiceItemModel {
   /// Creates a [ServiceItemModel] with the given label and icon.
   const ServiceItemModel({
     required this.label,
-    required this.icon,
+     this.icon,
   });
 
   /// Display label for the service.
   final String label;
 
   /// Icon for the service.
-  final IconData icon;
+  final Widget? icon;
 
-  /// Default banking services list.
-  static const List<ServiceItemModel> bankingServices = <ServiceItemModel>[
-    ServiceItemModel(label: 'AEPS Aadhaar Pay', icon: Icons.fingerprint),
-    ServiceItemModel(label: 'MATM', icon: Icons.atm),
-    ServiceItemModel(label: 'DMT', icon: Icons.swap_horiz),
-    ServiceItemModel(label: 'Credit Card', icon: Icons.credit_card),
-    ServiceItemModel(label: 'Account Open', icon: Icons.person_outline),
-    ServiceItemModel(label: 'Loan', icon: Icons.account_balance_wallet),
+
+  /// Banking services list.
+  static  List<ServiceItemModel> bankingServices = <ServiceItemModel>[
+    ServiceItemModel(label: 'AEPS Aadhaar Pay', icon:Assets.svgs.icStreamlineColorFingerprint2.svg()),
+    ServiceItemModel(label: 'MATM', icon: Assets.svgs.icMatm.svg()),
+    ServiceItemModel(label: 'DMT', icon:  Assets.svgs.icDmt.svg()),
+    ServiceItemModel(label: 'Credit Card', icon:  Assets.svgs.icCreditCard.svg()),
+    ServiceItemModel(label: 'Account Open', icon: Assets.svgs.icAccountOpen.svg() ),
+    ServiceItemModel(label: 'Loan', icon: Assets.svgs.icLoan.svg() ),
+  ];
+
+  /// Recharge and bill pay services list.
+  static  List<ServiceItemModel> rechargeAndBillPay =
+      <ServiceItemModel>[
+    ServiceItemModel(label: 'Mobile', icon: Assets.svgs.icMobile.svg()),
+    ServiceItemModel(label: 'DTH', icon: Assets.svgs.icDth.svg()),
+    ServiceItemModel(label: 'Postpaid', icon: Assets.svgs.icPostpaid.svg()),
+    ServiceItemModel(label: 'Broadband', icon: Assets.svgs.icBroadband.svg()),
+     ServiceItemModel(label: 'UPI/QR Payment',icon: Assets.svgs.icBroadband.svg(
+       height: 0,
+       width: 0
+     ) ),
+    const ServiceItemModel(label: 'View More',  ),
+  ];
+
+  /// Tour and travel services list.
+  static  List<ServiceItemModel> tourAndTravel = <ServiceItemModel>[
+    ServiceItemModel(label: 'Train', icon: Assets.svgs.icTrain.svg()),
+    ServiceItemModel(label: 'Flight', icon: Assets.svgs.icFlight.svg()),
+    ServiceItemModel(label: 'Bus', icon: Assets.svgs.icBus.svg()),
+    ServiceItemModel(label: 'Hotel', icon: Assets.svgs.icHotel.svg()),
   ];
 }

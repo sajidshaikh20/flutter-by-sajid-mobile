@@ -43,10 +43,7 @@ class HomeViewWidget extends StatelessWidget {
             Dimens.space20.heightBox,
             const ServicesContainerWidget(
               child: Padding(
-                padding: EdgeInsets.only(
-                    right: Dimens.space20,
-                    left: Dimens.space20,
-                    top: Dimens.space44),
+                padding: EdgeInsets.only(top: Dimens.space44),
                 child: AllServicesWidget(),
               ),
             ),

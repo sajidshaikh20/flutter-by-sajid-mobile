@@ -4,13 +4,16 @@ import '../../../utils/exports.dart';
 class HomeCubit extends BaseCubit<HomeState> {
   HomeCubit() : super(HomeState.initial());
 
-
-
   void initData() {}
 
   void initializeSegmentIndex() {}
 
   void refreshHomeData() {}
+
+  /// Selects the given All Services tab.
+  void selectServiceTab(ServiceCategoryTab tab) {
+    emit(state.copyWith(selectedServiceTab: tab));
+  }
 
   /// Toggles the visibility of the available balance.
   void toggleBalanceVisibility() {
