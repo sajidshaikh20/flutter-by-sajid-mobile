@@ -1,4 +1,5 @@
 export 'banner_carousel_widget.dart';
+export 'banner_card_widget.dart';
 export 'custom_home_app_bar.dart';
 export 'home_view_widget.dart';
 export 'user_greeting_avatar_widget.dart';
