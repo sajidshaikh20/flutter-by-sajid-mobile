@@ -8,17 +8,17 @@ class WalletCardsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimens.space16,
+      padding: const EdgeInsets.symmetric(
+        horizontal: Dimens.space20,
         vertical: Dimens.space14,
       ),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
-        borderRadius: Dimens.radius16.borderRadius,
+        borderRadius: Dimens.radius6.borderRadius,
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const <Widget>[
+        children:  <Widget>[
           _WalletItem(label: 'Postpaid Wallet', showView: false),
           _WalletItem(label: 'Prepaid Wallet', showView: true),
           _WalletItem(label: 'Payout Wallet', showView: true),
@@ -46,12 +46,12 @@ class _WalletItem extends StatelessWidget {
           label: label,
           textAlign: TextAlign.start,
           style: context.textTheme.labelSmall?.copyWith(
-            fontSize: Dimens.fontSize11,
+            fontSize: Dimens.fontSize10,
+            fontWeight: FontWeight.w400,
             color: MainConfig.appColors.textBlackColor
-                .withValues(alpha: Dimens.opacity06),
           ),
         ),
-        Dimens.space6.heightBox,
+        Dimens.space7.heightBox,
         Row(
           children: <Widget>[
             CustomTextLabelWidget(
@@ -59,19 +59,13 @@ class _WalletItem extends StatelessWidget {
               textAlign: TextAlign.start,
               style: context.textTheme.headlineSmall?.copyWith(
                 fontSize: Dimens.fontSize14,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
                 color: MainConfig.appColors.textBlackColor
-                    .withValues(alpha: Dimens.opacity08),
               ),
             ),
-            Dimens.space4.widthBox,
+            Dimens.space12.widthBox,
             if (!showView)
-              Icon(
-                Icons.visibility_off,
-                size: Dimens.size14,
-                color: MainConfig.appColors.textBlackColor
-                    .withValues(alpha: Dimens.opacity04),
-              ),
+              Assets.svgs.icVisibilityPrimary.svg(),
             if (showView) _ViewButton(),
           ],
         ),
@@ -84,20 +78,22 @@ class _ViewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimens.space8,
-        vertical: Dimens.space2,
+      padding: const EdgeInsets.all(
+      Dimens.space5,
       ),
       decoration: BoxDecoration(
-        color: MainConfig.appColors.mainColor,
+       border: Border.all(
+         color: MainConfig.appColors.primary,
+         width: Dimens.borderWidth05
+       ),
         borderRadius: Dimens.radius6.borderRadius,
       ),
       child: CustomTextLabelWidget(
         label: 'View',
         style: context.textTheme.labelMedium?.copyWith(
-          color: MainConfig.appColors.textWhiteColor,
-          fontSize: Dimens.fontSize11,
-          fontWeight: FontWeight.w600,
+          color: MainConfig.appColors.primary,
+          fontSize: Dimens.fontSize7,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

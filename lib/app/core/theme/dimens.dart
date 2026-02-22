@@ -7,6 +7,7 @@ abstract class Dimens {
   static const double fontHeight1_8 = 1.8;
   static const double fontHeight2_2 = 2.2;
   static const double fontSize0 = 0;
+  static const double fontSize7 = 7;
   static const double fontSize8 = 8;
   static const double fontSize9 = 9;
   static const double fontSize10 = 10;
