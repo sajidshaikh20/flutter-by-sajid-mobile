@@ -2,6 +2,7 @@ import '../../../../../utils/exports.dart';
 import '../../model/beneficiary_model.dart';
 import 'add_new_beneficiary_button.dart';
 import 'beneficiary_card_widget.dart';
+import 'send_money_bottom_sheet.dart';
 
 /// Sample list for UI; replace with API/cubit later.
 
@@ -35,6 +36,10 @@ class BeneficiaryTabContent extends StatelessWidget {
                 child: BeneficiaryCardWidget(
                   key: ValueKey<String?>(item.id),
                   beneficiary: item,
+                  onSendMoney: () => showSendMoneyBottomSheet(
+                    context,
+                    sendUpTo: '₹25,000',
+                  ),
                 ),
               );
             },
