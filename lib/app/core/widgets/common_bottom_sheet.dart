@@ -26,6 +26,7 @@ class CommonBottomSheetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     return DecoratedBox(
       decoration: const BoxDecoration(
         color: AppColors.whiteColor,
@@ -35,12 +36,15 @@ class CommonBottomSheetContent extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const _DragHandle(),
-            child,
-          ],
+        child: Padding(
+          padding: EdgeInsets.only(bottom: keyboardHeight),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const _DragHandle(),
+              child,
+            ],
+          ),
         ),
       ),
     );
