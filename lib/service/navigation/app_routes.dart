@@ -34,6 +34,13 @@ class AppRouter extends RootStackRouter {
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
         ),
+        CustomRoute<dynamic>(
+          page: PaymentSuccessRoute.page,
+          path: AppPaths.paymentSuccess,
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
 
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(

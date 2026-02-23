@@ -1,4 +1,5 @@
 import '../../../../../utils/exports.dart';
+import 'enter_otp_bottom_sheet.dart';
 
 /// Shows the Send Money modal bottom sheet (reuses [showCommonBottomSheet]).
 /// [sendUpTo] is the limit text, e.g. '₹25,000'.
@@ -89,8 +90,9 @@ class _SendMoneyBottomSheetContentState
           CustomButtonWidget(
             title: 'Send Money',
             onTap: () async {
+              Navigator.of(context).pop();
               hideKeyboard();
-              await context.router.maybePop();
+              await showEnterOtpBottomSheet(context);
             },
             backgroundColor: AppColors.blackColor,
             height: Dimens.space34,

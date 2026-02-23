@@ -13,3 +13,4 @@ export 'no_internet/no_internet.dart';
 export 'service_details/service_details.dart';
 export 'splash/splash.dart';
 export 'transaction_history/transaction_history.dart';
+export 'payment_success/payment_success.dart';

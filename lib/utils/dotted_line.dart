@@ -68,7 +68,7 @@ class DottedDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal:   Dimens.space10),
+      padding: EdgeInsets.only(left: indent, right: endIndent),
       child: DottedLine(color: color ?? MainConfig.appColors.dividerColor),
     );
   }

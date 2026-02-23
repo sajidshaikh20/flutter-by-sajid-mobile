@@ -183,6 +183,8 @@ class AppColors {
   Color unselectedGreyColor = const Color(0xFFBBBBBB);
   /// Represents a gray color for backgrounds.
   Color backgroundGrayColor = const Color(0xFFF4F4F4);
+
+  Color backgroundSuccessColor = const Color(0xFFFCF8F8);
   /// Represents a pink color for backgrounds.
   Color backgroundPinkColor = const Color(0xFFFFEFF7);
   /// Represents a gray color for dividers.

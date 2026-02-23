@@ -34,4 +34,7 @@ abstract class AppPaths {
 
   /// DMT (Domestic Money Transfer) details screen – beneficiary & customer info tabs.
   static const String dmtDetails = '/dmt_details';
+
+  /// Payment success screen after successful OTP verification.
+  static const String paymentSuccess = '/payment_success';
 }
