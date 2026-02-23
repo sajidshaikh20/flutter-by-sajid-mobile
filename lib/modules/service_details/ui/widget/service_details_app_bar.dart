@@ -1,6 +1,4 @@
 import '../../../../../utils/exports.dart';
-import 'service_details_app_bar_back_button.dart';
-import 'service_details_app_bar_right_icon_button.dart';
 
 /// Custom app bar for service details screens.
 ///

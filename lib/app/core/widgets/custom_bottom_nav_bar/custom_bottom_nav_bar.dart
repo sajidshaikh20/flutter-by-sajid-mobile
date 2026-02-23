@@ -1,6 +1,6 @@
 import '../../../../utils/exports.dart';
 
-import 'model/model.dart';
+
 import 'widget/widget.dart';
 
 export 'model/model.dart';

@@ -26,7 +26,7 @@ class DmtDetailsPage extends StatelessWidget {
           children: <Widget>[
             Material(
               color: AppColors.whiteColor,
-              elevation: Dimens.space0,
+
               child: TabBar(
                 labelColor: AppColors.blackColor,
                 unselectedLabelColor: greyText,

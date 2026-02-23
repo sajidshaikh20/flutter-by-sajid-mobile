@@ -4,7 +4,7 @@ import '../../../utils/exports.dart';
 /// such as triggering navigation after a delay and handling
 /// initial app configuration tasks.
 class SplashCubit extends Cubit<SplashState> {
-  /// Creates a [SplashCubit] with the given [repository].
+
   ///
   /// Upon creation, it schedules [_showAfterDelay] to be called asynchronously
   /// after the initial state is emitted.

@@ -15,7 +15,7 @@ class EnterOtpCubit extends Cubit<EnterOtpState> {
           (_) => TextEditingController(text: kDefaultOtpDigit),
         ),
         _focusNodes = List<FocusNode>.generate(kEnterOtpLength, (_) => FocusNode()),
-        super(const EnterOtpState(otp: '11111'));
+        super(const EnterOtpState());
 
   final List<TextEditingController> _controllers;
   final List<FocusNode> _focusNodes;

@@ -32,7 +32,7 @@ class AddNewBeneficiaryButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimens.radius10),
             gradient: LinearGradient(
-              end: Alignment.centerRight,
+
               colors: <Color>[primary, primaryDark],
             ),
           ),

@@ -14,7 +14,7 @@ class AppRouter extends RootStackRouter {
             page: SplashRoute.page,
             path: AppPaths.splash,
             opaque: false,
-            initial: false,
+
             guards: <AutoRouteGuard>[MaintenanceMiddleware()],
             reverseDurationInMilliseconds: 0,
             transitionsBuilder: TransitionsBuilders.noTransition,

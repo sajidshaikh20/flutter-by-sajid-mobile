@@ -10,7 +10,7 @@ export 'force_update_under_maintenance/force_update_under_maintenance.dart';
 export 'home/home.dart';
 export 'localization/localization.dart';
 export 'no_internet/no_internet.dart';
+export 'payment_success/payment_success.dart';
 export 'service_details/service_details.dart';
 export 'splash/splash.dart';
 export 'transaction_history/transaction_history.dart';
-export 'payment_success/payment_success.dart';

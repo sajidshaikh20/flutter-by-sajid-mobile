@@ -62,7 +62,7 @@ class DottedDivider extends StatelessWidget {
   /// Space from the right edge.
   final double endIndent;
 
-  /// Line color; defaults to [MainConfig.appColors.dividerColor].
+
   final Color? color;
 
   @override
