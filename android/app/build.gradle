@@ -93,14 +93,15 @@ android {
     buildTypes {
         release {
             debuggable false
-            minifyEnabled true
-            shrinkResources true
+            // Disabled to avoid "package appears invalid" on install; re-enable with proper ProGuard rules if needed.
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // add this
             multiDexEnabled = true
-            if (keyStoreProperties.getProperty("storeFile") != null) {
-                signingConfig signingConfigs.release
-            }
+            // Always sign release: use release keystore if present, else debug (so APK is installable).
+            signingConfig keyStoreProperties.getProperty("storeFile") != null
+                ? signingConfigs.release
+                : signingConfigs.debug
         }
         debug {
             if (keyStoreProperties.getProperty("storeFile") != null) {
