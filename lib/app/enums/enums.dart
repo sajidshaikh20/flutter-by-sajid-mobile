@@ -64,7 +64,8 @@ enum OrderStatus {
 
   /// Order is in a pending state.
   pending("pending");
-/// Status of the order.
+
+  /// Status of the order.
   final String status;
 
   const OrderStatus(this.status);
@@ -74,8 +75,10 @@ enum OrderStatus {
 enum BottomSheetDataType {
   /// Country data type.
   country,
+
   /// State data type.
   state,
+
   /// City data type.
   city,
 }
@@ -84,17 +87,23 @@ enum BottomSheetDataType {
 enum FacebookPermissionEnum {
   /// Email permission.
   email("email"),
+
   /// Public profile permission.
   publicProfile("public_profile"),
+
   /// name
   name("name"),
+
   /// first_name
   firstName("first_name"),
+
   /// last_name
   lastName("last_name"),
+
   /// picture
   picture("picture");
-/// Permission value.
+
+  /// Permission value.
   final String value;
 
   const FacebookPermissionEnum(this.value);
@@ -104,10 +113,13 @@ enum FacebookPermissionEnum {
 enum AddressType {
   /// Home address.
   home("Home"),
+
   /// Work address.
   work("Work"),
+
   /// Other address.
   other("Other");
+
 //// Name of the address type.
   final String name;
 
@@ -118,11 +130,14 @@ enum AddressType {
 enum CarouselType {
   /// Image carousel item.
   image("image"),
+
   /// Product carousel item.
   text("text"),
- /// Product carousel item.
+
+  /// Product carousel item.
   product("product");
-/// Type of the carousel item.
+
+  /// Type of the carousel item.
   final String type;
 
   const CarouselType(this.type);
@@ -132,8 +147,10 @@ enum CarouselType {
 enum ProductListUpdateType {
   ///
   qty,
+
   ///
   wishlist,
+
   ///
   loader,
 }
@@ -142,18 +159,25 @@ enum ProductListUpdateType {
 enum TabState {
   /// Home tab.
   home,
-  /// Transaction history tab.
-  transactionHistory,
+
+  /// Watchlist tab.
+  watchlist,
+
   /// Bank transfer tab.
   bankTransfer,
+
   /// Chat support tab.
   chatSupport,
+
   /// Legacy: category (kept for compatibility).
   category,
+
   /// Legacy: offers (kept for compatibility).
   offers,
+
   /// Legacy: profile tab (kept for compatibility).
   myAccount,
+
   /// Cart tab.
   cart,
 }
@@ -162,8 +186,10 @@ enum TabState {
 enum PasswordFieldType {
   /// Old password field.
   oldPassword,
+
   /// New password field.
   newPassword,
+
   /// Confirm password field.
   confirmPassword,
 }
@@ -172,20 +198,25 @@ enum PasswordFieldType {
 enum ProductTab {
   /// All products tab.
   description,
+
   /// Reviews tab.
   ingredients,
+
   /// Ingredients tab.
   reviews,
 }
 
 /// Enum representing the state of the shopping cart.
 enum StatusOfCart {
-/// Initial state.
+  /// Initial state.
   initial,
+
   /// Loading state.
   loading,
+
   /// Success state.
   success,
+
   /// Failure state.
   failure,
 }
@@ -194,12 +225,16 @@ enum StatusOfCart {
 enum MyOrderListAction {
   /// Initial state.
   myOrderListInitial,
+
   /// Loaded state.
   myOrderListLoaded,
+
   /// success state.
   reOrderSuccess,
+
   /// Failed state.
   myOrderListFailed,
+
   /// No data state.
   myOrderListNoData,
 }
@@ -214,8 +249,10 @@ enum MyOrderListAction {
 enum NavigateTo {
   /// {@macro navigate_to}
   none,
+
   /// {@macro navigate_to}
   writeReview,
+
   /// {@macro navigate_to}
   trackOrder,
 }
@@ -230,38 +267,55 @@ enum NavigateTo {
 enum MyAccountItemType {
   /// {@macro my_account_item_type}
   editProfile,
+
   /// {@macro my_account_item_type}
   changePassword,
+
   /// {@macro my_account_item_type}
   myOrders,
+
   /// {@macro my_account_item_type}
   myReturns,
+
   /// {@macro my_account_item_type}
   myWallet,
+
   /// {@macro my_account_item_type}
   signUp,
+
   /// {@macro my_account_item_type}
   signIn,
+
   /// {@macro my_account_item_type}
   myAddress,
+
   /// {@macro my_account_item_type}
   myWishList,
+
   /// {@macro my_account_item_type}
   myReviewAndRating,
+
   /// {@macro my_account_item_type}
   referAndEarn,
+
   /// {@macro my_account_item_type}
   country,
+
   /// {@macro my_account_item_type}
   language,
+
   /// {@macro my_account_item_type}
   currency,
+
   /// {@macro my_account_item_type}
   aboutUs,
+
   ///
   contactUs,
+
   ///
   help,
+
   ///
   none,
 }
@@ -270,35 +324,46 @@ enum MyAccountItemType {
 enum WishListAction {
   /// Initial state.
   wishListInitial,
+
   /// Loaded state.
   wishListLoaded,
+
   /// No data state.
   wishListNoData,
+
   /// Deleted successfully state.
   wishListDeletedSuccessfully,
+
   /// Failed state.
   wishListFailed,
+
   /// Added to card successfully state.
   wishListAddToCardProduct,
+
   /// Failed to add to card state.
   wishListAddToCardProductFailed,
+
   /// Updated successfully state.
   wishListUpdateCardProduct,
 
   /// Failed to update state.
   wishListUpdateCardProductFailed,
+
   /// Added to card successfully state.
   wishListToCard,
 }
 
 /// Enum defining different contact list types.
 enum ContactListType {
- /// Phone contact type.
+  /// Phone contact type.
   phone,
+
   /// Email contact type.
   email,
+
   /// Whatsapp contact type.
   whatsapp,
+
   /// Facebook contact type.
   requestACallback,
 }
@@ -307,8 +372,10 @@ enum ContactListType {
 enum BackScreenApiCall {
   /// Initial state.
   homeScreen,
+
   /// Initial state.
   cartScreen,
+
   ///
   none,
 }
@@ -317,10 +384,13 @@ enum BackScreenApiCall {
 enum SocialLoginType {
   /// Apple login.
   apple,
+
   /// Google login.
   google,
+
   /// Facebook login.
   facebook,
+
   /// Normal login.
   normalLogin,
 }
@@ -329,8 +399,10 @@ enum SocialLoginType {
 enum ScreenType {
   /// mobile
   mobile,
+
   /// tablet
   tablet,
+
   /// desktop
   desktop,
 }
@@ -339,11 +411,14 @@ enum ScreenType {
 enum UnderMaintenanceType {
   /// Under maintenance.
   none(0),
+
   /// text
   text(1),
+
   /// image
   image(2);
-/// Type of under maintenance.
+
+  /// Type of under maintenance.
   final int type;
 
   const UnderMaintenanceType(this.type);
@@ -353,12 +428,16 @@ enum UnderMaintenanceType {
 enum UpdateMaintenanceType {
   /// Update
   maintenance,
+
   /// No update
   none,
+
   /// Text
   force,
+
   /// Image
   optional;
+
   /// Type of update maintenance.
   const UpdateMaintenanceType();
 }
@@ -367,6 +446,7 @@ enum UpdateMaintenanceType {
 enum LanguageCode {
   ///english
   en,
+
   ///arabic
   ar, // Arabic
 }
@@ -375,10 +455,13 @@ enum LanguageCode {
 enum OrderStatusNew {
   /// Order is being processed.
   placed,
+
   /// Order has been placed successfully.
   delivered,
+
   /// Order was canceled.
   canceled,
+
   /// Order has been collected.
   collected,
 }
@@ -387,8 +470,10 @@ enum OrderStatusNew {
 enum FileType {
   /// Image file type.
   image,
+
   /// PDF file type.
   jsonFile,
+
   /// Other file type.
   unknown,
 }
@@ -447,7 +532,8 @@ enum NotificationType {
   /// Returns [NotificationType.promotion] as fallback if no match is found.
   static NotificationType fromValue(String? value) {
     return NotificationType.values.firstWhere(
-          (NotificationType e) => e.value.toLowerCase() == (value ?? '').toLowerCase(),
+      (NotificationType e) =>
+          e.value.toLowerCase() == (value ?? '').toLowerCase(),
       orElse: () => NotificationType.promotion, // fallback default
     );
   }
@@ -466,6 +552,7 @@ enum IndicatorType {
   /// Indicator at the bottom of the navigation bar.
   bottom,
 }
+
 /// Enum representing different OTP verification flow types.
 enum OtpFlowType {
   /// OTP verification for forgot password flow
@@ -489,6 +576,7 @@ enum ValidationType {
   /// Street address validation.
   street,
 }
+
 /// Enum to define radio button position in UI components.
 enum RadioPosition {
   /// Radio button positioned on the left side.
@@ -502,22 +590,22 @@ enum RadioPosition {
 enum TrackOrderStatus {
   /// Order has been placed
   orderPlaced('Order Placed'),
-  
+
   /// Order has been confirmed/accepted
   confirmed('Confirmed'),
-  
+
   /// Order has been assigned/processing
   assigned('Assigned'),
-  
+
   /// Order is in delivery
   inDelivery('In Delivery'),
-  
+
   /// Order has been delivered
   delivered('Delivered'),
-  
+
   /// Pickup has started
   pickupStarted('Pickup Started'),
-  
+
   /// Order has been picked up
   pickedUp('Picked Up');
 
@@ -539,4 +627,3 @@ enum TrackOrderStatus {
     }
   }
 }
-

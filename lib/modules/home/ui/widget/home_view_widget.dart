@@ -7,30 +7,16 @@ class HomeViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color gradientStart = MainConfig.appColors.primary;
-    final Color gradientEnd = MainConfig.appColors.primaryDark;
 
-    return const SizedBox(
-
-
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Dimens.space20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-
-                  Text("home page"),
-                ],
-              ),
-            ),
-
-          ],
-        ),
-      ),
-    );
+    return Center(child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+         const Text('Home Screen'),
+        Assets.svgs.icHome.svg(
+            height: 20,
+            color: Colors.red
+        )
+      ],
+    ));
   }
 }

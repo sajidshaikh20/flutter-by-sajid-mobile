@@ -23,6 +23,9 @@ abstract class AppPaths {
   /// Transaction history page route (sub-path).
   static const String transactionHistory = 'transaction_history';
 
+  /// Watchlist page route (sub-path).
+  static const String watchlist = 'watchlist';
+
   /// Bank transfer page route (sub-path).
   static const String bankTransfer = 'bank_transfer';
 

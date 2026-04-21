@@ -18,10 +18,12 @@ class DashboardPage extends BaseResponsiveView {
   const DashboardPage({
     super.key,
   });
+
   /// method for the back button which is managed by router
   static Future<bool> systemBackButtonPressed(TabsRouter tabsRouter,
       {bool canPop = false}) async {
-    final StackRouter? nestedRouter = tabsRouter.stackRouterOfIndex(tabsRouter.activeIndex);
+    final StackRouter? nestedRouter =
+        tabsRouter.stackRouterOfIndex(tabsRouter.activeIndex);
     if (canPop) {
       if (nestedRouter != null && nestedRouter.canPop()) {
         await nestedRouter.maybePop();
@@ -58,7 +60,8 @@ class DashboardPage extends BaseResponsiveView {
     return AutoTabsRouter(
       curve: Curves.easeInOutQuad,
       duration: const Duration(milliseconds: Dimens.milliseconds400),
-      transitionBuilder: (BuildContext context, Widget child, Animation<double> animation) {
+      transitionBuilder:
+          (BuildContext context, Widget child, Animation<double> animation) {
         return FadeTransition(
           opacity: CurvedAnimation(
             parent: animation,
@@ -69,7 +72,7 @@ class DashboardPage extends BaseResponsiveView {
       },
       routes: <PageRouteInfo>[
         HomeRoute(),
-        const TransactionHistoryRoute(),
+        const WatchlistRoute(),
         const BankTransferRoute(),
         const ChatSupportRoute(),
       ],
@@ -93,102 +96,104 @@ class DashboardPage extends BaseResponsiveView {
             await systemBackButtonPressed(tabsRouter, canPop: didPop);
           },
           child: Scaffold(
-              body: child,
-              bottomNavigationBar: CustomBottomNavBar(
-                currentIndex: tabsRouter.activeIndex,
-                onTap: (int value) {
-                  final TabState selectedTab = TabState.values[value];
-                  if (selectedTab == TabState.home && tabsRouter.activeIndex != value) {
-                    context.read<HomeCubit>().refreshHomeData();
-                  } else if (selectedTab == TabState.bankTransfer && tabsRouter.activeIndex != value) {
-                    /// Reset when switching to bank transfer tab.
-                  }
-                  tabsRouter.setActiveIndex(value);
-                },
-                items: <CustomBottomNavBarItem>[
-                  CustomBottomNavBarItem(
-                    activeIcon: Assets.svgs.icHome.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
+            body: child,
+            bottomNavigationBar: CustomBottomNavBar(
+              currentIndex: tabsRouter.activeIndex,
+              onTap: (int value) {
+                final TabState selectedTab = TabState.values[value];
+                if (selectedTab == TabState.home &&
+                    tabsRouter.activeIndex != value) {
+                  context.read<HomeCubit>().refreshHomeData();
+                } else if (selectedTab == TabState.bankTransfer &&
+                    tabsRouter.activeIndex != value) {
+                  /// Reset when switching to bank transfer tab.
+                }
+                tabsRouter.setActiveIndex(value);
+              },
+              items: <CustomBottomNavBarItem>[
+                CustomBottomNavBarItem(
+                  activeIcon: Assets.svgs.icHome.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
                     ),
-                    inactiveIcon: Assets.svgs.icHome.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: ColorFilter.mode(
-                        MainConfig.appColors.greyTextColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    routeName: AppPaths.home,
-                    label: 'Home',
                   ),
-                  CustomBottomNavBarItem(
-                    activeIcon: Assets.svgs.icTransactionHistory.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
+                  inactiveIcon: Assets.svgs.icHome.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: ColorFilter.mode(
+                      MainConfig.appColors.greyTextColor,
+                      BlendMode.srcIn,
                     ),
-                    inactiveIcon: Assets.svgs.icTransactionHistory.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: ColorFilter.mode(
-                        MainConfig.appColors.greyTextColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    routeName: AppPaths.transactionHistory,
-                    label: 'Transaction History',
                   ),
-                  CustomBottomNavBarItem(
-                    activeIcon: Assets.svgs.icBankTransfer.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
+                  routeName: AppPaths.home,
+                  label: 'Home',
+                ),
+                CustomBottomNavBarItem(
+                  activeIcon: Assets.svgs.icTransactionHistory.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
                     ),
-                    inactiveIcon: Assets.svgs.icBankTransfer.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: ColorFilter.mode(
-                        MainConfig.appColors.greyTextColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    routeName: AppPaths.bankTransfer,
-                    label: 'Bank Transfer',
                   ),
-                  CustomBottomNavBarItem(
-                    activeIcon: Assets.svgs.icChatSupport.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: const ColorFilter.mode(
-                        Colors.white,
-                        BlendMode.srcIn,
-                      ),
+                  inactiveIcon: Assets.svgs.icTransactionHistory.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: ColorFilter.mode(
+                      MainConfig.appColors.greyTextColor,
+                      BlendMode.srcIn,
                     ),
-                    inactiveIcon: Assets.svgs.icChatSupport.svg(
-                      height: iconSize,
-                      width: iconSize,
-                      colorFilter: ColorFilter.mode(
-                        MainConfig.appColors.greyTextColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    routeName: AppPaths.chatSupport,
-                    label: 'Chat Support',
                   ),
-                ],
-              ),
+                  routeName: AppPaths.watchlist,
+                  label: 'Watchlist',
+                ),
+                CustomBottomNavBarItem(
+                  activeIcon: Assets.svgs.icBankTransfer.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  inactiveIcon: Assets.svgs.icBankTransfer.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: ColorFilter.mode(
+                      MainConfig.appColors.greyTextColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  routeName: AppPaths.bankTransfer,
+                  label: 'Bank Transfer',
+                ),
+                CustomBottomNavBarItem(
+                  activeIcon: Assets.svgs.icChatSupport.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  inactiveIcon: Assets.svgs.icChatSupport.svg(
+                    height: iconSize,
+                    width: iconSize,
+                    colorFilter: ColorFilter.mode(
+                      MainConfig.appColors.greyTextColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  routeName: AppPaths.chatSupport,
+                  label: 'Chat Support',
+                ),
+              ],
             ),
+          ),
         );
       },
     );

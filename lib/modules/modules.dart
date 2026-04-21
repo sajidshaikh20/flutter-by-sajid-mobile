@@ -11,3 +11,4 @@ export 'localization/localization.dart';
 export 'no_internet/no_internet.dart';
 export 'splash/splash.dart';
 export 'transaction_history/transaction_history.dart';
+export 'watchlist/watchlist.dart';
