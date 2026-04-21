@@ -14,33 +14,10 @@ class AppRouter extends RootStackRouter {
             page: SplashRoute.page,
             path: AppPaths.splash,
             opaque: false,
-
             guards: <AutoRouteGuard>[MaintenanceMiddleware()],
             reverseDurationInMilliseconds: 0,
             transitionsBuilder: TransitionsBuilders.noTransition,
             durationInMilliseconds: 0),
-
-        CustomRoute<dynamic>(
-          page: ServiceDetailsRoute.page,
-          path: AppPaths.serviceDetails,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-          page: DmtDetailsRoute.page,
-          path: AppPaths.dmtDetails,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
-        CustomRoute<dynamic>(
-          page: PaymentSuccessRoute.page,
-          path: AppPaths.paymentSuccess,
-          durationInMilliseconds: Dimens.milliseconds400,
-          reverseDurationInMilliseconds: Dimens.milliseconds400,
-          transitionsBuilder: fadePageTransition,
-        ),
 
         /// Dashboard with 4 tabs
         CustomRoute<dynamic>(
@@ -60,15 +37,6 @@ class AppRouter extends RootStackRouter {
               reverseDurationInMilliseconds: Dimens.milliseconds400,
               transitionsBuilder: fadePageTransition,
             ),
-            /*CustomRoute<dynamic>(
-              initial: true,
-              page: HomeWithBottomPageRoute.page,
-              path: AppPaths.home,
-              durationInMilliseconds: Dimens.milliseconds400,
-              reverseDurationInMilliseconds: Dimens.milliseconds400,
-              transitionsBuilder: fadePageTransition,
-
-            ),*/
             CustomRoute<dynamic>(
               page: TransactionHistoryRoute.page,
               path: AppPaths.transactionHistory,
