@@ -30,7 +30,7 @@ class AppRouter extends RootStackRouter {
           children: <AutoRoute>[
             /// Home tab shell (AutoRouter); children show inside tab so bottom nav stays visible.
             CustomRoute<dynamic>(
-              initial: false,
+              initial: true,
               page: HomeRoute.page,
               path: AppPaths.home,
               durationInMilliseconds: Dimens.milliseconds400,
@@ -41,7 +41,6 @@ class AppRouter extends RootStackRouter {
               page: WatchlistRoute.page,
               path: AppPaths.watchlist,
               maintainState: true,
-              initial: true,
               durationInMilliseconds: Dimens.milliseconds400,
               reverseDurationInMilliseconds: Dimens.milliseconds400,
               transitionsBuilder: fadePageTransition,
