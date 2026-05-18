@@ -20,7 +20,6 @@ class NotificationManager {
     await AwesomeNotificationManager.instance.init();
     _getBackgroundMessage();
     await _getToken();
-    await _getInitialMessage();
     _onMessage();
     _onMessageOpenedApp();
   }
@@ -167,30 +166,6 @@ class NotificationManager {
     }
   }
 
-  /// Retrieves the initial message when the app is opened from
-  /// a terminated state.
-  Future<void> _getInitialMessage() async {
-    // Only proceed if Firebase is initialized
-    if (Firebase.apps.isEmpty) {
-      DebugLog.instance.w("Firebase not initialized, skipping initial message retrieval");
-      return;
-    }
-    
-    await FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      DebugLog.instance.i(
-        'FCM Initial Message : ${message?.data} ${message?.notification}',
-      );
-      Map<String, dynamic> data = message?.data ?? <String, dynamic>{};
-      String type = data['type']?.toString().toLowerCase() ?? '';
-
-      // If a type exists in the message data, handle redirection based on type.
-      if (type.isNotEmpty) {
-        handleRedirection(type: type, data: data);
-      }
-    });
-  }
 
   /// Listens for foreground messages from Firebase Cloud Messaging (FCM).
   void _onMessage() {
@@ -241,10 +216,7 @@ class NotificationManager {
       DebugLog.instance.i(
         'FCM MessageOpenedApp Message entity : $entity',
       );
-      // If a type exists in the message data, handle redirection based on type.
-      if (type.isNotEmpty) {
-        handleRedirection(type: type, data: data);
-      }
+
     });
   }
 }

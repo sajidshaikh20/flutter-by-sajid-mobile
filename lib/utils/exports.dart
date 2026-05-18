@@ -5,6 +5,7 @@ export 'dart:ui' show IsolateNameServer;
 
 export 'package:app_tracking_transparency/app_tracking_transparency.dart';
 export 'package:auto_route/auto_route.dart';
+export 'package:cloud_firestore/cloud_firestore.dart';
 export 'package:collection/collection.dart';
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:equatable/equatable.dart';
@@ -47,7 +48,7 @@ export '../../gen/assets.gen.dart';
 export '../../gen/fonts.gen.dart';
 export '../../modules/modules.dart' hide HtmlWidget;
 export '../../service/service.dart'
-    hide binarySearch, mergeSort, ProgressCallback;
+    hide binarySearch, mergeSort, ProgressCallback,kIsWasm;
 export '../base/base_state.dart';
 export '../main.dart';
 export 'utils.dart';

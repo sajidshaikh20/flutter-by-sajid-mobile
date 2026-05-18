@@ -19,49 +19,18 @@ class AppRouter extends RootStackRouter {
             transitionsBuilder: TransitionsBuilders.noTransition,
             durationInMilliseconds: 0),
 
-        /// Dashboard with 4 tabs
+        /// Project Aether — single-screen nervous system. Guarded by the
+        /// same maintenance middleware so force-update / under-maintenance
+        /// gating from Firebase Remote Config blocks raid joins too.
         CustomRoute<dynamic>(
-          page: DashboardRoute.page,
-          path: AppPaths.dashboard,
+          page: AetherRoute.page,
+          path: AppPaths.aether,
           initial: true,
+          guards: <AutoRouteGuard>[MaintenanceMiddleware()],
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
-          children: <AutoRoute>[
-            /// Home tab shell (AutoRouter); children show inside tab so bottom nav stays visible.
-            CustomRoute<dynamic>(
-              initial: true,
-              page: HomeRoute.page,
-              path: AppPaths.home,
-              durationInMilliseconds: Dimens.milliseconds400,
-              reverseDurationInMilliseconds: Dimens.milliseconds400,
-              transitionsBuilder: fadePageTransition,
-            ),
-            CustomRoute<dynamic>(
-              page: WatchlistRoute.page,
-              path: AppPaths.watchlist,
-              maintainState: true,
-              durationInMilliseconds: Dimens.milliseconds400,
-              reverseDurationInMilliseconds: Dimens.milliseconds400,
-              transitionsBuilder: fadePageTransition,
-            ),
-            CustomRoute<dynamic>(
-              page: BankTransferRoute.page,
-              maintainState: false,
-              path: AppPaths.bankTransfer,
-              durationInMilliseconds: Dimens.milliseconds400,
-              reverseDurationInMilliseconds: Dimens.milliseconds400,
-              transitionsBuilder: fadePageTransition,
-            ),
-            CustomRoute<dynamic>(
-              page: ChatSupportRoute.page,
-              path: AppPaths.chatSupport,
-              maintainState: false,
-              durationInMilliseconds: Dimens.milliseconds400,
-              reverseDurationInMilliseconds: Dimens.milliseconds400,
-              transitionsBuilder: fadePageTransition,
-            ),
-          ],
         ),
+
       ];
 }

@@ -68,8 +68,8 @@ class ForceUpdateUnderMaintenanceCubit
               updateMaintenanceType: UpdateMaintenanceType.none,
               underMaintenanceType: UnderMaintenanceType.none,
               redirectRoute: isCountryAndLanguageSelected
-                  ? const DashboardRoute()
-                  : const DashboardRoute(),
+                  ?  AetherRoute()
+                  :  AetherRoute(),
               status: BaseStateStatus.success,
             ),
           );

@@ -59,9 +59,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (BuildContext context) =>
               ForceUpdateUnderMaintenanceCubit.instance(),
         ),
-        BlocProvider<HomeCubit>(
-          create: (BuildContext context) => HomeCubit(),
-        ),
+
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
         builder: (BuildContext context, ChangeLocaleState state) {

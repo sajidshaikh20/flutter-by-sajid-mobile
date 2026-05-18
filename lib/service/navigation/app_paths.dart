@@ -40,4 +40,8 @@ abstract class AppPaths {
 
   /// Payment success screen after successful OTP verification.
   static const String paymentSuccess = '/payment_success';
+
+  /// Project Aether — single-screen MMORPG nervous system
+  /// (World Pulse + Geo-Raid + Engagement Chat).
+  static const String aether = '/aether';
 }

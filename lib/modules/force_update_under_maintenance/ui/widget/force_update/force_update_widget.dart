@@ -120,8 +120,8 @@ class ForceUpdateWidget extends BaseResponsiveView {
                     // Redirects based on country and language selection
                     await ctx.router.pushAndPopUntil(
                       isCountryAndLanguageSelected
-                          ? const DashboardRoute()
-                          : const DashboardRoute(),
+                          ?  AetherRoute()
+                          :  AetherRoute(),
                       predicate: (Route<dynamic> route) => false,
                     );
                   },

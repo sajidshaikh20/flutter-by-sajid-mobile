@@ -58,6 +58,7 @@ dependencies:
   path_provider: ^2.1.3
   firebase_core: ^4.0.0
   firebase_remote_config: ^6.0.0
+  cloud_firestore: ^6.0.0 # Project Aether — Geo-Raid atomic counter & Engagement Chat.
   url_launcher: ^6.3.1 #to launch phone dialer in flutter
   awesome_notifications: ^0.10.1
   firebase_messaging: ^16.0.0
@@ -101,6 +102,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  fake_cloud_firestore: ^4.0.0 # Project Aether — Concurrency harness for RaidService.
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
