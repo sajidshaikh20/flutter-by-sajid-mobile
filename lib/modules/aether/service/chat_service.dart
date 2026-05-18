@@ -109,7 +109,7 @@ class ChatMessage {
     required this.ts,
   });
 
-  /// Firestore doc id (used as the [Widget.key]).
+  /// Firestore doc id (used as the widget key).
   final String id;
 
   /// Display name of the author.

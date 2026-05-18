@@ -281,10 +281,11 @@ class _SlotPipsRow extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints c) {
         const double spacing = 6;
-        final int count = maxSlots == 0 ? 0 : maxSlots;
+        final int count = maxSlots <= 0 ? 0 : maxSlots;
         final double size = count == 0
-            ? 0
-            : ((c.maxWidth - spacing * (count - 1)) / count).clamp(8.0, 22.0);
+            ? 0.0
+            : ((c.maxWidth - spacing * (count - 1)) / count)
+                .clamp(8.0, 22.0);
         return Wrap(
           spacing: spacing,
           runSpacing: spacing,

@@ -29,6 +29,10 @@ analyzer:
     - ".dart_tool/**"
     # Exclude third party packages
     - "packages/**"
+    # Aether tooling script (Dart CLI run via `dart aether_linter.dart`,
+    # not part of the shipping app). It runs `flutter analyze` and
+    # `flutter test`, so it must not appear in its own output.
+    - "aether_linter.dart"
 
   errors:
     avoid_print: error

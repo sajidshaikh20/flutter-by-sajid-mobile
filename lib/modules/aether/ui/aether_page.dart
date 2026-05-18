@@ -96,7 +96,7 @@ class _AetherScaffoldState extends State<_AetherScaffold> {
       backgroundColor: const Color(0xFF0B0817),
       appBar: AppBar(
         backgroundColor: const Color(0xFF0B0817),
-        foregroundColor: Colors.white,
+
         elevation: 0,
         centerTitle: false,
         titleSpacing: 16,
