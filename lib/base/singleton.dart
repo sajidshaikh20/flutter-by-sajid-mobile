@@ -26,8 +26,6 @@ FutureOr<void> setupLocator() {
 
     ..registerLazySingleton<TabRouterService>(TabRouterService.new)
 
-    // Services — lazy unless required immediately
-    ..registerLazySingleton<LanguageService>(LanguageService.new)
 
 
 

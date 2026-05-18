@@ -213,12 +213,7 @@ class SharedPref {
     return bioMetricModel;
   }
 
-  /// This function will store all the required selected language data
-  Future<void> storeLanguageData(LanguageList languageList) async {
-    String jsonString = jsonEncode(languageList.toJson());
-    await setValue(PrefsKey.languageDataKey, jsonString);
-    await getIt<LanguageService>().loadLanguageData();
-  }
+
 
 
   /// Completes with true once the user
@@ -227,14 +222,7 @@ class SharedPref {
 
     BiometricModel? bioModel = await getBioMetricLoginData();
 
-    LanguageList languageData = LanguageList(
-      defaultCurrency: getIt<LanguageService>().defaultCurrency,
-      languageSortCode: getIt<LanguageService>().languageSortCode,
-      // code: getIt<LanguageService>().code,
-      url: getIt<LanguageService>().url,
-      languageId: getIt<LanguageService>().languageId,
-      languageName: getIt<LanguageService>().languageName,
-    );
+
     String type = getString(PrefsKey.offerTypeKey, '');
     String quoteId = getString(PrefsKey.quoteIdKey, '');
     bool isEnglishLanguageLoaded =
@@ -245,13 +233,12 @@ class SharedPref {
 
     await Future.wait(
       <Future<void>>[
-        storeLanguageData(languageData),
         setValue(PrefsKey.isCountryAndLanguageSelectedKey, true),
         setValue(PrefsKey.offerTypeKey, type),
         setValue(PrefsKey.offerCategoryIdKey, offerCategoryIdKey),
         setValue(PrefsKey.quoteIdKey, quoteId),
 
-        getIt<LanguageService>().loadLanguageData(),
+
 
         setValue(
           PrefsKey.isEnglishLanguageLoadedKey,
@@ -330,7 +317,6 @@ class SharedPref {
 
   /// Load and store LanguageService data
   Future<void> loadAndStoreLanguageService() async {
-    await getIt<LanguageService>().loadLanguageData();
     DebugLog.instance.i('LanguageService data loaded from SharedPreferences');
   }
 

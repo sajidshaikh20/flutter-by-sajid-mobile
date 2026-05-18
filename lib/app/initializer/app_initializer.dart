@@ -78,14 +78,12 @@ class AppInitializer {
 
       DebugLog.instance.i('AppInitializer: CountryService loaded');
 
-      await getIt<LanguageService>().loadLanguageData();
+
       DebugLog.instance.i('AppInitializer: LanguageService loaded');
 
       // Verify services are properly loaded
-      final LanguageService languageService = getIt<LanguageService>();
 
-      DebugLog.instance.i('AppInitializer: Service verification:');
-      DebugLog.instance.i('  - LanguageService.languageId: "${languageService.languageId}"');
+
 
       unawaited(NotificationManager.instance.init());
 

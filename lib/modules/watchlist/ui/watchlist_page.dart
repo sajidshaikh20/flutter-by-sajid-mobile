@@ -25,7 +25,7 @@ class WatchlistPage extends BaseResponsiveView {
             ),
           ),
         ),
-        body: const WatchlistViewWidget(),
+        body:  Container(),
       ),
     );
   }

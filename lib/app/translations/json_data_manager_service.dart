@@ -105,44 +105,4 @@ class JsonDataManagerService {
       _keyValueMap?[key] ?? _keyValueMapForDefault?[key] ?? '';
 
   /// Loads the language configuration based on the language sort code.
-  Future<void> languageAlignmentAndLoadLanguage() async {
-    bool isEnglishLanguageLoaded = true;
-
-    // Check if the language sort code is available and if the file exists.
-    if (getIt<LanguageService>().languageSortCode.isNotEmpty) {
-      if (await isFileAvailable(
-        '${getIt<LanguageService>().languageSortCode}.json',
-      )) {
-        // Load the language file and set alignment based on
-        // language configuration.
-        isEnglishLanguageLoaded = await loadJsonFileAndIsloadedEnglish(
-          '${getIt<LanguageService>().languageSortCode}.json',
-          isDefaultFileLoad: false,
-          isLTR: getIt<LanguageService>().languageAlignment ==
-              AppConstant.defaultLanguageAlignment,
-        );
-      } else {
-        // Load the default English language file if the file does not exist.
-        isEnglishLanguageLoaded = await loadJsonFileAndIsloadedEnglish(
-          '',
-          isDefaultFileLoad: true,
-          isLTR: true,
-        );
-      }
-    } else {
-      // Load the default language if no sort code is provided.
-      isEnglishLanguageLoaded = await loadJsonFileAndIsloadedEnglish(
-        '',
-        isDefaultFileLoad: true,
-        isLTR: true,
-      );
-    }
-
-    // Save the result to shared preferences.
-    await SharedPref.instance.setValue(
-      PrefsKey.isEnglishLanguageLoadedKey,
-      isEnglishLanguageLoaded,
-      isNeedToAwait: true,
-    );
-  }
 }
