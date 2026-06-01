@@ -20,13 +20,13 @@ abstract class AppConstant {
   static const String ios = "ios";
 
   // App identity & store
-  static const String appName = "FlutterBySajid";
+  static const String appName = "Weko Pro";
   static const String updateApp = "force_update_maintainance_config";
   static const String update = "Update";
   static const String playStoreURL =
       "https://play.google.com/store/apps/details?id=";
   static const String appstoreURL = "https://apps.apple.com/app/";
-  static const String appId = "base.com.flutterbysajid.app";
+  static const String appId = "com.wekopro.app";
   static const String appStoreId = "kdd-online-grocery/id1551339483";
   static const String platformNotSupportedCode = 'PlatformNotSupported';
   static const String platformNotSupportedMessage =

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:537817253607:android:e22032e3cc4ac65020c442",
         "android_client_info": {
-          "package_name": "base.com.flutterbysajid.app"
+          "package_name": "com.wekopro.app"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "537817253607-uq41vd2lc5ugm23t5k3kgu9hl59jtrpd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "base.com.flutterbysajid.app",
+            "package_name": "com.wekopro.app",
             "certificate_hash": "ece35b5234045eda3cff0bb9e54c6b8971618b2a"
           }
         },

@@ -1,4 +1,4 @@
-package base.com.flutterbysajid.app
+package com.wekopro.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
