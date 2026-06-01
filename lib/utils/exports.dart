@@ -23,7 +23,6 @@ export 'package:flutter_native_splash/flutter_native_splash.dart';
 export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 export 'package:flutter_svg/flutter_svg.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
-export 'package:google_places_flutter/model/prediction.dart';
 export 'package:google_sign_in/google_sign_in.dart';
 export 'package:intl/date_symbol_data_local.dart';
 export 'package:jwt_decoder/jwt_decoder.dart';

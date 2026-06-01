@@ -15,7 +15,7 @@ class AppRouter extends RootStackRouter {
       page: SplashRoute.page,
       path: AppPaths.splash,
       opaque: false,
-
+      initial: true,
       guards: <AutoRouteGuard>[MaintenanceMiddleware()],
       reverseDurationInMilliseconds: 0,
       transitionsBuilder: TransitionsBuilders.noTransition,
@@ -26,7 +26,6 @@ class AppRouter extends RootStackRouter {
     CustomRoute<dynamic>(
       page: DashboardRoute.page,
       path: AppPaths.dashboard,
-      initial: true,
       durationInMilliseconds: Dimens.milliseconds400,
       reverseDurationInMilliseconds: Dimens.milliseconds400,
       transitionsBuilder: fadePageTransition,

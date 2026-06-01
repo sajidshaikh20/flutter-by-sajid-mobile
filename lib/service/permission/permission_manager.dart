@@ -392,18 +392,11 @@ class PermissionManager {
     }
   }
 
-  /// Requests multiple permissions (location, contact, phone) sequentially.
-  /// If each permission is granted, it proceeds to request the next one.
+  /// Requests contact and phone permissions sequentially.
   Future<void> askPermission() async {
-    bool value = await PermissionManager().requestLocationPermission();
-    if (value) {
-      bool contactPermission = await requestContactPermission();
-      if (contactPermission) {
-        bool storagePermission = await requestPhonePermission();
-        if (storagePermission) {
-          // var smsPermission = await requestSMSPermission();
-        }
-      }
+    final bool contactPermission = await requestContactPermission();
+    if (contactPermission) {
+      await requestPhonePermission();
     }
   }
 

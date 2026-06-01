@@ -59,12 +59,12 @@ stage_env.json
 {
 "base_url": "https://google.com",
 "envKey": "stage",
-"androidAppId": "1:537817253607:android:e22032e3cc4ac65020c442",
-"iosAppId": "1:537817253607:android:e22032e3cc4ac65020c442",
-"messagingSenderId": "537817253607",
-"projectId": "flutterbysajid",
-"iosApiKey": "",
-"androidApiKey": "",
+"androidAppId": "1:81561226063:android:2a3d1ca8f93f1bde75933a",
+"iosAppId": "",
+"messagingSenderId": "81561226063",
+"projectId": "weko-pro-b8382",
+"iosApiKey": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs",
+"androidApiKey": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs",
 "sentryDSN": "",
-"googleApiKey": ""
+"googleApiKey": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs"
 }

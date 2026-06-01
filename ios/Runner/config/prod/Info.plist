@@ -45,8 +45,6 @@
         <string>Weko Pro</string>
         <key>GIDClientID</key>
         <string></string>
-        <key>GoogleMapsAPIKey</key>
-        <string></string>
         <key>LSApplicationQueriesSchemes</key>
         <array>
             <string>http</string>
@@ -59,17 +57,6 @@
         <true/>
         <key>NSFaceIDUsageDescription</key>
         <string>Would you like to register fingerprint access for next quick login?</string>
-        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-        <string>We need your location to show the map</string>
-        <key>NSLocationAlwaysUsageDescription</key>
-        <string>We need your location to show the map</string>
-        <key>NSLocationTemporaryUsageDescriptionDictionary</key>
-        <dict>
-            <key>PurposeKey</key>
-            <string>We need precise location for better accuracy.</string>
-        </dict>
-        <key>NSLocationWhenInUseUsageDescription</key>
-        <string>We need your location to show the map</string>
         <key>NSUserTrackingUsageDescription</key>
         <string>This identifier will be used to deliver personalized ads to you.</string>
         <key>REVERSED_CLIENT_ID</key>
@@ -80,7 +67,6 @@
         <array>
             <string>fetch</string>
             <string>remote-notification</string>
-            <string>location</string>
         </array>
         <key>UILaunchStoryboardName</key>
         <string>LaunchScreen</string>

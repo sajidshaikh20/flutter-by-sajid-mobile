@@ -60,7 +60,7 @@ class ForceUpdateUnderMaintenanceCubit
         {
           bool isCountryAndLanguageSelected = SharedPref.instance.getBool(
             PrefsKey.isCountryAndLanguageSelectedKey,
-           defValue: false,
+            defValue: false,
           );
 
           emit(

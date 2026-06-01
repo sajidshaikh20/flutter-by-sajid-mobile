@@ -5,7 +5,12 @@
       "name": "Flutter: Default",
       "type": "dart",
       "request": "launch",
-      "program": "lib/main.dart"
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--flavor",
+        "stage",
+        "--dart-define-from-file=stage_env.json"
+      ]
     },
     {
       "name": "Flutter: Stage",

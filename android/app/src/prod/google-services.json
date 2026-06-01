@@ -1,44 +1,26 @@
 {
   "project_info": {
-    "project_number": "537817253607",
-    "project_id": "flutterbysajid",
-    "storage_bucket": "flutterbysajid.firebasestorage.app"
+    "project_number": "81561226063",
+    "project_id": "weko-pro-b8382",
+    "storage_bucket": "weko-pro-b8382.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:537817253607:android:e22032e3cc4ac65020c442",
+        "mobilesdk_app_id": "1:81561226063:android:2a3d1ca8f93f1bde75933a",
         "android_client_info": {
           "package_name": "com.wekopro.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "537817253607-uq41vd2lc5ugm23t5k3kgu9hl59jtrpd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.wekopro.app",
-            "certificate_hash": "ece35b5234045eda3cff0bb9e54c6b8971618b2a"
-          }
-        },
-        {
-          "client_id": "537817253607-1kbnbvkvslbf1vfhmt1ht6u18t8mv5o8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBe5HtWWq6dJy5FBbp70EfIDjHYrFkc_3s"
+          "current_key": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "537817253607-1kbnbvkvslbf1vfhmt1ht6u18t8mv5o8.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
