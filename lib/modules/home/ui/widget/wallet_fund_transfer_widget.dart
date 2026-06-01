@@ -25,7 +25,7 @@ class WalletFundTransferWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TransferItem(
-              icon: Assets.svgs.icSelfTransfer.svg(),
+              icon: Assets.svgs.icAppleIcon.svg(),
               label: 'Self\nTransfer',
             ),
             TransferItem(
@@ -37,7 +37,7 @@ class WalletFundTransferWidget extends StatelessWidget {
               label: 'Top Up',
             ),
             TransferItem(
-              icon: Assets.svgs.icLinkPayment.svg(),
+              icon: Assets.svgs.icAdd.svg(),
               label: 'Link\nPayment',
             ),
           ],

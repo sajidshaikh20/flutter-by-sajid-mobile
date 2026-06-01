@@ -109,7 +109,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0 # To perform lint operations
   build_runner: ^2.4.9 # To Run build runner command
-  flutter_gen_runner: ^5.11.0
+  flutter_gen_runner: ">=5.11.0 <5.14.0" # 5.14+ requires build_runner ^2.12 (conflicts with auto_route_generator 9.x)
   json_serializable: ^6.7.1 # Generate model class using json
   auto_route_generator: ^9.0.0
   encrypt: ^5.0.1

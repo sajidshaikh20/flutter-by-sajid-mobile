@@ -34,7 +34,7 @@ class ServiceItemModel {
       icon: Assets.svgs.icDmt.svg(),
       serviceDetailType: ServiceDetailType.dmt,
     ),
-    ServiceItemModel(label: 'Credit Card', icon: Assets.svgs.icCreditCard.svg()),
+    ServiceItemModel(label: 'Credit Card', icon: Assets.svgs.icAdd.svg()),
     ServiceItemModel(label: 'Account Open', icon: Assets.svgs.icAccountOpen.svg()),
     ServiceItemModel(label: 'Loan', icon: Assets.svgs.icLoan.svg()),
   ];
