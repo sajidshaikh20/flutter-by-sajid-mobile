@@ -428,17 +428,17 @@ enum NotificationType {
   /// Creates a notification type with the given value.
   const NotificationType(this.value);
 
-  /// Get SVG icon path based on enum
-  String get iconPath {
+  /// Default Material icon for this notification type.
+  IconData get icon {
     switch (this) {
       case NotificationType.deliverd:
-        return Assets.svgs.icOrderDelivery.path;
+        return Icons.local_shipping_outlined;
       case NotificationType.pickup:
-        return Assets.svgs.icPickup.path;
+        return Icons.storefront_outlined;
       case NotificationType.loyalty:
-        return Assets.svgs.icLoyalty.path;
+        return Icons.card_giftcard_outlined;
       case NotificationType.promotion:
-        return Assets.svgs.icPromotion.path;
+        return Icons.campaign_outlined;
     }
   }
 

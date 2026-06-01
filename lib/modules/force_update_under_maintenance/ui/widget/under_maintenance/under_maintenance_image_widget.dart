@@ -19,7 +19,7 @@ class UnderMaintenanceImageWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: Dimens.space8),
         child: CustomNetworkImageWidget(
           imageUrl: config?.underMaintenance?.maintainanceImage ?? '',
-          placeHolderImage: Assets.svgs.icDukanSplashLogo.svg(),
+          placeHolderImage: Assets.svgs.icPlaceHolderDukkan.svg(),
           fit: BoxFit.contain,
         ),
       );

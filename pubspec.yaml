@@ -99,7 +99,6 @@ flutter:
     - assets/svgs/
     - assets/json/
     - assets/language/
-    - assets/gif/
 
   fonts:
     - family: inter

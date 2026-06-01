@@ -128,21 +128,15 @@
                     ),
 
                     CustomBottomNavBarItem(
-                      activeIcon: Assets.svgs.icTransactionHistory.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
+                      activeIcon: Icon(
+                        Icons.history,
+                        size: iconSize,
+                        color: Colors.white,
                       ),
-                      inactiveIcon: Assets.svgs.icTransactionHistory.svg(
-                        height: iconSize,
-                        width: iconSize,
-                        colorFilter: ColorFilter.mode(
-                          MainConfig.appColors.greyTextColor,
-                          BlendMode.srcIn,
-                        ),
+                      inactiveIcon: Icon(
+                        Icons.history,
+                        size: iconSize,
+                        color: MainConfig.appColors.greyTextColor,
                       ),
                       routeName: AppPaths.transactionHistory,
                       label: 'Transaction History',

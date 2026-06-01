@@ -133,12 +133,7 @@ class CustomGradientButtonWidget extends StatelessWidget {
                   fit: StackFit.expand,
                   children: <Widget>[
                     // SVG Background
-                    Positioned.fill(
-                      child: FlippableSvgBackground(
-                        assetPath: Assets
-                            .svgs.bgGradient.path, // Path to your SVG file
-                      ),
-                    ),
+
                     // Foreground Content
                     buttonTextWidget(enableTextStyle),
                   ],

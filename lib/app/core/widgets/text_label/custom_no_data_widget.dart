@@ -12,7 +12,7 @@ class CustomNoDataWidget extends StatelessWidget {
   /// Text alignment within the widget. Defaults to center.
   final TextAlign textAlign;
 
-  /// Custom asset widget. If null, default "noProductFound" will be shown.
+  /// Custom asset widget. If null, a default empty-state icon is shown.
   final Widget? asset;
 
   /// The description message to display below the title.
@@ -57,7 +57,12 @@ class CustomNoDataWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (showImage) ...<Widget>[
-              asset ?? Assets.svgs.noProductFound.svg(),
+              asset ??
+                  Icon(
+                    Icons.inbox_outlined,
+                    size: Dimens.size80,
+                    color: MainConfig.appColors.greyTextColor,
+                  ),
               Dimens.space20.heightBox,
             ],
             // Title
