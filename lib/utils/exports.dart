@@ -37,7 +37,7 @@ export 'package:photo_view/photo_view_gallery.dart';
 export 'package:sensors_plus/sensors_plus.dart';
 export 'package:share_plus/share_plus.dart';
 export 'package:shimmer/shimmer.dart';
-export 'package:sign_in_with_apple/sign_in_with_apple.dart' hide IconAlignment;
+export 'package:sign_in_with_apple/sign_in_with_apple.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:webview_flutter/webview_flutter.dart';
 
@@ -45,7 +45,7 @@ export '../../app/app.dart' hide X509Certificate;
 export '../../base/base.dart';
 export '../../gen/assets.gen.dart';
 export '../../gen/fonts.gen.dart';
-export '../../modules/modules.dart' hide HtmlWidget;
+export '../../modules/modules.dart';
 export '../../modules/select_language/language.dart';
 export '../../service/service.dart'
     hide binarySearch, mergeSort, ProgressCallback;

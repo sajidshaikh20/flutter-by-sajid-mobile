@@ -109,7 +109,7 @@ class DialogUtils extends StatelessWidget {
             if (title.isNotNullOrBlank) SizedBox(height: space8_16),
 
             // Content widget
-            if (contentWidget != null) contentWidget!,
+            ?contentWidget,
 
             // Message
             if (message.isNotBlank)

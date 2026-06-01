@@ -12,7 +12,11 @@ class HomePage extends BaseResponsiveView {
       create: (BuildContext c) => HomeCubit(),
       child: const SafeArea(
         child: Scaffold(
-          body: HomeViewWidget(),
+          body: Center(
+            child: CustomTextLabelWidget(
+              label: "Home page",
+            ),
+          ),
         ),
       ),
     );

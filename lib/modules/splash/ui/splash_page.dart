@@ -17,7 +17,7 @@ class SplashPage extends StatelessWidget {
               await context.read<LocaleCubit>().changeLanguageOnInit(state.languageCode, state.languageAlignment);
 
             if(context.mounted) {
-                await context.router.replaceNamed(state.redirectPath);
+                await context.router.replacePath(state.redirectPath);
               }
 
             }

@@ -13,7 +13,7 @@ class AuthenticationMiddleWare extends AutoRouteGuard {
       defValue: false,
     );
     if (isLogin) {
-      // await router.pushNamed(AppPaths.dashboard);
+      // await router.pushPath(AppPaths.dashboard);
       await router.replaceAll(<PageRouteInfo>[const DashboardRoute()]);
     } else {
       resolver.next();

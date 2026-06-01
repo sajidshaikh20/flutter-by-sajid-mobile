@@ -5,7 +5,7 @@
 ///
 /// Example usage:
 /// ```dart
-/// context.router.pushNamed(AppPaths.dashboard);
+/// context.router.pushPath(AppPaths.dashboard);
 /// ```
 abstract class AppPaths {
   /// Dashboard or main landing page route.

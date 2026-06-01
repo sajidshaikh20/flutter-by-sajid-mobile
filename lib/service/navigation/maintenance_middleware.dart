@@ -25,7 +25,8 @@ class MaintenanceMiddleware extends AutoRouteGuard {
       resolver.next();
     } else {
       // If maintenance or update is required, navigate to the maintenance page
-      await router.pushNamed(AppPaths.maintenance);
+
+      await router.pushPath(AppPaths.maintenance);
     }
   }
 }

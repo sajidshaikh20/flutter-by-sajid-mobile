@@ -48,37 +48,7 @@ abstract class AppConstant {
   static const List<String> jsonExtensions = <String>['json'];
 
 
-  static List<BeneficiaryModel> get sampleBeneficiaries => <BeneficiaryModel>[
-    const BeneficiaryModel(
-      id: '1',
-      name: 'Sparkup Technology PVT. LTD.',
-      bank: 'Kotak Mahindra Bank',
-      ifsc: 'Kkbk0005900',
-      accountNumber: '1234567890',
-      isActive: true,
-    ),
-    const BeneficiaryModel(
-      id: '2',
-      name: 'Sparkup Technology PVT. LTD.',
-      bank: 'Kotak Mahindra Bank',
-      ifsc: 'Kkbk0005900',
-      accountNumber: '1234567890',
-      isActive: false,
-    ),
-  ];
 
-  static const List<String> methods = <String>[
-    'Cash Withdrawal',
-    'Balance Enquiry',
-    'Mini Statement',
-    'Aadhaar Pay',
-  ];
-
-  static const List<String> banks = <String>[
-    'FINO',
-    'NSDL',
-    'CITY UNION',
-  ];
 
   // Navigation / routing (utils_functions)
   static const String promotion = "promotion";
