@@ -93,6 +93,7 @@ flutter:
     - assets/svgs/
     - assets/json/
     - assets/language/
+    - assets/webp/
 
   fonts:
     - family: inter

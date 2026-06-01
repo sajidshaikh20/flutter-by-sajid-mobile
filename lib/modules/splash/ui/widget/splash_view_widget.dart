@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-import 'dart:ui' as ui;
 import '../../../../utils/exports.dart';
 
 /// Widget that displays the splash screen UI.
@@ -7,69 +5,47 @@ class SplashViewWidget extends StatelessWidget {
   /// Creates a splash view widget.
   const SplashViewWidget({super.key});
 
-  /// Helper to determine dark mode styling dynamically.
-  /// This prevents compiler dead code warnings when forcing dark theme.
-  bool _checkDarkTheme() {
-    // By default, we use dark theme splash (as requested "for dark as of now").
-    // In the future, this can easily be modified to:
-    // return Theme.of(context).brightness == Brightness.dark;
-    return true;
+  bool _isDarkTheme(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark;
   }
 
   /// Builds the splash view for the specified screen type.
-  ///
-  /// [screenType] specifies the device screen type for responsive design.
   Widget buildViews(ScreenType screenType, BuildContext context) {
-    final bool isDark = _checkDarkTheme();
+    final bool isDark = _isDarkTheme(context);
+    final AssetGenImage backgroundImage = isDark
+        ? Assets.webp.icDarkBackgroundSplash
+        : Assets.webp.icLightBackgroundSplash;
 
-    // Define theme constants
-    final Color backgroundColorStart = isDark
-        ? const Color(0xFF070014)
-        : const Color(0xFFFFFFFF);
-    final Color backgroundColorMid = isDark
-        ? const Color(0xFF0F0024)
-        : const Color(0xFFFAF9FC);
-    final Color backgroundColorEnd = isDark
-        ? const Color(0xFF05000F)
-        : const Color(0xFFF5EFFF);
-
-    final Color textMainColor = isDark ? Colors.white : const Color(0xFF000000);
-    final Color textMutedColor = isDark ? Colors.white54 : Colors.black45;
+    final Color textMainColor =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color textMutedColor =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
     return Scaffold(
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: <Color>[
-              backgroundColorStart,
-              backgroundColorMid,
-              backgroundColorEnd,
-            ],
-            stops: const <double>[0.0, 0.5, 1.0],
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          backgroundImage.image(
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
           ),
-        ),
-        child: SafeArea(
-          child: Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-
-              // Static Logo Image
-              Assets.png.icWeko.image(
-                  width: Dimens.size160,
-                  height: Dimens.size160,
-                  fit: BoxFit.fitWidth),
-              // Static Text & Loading Content
+              Assets.png.icCropWekoIcon.image(
+                width: Dimens.size140,
+                height: Dimens.size140,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: Dimens.space4),
               Column(
                 children: <Widget>[
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       CustomTextLabelWidget(
-                        label:
-                        "WEKO",
+                        label: 'WEKO',
                         style: TextStyle(
                           fontSize: Dimens.fontSize35,
                           fontWeight: FontWeight.w900,
@@ -81,20 +57,19 @@ class SplashViewWidget extends StatelessWidget {
                         shaderCallback: (Rect bounds) {
                           return const LinearGradient(
                             colors: <Color>[
-                              Color(0xFF8A2BE2), // Neon Purple
-                              Color(0xFFFF4FD8), // Hot Pink
+                              AppColors.secondaryPurple,
+                              AppColors.accentPink,
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ).createShader(bounds);
                         },
                         child: const CustomTextLabelWidget(
-                          label:
-                          ".PRO",
+                          label: '.PRO',
                           style: TextStyle(
                             fontSize: Dimens.fontSize35,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white, // Mask overrides this
+                            color: Colors.white,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -102,10 +77,8 @@ class SplashViewWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: Dimens.space4),
-                  // Slogan "ALL-IN-ONE TRADING PLATFORM"
                   CustomTextLabelWidget(
-                    label:
-                    "ALL-IN-ONE TRADING PLATFORM",
+                    label: 'ALL-IN-ONE TRADING PLATFORM',
                     style: TextStyle(
                       fontSize: Dimens.fontSize10,
                       fontWeight: FontWeight.w700,
@@ -117,7 +90,7 @@ class SplashViewWidget extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
