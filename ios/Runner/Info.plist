@@ -37,14 +37,6 @@
 		</array>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>FacebookAppID</key>
-		<string></string>
-		<key>FacebookClientToken</key>
-		<string></string>
-		<key>FacebookDisplayName</key>
-		<string>Weko Pro</string>
-		<key>GIDClientID</key>
-		<string></string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
@@ -57,10 +49,6 @@
 		<true/>
 		<key>NSFaceIDUsageDescription</key>
 		<string>Would you like to register fingerprint access for next quick login?</string>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>This identifier will be used to deliver personalized ads to you.</string>
-		<key>REVERSED_CLIENT_ID</key>
-		<string></string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIBackgroundModes</key>

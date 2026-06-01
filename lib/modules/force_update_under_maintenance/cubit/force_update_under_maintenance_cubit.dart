@@ -29,8 +29,8 @@ class ForceUpdateUnderMaintenanceCubit
     try {
       await remoteConfig.setConfigSettings(
         RemoteConfigSettings(
-          fetchTimeout: const Duration(seconds: Dimens.duration10),
-          minimumFetchInterval: const Duration(seconds: Dimens.duration10),
+          fetchTimeout: const Duration(seconds: 3),
+          minimumFetchInterval: const Duration(hours: 1),
         ),
       );
       await remoteConfig.fetchAndActivate();
