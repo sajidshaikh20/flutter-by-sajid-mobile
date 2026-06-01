@@ -88,6 +88,9 @@ class PrefsKey {
   /// Key indicating whether we have already asked for notification permission
   /// at least once. Used to avoid auto-request loops on subsequent launches.
   static const String notificationPermissionAskedKey = 'notificationPermissionAskedKey';
+
+  /// Persisted app theme mode (`ThemeMode.name`: system, light, dark).
+  static const String themeModeKey = 'themeModeKey';
 }
 
 /// Minimal model for storing biometric login data in SharedPreferences.

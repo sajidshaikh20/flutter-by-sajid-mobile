@@ -141,24 +141,26 @@ import '../../../utils/exports.dart';
    /// Builds the application's TextTheme.
    ///
    /// The [isLtr] flag indicates text direction context (currently not altering styles).
-   TextTheme  textTheme({required bool isLtr})  {
+   TextTheme textTheme({required bool isLtr}) {
+    final Color textColor = MainConfig.appColors.textBlackColor;
 
+    TextStyle withColor(TextStyle style) => style.copyWith(color: textColor);
 
     return TextTheme(
-      bodyLarge: _bodyLarge,
-      bodyMedium: _bodyMedium,
-      bodySmall: _bodySmall,
+      bodyLarge: withColor(_bodyLarge),
+      bodyMedium: withColor(_bodyMedium),
+      bodySmall: withColor(_bodySmall),
       displayLarge: _displayLarge,
       displayMedium: _displayMedium,
       displaySmall: _displaySmall,
-      headlineMedium: _headlineMedium,
-      headlineSmall: _headlineSmall,
-      titleLarge: _titleLarge,
-      titleMedium: _titleMedium,
-      titleSmall: _titleSmall,
-      labelLarge: _labelLarge,
-      labelMedium: _labelMedium,
-      labelSmall: _labelSmall,
+      headlineMedium: withColor(_headlineMedium),
+      headlineSmall: withColor(_headlineSmall),
+      titleLarge: withColor(_titleLarge),
+      titleMedium: withColor(_titleMedium),
+      titleSmall: withColor(_titleSmall),
+      labelLarge: withColor(_labelLarge),
+      labelMedium: withColor(_labelMedium),
+      labelSmall: withColor(_labelSmall),
     );
   }
 }

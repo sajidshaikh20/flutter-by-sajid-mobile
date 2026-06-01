@@ -13,7 +13,7 @@ import '../../../utils/exports.dart';
 /// - ThemeData configurations for each theme,
 /// including brightness and text styling.
 class MyAppTheme {
-  final ColorScheme _appColorScheme = ColorScheme(
+  static final ColorScheme _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
     primary: MainConfig.appColors.primary,
     primaryContainer: MainConfig.appColors.primaryContainer,
@@ -29,33 +29,84 @@ class MyAppTheme {
     errorContainer: MainConfig.appColors.borderRedColorDull,
     onErrorContainer: MainConfig.appColors.redColor,
     surface: MainConfig.appColors.surface,
-    // onBackground: MainConfig.appColors.onBackground,
-    // background: MainConfig.appColors.surface,
     onSurface: MainConfig.appColors.onSurface,
     outline: MainConfig.appColors.borderLightGreyColor,
     shadow: MainConfig.appColors.shadowBlackColor,
   );
+
+  static final ColorScheme _darkColorScheme = ColorScheme(
+    brightness: Brightness.dark,
+    primary: AppColors.primaryPurple,
+    primaryContainer: AppColors.surfaceDark,
+    onPrimaryContainer: AppColors.textPrimaryDark,
+    onPrimary: AppColors.textPrimaryDark,
+    secondary: AppColors.secondaryPurple,
+    onSecondary: AppColors.textPrimaryDark,
+    onSecondaryContainer: AppColors.textPrimaryDark,
+    secondaryContainer: AppColors.cardDark,
+    tertiary: AppColors.textSecondaryDark,
+    error: AppColors.errorColor,
+    onError: AppColors.textPrimaryDark,
+    errorContainer: AppColors.errorColor.withValues(alpha: 0.12),
+    onErrorContainer: AppColors.errorColor,
+    surface: AppColors.surfaceDark,
+    onSurface: AppColors.textPrimaryDark,
+    outline: AppColors.borderDark,
+    shadow: Colors.black,
+  );
+
+  ColorScheme _appColorScheme = _lightColorScheme;
   bool _isEnglishLan = true;
 
-  /// Returns the appropriate [ThemeData] based on t
-  /// he
-  ///  text direction (LTR or RTL).
-  ///
-  /// This method adjusts the theme's font family and styling based on the
-  /// provided [isLtr] flag to ensure proper
-  /// display
-  /// of text for different languages.
+  /// Returns the appropriate [ThemeData] based on text direction (LTR or RTL).
   ThemeData theme({required bool isLtr}) {
     _isEnglishLan = isLtr;
+    _appColorScheme = _lightColorScheme;
     return ThemeData(
       brightness: Brightness.light,
       visualDensity: VisualDensity.standard,
       appBarTheme: _getAppBarTheme(),
       primaryTextTheme: MainConfig.appStyle.textTheme(isLtr: _isEnglishLan),
       colorScheme: _appColorScheme,
-
       splashColor:
-          _appColorScheme.onPrimary.withValues(alpha: Dimens.opacity03),
+      _appColorScheme.onPrimary.withValues(alpha: Dimens.opacity03),
+      iconTheme: IconThemeData(color: _appColorScheme.onSurface),
+      scaffoldBackgroundColor: _appColorScheme.surface,
+      buttonTheme: _getButtonTheme(),
+      textButtonTheme: _getTextButtonThemeData(),
+      elevatedButtonTheme: _getElevatedButtonThemeData(),
+      outlinedButtonTheme: _getOutlinedButtonThemeData(),
+      floatingActionButtonTheme: _getFloatingActionButtonThemeData(),
+      textTheme: MainConfig.appStyle.textTheme(isLtr: _isEnglishLan),
+      inputDecorationTheme: _getInputDecorationTheme(),
+      cardTheme: _getCardTheme(),
+      dialogTheme: _getDialogTheme(),
+      bottomSheetTheme: _getBottomSheetThemeData(),
+      bottomNavigationBarTheme: _getBottomNavigationBarThemeData(),
+      dividerColor: _appColorScheme.outline,
+      drawerTheme: _getDrawerThemeData(),
+      tabBarTheme: _getTabBarTheme(),
+      switchTheme: _getSwitchThemeData(),
+      snackBarTheme: _getSnackBarThemeData(),
+      radioTheme: _getRadioThemeData(),
+      progressIndicatorTheme: _getProgressIndicatorThemeData(),
+      popupMenuTheme: _getPopupMenuThemeData(),
+      useMaterial3: true,
+    );
+  }
+
+  /// Returns the dark version of [ThemeData] configuration.
+  ThemeData darkTheme({required bool isLtr}) {
+    _isEnglishLan = isLtr;
+    _appColorScheme = _darkColorScheme;
+    return ThemeData(
+      brightness: Brightness.dark,
+      visualDensity: VisualDensity.standard,
+      appBarTheme: _getAppBarTheme(),
+      primaryTextTheme: MainConfig.appStyle.textTheme(isLtr: _isEnglishLan),
+      colorScheme: _appColorScheme,
+      splashColor:
+      _appColorScheme.onPrimary.withValues(alpha: Dimens.opacity03),
       iconTheme: IconThemeData(color: _appColorScheme.onSurface),
       scaffoldBackgroundColor: _appColorScheme.surface,
       buttonTheme: _getButtonTheme(),
@@ -82,29 +133,29 @@ class MyAppTheme {
   }
 
   AppBarTheme _getAppBarTheme() => AppBarTheme(
-        // backgroundColor: _appColorScheme.secondary,
-        backgroundColor: _appColorScheme.primary,
-        centerTitle: true,
-        actionsIconTheme: IconThemeData(
-          color: _appColorScheme.onPrimary,
-          size: Dimens.size25,
-        ),
-        shadowColor: MainConfig.appColors.shadowGreyLightColor,
-        shape: Border(
-          bottom: BorderSide(
-            color: MainConfig.appColors.borderLightGreyColor,
-          ),
-        ),
-        iconTheme: IconThemeData(color: _appColorScheme.onPrimary),
-        titleTextStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .titleLarge
-            ?.copyWith(
-              fontSize: Dimens.fontSize20,
-              color: _appColorScheme.primary,
-            ),
-        systemOverlayStyle: systemOverlay(),
-      );
+    // backgroundColor: _appColorScheme.secondary,
+    backgroundColor: _appColorScheme.primary,
+    centerTitle: true,
+    actionsIconTheme: IconThemeData(
+      color: _appColorScheme.onPrimary,
+      size: Dimens.size25,
+    ),
+    shadowColor: MainConfig.appColors.shadowGreyLightColor,
+    shape: Border(
+      bottom: BorderSide(
+        color: MainConfig.appColors.borderLightGreyColor,
+      ),
+    ),
+    iconTheme: IconThemeData(color: _appColorScheme.onPrimary),
+    titleTextStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .titleLarge
+        ?.copyWith(
+      fontSize: Dimens.fontSize20,
+      color: _appColorScheme.primary,
+    ),
+    systemOverlayStyle: systemOverlay(),
+  );
 
   /// Returns the appropriate [SystemUiOverlayStyle]
   ///  for
@@ -117,89 +168,90 @@ class MyAppTheme {
   /// for both light and dark modes.
 
   SystemUiOverlayStyle systemOverlay() {
+    final bool isDark = _appColorScheme.brightness == Brightness.dark;
     return SystemUiOverlayStyle(
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-      statusBarColor: MainConfig.appColors.primary,
-      systemNavigationBarColor: AppColors.whiteColor,
-      systemNavigationBarDividerColor: AppColors.whiteColor,
-      systemNavigationBarIconBrightness: Brightness.dark,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      statusBarColor: isDark ? AppColors.backgroundDark : MainConfig.appColors.primary,
+      systemNavigationBarColor: isDark ? AppColors.backgroundDark : AppColors.whiteColor,
+      systemNavigationBarDividerColor: isDark ? AppColors.backgroundDark : AppColors.whiteColor,
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       systemStatusBarContrastEnforced: false,
     );
   }
 
   ButtonThemeData _getButtonTheme() => ButtonThemeData(
-        buttonColor: _appColorScheme.primary,
-        disabledColor: _appColorScheme.outline,
-        padding: const EdgeInsets.symmetric(
-          vertical: Dimens.space10,
-          horizontal: Dimens.space20,
-        ),
-        colorScheme: _appColorScheme,
-        textTheme: ButtonTextTheme.primary,
-        splashColor:
-            _appColorScheme.onPrimary.withValues(alpha: Dimens.opacity03),
-        shape: RoundedRectangleBorder(
-          borderRadius: Dimens.radius20.borderRadius,
-          side: Dimens.borderWidth3.borderSide(
-            color: _appColorScheme.primary,
-            style: BorderStyle.solid,
-          ),
-        ),
-      );
+    buttonColor: _appColorScheme.primary,
+    disabledColor: _appColorScheme.outline,
+    padding: const EdgeInsets.symmetric(
+      vertical: Dimens.space10,
+      horizontal: Dimens.space20,
+    ),
+    colorScheme: _appColorScheme,
+    textTheme: ButtonTextTheme.primary,
+    splashColor:
+    _appColorScheme.onPrimary.withValues(alpha: Dimens.opacity03),
+    shape: RoundedRectangleBorder(
+      borderRadius: Dimens.radius20.borderRadius,
+      side: Dimens.borderWidth3.borderSide(
+        color: _appColorScheme.primary,
+        style: BorderStyle.solid,
+      ),
+    ),
+  );
 
   TextButtonThemeData _getTextButtonThemeData() => TextButtonThemeData(
-        style: ButtonStyle(
-          overlayColor: WidgetStateProperty.resolveWith<Color?>(
+    style: ButtonStyle(
+      overlayColor: WidgetStateProperty.resolveWith<Color?>(
             (Set<WidgetState> states) {
-              if (states.contains(WidgetState.pressed)) {
-                return MainConfig.appColors.backgroundMediumDarkBlueColor
-                    .withValues(alpha: Dimens.opacity03);
-              }
+          if (states.contains(WidgetState.pressed)) {
+            return MainConfig.appColors.backgroundMediumDarkBlueColor
+                .withValues(alpha: Dimens.opacity03);
+          }
 
-              return null;
-            },
-          ),
-          // If you want to set textStyle for button with color, first you have
-          // remove foreground color, so giving null as value.
-          foregroundColor:
-              WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-            if (states.contains(WidgetState.disabled)) {
-              return _appColorScheme.tertiary;
-            }
-            return MainConfig.appColors.backgroundMediumDarkBlueColor;
-          }),
-          // Setting textStyle for text of button
-          textStyle: WidgetStatePropertyAll<TextStyle?>(
-            MainConfig.appStyle
-                .textTheme(isLtr: _isEnglishLan)
-                .titleLarge
-                ?.copyWith(
-                  fontSize: Dimens.fontSize20,
-                  color: _appColorScheme.surface,
-                ),
-          ),
-          shape: WidgetStatePropertyAll<OutlinedBorder?>(
-            RoundedRectangleBorder(
-              borderRadius: Dimens.radius6.borderRadius,
-            ),
-          ),
-          backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) {
-              if (states.contains(WidgetState.disabled)) {
-                return _appColorScheme.outline;
-              }
-              return null;
-            },
-          ),
+          return null;
+        },
+      ),
+      // If you want to set textStyle for button with color, first you have
+      // remove foreground color, so giving null as value.
+      foregroundColor:
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return _appColorScheme.tertiary;
+        }
+        return MainConfig.appColors.backgroundMediumDarkBlueColor;
+      }),
+      // Setting textStyle for text of button
+      textStyle: WidgetStatePropertyAll<TextStyle?>(
+        MainConfig.appStyle
+            .textTheme(isLtr: _isEnglishLan)
+            .titleLarge
+            ?.copyWith(
+          fontSize: Dimens.fontSize20,
+          color: _appColorScheme.surface,
         ),
-      );
+      ),
+      shape: WidgetStatePropertyAll<OutlinedBorder?>(
+        RoundedRectangleBorder(
+          borderRadius: Dimens.radius6.borderRadius,
+        ),
+      ),
+      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+            (Set<WidgetState> states) {
+          if (states.contains(WidgetState.disabled)) {
+            return _appColorScheme.outline;
+          }
+          return null;
+        },
+      ),
+    ),
+  );
 
   ElevatedButtonThemeData _getElevatedButtonThemeData() =>
       ElevatedButtonThemeData(
         style: ButtonStyle(
           overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) {
+                (Set<WidgetState> states) {
               if (states.contains(WidgetState.pressed)) {
                 return _appColorScheme.onPrimary
                     .withValues(alpha: Dimens.opacity03);
@@ -212,7 +264,7 @@ class MyAppTheme {
           ),
 
           backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) {
+                (Set<WidgetState> states) {
               if (states.contains(WidgetState.disabled)) {
                 return _appColorScheme.tertiary;
               }
@@ -222,7 +274,7 @@ class MyAppTheme {
           // If you want to set textStyle for button with color, first you have
           // remove foreground color, so giving null as value.
           foregroundColor:
-              WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          WidgetStateProperty.resolveWith((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
               return _appColorScheme.tertiary;
             }
@@ -234,9 +286,9 @@ class MyAppTheme {
                 .textTheme(isLtr: _isEnglishLan)
                 .titleLarge
                 ?.copyWith(
-                  fontSize: Dimens.fontSize20,
-                  color: _appColorScheme.surface,
-                ),
+              fontSize: Dimens.fontSize20,
+              color: _appColorScheme.surface,
+            ),
           ),
           padding: const WidgetStatePropertyAll<EdgeInsetsGeometry?>(
             EdgeInsets.only(
@@ -265,7 +317,7 @@ class MyAppTheme {
       OutlinedButtonThemeData(
         style: ButtonStyle(
           overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) {
+                (Set<WidgetState> states) {
               if (states.contains(WidgetState.pressed)) {
                 return _appColorScheme.primary
                     .withValues(alpha: Dimens.opacity03);
@@ -279,7 +331,7 @@ class MyAppTheme {
           // If you want to set textStyle for button with color, first you have
           // remove foreground color, so giving null as value.
           foregroundColor:
-              WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+          WidgetStateProperty.resolveWith((Set<WidgetState> states) {
             if (states.contains(WidgetState.disabled)) {
               return _appColorScheme.tertiary;
             }
@@ -291,9 +343,9 @@ class MyAppTheme {
                 .textTheme(isLtr: _isEnglishLan)
                 .titleLarge
                 ?.copyWith(
-                  fontSize: Dimens.fontSize20,
-                  color: _appColorScheme.surface,
-                ),
+              fontSize: Dimens.fontSize20,
+              color: _appColorScheme.surface,
+            ),
           ),
           padding: const WidgetStatePropertyAll<EdgeInsetsGeometry?>(
             EdgeInsets.symmetric(
@@ -326,60 +378,60 @@ class MyAppTheme {
         disabledElevation: Dimens.zero,
         extendedIconLabelSpacing: Dimens.space20,
         splashColor:
-            _appColorScheme.primary.withValues(alpha: Dimens.opacity03),
+        _appColorScheme.primary.withValues(alpha: Dimens.opacity03),
       );
 
   InputDecorationTheme _getInputDecorationTheme() => InputDecorationTheme(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: Dimens.space10,
-        ),
-        hintStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .bodyMedium
-            ?.copyWith(color: MainConfig.appColors.textColorGrey),
-        labelStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .bodyMedium
-            ?.copyWith(
-              color: MainConfig.appColors.textColorGrey,
-            ),
-        hoverColor: Colors.transparent,
-        errorStyle: MainConfig.appStyle.errorStyle.copyWith(
-          fontSize: Dimens.fontSize12,
-        ),
-        alignLabelWithHint: true,
-        errorMaxLines: Dimens.maxLines03,
-        enabledBorder: Dimens.radius0.underlineInputBorder(
-          borderSide: Dimens.borderWidth1.borderSide(
-            color: MainConfig.appColors.borderGrey,
-          ),
-        ),
-        focusedBorder: Dimens.radius0.underlineInputBorder(
-          borderSide: Dimens.borderWidth1.borderSide(
-            color: MainConfig.appColors.borderPrimaryColor,
-          ),
-        ),
-        border: Dimens.radius0.underlineInputBorder(
-          borderSide: Dimens.borderWidth1.borderSide(
-            color: MainConfig.appColors.borderGrey,
-          ),
-        ),
-        errorBorder: Dimens.radius0.underlineInputBorder(
-          borderSide: Dimens.borderWidth1.borderSide(
-            color: MainConfig.appColors.borderRedColorDull,
-          ),
-        ),
-        focusedErrorBorder: Dimens.radius0.underlineInputBorder(
-          borderSide: Dimens.borderWidth1.borderSide(
-            color: MainConfig.appColors.borderRedColorDull,
-          ),
-        ),
-        disabledBorder: Dimens.radius0.underlineInputBorder(
-          borderSide: Dimens.borderWidth1.borderSide(
-            color: _appColorScheme.outline.withValues(alpha: Dimens.opacity05),
-          ),
-        ),
-      );
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: Dimens.space10,
+    ),
+    hintStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .bodyMedium
+        ?.copyWith(color: MainConfig.appColors.textColorGrey),
+    labelStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .bodyMedium
+        ?.copyWith(
+      color: MainConfig.appColors.textColorGrey,
+    ),
+    hoverColor: Colors.transparent,
+    errorStyle: MainConfig.appStyle.errorStyle.copyWith(
+      fontSize: Dimens.fontSize12,
+    ),
+    alignLabelWithHint: true,
+    errorMaxLines: Dimens.maxLines03,
+    enabledBorder: Dimens.radius0.underlineInputBorder(
+      borderSide: Dimens.borderWidth1.borderSide(
+        color: MainConfig.appColors.borderGrey,
+      ),
+    ),
+    focusedBorder: Dimens.radius0.underlineInputBorder(
+      borderSide: Dimens.borderWidth1.borderSide(
+        color: MainConfig.appColors.borderPrimaryColor,
+      ),
+    ),
+    border: Dimens.radius0.underlineInputBorder(
+      borderSide: Dimens.borderWidth1.borderSide(
+        color: MainConfig.appColors.borderGrey,
+      ),
+    ),
+    errorBorder: Dimens.radius0.underlineInputBorder(
+      borderSide: Dimens.borderWidth1.borderSide(
+        color: MainConfig.appColors.borderRedColorDull,
+      ),
+    ),
+    focusedErrorBorder: Dimens.radius0.underlineInputBorder(
+      borderSide: Dimens.borderWidth1.borderSide(
+        color: MainConfig.appColors.borderRedColorDull,
+      ),
+    ),
+    disabledBorder: Dimens.radius0.underlineInputBorder(
+      borderSide: Dimens.borderWidth1.borderSide(
+        color: _appColorScheme.outline.withValues(alpha: Dimens.opacity05),
+      ),
+    ),
+  );
 
   /// Returns a customized [InputDecorationTheme] for a search bar input field.
   ///
@@ -396,15 +448,15 @@ class MyAppTheme {
             .textTheme(isLtr: _isEnglishLan)
             .bodySmall
             ?.copyWith(
-              fontSize: Dimens.fontSize16,
-              color: MainConfig.appColors.textGreyMediumColor,
-            ),
+          fontSize: Dimens.fontSize16,
+          color: MainConfig.appColors.textGreyMediumColor,
+        ),
         labelStyle: MainConfig.appStyle
             .textTheme(isLtr: _isEnglishLan)
             .bodyMedium
             ?.copyWith(
-              color: MainConfig.appColors.textColorGrey,
-            ),
+          color: MainConfig.appColors.textColorGrey,
+        ),
         hoverColor: Colors.transparent,
         errorStyle: MainConfig.appStyle.errorStyle.copyWith(
           fontSize: Dimens.fontSize12,
@@ -501,44 +553,44 @@ class MyAppTheme {
       );
 
   CardThemeData _getCardTheme() => CardThemeData(
-        color: MainConfig.appColors.cardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: Dimens.radius10.borderRadius,
-        ),
-        shadowColor: MainConfig.appColors.cardShadowColor,
-        elevation: Dimens.space4,
-      );
+    color: MainConfig.appColors.cardColor,
+    shape: RoundedRectangleBorder(
+      borderRadius: Dimens.radius10.borderRadius,
+    ),
+    shadowColor: MainConfig.appColors.cardShadowColor,
+    elevation: Dimens.space4,
+  );
 
   DialogThemeData _getDialogTheme() => DialogThemeData(
-        backgroundColor: _appColorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: Dimens.radius20.borderRadius,
-        ),
-        elevation: Dimens.space4,
-        titleTextStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .titleLarge
-            ?.copyWith(color: _appColorScheme.onSurface),
-        contentTextStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .bodyMedium
-            ?.copyWith(
-              color: _appColorScheme.onSurface,
-            ),
-      );
+    backgroundColor: _appColorScheme.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: Dimens.radius20.borderRadius,
+    ),
+    elevation: Dimens.space4,
+    titleTextStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .titleLarge
+        ?.copyWith(color: _appColorScheme.onSurface),
+    contentTextStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .bodyMedium
+        ?.copyWith(
+      color: _appColorScheme.onSurface,
+    ),
+  );
 
   BottomSheetThemeData _getBottomSheetThemeData() => BottomSheetThemeData(
-        backgroundColor: _appColorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Dimens.radius24.circularRadius,
-            topRight: Dimens.radius24.circularRadius,
-          ),
-        ),
-        modalBackgroundColor: _appColorScheme.surface,
-        elevation: Dimens.space4,
-        modalElevation: Dimens.space4,
-      );
+    backgroundColor: _appColorScheme.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Dimens.radius24.circularRadius,
+        topRight: Dimens.radius24.circularRadius,
+      ),
+    ),
+    modalBackgroundColor: _appColorScheme.surface,
+    elevation: Dimens.space4,
+    modalElevation: Dimens.space4,
+  );
 
   BottomNavigationBarThemeData _getBottomNavigationBarThemeData() =>
       BottomNavigationBarThemeData(
@@ -561,88 +613,88 @@ class MyAppTheme {
             .textTheme(isLtr: _isEnglishLan)
             .bodyMedium
             ?.copyWith(
-              fontSize: Dimens.fontSize12,
-            ),
+          fontSize: Dimens.fontSize12,
+        ),
       );
 
   DrawerThemeData _getDrawerThemeData() => DrawerThemeData(
-        backgroundColor: _appColorScheme.surface,
-      );
+    backgroundColor: _appColorScheme.surface,
+  );
 
   TabBarThemeData _getTabBarTheme() => TabBarThemeData(
     indicatorColor: _appColorScheme.surface,
-        overlayColor: WidgetStateProperty.resolveWith(
+    overlayColor: WidgetStateProperty.resolveWith(
           (Set<WidgetState> states) {
-            if (states.contains(WidgetState.pressed)) {
-              return _appColorScheme.surface
-                  .withValues(alpha: Dimens.opacity03);
-            }
-            return null;
-          },
-        ),
-        dividerColor: Colors.transparent,
-        dividerHeight: 0,
-        indicatorSize: TabBarIndicatorSize.label,
-        labelPadding: const EdgeInsets.symmetric(
-          vertical: Dimens.space6,
-          horizontal: Dimens.space10,
-        ),
-        labelColor: _appColorScheme.surface,
-        unselectedLabelColor: _appColorScheme.tertiary,
-        labelStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .bodyMedium
-            ?.copyWith(fontSize: Dimens.fontSize20),
-        unselectedLabelStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .bodyMedium
-            ?.copyWith(fontSize: Dimens.fontSize20),
-      );
+        if (states.contains(WidgetState.pressed)) {
+          return _appColorScheme.surface
+              .withValues(alpha: Dimens.opacity03);
+        }
+        return null;
+      },
+    ),
+    dividerColor: Colors.transparent,
+    dividerHeight: 0,
+    indicatorSize: TabBarIndicatorSize.label,
+    labelPadding: const EdgeInsets.symmetric(
+      vertical: Dimens.space6,
+      horizontal: Dimens.space10,
+    ),
+    labelColor: _appColorScheme.surface,
+    unselectedLabelColor: _appColorScheme.tertiary,
+    labelStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .bodyMedium
+        ?.copyWith(fontSize: Dimens.fontSize20),
+    unselectedLabelStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .bodyMedium
+        ?.copyWith(fontSize: Dimens.fontSize20),
+  );
 
   SwitchThemeData _getSwitchThemeData() => SwitchThemeData(
-        thumbColor: WidgetStatePropertyAll<Color?>(_appColorScheme.surface),
-        trackColor: WidgetStateProperty.resolveWith(
+    thumbColor: WidgetStatePropertyAll<Color?>(_appColorScheme.surface),
+    trackColor: WidgetStateProperty.resolveWith(
           (Set<WidgetState> states) {
-            if (states.contains(WidgetState.selected) ||
-                states.contains(WidgetState.pressed)) {
-              return _appColorScheme.surface;
-            }
-            return _appColorScheme.tertiary;
-          },
-        ),
-        overlayColor: WidgetStateProperty.resolveWith(
+        if (states.contains(WidgetState.selected) ||
+            states.contains(WidgetState.pressed)) {
+          return _appColorScheme.surface;
+        }
+        return _appColorScheme.tertiary;
+      },
+    ),
+    overlayColor: WidgetStateProperty.resolveWith(
           (Set<WidgetState> states) {
-            if (states.contains(WidgetState.pressed)) {
-              return _appColorScheme.surface
-                  .withValues(alpha: Dimens.opacity03);
-            }
-            return null;
-          },
-        ),
-        splashRadius: Dimens.radius10,
-      );
+        if (states.contains(WidgetState.pressed)) {
+          return _appColorScheme.surface
+              .withValues(alpha: Dimens.opacity03);
+        }
+        return null;
+      },
+    ),
+    splashRadius: Dimens.radius10,
+  );
 
   SnackBarThemeData _getSnackBarThemeData() => SnackBarThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: Dimens.radius6.borderRadius,
-        ),
-        backgroundColor: _appColorScheme.onSurface,
-        actionTextColor: _appColorScheme.surface,
-        contentTextStyle: MainConfig.appStyle
-            .textTheme(isLtr: _isEnglishLan)
-            .bodyMedium
-            ?.copyWith(color: _appColorScheme.surface),
-      );
+    shape: RoundedRectangleBorder(
+      borderRadius: Dimens.radius6.borderRadius,
+    ),
+    backgroundColor: _appColorScheme.onSurface,
+    actionTextColor: _appColorScheme.surface,
+    contentTextStyle: MainConfig.appStyle
+        .textTheme(isLtr: _isEnglishLan)
+        .bodyMedium
+        ?.copyWith(color: _appColorScheme.surface),
+  );
 
   RadioThemeData _getRadioThemeData() => RadioThemeData(
-        fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-          if (states.contains(WidgetState.selected)) {
-            return _appColorScheme.primary;
-          }
-          return MainConfig.appColors.radioFillGrey;
-        }),
-        splashRadius: Dimens.radius10,
-      );
+    fillColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        return _appColorScheme.primary;
+      }
+      return MainConfig.appColors.radioFillGrey;
+    }),
+    splashRadius: Dimens.radius10,
+  );
 
   ProgressIndicatorThemeData _getProgressIndicatorThemeData() =>
       ProgressIndicatorThemeData(
@@ -653,12 +705,12 @@ class MyAppTheme {
       );
 
   PopupMenuThemeData _getPopupMenuThemeData() => PopupMenuThemeData(
-        color: _appColorScheme.surface,
-        elevation: Dimens.elevation4,
-        shape: RoundedRectangleBorder(
-          borderRadius: Dimens.radius10.borderRadius,
-        ),
-        textStyle:
-            MainConfig.appStyle.textTheme(isLtr: _isEnglishLan).bodySmall,
-      );
+    color: _appColorScheme.surface,
+    elevation: Dimens.elevation4,
+    shape: RoundedRectangleBorder(
+      borderRadius: Dimens.radius10.borderRadius,
+    ),
+    textStyle:
+    MainConfig.appStyle.textTheme(isLtr: _isEnglishLan).bodySmall,
+  );
 }

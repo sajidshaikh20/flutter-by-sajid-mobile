@@ -59,51 +59,61 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (BuildContext context) =>
               ForceUpdateUnderMaintenanceCubit.instance(),
         ),
+        BlocProvider<ThemeCubit>(
+          create: (BuildContext context) => ThemeCubit.instance,
+        ),
         BlocProvider<HomeCubit>(
           create: (BuildContext context) => HomeCubit(),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(
         builder: (BuildContext context, ChangeLocaleState state) {
-          bool isLtr = SharedPref.instance
+          final bool isLtr = SharedPref.instance
               .getBool(PrefsKey.isEnglishLanguageLoadedKey, defValue: true);
           final AppRouter appRouter = GetIt.instance<AppRouter>();
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            builder: EasyLoading.init(
-                builder: (BuildContext context, Widget? child) {
-              configLoader();
-              return child ?? const SizedBox();
-            }),
-            routerConfig: appRouter.config(
-              navigatorObservers: () => <NavigatorObserver>[
-                CustomNavigationObserver(),
-                // SentryNavigatorObserver(),
-                //if (kDebugMode) ChuckerFlutter.navigatorObserver,
-              ],
-            ),
-            title: AppConstant.appName,
-            locale: getLocale(),
-            supportedLocales: const <Locale>[
-              Locale(AppConstant.en, ''),
-              Locale(AppConstant.ar, ''),
-            ],
-            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-              AppLocalizationsDelegate(),
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            localeResolutionCallback:
-                (Locale? locale, Iterable<Locale> supportedLocales) {
-              for (final Locale supportedLocale in supportedLocales) {
-                if (supportedLocale.languageCode == locale?.languageCode) {
-                  return supportedLocale;
-                }
-              }
-              return supportedLocales.first;
+          return BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (BuildContext context, ThemeMode themeMode) {
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                builder: EasyLoading.init(
+                  builder: (BuildContext context, Widget? child) {
+                    configLoader();
+                    return child ?? const SizedBox();
+                  },
+                ),
+                routerConfig: appRouter.config(
+                  navigatorObservers: () => <NavigatorObserver>[
+                    CustomNavigationObserver(),
+                  ],
+                ),
+                title: AppConstant.appName,
+                locale: getLocale(),
+                supportedLocales: const <Locale>[
+                  Locale(AppConstant.en, ''),
+                  Locale(AppConstant.ar, ''),
+                ],
+                localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+                  AppLocalizationsDelegate(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                localeResolutionCallback: (
+                  Locale? locale,
+                  Iterable<Locale> supportedLocales,
+                ) {
+                  for (final Locale supportedLocale in supportedLocales) {
+                    if (supportedLocale.languageCode == locale?.languageCode) {
+                      return supportedLocale;
+                    }
+                  }
+                  return supportedLocales.first;
+                },
+                theme: MainConfig.appTheme.theme(isLtr: isLtr),
+                darkTheme: MainConfig.appTheme.darkTheme(isLtr: isLtr),
+                themeMode: themeMode,
+              );
             },
-            theme: MainConfig.appTheme.theme(isLtr: isLtr),
           );
         },
       ),

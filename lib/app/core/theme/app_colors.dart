@@ -10,6 +10,43 @@ import '../../../utils/exports.dart';
 /// UI elements and states, like text colors, background colors, border colors, and colors
 /// for interactive components like buttons and icons.
 class AppColors {
+  /// Updated by [ThemeCubit] when the user changes theme mode.
+  bool isDark = false;
+
+  // ---------------------------------------------------------------------------
+  // WEKO.PRO brand & semantic palette
+  // ---------------------------------------------------------------------------
+  static const Color primaryPurple = Color(0xFF8B40FF);
+  static const Color secondaryPurple = Color(0xFF8A2BE2);
+  static const Color accentPink = Color(0xFFFF4F0B);
+  static const Color backgroundDark = Color(0xFF030511);
+  static const Color surfaceDark = Color(0xFF141023);
+  static const Color cardDark = Color(0xFF1B162E);
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
+  static const Color textSecondaryDark = Color(0xFFB7B3C8);
+  static const Color borderDark = Color(0xFF2B2147);
+  static const Color dividerDark = Color(0xFF211A33);
+  static const Color backgroundLight = Color(0xFFF8F7FC);
+  static const Color surfaceLight = Color(0xFFFFFFFF);
+  static const Color cardLight = Color(0xFFF3EEFF);
+  static const Color textPrimaryLight = Color(0xFF1A102B);
+  static const Color textSecondaryLight = Color(0xFF5F5873);
+  static const Color borderLight = Color(0xFFE2D9F5);
+  static const Color dividerLight = Color(0xFFEEE8F9);
+  static const Color successColor = Color(0xFF00E676);
+  static const Color errorColor = Color(0xFFFF5252);
+  static const Color warningColor = Color(0xFFFFC107);
+  static const Color infoColor = Color(0xFF2196F3);
+  static const Color neutralColor = Color(0xFFA0A0A0);
+  static const List<Color> primaryGradient = <Color>[
+    Color(0xFFFF4F0B),
+    Color(0xFF8B40FF),
+  ];
+  static const List<Color> secondaryGradient = <Color>[
+    Color(0xFF8A2BE2),
+    Color(0xFF7A2FFF),
+  ];
+
   /// Represents a transparent color.
   Color transparent = Colors.transparent;
 
@@ -132,12 +169,12 @@ class AppColors {
   ///
   ///
   ///
-  /// DUKAN app color
+  /// DUKAN app color (WEKO.PRO overrides via getters below)
   ///
-  /// Represents the main brand color, typically a shade of dark blue.
-  Color mainColor = const Color(0xFF3AB557);
+  /// Represents the main brand color.
+  Color get mainColor => primaryPurple;
   /// Represents a secondary brand color, often used for accents.
-  Color secondaryColor = const Color(0xFFC4618C);
+  Color get secondaryColor => secondaryPurple;
   /// Represents an ice blue color, commonly used for backgrounds or highlights.
   Color iceBlueColor = const Color(0xFFE9FAFF);
   /// Represents a standard gray color, often used for text.
@@ -152,12 +189,12 @@ class AppColors {
   /// Represents a gray color used for image backgrounds.
   Color imageBgColor = const Color(0xFFEDEDED);
   /// Represents a standard red color, used for alerts or important text.
-  Color redColor = const Color(0xFFE11C23);
+  Color get redColor => errorColor;
   /// Represents a light red color, often used for backgrounds.
   Color lightredBgColor = const Color(0xFFFFEEEF);
 
   /// Represents a standard green color, typically used for success indicators.
-  Color greenColor = const Color(0xFF07A927);
+  Color get greenColor => successColor;
   /// Represents a light green color, often used for backgrounds.
   Color lightgreenBgColor = const Color(0xFFECFFF0);
   /// Represents a dark green color, used for important text or icons.
@@ -171,14 +208,15 @@ class AppColors {
   /// Represents a specific blue color for span text.
   Color spanTextColor = const Color(0xFF27328C);
   /// Represents a gray color for labels.
-  Color labelGrey = const Color(0xFF727272);
+  Color get labelGrey => isDark ? textSecondaryDark : textSecondaryLight;
   /// Represents a gray color for circles or circular elements.
   Color circleGrey = const Color(0xFF737373);
   /// Represents an extremely light gray color, used for backgrounds.
   Color lightestGreyColor = const Color(0xFFF8F8F8);
 
   /// Represents a gray color for text.
-  Color greyTextColor = const Color(0xFFA0A0A0);
+  Color get greyTextColor =>
+      isDark ? textSecondaryDark : textSecondaryLight;
   /// Represents a gray color for unselected items.
   Color unselectedGreyColor = const Color(0xFFBBBBBB);
   /// Represents a gray color for backgrounds.
@@ -226,52 +264,52 @@ class AppColors {
 
 
 
-  // mainColor=Color(0xFF00387B);
-
   /// Primary color.
-  Color primary = const Color(0xFF3AB557);
+  Color get primary => primaryPurple;
 
-  /// Dark shade of primary for gradients (e.g. wallet home background).
-  Color primaryDark = const Color(0xFF1D542A);
+  /// Dark shade of primary for gradients.
+  Color get primaryDark => secondaryPurple;
 
   /// Color on primary color.
-  Color onPrimary = whiteColor;
+  Color get onPrimary => whiteColor;
 
   /// Primary container color.
-  Color primaryContainer = blackColor;
+  Color get primaryContainer => isDark ? cardDark : cardLight;
 
   /// Color on primary container.
-  Color onPrimaryContainer = blackColor;
+  Color get onPrimaryContainer =>
+      isDark ? textPrimaryDark : textPrimaryLight;
 
   /// Secondary color.
-  Color secondary = blackColor;
+  Color get secondary => secondaryPurple;
 
   /// Color on secondary color.
-  Color onSecondary = blackColor;
+  Color get onSecondary => whiteColor;
 
   /// Color on secondary container.
-  Color onSecondaryContainer = blackColor;
+  Color get onSecondaryContainer =>
+      isDark ? textPrimaryDark : textPrimaryLight;
 
   /// Secondary container color.
-  Color secondaryContainer = blackColor;
+  Color get secondaryContainer => isDark ? surfaceDark : surfaceLight;
 
   /// Tertiary color.
-  Color tertiary = backgroundLightGrayColor;
+  Color get tertiary => isDark ? textSecondaryDark : textSecondaryLight;
 
   /// Primary background color.
-  Color backgroundPrimary = blackColor;
+  Color get backgroundPrimary => isDark ? backgroundDark : backgroundLight;
 
   /// Default background color.
-  Color background = whiteColor;
+  Color get background => isDark ? backgroundDark : backgroundLight;
 
   /// Color on background color.
-  Color onBackground = blackColor;
+  Color get onBackground => isDark ? textPrimaryDark : textPrimaryLight;
 
   /// Surface color.
-  Color surface = whiteColor;
+  Color get surface => isDark ? backgroundDark : surfaceLight;
 
   /// Color on surface.
-  Color onSurface = blackColor;
+  Color get onSurface => isDark ? textPrimaryDark : textPrimaryLight;
 
   /// Extra light blue background color.
   Color backgroundExtraLightBlue = extraLightBlueColor;
@@ -282,12 +320,12 @@ class AppColors {
   /// Alerts colors (Used in Listing)
   /// Border colors
   ///
-  /// Represents the primary border color, typically a shade of dark blue.
-  Color borderPrimaryColor = const Color(0xFF00387B);
+  /// Represents the primary border color.
+  Color get borderPrimaryColor => isDark ? borderDark : borderLight;
   /// Represents a secondary border color, usually white.
   Color borderSecondaryColor = whiteColor;
   /// Represents a light gray border color.
-  Color borderLightGreyColor = greyLightColor;
+  Color get borderLightGreyColor => isDark ? borderDark : borderLight;
   /// Represents a transparent border color.
   Color borderTransparentColor = Colors.transparent;
   /// Represents a transparent color for cards.
@@ -319,12 +357,14 @@ class AppColors {
 
   /// Text colors
   ///
-  /// Represents the primary text color, typically black.
-  Color textPrimaryColor = blackColor;
+  /// Represents the primary text color.
+  Color get textPrimaryColor =>
+      isDark ? textPrimaryDark : textPrimaryLight;
   /// Represents the text color when it should be white.
   Color textWhiteColor = whiteColor;
-  /// Represents the text color when it should be black.
-  Color textBlackColor = blackColor;
+  /// Represents the primary body text color (theme-aware).
+  Color get textBlackColor =>
+      isDark ? textPrimaryDark : textPrimaryLight;
   /// Represents a gray text color.
   Color textColorGrey = grey;
   /// Represents a red text color.
@@ -335,12 +375,14 @@ class AppColors {
   Color textDarkBlueColor = const Color(0xFF0466DC);
   /// flutterbysajid main color
   ///
-  /// Represents a medium dark blue text color.
-  Color textMediumDarkBlueColor = const Color(0xFF00387B);
+  /// Represents a medium dark accent text color.
+  Color get textMediumDarkBlueColor =>
+      isDark ? textPrimaryDark : textPrimaryLight;
   /// Represents a dark gray text color.
   Color textGreyDarkColor = greyDarkColor;
-  /// Represents a very dark gray text color, almost black.
-  Color textDarkBlackColor = greyDarkBlackColor;
+  /// Represents a very dark text color (theme-aware).
+  Color get textDarkBlackColor =>
+      isDark ? textPrimaryDark : textPrimaryLight;
   /// Represents a gray text color for labels.
   Color textLabelGreyColor = greyColor;
   /// Represents a medium gray text color.
@@ -350,8 +392,8 @@ class AppColors {
 
   /// Background colors
 
-  /// Represents the primary background color, a shade of dark blue.
-  Color backgroundPrimaryColor = const Color(0xFF00387B);
+  /// Represents the primary background color.
+  Color get backgroundPrimaryColor => primaryPurple;
 
   /// Represents a white background color.
   Color backgroundWhiteColor = whiteColor;
@@ -388,8 +430,9 @@ class AppColors {
   // Color backgroundDarkBlueColor = const Color(0xFF0466DC);
 
   /// **Dukkan Main Color:**
-  /// Represents the medium dark blue color used in the Dukkan app.
-  Color backgroundMediumDarkBlueColor = const Color(0xFF00387B);
+  /// Accent surface tint used for pressed/hover states.
+  Color get backgroundMediumDarkBlueColor =>
+      primaryPurple.withValues(alpha: 0.12);
   /// Represents the standard grey color used in the background.
   Color backgroundGrey = grey;
   /// Represents the lighter shade of grey used in the background.

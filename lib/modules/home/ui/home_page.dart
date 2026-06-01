@@ -10,12 +10,24 @@ class HomePage extends BaseResponsiveView {
   Widget buildview(BuildContext context) {
     return BlocProvider<HomeCubit>(
       create: (BuildContext c) => HomeCubit(),
-      child: const SafeArea(
+      child: SafeArea(
         child: Scaffold(
-          body: Center(
-            child: CustomTextLabelWidget(
-              label: "Home page",
-            ),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          appBar: AppBar(
+            title: const CustomTextLabelWidget(label: 'Home'),
+          ),
+          body: ListView(
+            padding: const EdgeInsets.all(Dimens.space16),
+            children: <Widget>[
+              CustomTextLabelWidget(
+                label: 'Settings',
+                style: context.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: Dimens.space12),
+              const AppThemeSettingsTile(),
+            ],
           ),
         ),
       ),
