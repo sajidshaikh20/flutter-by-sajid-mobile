@@ -59,4 +59,68 @@ class EnUS extends AppString {
 
   @override
   String get workKey => 'Work';
+
+  // Login & Social Login Keys
+  @override
+  String get loginSignupKey => 'Log in our sign up not to enjoy a more personalized and seamless ordering experience';
+
+  @override
+  String get continueWithGoogleKey => 'Continue with Google';
+
+  @override
+  String get continueWithMobileEmailKey => 'Continue with Mobile / Email';
+
+  @override
+  String get loginKey => 'Login';
+
+  @override
+  String get labelMobileOrMailKey => 'Mobile or Email';
+
+  @override
+  String get passwordKey => 'Password';
+
+  @override
+  String get pleaseEnterMobileOrNumberKey => 'Please enter mobile number or email';
+
+  @override
+  String get pleaseEnterThePasswordKey => 'Please enter the password';
+
+  @override
+  String get pleaseEnterMobileNumberKey => 'Please enter mobile number';
+
+  @override
+  String get onlyNumbersAllowedKey => 'Only numbers allowed';
+
+  @override
+  String get enterValidMobileNumberKey => 'Please enter a valid mobile number';
+
+  @override
+  String get pleaseEnterTheEmailKey => 'Please enter the email';
+
+  @override
+  String get pleaseEnterValidEmailKey => 'Please enter a valid email';
+
+  @override
+  String get passAllCriteriaKey => 'Password must meet all criteria';
+
+  @override
+  String get dontHaveAccountKey => "Don't have an account? Sign Up";
+
+  @override
+  String get forgotPasswordKey => 'Forgot Password?';
+
+  @override
+  String get welcomeBackKey => 'Welcome Back!';
+
+  @override
+  String get byContinuingAgreeKey => 'By continuing, you agree to our';
+
+  @override
+  String get termsOfServiceKey => 'Terms of Service';
+
+  @override
+  String get andKey => 'and';
+
+  @override
+  String get privacyPolicyKey => 'Privacy Policy';
 }

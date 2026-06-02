@@ -59,4 +59,68 @@ class ArDu extends AppString {
 
   @override
   String get workKey => 'العمل';
+
+  // Login & Social Login Keys
+  @override
+  String get loginSignupKey => 'تسجيل الدخول أو التسجيل';
+
+  @override
+  String get continueWithGoogleKey => 'المتابعة باستخدام Google';
+
+  @override
+  String get continueWithMobileEmailKey => 'المتابعة باستخدام الهاتف / البريد الإلكتروني';
+
+  @override
+  String get loginKey => 'تسجيل الدخول';
+
+  @override
+  String get labelMobileOrMailKey => 'الهاتف أو البريد الإلكتروني';
+
+  @override
+  String get passwordKey => 'كلمة المرور';
+
+  @override
+  String get pleaseEnterMobileOrNumberKey => 'الرجاء إدخال رقم الهاتف أو البريد الإلكتروني';
+
+  @override
+  String get pleaseEnterThePasswordKey => 'الرجاء إدخال كلمة المرور';
+
+  @override
+  String get pleaseEnterMobileNumberKey => 'الرجاء إدخال رقم الهاتف';
+
+  @override
+  String get onlyNumbersAllowedKey => 'الأرقام فقط مسموح بها';
+
+  @override
+  String get enterValidMobileNumberKey => 'الرجاء إدخال رقم هاتف صحيح';
+
+  @override
+  String get pleaseEnterTheEmailKey => 'الرجاء إدخال البريد الإلكتروني';
+
+  @override
+  String get pleaseEnterValidEmailKey => 'الرجاء إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get passAllCriteriaKey => 'يجب أن تستوفي كلمة المرور جميع المعايير';
+
+  @override
+  String get dontHaveAccountKey => 'ليس لديك حساب؟ سجل الآن';
+
+  @override
+  String get forgotPasswordKey => 'هل نسيت كلمة المرور؟';
+
+  @override
+  String get welcomeBackKey => 'مرحباً بعودتك!';
+
+  @override
+  String get byContinuingAgreeKey => 'من خلال الاستمرار، فإنك توافق على';
+
+  @override
+  String get termsOfServiceKey => 'شروط الخدمة';
+
+  @override
+  String get andKey => 'و';
+
+  @override
+  String get privacyPolicyKey => 'سياسة الخصوصية';
 }

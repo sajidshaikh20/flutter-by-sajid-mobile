@@ -121,7 +121,7 @@ class CustomButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
-    double textFontSize = Dimens.fontSize18;
+    double textFontSize = Dimens.fontSize16;
     double buttonHeight = height;
 
     return TextButton(

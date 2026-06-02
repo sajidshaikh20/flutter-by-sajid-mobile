@@ -19,6 +19,7 @@ FutureOr<void> setupLocator() {
     ..registerSingleton<SharedPref>(SharedPref())
     ..registerSingleton<DebugLog>(DebugLog())
     ..registerSingleton<JsonDataManagerService>(JsonDataManagerService())
+    ..registerLazySingleton<UserProfileService>(UserProfileService.new)
 
   // Utilities — lazy unless used instantly
     ..registerLazySingleton<AESEncryption>(AESEncryption.new)
@@ -28,6 +29,7 @@ FutureOr<void> setupLocator() {
 
     // Services — lazy unless required immediately
     ..registerLazySingleton<LanguageService>(LanguageService.new)
+    ..registerLazySingleton<SocialLoginServices>(SocialLoginServices.new)
 
 
 

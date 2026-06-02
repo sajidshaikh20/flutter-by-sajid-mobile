@@ -54,6 +54,8 @@ class AppInitializer {
     await _initStorage();
     await _initScreenPreference();
     await FirebaseInitializer.instance.initialize();
+    await getIt<UserProfileService>().loadUserData();
+    DebugLog.instance.i('AppInitializer: UserProfileService loaded');
     _setStatusBarTheme();
   }
 
@@ -79,6 +81,7 @@ class AppInitializer {
     await GetStorage.init();
     await SharedPref.instance.init();
   }
+
 
   Future<void> _initScreenPreference() async {
     await SystemChrome.setPreferredOrientations(

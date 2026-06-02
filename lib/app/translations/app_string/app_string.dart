@@ -25,4 +25,27 @@ abstract class AppString {
   String get showKey;
   String get tryAgainKey;
   String get workKey;
+  
+  // Login & Social Login Keys
+  String get  loginSignupKey;
+  String get continueWithGoogleKey;
+  String get continueWithMobileEmailKey;
+  String get loginKey;
+  String get labelMobileOrMailKey;
+  String get passwordKey;
+  String get pleaseEnterMobileOrNumberKey;
+  String get pleaseEnterThePasswordKey;
+  String get pleaseEnterMobileNumberKey;
+  String get onlyNumbersAllowedKey;
+  String get enterValidMobileNumberKey;
+  String get pleaseEnterTheEmailKey;
+  String get pleaseEnterValidEmailKey;
+  String get passAllCriteriaKey;
+  String get dontHaveAccountKey;
+  String get forgotPasswordKey;
+  String get welcomeBackKey;
+  String get byContinuingAgreeKey;
+  String get termsOfServiceKey;
+  String get andKey;
+  String get privacyPolicyKey;
 }

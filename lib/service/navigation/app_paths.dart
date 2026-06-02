@@ -37,4 +37,10 @@ abstract class AppPaths {
 
   /// Payment success screen after successful OTP verification.
   static const String paymentSuccess = '/payment_success';
+
+  /// Social login screen route.
+  static const String socialLogin = '/social_login';
+
+  /// Login screen route.
+  static const String login = '/login';
 }

@@ -21,6 +21,20 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: TransitionsBuilders.noTransition,
       durationInMilliseconds: 0,
     ),
+    CustomRoute<dynamic>(
+      page: SocialLoginRoute.page,
+      path: AppPaths.socialLogin,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
+      page: LoginRoute.page,
+      path: AppPaths.login,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
 
     /// Dashboard with 4 tabs
     CustomRoute<dynamic>(

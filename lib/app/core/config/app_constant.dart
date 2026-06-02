@@ -78,6 +78,7 @@ abstract class AppConstant {
   static const String appleSignInSuccess = "Apple Sign in Complete";
   static const String appleSignInFailed = "Apple Sign in Failed";
   static const String googleSignInSuccess = "Google Sign in Complete";
+  static const String googleSignInFailed = "Google Sign in Failed";
   static const String facebookSignInSuccess = "facebook Sign in Complete";
   static const String facebookSignInFailed = "Facebook Sign in Failed";
 }

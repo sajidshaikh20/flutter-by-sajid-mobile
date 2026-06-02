@@ -7,7 +7,8 @@ export 'package:auto_route/auto_route.dart';
 export 'package:collection/collection.dart';
 export 'package:device_info_plus/device_info_plus.dart';
 export 'package:equatable/equatable.dart';
-export 'package:fast_cached_network_image/fast_cached_network_image.dart' show FastCachedImage, FastCachedImageConfig, FastCachedProgressData;
+export 'package:fast_cached_network_image/fast_cached_network_image.dart'
+    show FastCachedImage, FastCachedImageConfig, FastCachedProgressData;
 export 'package:firebase_analytics/firebase_analytics.dart';
 export 'package:firebase_core/firebase_core.dart';
 export 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -21,6 +22,7 @@ export 'package:flutter_native_splash/flutter_native_splash.dart';
 export 'package:flutter_rating_bar/flutter_rating_bar.dart';
 export 'package:flutter_svg/flutter_svg.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
+export 'package:google_sign_in/google_sign_in.dart';
 export 'package:intl/date_symbol_data_local.dart';
 export 'package:keyboard_actions/keyboard_actions.dart';
 export 'package:logger/logger.dart';
@@ -42,5 +44,3 @@ export '../../service/service.dart'
 export '../base/base_state.dart';
 export '../main.dart';
 export 'utils.dart';
-
-

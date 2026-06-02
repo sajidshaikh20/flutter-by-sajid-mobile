@@ -1,4 +1,3 @@
-
 import 'exports.dart';
 
 /// Common utility functions used across the app.
@@ -37,9 +36,9 @@ Future<void> showLoader({required bool value, String? message}) async {
 
 /// Returns true if the language is aligned from left to right (LTR).
 bool get isLanguageAlignmentLTR => SharedPref.instance.getBool(
-      PrefsKey.isEnglishLanguageLoadedKey,
-      defValue: true,
-    );
+  PrefsKey.isEnglishLanguageLoadedKey,
+  defValue: true,
+);
 
 /// Checks if the given [text] is written in a right-to-left (RTL) language.
 bool isRTLText(String text) {
@@ -65,10 +64,7 @@ bool _isNavigating = false;
 
 /// Handles redirection based on [type] and optional [data], navigating to
 /// appropriate pages while preventing duplicate navigation
-void handleRedirection({
-  required String type,
-  Map<String, dynamic>? data,
-}) {
+void handleRedirection({required String type, Map<String, dynamic>? data}) {
   if (_isNavigating) {
     return;
   }
@@ -100,9 +96,11 @@ void handleRedirection({
         unawaited(router.push(const BankTransferRoute()));
       }
   }
-  unawaited(Future<void>.delayed(const Duration(milliseconds: 500), () {
-    _isNavigating = false;
-  }));
+  unawaited(
+    Future<void>.delayed(const Duration(milliseconds: 500), () {
+      _isNavigating = false;
+    }),
+  );
 }
 
 /// Fade page transition for route animations
@@ -113,10 +111,7 @@ Widget fadePageTransition(
   Widget child,
 ) {
   return FadeTransition(
-    opacity: CurvedAnimation(
-      parent: animation,
-      curve: Curves.easeInOutQuad,
-    ),
+    opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOutQuad),
     child: child,
   );
 }
@@ -165,4 +160,28 @@ Future<void> logCrashlyticsError(
       }
     }
   }
+}
+
+///getPlatformName
+String getPlatformName() {
+  if (kIsWeb) return AppConstant.web;
+  if (Platform.isAndroid) return AppConstant.android;
+  if (Platform.isIOS) return AppConstant.ios;
+  return "";
+}
+
+/// Gets the unique device identifier for the current platform.
+///
+/// Returns:
+/// - For Android: The device ID from AndroidDeviceInfo
+/// - For iOS: The identifier for vendor from IosDeviceInfo
+/// - For other platforms: Empty string
+String getDeviceId() {
+  String deviceId = '';
+  if (Platform.isAndroid) {
+    deviceId = getIt<MainConfig>().androidInfo.id;
+  } else if (Platform.isIOS) {
+    deviceId = getIt<MainConfig>().iosDeviceInfo.identifierForVendor ?? '';
+  }
+  return deviceId;
 }
