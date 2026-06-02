@@ -18,7 +18,7 @@ class OtherAuthView extends StatelessWidget {
         CustomTextLabelWidget(
             label: context.appString.forgotPasswordKey,
             style: context.textTheme.headlineMedium?.copyWith(
-              color: AppColors.blackColor,
+              color: AppColors.primaryPurple,
               height: Dimens.lineHeight20.toLineHeight(forgotPasswordText),
               fontWeight: FontWeight.w600,
               fontSize: forgotPasswordText,

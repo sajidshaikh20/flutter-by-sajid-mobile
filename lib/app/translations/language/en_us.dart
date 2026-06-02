@@ -123,4 +123,16 @@ class EnUS extends AppString {
 
   @override
   String get privacyPolicyKey => 'Privacy Policy';
+
+  @override
+  String get memberLoginKey => 'Member Login';
+
+  @override
+  String get continueJourneySecurelyKey => 'Continue your trading journey securely';
+
+  @override
+  String get emailOrUsernameKey => 'Email or Username';
+
+  @override
+  String get pleaseEnterEmailOrUsernameKey => 'Please enter your email or username';
 }

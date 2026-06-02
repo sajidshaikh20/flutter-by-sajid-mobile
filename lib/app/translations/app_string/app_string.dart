@@ -48,4 +48,8 @@ abstract class AppString {
   String get termsOfServiceKey;
   String get andKey;
   String get privacyPolicyKey;
+  String get memberLoginKey;
+  String get continueJourneySecurelyKey;
+  String get emailOrUsernameKey;
+  String get pleaseEnterEmailOrUsernameKey;
 }

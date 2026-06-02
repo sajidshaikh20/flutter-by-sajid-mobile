@@ -190,7 +190,7 @@ class CommonTextFormFieldWidget extends StatefulWidget {
   /// When true, the field's container height grows with content instead of being fixed
   final bool enableAutoHeight;
 ///
-  CommonTextFormFieldWidget({
+  const CommonTextFormFieldWidget({
     super.key,
     required this.controller,
     this.formFieldKey,
@@ -205,14 +205,14 @@ class CommonTextFormFieldWidget extends StatefulWidget {
     this.titleStyle,
     this.title,
     this.prefixIconColor = Colors.transparent,
-    Color? labelColor,
+    this.labelColor,
     this.autoFocus = false,
     this.onChange,
     this.textInputType = TextInputType.text,
     this.prefix,
     this.readOnly = false,
     this.cursorColor,
-    Color? fillColor,
+    this.fillColor,
     this.input,
     this.editTextHeight = Dimens.size58,
     this.borderRadius = Dimens.size10,
@@ -260,8 +260,7 @@ class CommonTextFormFieldWidget extends StatefulWidget {
     this.showCursor,
     this.disableContextMenu = false,
     this.enableAutoHeight = false,
-  })  : fillColor = fillColor ?? MainConfig.appColors.backgroundWhite,
-        labelColor = labelColor ?? MainConfig.appColors.labelGrey;
+  });
 
   @override
   State<CommonTextFormFieldWidget> createState() =>
@@ -290,6 +289,7 @@ class _CommonTextFormFieldWidgetState extends State<CommonTextFormFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final bool isRTL = Directionality.of(context) == TextDirection.rtl;
     double textFontSize = Dimens.fontSize16;
     EdgeInsets contentPadding = const EdgeInsets.only(
@@ -302,18 +302,24 @@ class _CommonTextFormFieldWidgetState extends State<CommonTextFormFieldWidget> {
     final bool hasError = widget.errorMsg?.isNotEmpty ?? false;
     final bool isFocused = _focusNode.hasFocus;
 
+    // Dynamically resolve colors based on theme
+    final Color resolvedFillColor = widget.fillColor ??
+        (isDark ? AppColors.surfaceDark : AppColors.whiteColor);
+    final Color resolvedLabelColor = widget.labelColor ??
+        (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight);
+
     Color borderColor;
     Color labelColor;
     if (hasError) {
-      borderColor = MainConfig.appColors.errorBorder;
-      labelColor = MainConfig.appColors.errorBorder;
+      borderColor = AppColors.errorColor;
+      labelColor = AppColors.errorColor;
     } else if (isFocused) {
-      borderColor = MainConfig.appColors.borderPrimaryColor;
-      labelColor = MainConfig.appColors.mainColor;
-      // Border color when focused
+      borderColor = AppColors.primaryPurple;
+      labelColor = AppColors.primaryPurple;
     } else {
-      borderColor = widget.borderColor ?? MainConfig.appColors.dukkanborderGreyLightColor;
-      labelColor = MainConfig.appColors.labelGrey;
+      borderColor = widget.borderColor ??
+          (isDark ? AppColors.whiteColor : MainConfig.appColors.dukkanborderGreyLightColor);
+      labelColor = resolvedLabelColor;
     }
 
     return MediaQuery(
@@ -327,7 +333,7 @@ class _CommonTextFormFieldWidgetState extends State<CommonTextFormFieldWidget> {
             height: widget.enableAutoHeight ? null : widget.editTextHeight,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
-              color: widget.fillColor,
+              color: resolvedFillColor,
               border: Border.all(color: borderColor,
               width: widget.borderWidth),
               borderRadius: BorderRadius.all(
@@ -336,60 +342,60 @@ class _CommonTextFormFieldWidgetState extends State<CommonTextFormFieldWidget> {
             ),
             child: TextFormField(
               onTapOutside: widget.onTapOutside,
-              key: widget.formFieldKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              enableInteractiveSelection: widget.enableInteractiveSelection ?? true,
-              maxLength: widget.maxLength,
-              controller: widget.controller,
-              onTap: widget.onTap,
-              textCapitalization: widget.textCapitalization,
-              keyboardType: widget.textInputType,
-              textInputAction: widget.input,
-              onChanged: widget.onChange,
-              readOnly: widget.readOnly ?? false,
-              focusNode: widget.focusNode,
-              autofocus: widget.autoFocus,
-              showCursor: widget.showCursor,
-              // contextMenuBuilder: widget.disableContextMenu
-              //     ? (BuildContext context, EditableTextState editableTextState) {
-              //         return const SizedBox.shrink();
-              //       }
-              //     : null,
-              cursorHeight: widget.cursorHeight,
-              inputFormatters: widget.isEmojiAllow
-                  ? widget.inputFormatters
-                  : <TextInputFormatter>[
-                      ...?widget.inputFormatters,
-                      EmojiBlockFormatter(),
-                    ],
-              style: widget.style ??
-                  context.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      height: Dimens.lineHeight24.toLineHeight(textFontSize),
-                      color: MainConfig.appColors.textBlackColor,
-                      fontSize: textFontSize),
-              maxLines: widget.maxLines,
-              minLines: widget.minLines,
-              enabled: widget.isEditable,
-              cursorColor: widget.cursorColor ??
-                  MainConfig.appColors.backgroundBlackColor,
-              obscureText: widget.obscureText ?? false,
-              textAlign: widget.textAlign ?? TextAlign.start,
-              onFieldSubmitted: widget.onTextSubmit,
-              decoration: widget.decoration ??
-                  InputDecoration(
-                    counterText: '',
-                    alignLabelWithHint: widget.alignLabelWithHint,
-                    floatingLabelBehavior: widget.floatingLabelBehavior,
-                    errorBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    fillColor: widget.fillColor,
-                    filled: true,
-                    focusedErrorBorder: InputBorder.none,
-                    suffixIconConstraints: widget.suffixIconConstraints,
+            key: widget.formFieldKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            enableInteractiveSelection: widget.enableInteractiveSelection ?? true,
+            maxLength: widget.maxLength,
+            controller: widget.controller,
+            onTap: widget.onTap,
+            textCapitalization: widget.textCapitalization,
+            keyboardType: widget.textInputType,
+            textInputAction: widget.input,
+            onChanged: widget.onChange,
+            readOnly: widget.readOnly ?? false,
+            focusNode: widget.focusNode,
+            autofocus: widget.autoFocus,
+            showCursor: widget.showCursor,
+            // contextMenuBuilder: widget.disableContextMenu
+            //     ? (BuildContext context, EditableTextState editableTextState) {
+            //         return const SizedBox.shrink();
+            //       }
+            //     : null,
+            cursorHeight: widget.cursorHeight,
+            inputFormatters: widget.isEmojiAllow
+                ? widget.inputFormatters
+                : <TextInputFormatter>[
+                    ...?widget.inputFormatters,
+                    EmojiBlockFormatter(),
+                  ],
+            style: widget.style ??
+                context.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    height: Dimens.lineHeight24.toLineHeight(textFontSize),
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: textFontSize),
+            maxLines: widget.maxLines,
+            minLines: widget.minLines,
+            enabled: widget.isEditable,
+            cursorColor: widget.cursorColor ??
+                (isDark ? Colors.white : Colors.black),
+            obscureText: widget.obscureText ?? false,
+            textAlign: widget.textAlign ?? TextAlign.start,
+            onFieldSubmitted: widget.onTextSubmit,
+            decoration: widget.decoration ??
+                InputDecoration(
+                  counterText: '',
+                  alignLabelWithHint: widget.alignLabelWithHint,
+                  floatingLabelBehavior: widget.floatingLabelBehavior,
+                  errorBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  fillColor: resolvedFillColor,
+                  filled: true,
+                  focusedErrorBorder: InputBorder.none,
+                  suffixIconConstraints: widget.suffixIconConstraints,
                     contentPadding: contentPadding,
                     prefixIconConstraints: widget.prefixIconConstraints ??
                         BoxConstraints(

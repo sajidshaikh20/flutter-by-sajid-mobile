@@ -123,4 +123,16 @@ class ArDu extends AppString {
 
   @override
   String get privacyPolicyKey => 'سياسة الخصوصية';
+
+  @override
+  String get memberLoginKey => 'دخول الأعضاء';
+
+  @override
+  String get continueJourneySecurelyKey => 'واصل رحلتك التجارية بأمان';
+
+  @override
+  String get emailOrUsernameKey => 'البريد الإلكتروني أو اسم المستخدم';
+
+  @override
+  String get pleaseEnterEmailOrUsernameKey => 'الرجاء إدخال البريد الإلكتروني أو اسم المستخدم';
 }

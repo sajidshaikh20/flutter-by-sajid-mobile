@@ -173,7 +173,7 @@ class SocialLoginPage extends BaseResponsiveView {
                                           style: context.textTheme.bodyLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.w600,
-                                                fontSize: Dimens.fontSize15,
+                                                fontSize: Dimens.fontSize12,
                                                 color: isDark
                                                     ? AppColors.textPrimaryDark
                                                     : AppColors
@@ -212,10 +212,9 @@ class SocialLoginPage extends BaseResponsiveView {
                                           context
                                               .appString
                                               .continueWithMobileEmailKey,
-                                          style: context.textTheme.bodyLarge
-                                              ?.copyWith(
+                                          style: context.textTheme.bodyLarge?.copyWith(
                                                 fontWeight: FontWeight.w600,
-                                                fontSize: Dimens.fontSize15,
+                                                fontSize: Dimens.fontSize12,
                                                 color: Colors.white,
                                               ),
                                         ),
