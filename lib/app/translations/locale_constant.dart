@@ -10,7 +10,10 @@ Future<Locale> setLocale(String languageCode) async {
 /// Retrieves the application's current locale from shared preferences,
 /// defaulting to English if not set.
 Locale getLocale() {
-  String languageCode = SharedPref.instance.getString(PrefsKey.currentLocaleKey, AppConstant.en);
+  String languageCode = SharedPref.instance.getString(
+    PrefsKey.currentLocaleKey,
+    AppConstant.en,
+  );
   return _locale(languageCode);
 }
 

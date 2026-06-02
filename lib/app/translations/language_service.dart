@@ -9,11 +9,15 @@ class LanguageService {
 
   /// Loads language data from SharedPreferences
   Future<void> loadLanguageData() async {
-    String? jsonString = await SharedPref.instance.getValue(PrefsKey.languageDataKey);
+    String? jsonString = await SharedPref.instance.getValue(
+      PrefsKey.languageDataKey,
+    );
     if (jsonString != null && jsonString.isNotEmpty) {
       Map<String, dynamic> jsonMap = jsonDecode(jsonString);
       _dataModel = LanguageList.fromJson(jsonMap);
-      DebugLog.instance.d('Language data loaded: ${_dataModel?.languageName} (ID: ${_dataModel?.languageId})');
+      DebugLog.instance.d(
+        'Language data loaded: ${_dataModel?.languageName} (ID: ${_dataModel?.languageId})',
+      );
     } else {
       _dataModel = null;
       DebugLog.instance.d('No language data found in SharedPreferences');
@@ -27,7 +31,6 @@ class LanguageService {
     }
   }
 
-
   // Getters for language properties
 
   /// Retrieves the URL from the data model or returns an empty string if null.
@@ -40,7 +43,9 @@ class LanguageService {
   ///  empty string if null.
   String get languageId {
     final String id = _dataModel?.languageId ?? '';
-    DebugLog.instance.d('LanguageService.languageId accessed: "$id" (isDataLoaded: ${_dataModel != null})');
+    DebugLog.instance.d(
+      'LanguageService.languageId accessed: "$id" (isDataLoaded: ${_dataModel != null})',
+    );
     return id;
   }
 
@@ -68,7 +73,8 @@ class LanguageService {
   // Additional getters for easy access to language properties
 
   /// Gets the allowed currencies label
-  String get allowedCurrenciesLabel => _dataModel?.allowedCurrencies?.label ?? '';
+  String get allowedCurrenciesLabel =>
+      _dataModel?.allowedCurrencies?.label ?? '';
 
   /// Gets the allowed currencies code
   String get allowedCurrenciesCode => _dataModel?.allowedCurrencies?.code ?? '';
@@ -80,10 +86,12 @@ class LanguageService {
   int get priceFormatPrecision => _dataModel?.priceFormat?.precision ?? 2;
 
   /// Gets the price format required precision
-  int get priceFormatRequiredPrecision => _dataModel?.priceFormat?.requiredPrecision ?? 2;
+  int get priceFormatRequiredPrecision =>
+      _dataModel?.priceFormat?.requiredPrecision ?? 2;
 
   /// Gets the price format decimal symbol
-  String get priceFormatDecimalSymbol => _dataModel?.priceFormat?.decimalSymbol ?? '.';
+  String get priceFormatDecimalSymbol =>
+      _dataModel?.priceFormat?.decimalSymbol ?? '.';
 
   /// Gets the download URL for language files
   String get downloadURL => _dataModel?.downloadURL ?? '';
@@ -93,18 +101,28 @@ class LanguageService {
 
   /// Store the complete language list from API response
   Future<void> storeLanguageList(List<LanguageList> languageList) async {
-    String jsonString = jsonEncode(languageList.map((LanguageList lang) => lang.toJson()).toList());
+    String jsonString = jsonEncode(
+      languageList.map((LanguageList lang) => lang.toJson()).toList(),
+    );
     await SharedPref.instance.setValue(PrefsKey.languageListKey, jsonString);
-    DebugLog.instance.d('Language list stored with ${languageList.length} languages');
+    DebugLog.instance.d(
+      'Language list stored with ${languageList.length} languages',
+    );
   }
 
   /// Load the complete language list from SharedPreferences
   Future<List<LanguageList>> loadLanguageList() async {
-    String? jsonString = await SharedPref.instance.getValue(PrefsKey.languageListKey);
+    String? jsonString = await SharedPref.instance.getValue(
+      PrefsKey.languageListKey,
+    );
     if (jsonString != null && jsonString.isNotEmpty) {
       List<dynamic> jsonList = jsonDecode(jsonString);
-      List<LanguageList> languageList = jsonList.map((dynamic json) => LanguageList.fromJson(json)).toList();
-      DebugLog.instance.d('Language list loaded with ${languageList.length} languages');
+      List<LanguageList> languageList = jsonList
+          .map((dynamic json) => LanguageList.fromJson(json))
+          .toList();
+      DebugLog.instance.d(
+        'Language list loaded with ${languageList.length} languages',
+      );
       return languageList;
     }
     return <LanguageList>[];
@@ -120,9 +138,8 @@ class LanguageService {
     _dataModel = selectedLanguage;
     String jsonString = jsonEncode(selectedLanguage.toJson());
     await SharedPref.instance.setValue(PrefsKey.languageDataKey, jsonString);
-    DebugLog.instance.d('Selected language stored: ${selectedLanguage.languageName} (ID: ${selectedLanguage.languageId})');
+    DebugLog.instance.d(
+      'Selected language stored: ${selectedLanguage.languageName} (ID: ${selectedLanguage.languageId})',
+    );
   }
-
-
-
 }

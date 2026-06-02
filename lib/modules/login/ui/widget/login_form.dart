@@ -17,7 +17,7 @@ class LoginForm extends StatelessWidget {
 
   BlocListener<LoginCubit, LoginState> _loginForm(BuildContext context) {
     final LoginCubit loginCubit = context.instance<LoginCubit>();
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     final Color backgroundColor = isDark
         ? AppColors.backgroundDark
         : AppColors.backgroundLight;

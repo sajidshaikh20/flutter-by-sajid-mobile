@@ -7,7 +7,7 @@ class SocialLoginPage extends BaseResponsiveView {
 
   /// Builds the social login view with BlocProvider.
   Widget buildView(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
 
     // Choose premium colors based on the theme
     final Color backgroundColor = isDark
@@ -212,7 +212,8 @@ class SocialLoginPage extends BaseResponsiveView {
                                           context
                                               .appString
                                               .continueWithMobileEmailKey,
-                                          style: context.textTheme.bodyLarge?.copyWith(
+                                          style: context.textTheme.bodyLarge
+                                              ?.copyWith(
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: Dimens.fontSize12,
                                                 color: Colors.white,

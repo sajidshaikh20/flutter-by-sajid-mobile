@@ -289,7 +289,7 @@ class _CommonTextFormFieldWidgetState extends State<CommonTextFormFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isDark = context.isDark;
     final bool isRTL = Directionality.of(context) == TextDirection.rtl;
     double textFontSize = Dimens.fontSize16;
     EdgeInsets contentPadding = const EdgeInsets.only(

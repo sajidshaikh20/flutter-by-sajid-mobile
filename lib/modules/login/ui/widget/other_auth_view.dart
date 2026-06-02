@@ -16,16 +16,17 @@ class OtherAuthView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         CustomTextLabelWidget(
-            label: context.appString.forgotPasswordKey,
-            style: context.textTheme.headlineMedium?.copyWith(
-              color: AppColors.primaryPurple,
-              height: Dimens.lineHeight20.toLineHeight(forgotPasswordText),
-              fontWeight: FontWeight.w600,
-              fontSize: forgotPasswordText,
-            ),
-            onTap: () async {
-              displaySnackBar('Forgot Password option is not implemented yet.', context);
-            }),
+          label: context.appString.forgotPasswordKey,
+          style: context.textTheme.headlineMedium?.copyWith(
+            color: AppColors.primaryPurple,
+            height: Dimens.lineHeight20.toLineHeight(forgotPasswordText),
+            fontWeight: FontWeight.w600,
+            fontSize: forgotPasswordText,
+          ),
+          onTap: () async {
+            await context.router.push(const ForgotPasswordRoute());
+          },
+        ),
       ],
     );
   }

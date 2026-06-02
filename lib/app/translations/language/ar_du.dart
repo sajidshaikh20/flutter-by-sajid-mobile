@@ -68,7 +68,8 @@ class ArDu extends AppString {
   String get continueWithGoogleKey => 'المتابعة باستخدام Google';
 
   @override
-  String get continueWithMobileEmailKey => 'المتابعة باستخدام الهاتف / البريد الإلكتروني';
+  String get continueWithMobileEmailKey =>
+      'المتابعة باستخدام الهاتف / البريد الإلكتروني';
 
   @override
   String get loginKey => 'تسجيل الدخول';
@@ -80,7 +81,8 @@ class ArDu extends AppString {
   String get passwordKey => 'كلمة المرور';
 
   @override
-  String get pleaseEnterMobileOrNumberKey => 'الرجاء إدخال رقم الهاتف أو البريد الإلكتروني';
+  String get pleaseEnterMobileOrNumberKey =>
+      'الرجاء إدخال رقم الهاتف أو البريد الإلكتروني';
 
   @override
   String get pleaseEnterThePasswordKey => 'الرجاء إدخال كلمة المرور';
@@ -134,5 +136,30 @@ class ArDu extends AppString {
   String get emailOrUsernameKey => 'البريد الإلكتروني أو اسم المستخدم';
 
   @override
-  String get pleaseEnterEmailOrUsernameKey => 'الرجاء إدخال البريد الإلكتروني أو اسم المستخدم';
+  String get pleaseEnterEmailOrUsernameKey =>
+      'الرجاء إدخال البريد الإلكتروني أو اسم المستخدم';
+
+  @override
+  String get resetPasswordTitleKey => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get enterEmailToReceiveResetLinkKey =>
+      'أدخل بريدك الإلكتروني لتلقي رابط إعادة التعيين';
+
+  @override
+  String get enterYourEmailKey => 'أدخل بريدك الإلكتروني';
+
+  @override
+  String get sendResetLinkKey => 'إرسال رابط إعادة التعيين';
+
+  @override
+  String get backToLoginKey => '← العودة لتسجيل الدخول';
+
+  @override
+  String get resetLinkSentSuccessKey =>
+      'تم إرسال رابط إعادة التعيين بنجاح. يرجى التحقق من بريدك الإلكتروني.';
+
+  @override
+  String get forgotPasswordFailedKey =>
+      'تعذر إرسال رابط إعادة التعيين. يرجى المحاولة مرة أخرى.';
 }

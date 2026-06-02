@@ -42,4 +42,7 @@ extension CustomExtension on BuildContext {
   /// Returns `true` if the current text direction is left-to-right (LTR),
   /// which is typically used for English and other LTR languages.
   bool get isEnglishLanguage => Directionality.of(this) == TextDirection.ltr;
+
+  /// Returns `true` if the current theme brightness is dark.
+  bool get isDark => theme.brightness == Brightness.dark;
 }

@@ -25,9 +25,9 @@ abstract class AppString {
   String get showKey;
   String get tryAgainKey;
   String get workKey;
-  
+
   // Login & Social Login Keys
-  String get  loginSignupKey;
+  String get loginSignupKey;
   String get continueWithGoogleKey;
   String get continueWithMobileEmailKey;
   String get loginKey;
@@ -52,4 +52,13 @@ abstract class AppString {
   String get continueJourneySecurelyKey;
   String get emailOrUsernameKey;
   String get pleaseEnterEmailOrUsernameKey;
+
+  // Forgot Password
+  String get resetPasswordTitleKey;
+  String get enterEmailToReceiveResetLinkKey;
+  String get enterYourEmailKey;
+  String get sendResetLinkKey;
+  String get backToLoginKey;
+  String get resetLinkSentSuccessKey;
+  String get forgotPasswordFailedKey;
 }

@@ -62,7 +62,8 @@ class EnUS extends AppString {
 
   // Login & Social Login Keys
   @override
-  String get loginSignupKey => 'Log in our sign up not to enjoy a more personalized and seamless ordering experience';
+  String get loginSignupKey =>
+      'Log in our sign up not to enjoy a more personalized and seamless ordering experience';
 
   @override
   String get continueWithGoogleKey => 'Continue with Google';
@@ -80,7 +81,8 @@ class EnUS extends AppString {
   String get passwordKey => 'Password';
 
   @override
-  String get pleaseEnterMobileOrNumberKey => 'Please enter mobile number or email';
+  String get pleaseEnterMobileOrNumberKey =>
+      'Please enter mobile number or email';
 
   @override
   String get pleaseEnterThePasswordKey => 'Please enter the password';
@@ -128,11 +130,37 @@ class EnUS extends AppString {
   String get memberLoginKey => 'Member Login';
 
   @override
-  String get continueJourneySecurelyKey => 'Continue your trading journey securely';
+  String get continueJourneySecurelyKey =>
+      'Continue your trading journey securely';
 
   @override
   String get emailOrUsernameKey => 'Email or Username';
 
   @override
-  String get pleaseEnterEmailOrUsernameKey => 'Please enter your email or username';
+  String get pleaseEnterEmailOrUsernameKey =>
+      'Please enter your email or username';
+
+  @override
+  String get resetPasswordTitleKey => 'Reset Password';
+
+  @override
+  String get enterEmailToReceiveResetLinkKey =>
+      'Enter your email to receive reset link';
+
+  @override
+  String get enterYourEmailKey => 'Enter your email';
+
+  @override
+  String get sendResetLinkKey => 'Send Reset Link';
+
+  @override
+  String get backToLoginKey => '← Back to Login';
+
+  @override
+  String get resetLinkSentSuccessKey =>
+      'Reset link sent successfully. Please check your email.';
+
+  @override
+  String get forgotPasswordFailedKey =>
+      'Unable to send reset link. Please try again.';
 }

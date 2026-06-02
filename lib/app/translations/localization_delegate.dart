@@ -32,10 +32,8 @@ import '../../utils/exports.dart';
 ///   does not need to be reloaded during runtime.
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppString> {
   @override
-  bool isSupported(Locale locale) => <String>[
-        AppConstant.en,
-        AppConstant.ar
-      ].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>[AppConstant.en, AppConstant.ar].contains(locale.languageCode);
 
   @override
   Future<AppString> load(Locale locale) async {

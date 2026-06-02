@@ -11,7 +11,7 @@ class JsonDataManagerService {
   JsonDataManagerService._internal();
   // Singleton instance
   static final JsonDataManagerService _instance =
-  JsonDataManagerService._internal();
+      JsonDataManagerService._internal();
 
   // Map to store key-value pairs from the JSON list structure
   Map<String, String>? _keyValueMap;
@@ -34,10 +34,10 @@ class JsonDataManagerService {
 
   /// Load the JSON file and parse it into a Map.
   Future<bool> loadJsonFileAndIsloadedEnglish(
-      String fileName, {
-        required bool isDefaultFileLoad,
-        required bool isLTR,
-      }) async {
+    String fileName, {
+    required bool isDefaultFileLoad,
+    required bool isLTR,
+  }) async {
     if (isDefaultFileLoad) {
       await loadDefaultEnglishLanguage();
       return true;
@@ -91,11 +91,12 @@ class JsonDataManagerService {
   }
 
   /// Converts a List of JSON objects into a `Map<String, String>`.
-  Map<String, String> _convertJsonListToMap(List<dynamic> jsonList) => <String, String>{
-    for (final dynamic item in jsonList)
-      (item as Map<String, dynamic>)['key_name'] as String: item['value'] as String,
-  };
-
+  Map<String, String> _convertJsonListToMap(List<dynamic> jsonList) =>
+      <String, String>{
+        for (final dynamic item in jsonList)
+          (item as Map<String, dynamic>)['key_name'] as String:
+              item['value'] as String,
+      };
 
   /// Get the key-value map from the JSON list.
   Map<String, String>? get keyValueMap => _keyValueMap;
@@ -118,7 +119,8 @@ class JsonDataManagerService {
         isEnglishLanguageLoaded = await loadJsonFileAndIsloadedEnglish(
           '${getIt<LanguageService>().languageSortCode}.json',
           isDefaultFileLoad: false,
-          isLTR: getIt<LanguageService>().languageAlignment ==
+          isLTR:
+              getIt<LanguageService>().languageAlignment ==
               AppConstant.defaultLanguageAlignment,
         );
       } else {
