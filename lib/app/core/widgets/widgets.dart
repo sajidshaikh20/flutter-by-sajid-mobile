@@ -51,3 +51,4 @@ export 'text_label/custom_text_label_with_icon_widget.dart';
 export 'text_label/custom_underline_label_widget.dart';
 export 'text_label/text_with_min_lines.dart';
 export 'theme/theme_widgets.dart';
+export 'wave_dotted_painter.dart';

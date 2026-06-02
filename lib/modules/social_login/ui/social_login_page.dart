@@ -1,8 +1,6 @@
-import 'dart:math' as math;
 import '../../../utils/exports.dart';
 
 @RoutePage()
-/// Page that displays social login options (Facebook, Google, Apple, Email).
 class SocialLoginPage extends BaseResponsiveView {
   /// Creates a social login page.
   const SocialLoginPage({super.key});
@@ -12,13 +10,19 @@ class SocialLoginPage extends BaseResponsiveView {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Choose premium colors based on the theme
-    final Color backgroundColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+    final Color backgroundColor = isDark
+        ? AppColors.backgroundDark
+        : AppColors.backgroundLight;
     final Color dotColor = isDark
         ? AppColors.primaryPurple.withValues(alpha: 0.15)
         : AppColors.primaryPurple.withValues(alpha: 0.12);
 
-    final Color titleColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final Color subtitleColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color titleColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final Color subtitleColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return BlocProvider<SocialLoginCubit>(
       create: (BuildContext ctx) => SocialLoginCubit(
@@ -78,7 +82,6 @@ class SocialLoginPage extends BaseResponsiveView {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Dimens.size40.heightBox,
                             // Weko logo centered with a soft glow
                             DecoratedBox(
                               decoration: BoxDecoration(
@@ -86,8 +89,12 @@ class SocialLoginPage extends BaseResponsiveView {
                                 boxShadow: <BoxShadow>[
                                   BoxShadow(
                                     color: isDark
-                                        ? AppColors.primaryPurple.withValues(alpha: 0.2)
-                                        : AppColors.primaryPurple.withValues(alpha: 0.08),
+                                        ? AppColors.primaryPurple.withValues(
+                                            alpha: 0.2,
+                                          )
+                                        : AppColors.primaryPurple.withValues(
+                                            alpha: 0.08,
+                                          ),
                                     blurRadius: 30,
                                     spreadRadius: 5,
                                   ),
@@ -99,7 +106,7 @@ class SocialLoginPage extends BaseResponsiveView {
                                 fit: BoxFit.contain,
                               ),
                             ),
-                            Dimens.size24.heightBox,
+                            Dimens.size22.heightBox,
                             // Welcome Back Title
                             CustomTextLabelWidget(
                               label: context.appString.welcomeBackKey,
@@ -113,40 +120,46 @@ class SocialLoginPage extends BaseResponsiveView {
                             Dimens.size8.heightBox,
                             // Subtitle / Prompt
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: Dimens.size16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Dimens.size16,
+                              ),
                               child: CustomTextLabelWidget(
                                 label: context.appString.loginSignupKey,
                                 style: context.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w500,
                                   color: subtitleColor,
                                   fontSize: Dimens.fontSize14,
-                                  height: Dimens.lineHeight20.toLineHeight(Dimens.fontSize14),
+                                  height: Dimens.lineHeight20.toLineHeight(
+                                    Dimens.fontSize14,
+                                  ),
                                 ),
                               ),
                             ),
-                            Dimens.size48.heightBox,
-
-
+                            Dimens.size40.heightBox,
 
                             CustomButtonWidget(
                               isPrimaryButton: false,
-                                isButtonEnabled: true,
-                                title: context.appString.continueWithGoogleKey, onTap: () async {
-                              if (state.status == BaseStateStatus.loading) {
-                                return;
-                              }
-                              await context
-                                  .read<SocialLoginCubit>()
-                                  .socialLoginWithGoogle();
-                            }),
+                              isButtonEnabled: true,
+                              title: context.appString.continueWithGoogleKey,
+                              onTap: () async {
+                                if (state.status == BaseStateStatus.loading) {
+                                  return;
+                                }
+                                await context
+                                    .read<SocialLoginCubit>()
+                                    .socialLoginWithGoogle();
+                              },
+                            ),
                             Dimens.size32.heightBox,
                             CustomButtonWidget(
-                                isPrimaryButton: false,
-                                isButtonEnabled: true,
-                                title:  context.appString.continueWithMobileEmailKey, onTap: () async {
-                              await context.router.push(LoginRoute());
-                            }),
-
+                              isPrimaryButton: false,
+                              isButtonEnabled: true,
+                              title:
+                                  context.appString.continueWithMobileEmailKey,
+                              onTap: () async {
+                                await context.router.push(LoginRoute());
+                              },
+                            ),
 
                             // 5. "Don't have an account? Sign Up" / "New here? Sign up"
                             GestureDetector(
@@ -166,7 +179,9 @@ class SocialLoginPage extends BaseResponsiveView {
 
                             // 6. Terms and Privacy Policy Disclaimer
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: Dimens.size16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Dimens.size16,
+                              ),
                               child: RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
@@ -176,30 +191,45 @@ class SocialLoginPage extends BaseResponsiveView {
                                     height: 1.4,
                                   ),
                                   children: <InlineSpan>[
-                                    TextSpan(text: '${context.appString.byContinuingAgreeKey} '),
+                                    TextSpan(
+                                      text:
+                                          '${context.appString.byContinuingAgreeKey} ',
+                                    ),
                                     TextSpan(
                                       text: context.appString.termsOfServiceKey,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                        color: isDark
+                                            ? AppColors.textPrimaryDark
+                                            : AppColors.textPrimaryLight,
                                         decoration: TextDecoration.underline,
                                       ),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
-                                          displaySnackBar('Terms of Service clicked', context);
+                                          displaySnackBar(
+                                            'Terms of Service clicked',
+                                            context,
+                                          );
                                         },
                                     ),
-                                    TextSpan(text: ' ${context.appString.andKey} '),
+                                    TextSpan(
+                                      text: ' ${context.appString.andKey} ',
+                                    ),
                                     TextSpan(
                                       text: context.appString.privacyPolicyKey,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                        color: isDark
+                                            ? AppColors.textPrimaryDark
+                                            : AppColors.textPrimaryLight,
                                         decoration: TextDecoration.underline,
                                       ),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
-                                          displaySnackBar('Privacy Policy clicked', context);
+                                          displaySnackBar(
+                                            'Privacy Policy clicked',
+                                            context,
+                                          );
                                         },
                                     ),
                                   ],
@@ -236,43 +266,3 @@ class SocialLoginPage extends BaseResponsiveView {
     return buildView(context);
   }
 }
-
-/// Custom painter to paint the dynamic bottom wave dotted grid.
-class WaveDottedPainter extends CustomPainter {
-  /// Color of the dotted grid waves.
-  final Color color;
-
-  /// Creates a WaveDottedPainter.
-  WaveDottedPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // 6 rows of dots offset by a sine wave to create overlapping wave grids
-    const int rows = 6;
-    const double rowSpacing = 18.0;
-
-    // Position the pattern starting from 70% height down to 90%
-    final double startY = size.height * 0.70;
-
-    for (int r = 0; r < rows; r++) {
-      final double currentBaseY = startY + (r * rowSpacing);
-
-      // Gradually make the dots slightly more opaque as we go down
-      final Color rowColor = color.withValues(alpha: (r + 1.5) / (rows + 1.5) * color.a);
-      final Paint rowPaint = Paint()
-        ..color = rowColor
-        ..style = PaintingStyle.fill;
-
-      for (double x = 0; x < size.width + 10; x += 14) {
-        // Sine wave offset: period is size.width, amplitude is 12, phase shift per row
-        final double y = currentBaseY + math.sin((x / size.width) * 2 * math.pi + (r * 0.5)) * 12;
-        canvas.drawCircle(Offset(x, y), 2.2, rowPaint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-
