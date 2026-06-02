@@ -163,4 +163,37 @@ class EnUS extends AppString {
   @override
   String get forgotPasswordFailedKey =>
       'Unable to send reset link. Please try again.';
+
+  @override
+  String get signUpTitleKey => 'Sign Up';
+
+  @override
+  String get signUpBasicInfoKey => 'Basic Info';
+
+  @override
+  String get signUpVerificationKey => 'Verification';
+
+  @override
+  String get signUpCompleteProfileKey => 'Complete Profile';
+
+  @override
+  String get signUpBasicInfoSubtitleKey =>
+      'Enter your name, email, and mobile number to get started.';
+
+  @override
+  String get signUpVerificationSubtitleKey =>
+      'Verify your email or phone with the code we send you.';
+
+  @override
+  String get signUpCompleteProfileSubtitleKey =>
+      'Add a few more details to finish setting up your account.';
+
+  @override
+  String get signUpNextKey => 'Next';
+
+  @override
+  String get signUpPreviousKey => 'Previous';
+
+  @override
+  String get signUpFinishKey => 'Finish';
 }

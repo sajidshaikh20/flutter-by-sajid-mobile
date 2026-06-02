@@ -61,4 +61,16 @@ abstract class AppString {
   String get backToLoginKey;
   String get resetLinkSentSuccessKey;
   String get forgotPasswordFailedKey;
+
+  // Sign Up
+  String get signUpTitleKey;
+  String get signUpBasicInfoKey;
+  String get signUpVerificationKey;
+  String get signUpCompleteProfileKey;
+  String get signUpBasicInfoSubtitleKey;
+  String get signUpVerificationSubtitleKey;
+  String get signUpCompleteProfileSubtitleKey;
+  String get signUpNextKey;
+  String get signUpPreviousKey;
+  String get signUpFinishKey;
 }

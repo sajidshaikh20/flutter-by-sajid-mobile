@@ -42,6 +42,37 @@ class AppRouter extends RootStackRouter {
       reverseDurationInMilliseconds: Dimens.milliseconds400,
       transitionsBuilder: fadePageTransition,
     ),
+    CustomRoute<dynamic>(
+      page: SignUpRoute.page,
+      path: AppPaths.signUp,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+      children: <AutoRoute>[
+        CustomRoute<dynamic>(
+          initial: true,
+          page: SignUpBasicInfoRoute.page,
+          path: AppPaths.signUpBasicInfo,
+          durationInMilliseconds: Dimens.milliseconds300,
+          reverseDurationInMilliseconds: Dimens.milliseconds300,
+          transitionsBuilder: fadePageTransition,
+        ),
+        CustomRoute<dynamic>(
+          page: SignUpVerificationRoute.page,
+          path: AppPaths.signUpVerification,
+          durationInMilliseconds: Dimens.milliseconds300,
+          reverseDurationInMilliseconds: Dimens.milliseconds300,
+          transitionsBuilder: fadePageTransition,
+        ),
+        CustomRoute<dynamic>(
+          page: SignUpCompleteProfileRoute.page,
+          path: AppPaths.signUpCompleteProfile,
+          durationInMilliseconds: Dimens.milliseconds300,
+          reverseDurationInMilliseconds: Dimens.milliseconds300,
+          transitionsBuilder: fadePageTransition,
+        ),
+      ],
+    ),
 
     /// Dashboard with 4 tabs
     CustomRoute<dynamic>(

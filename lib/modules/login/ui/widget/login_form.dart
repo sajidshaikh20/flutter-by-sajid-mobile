@@ -72,7 +72,9 @@ class LoginForm extends StatelessWidget {
                             child: RotatedIcon(
                               isLanguageAlignmentLTR: !isRTL,
                               iconWidget: Assets.svgs.icBack.svg(
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimaryLight,
                               ),
                             ),
                           ),
@@ -117,14 +119,20 @@ class LoginForm extends StatelessWidget {
                                   ),
                                   fontWeight: FontWeight.w800,
                                   fontSize: Dimens.fontSize24,
-                                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                  color: isDark
+                                      ? AppColors.textPrimaryDark
+                                      : AppColors.textPrimaryLight,
                                 ),
                               ),
                               Dimens.size8.heightBox,
                               CustomTextLabelWidget(
-                                label: context.appString.continueJourneySecurelyKey,
+                                label: context
+                                    .appString
+                                    .continueJourneySecurelyKey,
                                 style: context.textTheme.bodyMedium?.copyWith(
-                                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondaryLight,
                                   fontSize: Dimens.fontSize14,
                                 ),
                               ),
@@ -134,33 +142,37 @@ class LoginForm extends StatelessWidget {
                                 buildWhen:
                                     (LoginState previous, LoginState current) {
                                       return previous.emailErrorMessage !=
-                                              current.emailErrorMessage;
+                                          current.emailErrorMessage;
                                     },
                                 builder: (BuildContext context, LoginState state) {
                                   return CommonTextFormFieldWidget(
                                     controller: state.emailController,
-                                    label:
-                                        context.appString.emailOrUsernameKey,
+                                    label: context.appString.emailOrUsernameKey,
                                     input: TextInputAction.next,
                                     focusNode: state.emailFocusNode,
                                     errorMsg: state.emailErrorMessage,
                                     onChange: (String value) {
                                       if (value.isEmpty) {
-                                        loginCubit.handleValidationErrorMessageForEmail(
-                                          '',
-                                        );
+                                        loginCubit
+                                            .handleValidationErrorMessageForEmail(
+                                              '',
+                                            );
                                       } else {
                                         if (value.contains('@')) {
-                                          if (value.validateEmailBool() ?? true) {
-                                            loginCubit.handleValidationErrorMessageForEmail(
-                                              '',
-                                            );
+                                          if (value.validateEmailBool() ??
+                                              true) {
+                                            loginCubit
+                                                .handleValidationErrorMessageForEmail(
+                                                  '',
+                                                );
                                           }
                                         } else {
-                                          if (value.trim().length >= 3 && !value.contains(' ')) {
-                                            loginCubit.handleValidationErrorMessageForEmail(
-                                              '',
-                                            );
+                                          if (value.trim().length >= 3 &&
+                                              !value.contains(' ')) {
+                                            loginCubit
+                                                .handleValidationErrorMessageForEmail(
+                                                  '',
+                                                );
                                           }
                                         }
                                       }
@@ -185,7 +197,7 @@ class LoginForm extends StatelessWidget {
                                       // Only rebuild when password-related state changes
                                       return previous.passwordObscureText !=
                                               current.passwordObscureText ||
-                                           previous.passwordErrorMessage !=
+                                          previous.passwordErrorMessage !=
                                               current.passwordErrorMessage;
                                     },
                                 builder: (BuildContext context, LoginState state) {
@@ -266,13 +278,15 @@ class LoginForm extends StatelessWidget {
                                       .trim();
                                   bool isValid =
                                       true; //Flag for overall validation result
- 
+
                                   // Empty check
                                   if (email.isEmpty || password.isEmpty) {
                                     if (email.isEmpty) {
                                       loginCubit
                                           .handleValidationErrorMessageForEmail(
-                                            context.appString.pleaseEnterEmailOrUsernameKey,
+                                            context
+                                                .appString
+                                                .pleaseEnterEmailOrUsernameKey,
                                           );
                                       isValid = false;
                                     }
@@ -284,7 +298,7 @@ class LoginForm extends StatelessWidget {
                                       isValid = false;
                                     }
                                   }
- 
+
                                   // Validate Email or Username
                                   if (email.isNotEmpty) {
                                     if (email.contains('@')) {
@@ -334,7 +348,7 @@ class LoginForm extends StatelessWidget {
                                       }
                                     }
                                   }
- 
+
                                   // Validate Password
                                   if (password.isNotEmpty) {
                                     final String? passwordError = password
@@ -363,7 +377,7 @@ class LoginForm extends StatelessWidget {
                                           ); // Clear password error if valid
                                     }
                                   }
- 
+
                                   if (isValid) {
                                     // Call login API
                                     await loginCubit.login(
@@ -374,7 +388,6 @@ class LoginForm extends StatelessWidget {
                                 },
                               ),
 
-
                               Padding(
                                 padding: const EdgeInsets.only(
                                   bottom: Dimens.space50,
@@ -382,9 +395,8 @@ class LoginForm extends StatelessWidget {
                                 ),
                                 child: CustomTextLabelWidget(
                                   onTap: () async {
-                                    displaySnackBar(
-                                      'Sign Up is not implemented yet. Please use Google Sign In.',
-                                      context,
+                                    await context.router.push(
+                                      const SignUpRoute(),
                                     );
                                   },
                                   label: context.appString.dontHaveAccountKey,

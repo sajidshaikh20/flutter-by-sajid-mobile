@@ -62,7 +62,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      height: Dimens.size100,
+      height: Dimens.size58,
       child: Padding(
         padding: const EdgeInsets.only(
           left: Dimens.space10,

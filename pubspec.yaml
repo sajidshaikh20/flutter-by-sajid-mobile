@@ -59,6 +59,7 @@ dependencies:
   encrypt: ^5.0.1
   firebase_auth:
   google_sign_in:
+  step_progress: ^2.7.1
 
 dev_dependencies:
   flutter_test:

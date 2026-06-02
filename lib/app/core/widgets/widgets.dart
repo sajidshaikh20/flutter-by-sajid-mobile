@@ -36,6 +36,7 @@ export 'form_field/common_text_form_field_widget.dart';
 export 'form_field/custom_text_form_field_widget.dart';
 export 'form_field/custom_text_form_field_with_label_widget.dart';
 export 'form_field/emoji_block_formatter.dart';
+export 'main_appbar/gradient_sliver_app_bar_widget.dart';
 export 'main_appbar/main_appbar_title_widget.dart';
 export 'main_appbar/main_appbar_widget.dart';
 export 'progress_bar/custom_progress_bar.dart';

@@ -46,4 +46,16 @@ abstract class AppPaths {
 
   /// Forgot password screen route.
   static const String forgotPassword = '/forgot_password';
+
+  /// Sign up screen route.
+  static const String signUp = '/signup';
+
+  /// Sign up step 1 – basic info (sub-path).
+  static const String signUpBasicInfo = 'basic_info';
+
+  /// Sign up step 2 – verification (sub-path).
+  static const String signUpVerification = 'verification';
+
+  /// Sign up step 3 – complete profile (sub-path).
+  static const String signUpCompleteProfile = 'complete_profile';
 }

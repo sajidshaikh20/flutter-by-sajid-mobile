@@ -162,4 +162,37 @@ class ArDu extends AppString {
   @override
   String get forgotPasswordFailedKey =>
       'تعذر إرسال رابط إعادة التعيين. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get signUpTitleKey => 'التسجيل';
+
+  @override
+  String get signUpBasicInfoKey => 'المعلومات الأساسية';
+
+  @override
+  String get signUpVerificationKey => 'التحقق';
+
+  @override
+  String get signUpCompleteProfileKey => 'إكمال الملف';
+
+  @override
+  String get signUpBasicInfoSubtitleKey =>
+      'أدخل اسمك وبريدك الإلكتروني ورقم هاتفك للبدء.';
+
+  @override
+  String get signUpVerificationSubtitleKey =>
+      'تحقق من بريدك الإلكتروني أو هاتفك باستخدام الرمز الذي نرسله إليك.';
+
+  @override
+  String get signUpCompleteProfileSubtitleKey =>
+      'أضف بعض التفاصيل الإضافية لإكمال إعداد حسابك.';
+
+  @override
+  String get signUpNextKey => 'التالي';
+
+  @override
+  String get signUpPreviousKey => 'السابق';
+
+  @override
+  String get signUpFinishKey => 'إنهاء';
 }
