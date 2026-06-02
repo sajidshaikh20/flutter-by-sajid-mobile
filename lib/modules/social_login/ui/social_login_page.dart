@@ -70,177 +70,211 @@ class SocialLoginPage extends BaseResponsiveView {
                     painter: WaveDottedPainter(color: dotColor),
                   ),
                 ),
-                // 2. Main content container
                 SafeArea(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Dimens.size24,
-                        ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                    children: <Widget>[
+                      Expanded(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            // Weko logo centered with a soft glow
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: isDark
-                                        ? AppColors.primaryPurple.withValues(
-                                            alpha: 0.2,
-                                          )
-                                        : AppColors.primaryPurple.withValues(
-                                            alpha: 0.08,
+                            /// TOP SECTION
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Dimens.size24,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                          color: isDark
+                                              ? AppColors.primaryPurple
+                                                    .withValues(alpha: 0.2)
+                                              : AppColors.primaryPurple
+                                                    .withValues(alpha: 0.08),
+                                          blurRadius: 30,
+                                          spreadRadius: 5,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Assets.png.icCropWekoIcon.image(
+                                      height: Dimens.size110,
+                                      width: Dimens.size110,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  CustomTextLabelWidget(
+                                    label: context.appString.welcomeBackKey,
+                                    style: context.textTheme.headlineLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: Dimens.fontSize30,
+                                          color: titleColor,
+                                          letterSpacing: 0.5,
+                                        ),
+                                  ),
+
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: Dimens.size16,
+                                    ),
+                                    child: CustomTextLabelWidget(
+                                      label: context.appString.loginSignupKey,
+                                      style: context.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                            color: subtitleColor,
+                                            fontSize: Dimens.fontSize14,
+                                            height: Dimens.lineHeight20
+                                                .toLineHeight(
+                                                  Dimens.fontSize14,
+                                                ),
                                           ),
-                                    blurRadius: 30,
-                                    spreadRadius: 5,
+                                    ),
                                   ),
                                 ],
                               ),
-                              child: Assets.png.icCropWekoIcon.image(
-                                height: Dimens.size110,
-                                width: Dimens.size110,
-                                fit: BoxFit.contain,
-                              ),
                             ),
-                            Dimens.size22.heightBox,
-                            // Welcome Back Title
-                            CustomTextLabelWidget(
-                              label: context.appString.welcomeBackKey,
-                              style: context.textTheme.headlineLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                fontSize: Dimens.fontSize30,
-                                color: titleColor,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            Dimens.size8.heightBox,
-                            // Subtitle / Prompt
+
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: Dimens.size16,
+                                horizontal: Dimens.size24,
                               ),
-                              child: CustomTextLabelWidget(
-                                label: context.appString.loginSignupKey,
-                                style: context.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  color: subtitleColor,
-                                  fontSize: Dimens.fontSize14,
-                                  height: Dimens.lineHeight20.toLineHeight(
-                                    Dimens.fontSize14,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  CustomButtonWidget(
+                                    title:
+                                        context.appString.continueWithGoogleKey,
+                                    height: Dimens.size52,
+                                    borderRadius: Dimens.radius12,
+                                    backgroundColor: isDark
+                                        ? AppColors.surfaceDark
+                                        : AppColors.whiteColor,
+                                    borderColor: isDark
+                                        ? AppColors.borderDark
+                                        : AppColors.borderLight,
+                                    hasBorder: true,
+                                    childWidget: Stack(
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        Positioned(
+                                          left: Dimens.size12,
+                                          child: Assets.svgs.icGoogleIcon.svg(),
+                                        ),
+                                        CustomTextLabelWidget(
+                                          label: context
+                                              .appString
+                                              .continueWithGoogleKey,
+                                          style: context.textTheme.bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: Dimens.fontSize15,
+                                                color: isDark
+                                                    ? AppColors.textPrimaryDark
+                                                    : AppColors
+                                                          .textPrimaryLight,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () async {
+                                      await context
+                                          .read<SocialLoginCubit>()
+                                          .socialLoginWithGoogle();
+                                    },
                                   ),
-                                ),
-                              ),
-                            ),
-                            Dimens.size40.heightBox,
 
-                            CustomButtonWidget(
-                              isPrimaryButton: false,
-                              isButtonEnabled: true,
-                              title: context.appString.continueWithGoogleKey,
-                              onTap: () async {
-                                if (state.status == BaseStateStatus.loading) {
-                                  return;
-                                }
-                                await context
-                                    .read<SocialLoginCubit>()
-                                    .socialLoginWithGoogle();
-                              },
-                            ),
-                            Dimens.size32.heightBox,
-                            CustomButtonWidget(
-                              isPrimaryButton: false,
-                              isButtonEnabled: true,
-                              title:
-                                  context.appString.continueWithMobileEmailKey,
-                              onTap: () async {
-                                await context.router.push(LoginRoute());
-                              },
-                            ),
+                                  Dimens.size16.heightBox,
 
-                            // 5. "Don't have an account? Sign Up" / "New here? Sign up"
-                            GestureDetector(
-                              onTap: () async {
-                                await context.router.push(LoginRoute());
-                              },
-                              child: CustomTextLabelWidget(
-                                label: context.appString.dontHaveAccountKey,
-                                style: context.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryPurple,
-                                  fontSize: Dimens.fontSize14,
-                                ),
-                              ),
-                            ),
-                            Dimens.size48.heightBox,
-
-                            // 6. Terms and Privacy Policy Disclaimer
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: Dimens.size16,
-                              ),
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: context.textTheme.bodySmall?.copyWith(
-                                    fontSize: Dimens.fontSize12,
-                                    color: subtitleColor,
-                                    height: 1.4,
+                                  CustomButtonWidget(
+                                    title: context
+                                        .appString
+                                        .continueWithMobileEmailKey,
+                                    height: Dimens.size52,
+                                    borderRadius: Dimens.radius12,
+                                    childWidget: Stack(
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        const Positioned(
+                                          left: Dimens.size12,
+                                          child: Icon(
+                                            Icons.mail_outlined,
+                                            color: AppColors.whiteColor,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        Text(
+                                          context
+                                              .appString
+                                              .continueWithMobileEmailKey,
+                                          style: context.textTheme.bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: Dimens.fontSize15,
+                                                color: Colors.white,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () async {
+                                      await context.router.push(LoginRoute());
+                                    },
                                   ),
-                                  children: <InlineSpan>[
-                                    TextSpan(
-                                      text:
-                                          '${context.appString.byContinuingAgreeKey} ',
-                                    ),
-                                    TextSpan(
-                                      text: context.appString.termsOfServiceKey,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark
-                                            ? AppColors.textPrimaryDark
-                                            : AppColors.textPrimaryLight,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          displaySnackBar(
-                                            'Terms of Service clicked',
-                                            context,
-                                          );
-                                        },
-                                    ),
-                                    TextSpan(
-                                      text: ' ${context.appString.andKey} ',
-                                    ),
-                                    TextSpan(
-                                      text: context.appString.privacyPolicyKey,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark
-                                            ? AppColors.textPrimaryDark
-                                            : AppColors.textPrimaryLight,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          displaySnackBar(
-                                            'Privacy Policy clicked',
-                                            context,
-                                          );
-                                        },
-                                    ),
-                                  ],
-                                ),
+                                ],
                               ),
                             ),
-                            Dimens.size24.heightBox,
                           ],
                         ),
                       ),
-                    ),
+
+                      /// BOTTOM SECTION
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          Dimens.size24,
+                          0,
+                          Dimens.size24,
+                          Dimens.size24,
+                        ),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: context.textTheme.bodySmall?.copyWith(
+                              fontSize: Dimens.fontSize12,
+                              color: subtitleColor,
+                              height: 1.4,
+                            ),
+                            children: <InlineSpan>[
+                              TextSpan(
+                                text:
+                                    '${context.appString.byContinuingAgreeKey} ',
+                              ),
+                              TextSpan(
+                                text: context.appString.termsOfServiceKey,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: titleColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                              TextSpan(text: ' ${context.appString.andKey} '),
+                              TextSpan(
+                                text: context.appString.privacyPolicyKey,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: titleColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
