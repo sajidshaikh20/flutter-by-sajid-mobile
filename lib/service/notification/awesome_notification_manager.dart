@@ -40,9 +40,7 @@ Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
 
   String type = payload['type']?.toString().toLowerCase() ?? '';
 
-  if (type.isNotEmpty) {
-     handleRedirection(type: type, data: payload);
-  }
+
 }
 
 /// A singleton class to manage and initialize AwesomeNotifications

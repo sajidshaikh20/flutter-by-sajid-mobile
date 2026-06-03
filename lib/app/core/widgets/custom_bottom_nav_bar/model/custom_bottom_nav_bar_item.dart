@@ -9,11 +9,16 @@ class CustomBottomNavBarItem {
     this.iconBuilder,
     this.routeName,
     this.label,
+    this.isCenterElevated = false,
   }) : assert(
-          iconBuilder != null ||
+          isCenterElevated ||
+              iconBuilder != null ||
               (activeIcon != null && inactiveIcon != null),
           'Provide iconBuilder or both activeIcon and inactiveIcon',
         );
+
+  /// When true, renders as a raised gradient circle (e.g. Trades tab).
+  final bool isCenterElevated;
 
   /// Icon when selected (legacy).
   final Widget? activeIcon;

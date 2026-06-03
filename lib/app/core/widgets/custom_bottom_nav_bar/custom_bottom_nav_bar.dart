@@ -5,6 +5,9 @@ import 'widget/widget.dart';
 export 'model/model.dart';
 
 /// Bottom navigation bar — themed sheet, rounded top, icon + label tabs.
+///
+/// Supports a raised center tab via [CustomBottomNavBarItem.isCenterElevated]
+/// (e.g. Trades with gradient circle).
 class CustomBottomNavBar extends StatelessWidget {
   /// Creates [CustomBottomNavBar] with exactly [itemCount] tabs.
   const CustomBottomNavBar({
@@ -37,6 +40,12 @@ class CustomBottomNavBar extends StatelessWidget {
 
   static const double _topRadius = 24;
 
+  /// Small top inset when center tab lifts on select.
+  static const double _centerTabTopInset = 6;
+
+  /// Slightly more top padding on the bar sheet.
+  static const double _paddingTop = 10;
+
   @override
   Widget build(BuildContext context) {
     assert(
@@ -53,8 +62,12 @@ class CustomBottomNavBar extends StatelessWidget {
     final Color activeIconBg = activeIconBackgroundColor ??
         AppColors.primaryPurple.withValues(alpha: isDark ? 0.22 : 0.12);
     final double radius = topBorderRadius ?? _topRadius;
+    final bool hasCenterElevated =
+        items.any((CustomBottomNavBarItem i) => i.isCenterElevated);
 
-    return DecoratedBox(
+    return ClipRect(
+      clipBehavior: Clip.none,
+      child: DecoratedBox(
       decoration: BoxDecoration(
         color: backgroundColor ??
             (isDark ? AppColors.surfaceDark : AppColors.whiteColor),
@@ -79,30 +92,47 @@ class CustomBottomNavBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(
+          padding: EdgeInsets.fromLTRB(
             Dimens.space4,
-            Dimens.space6,
+            hasCenterElevated ? _centerTabTopInset : _paddingTop,
             Dimens.space4,
             Dimens.space4,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: List<Widget>.generate(
               itemCount.clamp(0, items.length),
-              (int index) => Expanded(
-                child: NavBarItemWidget(
-                  key: ValueKey<String>(items[index].routeName ?? '$index'),
-                  item: items[index],
-                  isSelected: index == currentIndex,
-                  activeColor: active,
-                  inactiveColor: inactive,
-                  activeIconBackgroundColor: activeIconBg,
-                  iconSize: iconSize,
-                  onTap: () => onTap(index),
-                ),
-              ),
+              (int index) {
+                final CustomBottomNavBarItem item = items[index];
+                if (item.isCenterElevated) {
+                  return Expanded(
+                    child: NavBarTradesCenterItemWidget(
+                      key: ValueKey<String>(item.routeName ?? '$index'),
+                      item: item,
+                      isSelected: index == currentIndex,
+                      activeColor: active,
+                      inactiveColor: inactive,
+                      onTap: () => onTap(index),
+                    ),
+                  );
+                }
+                return Expanded(
+                  child: NavBarItemWidget(
+                    key: ValueKey<String>(item.routeName ?? '$index'),
+                    item: item,
+                    isSelected: index == currentIndex,
+                    activeColor: active,
+                    inactiveColor: inactive,
+                    activeIconBackgroundColor: activeIconBg,
+                    iconSize: iconSize,
+                    onTap: () => onTap(index),
+                  ),
+                );
+              },
             ),
           ),
         ),
+      ),
       ),
     );
   }

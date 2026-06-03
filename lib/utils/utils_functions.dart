@@ -62,46 +62,7 @@ String formatMixedLanguageText(String text, {bool? isRTL}) {
 
 bool _isNavigating = false;
 
-/// Handles redirection based on [type] and optional [data], navigating to
-/// appropriate pages while preventing duplicate navigation
-void handleRedirection({required String type, Map<String, dynamic>? data}) {
-  if (_isNavigating) {
-    return;
-  }
-  _isNavigating = true;
-  AppRouter router = getIt<AppRouter>();
-  bool isInitialRoute = router.pageCount == 0;
 
-  switch (type) {
-    case AppConstant.promotion:
-      if (data?['entity'] == '0') {
-        if (isInitialRoute) {
-          unawaited(router.pushAll(<PageRouteInfo>[const BankTransferRoute()]));
-        } else {
-          unawaited(router.push(const BankTransferRoute()));
-        }
-      } else {
-        if (isInitialRoute) {
-          unawaited(router.pushAll(<PageRouteInfo>[const DashboardRoute()]));
-        }
-      }
-    case AppConstant.order:
-      if (isInitialRoute) {
-        unawaited(router.pushAll(<PageRouteInfo>[const DashboardRoute()]));
-      }
-    default:
-      if (isInitialRoute) {
-        unawaited(router.pushAll(<PageRouteInfo>[const BankTransferRoute()]));
-      } else {
-        unawaited(router.push(const BankTransferRoute()));
-      }
-  }
-  unawaited(
-    Future<void>.delayed(const Duration(milliseconds: 500), () {
-      _isNavigating = false;
-    }),
-  );
-}
 
 /// Fade page transition for route animations
 Widget fadePageTransition(

@@ -42,6 +42,11 @@ class AppColors {
     Color(0xFFFF4F0B),
     Color(0xFF8B40FF),
   ];
+
+  /// Primary button / CTA fill gradient (orange → purple, left to right).
+  static const LinearGradient primaryButtonGradient = LinearGradient(
+    colors: primaryGradient,
+  );
   static const List<Color> secondaryGradient = <Color>[
     Color(0xFF8A2BE2),
     Color(0xFF7A2FFF),

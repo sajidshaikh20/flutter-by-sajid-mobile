@@ -185,10 +185,7 @@ class NotificationManager {
       Map<String, dynamic> data = message?.data ?? <String, dynamic>{};
       String type = data['type']?.toString().toLowerCase() ?? '';
 
-      // If a type exists in the message data, handle redirection based on type.
-      if (type.isNotEmpty) {
-        handleRedirection(type: type, data: data);
-      }
+
     });
   }
 
@@ -241,10 +238,7 @@ class NotificationManager {
       DebugLog.instance.i(
         'FCM MessageOpenedApp Message entity : $entity',
       );
-      // If a type exists in the message data, handle redirection based on type.
-      if (type.isNotEmpty) {
-        handleRedirection(type: type, data: data);
-      }
+
     });
   }
 }

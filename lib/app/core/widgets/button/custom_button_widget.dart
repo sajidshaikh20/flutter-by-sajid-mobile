@@ -148,18 +148,14 @@ class CustomButtonWidget extends StatelessWidget {
       // Primary button styles
       if (isOutline || hasBorder) {
         resolvedBgColor = Colors.transparent;
-        borderGradient = const LinearGradient(
-          colors: <Color>[Color(0xFFFF4F0B), Color(0xFF8B40FF)],
-        );
+        borderGradient = AppColors.primaryButtonGradient;
       } else if (isGhost) {
         resolvedBgColor = isDark
             ? AppColors.primaryPurple.withValues(alpha: 0.15)
             : AppColors.primaryPurple.withValues(alpha: 0.08);
         resolvedTextColor = AppColors.primaryPurple;
       } else {
-        backgroundGradient = const LinearGradient(
-          colors: <Color>[Color(0xFFFF4F0B), Color(0xFF8B40FF)],
-        );
+        backgroundGradient = AppColors.primaryButtonGradient;
         resolvedTextColor = Colors.white;
       }
     } else {
@@ -200,9 +196,9 @@ class CustomButtonWidget extends StatelessWidget {
     if (isButtonEnabled && isPrimaryButton && (isOutline || hasBorder)) {
       labelWidget = ShaderMask(
         shaderCallback: (Rect bounds) {
-          return const LinearGradient(
-            colors: <Color>[Color(0xFFFF4F0B), Color(0xFF8B40FF)],
-          ).createShader(Offset.zero & bounds.size);
+          return AppColors.primaryButtonGradient.createShader(
+            Offset.zero & bounds.size,
+          );
         },
         child: CustomTextLabelWidget(
           textDirection: textDirection,

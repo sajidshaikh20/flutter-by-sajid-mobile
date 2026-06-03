@@ -105,7 +105,7 @@ class DashboardPage extends BaseResponsiveView {
                 ),
                 CustomBottomNavBarItem(
                   iconBuilder: (Color color, double size) => Icon(
-                    Icons.account_balance_wallet_outlined,
+                    Icons.candlestick_chart_outlined,
                     size: size,
                     color: color,
                   ),
@@ -113,11 +113,7 @@ class DashboardPage extends BaseResponsiveView {
                   label: strings.navMyTradesKey,
                 ),
                 CustomBottomNavBarItem(
-                  iconBuilder: (Color color, double size) => Icon(
-                    Icons.candlestick_chart_outlined,
-                    size: size,
-                    color: color,
-                  ),
+                  isCenterElevated: true,
                   routeName: AppPaths.trades,
                   label: strings.navTradesKey,
                 ),
