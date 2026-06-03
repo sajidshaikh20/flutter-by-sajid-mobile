@@ -33,6 +33,26 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
     AutoTabsRouter.of(context).setActiveIndex(step);
   }
 
+  void _handleNext(BuildContext context, SignUpCubit cubit, SignUpState state) {
+    if (cubit.isLastStep) {
+      if (cubit.tryProceedFromCurrentStep(context)) {
+        displaySnackBar(
+          context.appString.signUpRegistrationCompleteKey,
+          context,
+        );
+        goBack(context);
+      }
+      return;
+    }
+
+    if (!cubit.tryProceedFromCurrentStep(context)) {
+      return;
+    }
+
+    final int nextStep = state.currentStep + 1;
+    _syncStep(context, nextStep);
+  }
+
   List<String> _stepTitles(BuildContext context) => <String>[
     context.appString.signUpBasicInfoKey,
     context.appString.signUpVerificationKey,
@@ -62,96 +82,95 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
             bottomNavigationBar: _SignUpStickyBottomBar(
               canGoPrevious: cubit.canGoPrevious,
               isLastStep: cubit.isLastStep,
+              isNextEnabled: cubit.isNextEnabled(),
               backgroundColor: backgroundColor,
               onPrevious: () {
                 if (cubit.canGoPrevious) {
                   _syncStep(context, state.currentStep - 1);
                 }
               },
-              onNext: () {
-                if (cubit.isLastStep) {
-                  goBack(context);
-                  return;
-                }
-                _syncStep(context, state.currentStep + 1);
-              },
+              onNext: () => _handleNext(context, cubit, state),
             ),
-            body: AutoTabsRouter(
-              routes: const <PageRouteInfo>[
-                SignUpBasicInfoRoute(),
-                SignUpVerificationRoute(),
-                SignUpCompleteProfileRoute(),
-              ],
-              builder: (BuildContext context, Widget child) {
-                final TabsRouter tabsRouter = AutoTabsRouter.of(context);
+            body: Form(
+              key: state.formKey,
+              child: AutoTabsRouter(
+                routes: <PageRouteInfo<dynamic>>[
+                  const SignUpBasicInfoRoute(),
+                  SignUpVerificationRoute(email: state.email),
+                  const SignUpCompleteProfileRoute(),
+                ],
+                builder: (BuildContext context, Widget child) {
+                  final TabsRouter tabsRouter = AutoTabsRouter.of(context);
 
-                return BlocListener<SignUpCubit, SignUpState>(
-                  listenWhen:
-                      (SignUpState previous, SignUpState current) =>
-                          previous.currentStep != current.currentStep,
-                  listener: (BuildContext context, SignUpState state) {
-                    if (tabsRouter.activeIndex != state.currentStep) {
-                      tabsRouter.setActiveIndex(state.currentStep);
-                    }
-                    if (_stepProgressController.currentStep !=
-                        state.currentStep) {
-                      _stepProgressController.setCurrentStep(
-                        state.currentStep,
-                      );
-                    }
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          Dimens.size8,
-                          Dimens.size8,
-                          Dimens.size8,
-                          Dimens.size16,
-                        ),
-                        child: StepProgress(
-                          controller: _stepProgressController,
-                          totalSteps: signUpTotalSteps,
-                          currentStep: state.currentStep,
-                          stepNodeSize: Dimens.size40,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: Dimens.size4,
+                  return BlocListener<SignUpCubit, SignUpState>(
+                    listenWhen: (SignUpState p, SignUpState c) =>
+                        p.currentStep != c.currentStep ||
+                        p.isEmailVerified != c.isEmailVerified ||
+                        p.isPhoneVerified != c.isPhoneVerified,
+                    listener: (BuildContext context, SignUpState state) {
+                      if (tabsRouter.activeIndex != state.currentStep) {
+                        tabsRouter.setActiveIndex(state.currentStep);
+                      }
+                      if (_stepProgressController.currentStep !=
+                          state.currentStep) {
+                        _stepProgressController.setCurrentStep(
+                          state.currentStep,
+                        );
+                      }
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            Dimens.size8,
+                            Dimens.size8,
+                            Dimens.size8,
+                            Dimens.size16,
                           ),
-                          theme: buildSignUpStepProgressTheme(context),
-                          nodeIconBuilder: (int index, int currentStep) {
-                            return SignUpStepNodeCircle(
-                              stepNumber: index + 1,
-                              state: signUpStepNodeState(
+                          child: StepProgress(
+                            controller: _stepProgressController,
+                            totalSteps: signUpTotalSteps,
+                            currentStep: state.currentStep,
+                            stepNodeSize: Dimens.size40,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Dimens.size4,
+                            ),
+                            theme: buildSignUpStepProgressTheme(context),
+                            nodeIconBuilder: (int index, int currentStep) {
+                              return SignUpStepNodeCircle(
+                                stepNumber: index + 1,
+                                state: signUpStepNodeState(
+                                  index: index,
+                                  currentStep: currentStep,
+                                ),
+                                isDark: isDark,
+                              );
+                            },
+                            nodeLabelBuilder: (int index, int currentStep) {
+                              return buildSignUpStepLabel(
+                                context,
                                 index: index,
                                 currentStep: currentStep,
-                              ),
-                              isDark: isDark,
-                            );
-                          },
-                          nodeLabelBuilder: (int index, int currentStep) {
-                            return buildSignUpStepLabel(
-                              context,
-                              index: index,
-                              currentStep: currentStep,
-                              titles: _stepTitles(context),
-                            );
-                          },
-                          onStepNodeTapped: (int index) {
-                            if (index <= state.currentStep) {
+                                titles: _stepTitles(context),
+                              );
+                            },
+                            onStepNodeTapped: (int index) {
+                              if (index <= state.currentStep) {
+                                _syncStep(context, index);
+                              }
+                            },
+                            onStepChanged: (int index) {
                               _syncStep(context, index);
-                            }
-                          },
-                          onStepChanged: (int index) {
-                            _syncStep(context, index);
-                          },
+                            },
+                          ),
                         ),
-                      ),
-                      Expanded(child: child),
-                    ],
-                  ),
-                );
-              },
+                        Expanded(child: child),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },
@@ -160,11 +179,12 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
   }
 }
 
-/// Previous / Next and back-to-login pinned above the system inset.
+/// Previous / Next pinned at the bottom.
 class _SignUpStickyBottomBar extends StatelessWidget {
   const _SignUpStickyBottomBar({
     required this.canGoPrevious,
     required this.isLastStep,
+    required this.isNextEnabled,
     required this.backgroundColor,
     required this.onPrevious,
     required this.onNext,
@@ -172,6 +192,7 @@ class _SignUpStickyBottomBar extends StatelessWidget {
 
   final bool canGoPrevious;
   final bool isLastStep;
+  final bool isNextEnabled;
   final Color backgroundColor;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
@@ -189,7 +210,9 @@ class _SignUpStickyBottomBar extends StatelessWidget {
         border: Border(top: BorderSide(color: borderColor)),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: AppColors.primaryPurple.withValues(alpha: isDark ? 0.12 : 0.08),
+            color: AppColors.primaryPurple.withValues(
+              alpha: isDark ? 0.12 : 0.08,
+            ),
             blurRadius: Dimens.blurRadius10,
             offset: const Offset(0, -Dimens.offset2),
           ),
@@ -204,29 +227,25 @@ class _SignUpStickyBottomBar extends StatelessWidget {
             Dimens.size16,
             Dimens.size8,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Row(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  if (canGoPrevious)
-                    Expanded(
-                      child: CustomButtonWidget(
-                        title: context.appString.signUpPreviousKey,
-                        isPrimaryButton: false,
-                        onTap: onPrevious,
-                      ),
-                    ),
-                  if (canGoPrevious) Dimens.size12.widthBox,
-                  Expanded(
-                    child: CustomButtonWidget(
-                      title: isLastStep
-                          ? context.appString.signUpFinishKey
-                          : context.appString.signUpNextKey,
-                      onTap: onNext,
-                    ),
+              if (canGoPrevious)
+                Expanded(
+                  child: CustomButtonWidget(
+                    title: context.appString.signUpPreviousKey,
+                    isPrimaryButton: false,
+                    onTap: onPrevious,
                   ),
-                ],
+                ),
+              if (canGoPrevious) Dimens.size12.widthBox,
+              Expanded(
+                child: CustomButtonWidget(
+                  title: isLastStep
+                      ? context.appString.signUpFinishKey
+                      : context.appString.signUpNextKey,
+                  isButtonEnabled: isNextEnabled,
+                  onTap: onNext,
+                ),
               ),
             ],
           ),

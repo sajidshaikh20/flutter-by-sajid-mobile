@@ -15,3 +15,4 @@ export 'transaction_history/transaction_history.dart';
 export 'login/login.dart';
 export 'forgot_password/forgot_password.dart';
 export 'signup/signup.dart';
+export 'verification_pending/verification_pending.dart';

@@ -44,7 +44,7 @@ class SplashCubit extends Cubit<SplashState> {
                 : AppConstant.rtlLanguageAlignment,
             languageCode: locale.languageCode,
             status: BaseStateStatus.success,
-            redirectPath: AppPaths.dashboard,
+            redirectPath: AccountVerificationHelper.resolveLoggedInPath(),
           ));
         },
       );

@@ -1,16 +1,21 @@
 import '../../../../utils/exports.dart';
 
 @RoutePage()
-/// Sign up step 2 – verification.
+/// Sign up step 2 – email and phone verification.
 class SignUpVerificationPage extends StatelessWidget {
   /// Creates [SignUpVerificationPage].
-  const SignUpVerificationPage({super.key});
+  const SignUpVerificationPage({
+    super.key,
+    this.email,
+  });
+
+  /// Email from basic info (AutoRoute).
+  final String? email;
 
   @override
   Widget build(BuildContext context) {
-    return SignUpStepPlaceholder(
-      title: context.appString.signUpVerificationKey,
-      subtitle: context.appString.signUpVerificationSubtitleKey,
+    return SignUpVerificationForm(
+      email: email ?? '',
     );
   }
 }

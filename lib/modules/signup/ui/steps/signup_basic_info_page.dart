@@ -8,9 +8,6 @@ class SignUpBasicInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SignUpStepPlaceholder(
-      title: context.appString.signUpBasicInfoKey,
-      subtitle: context.appString.signUpBasicInfoSubtitleKey,
-    );
+    return const SignUpBasicInfoForm();
   }
 }

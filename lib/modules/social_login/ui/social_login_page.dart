@@ -47,9 +47,10 @@ class SocialLoginPage extends BaseResponsiveView {
             await Future<void>.delayed(const Duration(milliseconds: 100));
             try {
               if (context.mounted) {
-                await context.router.replaceAll(<PageRouteInfo>[
-                  const DashboardRoute(),
-                ]);
+                final PageRouteInfo route =
+                    state.redirectRoute ??
+                    AccountVerificationHelper.resolvePostLoginRoute();
+                await context.router.replaceAll(<PageRouteInfo>[route]);
                 DebugLog.instance.i('Navigation completed successfully');
               }
             } on Exception catch (e) {

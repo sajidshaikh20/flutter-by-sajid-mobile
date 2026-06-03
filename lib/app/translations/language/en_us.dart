@@ -178,11 +178,11 @@ class EnUS extends AppString {
 
   @override
   String get signUpBasicInfoSubtitleKey =>
-      'Enter your name, email, and mobile number to get started.';
+      'Enter your full name and email address to get started.';
 
   @override
   String get signUpVerificationSubtitleKey =>
-      'Verify your email or phone with the code we send you.';
+      'Verify your email and phone with the codes we send you.';
 
   @override
   String get signUpCompleteProfileSubtitleKey =>
@@ -196,4 +196,196 @@ class EnUS extends AppString {
 
   @override
   String get signUpFinishKey => 'Finish';
+
+  @override
+  String get signUpCreateClientAccountKey => 'Create Client Account';
+
+  @override
+  String get signUpBasicInfoDetailsKey =>
+      'Enter your details to continue registration';
+
+  @override
+  String get signUpFullNameKey => 'Full Name';
+
+  @override
+  String get signUpEnterFullNameKey => 'Enter full name';
+
+  @override
+  String get signUpEmailAddressKey => 'Email Address';
+
+  @override
+  String get signUpEnterEmailAddressKey => 'Enter email address';
+
+  @override
+  String get signUpPleaseEnterFullNameKey => 'Please enter full name';
+
+  @override
+  String get signUpPleaseEnterValidFullNameKey =>
+      'Please enter a valid full name';
+
+  @override
+  String get signUpSendOtpKey => 'Send OTP';
+
+  @override
+  String get signUpEnterEmailToReceiveOtpKey =>
+      'Enter your email to receive a verification code';
+
+  @override
+  String get signUpEnterPhoneToReceiveOtpKey =>
+      'Enter your mobile number to receive a verification code';
+
+  @override
+  String get signUpOtpSentEmailKey => 'OTP sent to your email';
+
+  @override
+  String get signUpOtpSentPhoneKey => 'OTP sent to your phone';
+
+  @override
+  String get signUpVerificationCompleteKey =>
+      'Email and phone verified. Tap Next to complete your profile.';
+
+  @override
+  String get signUpEmailVerificationKey => 'Email Verification';
+
+  @override
+  String get signUpPhoneVerificationKey => 'Phone Verification';
+
+  @override
+  String get signUpEmailOtpSentToKey =>
+      'Enter the 6-digit verification code sent to';
+
+  @override
+  String get signUpPhoneOtpSentToKey =>
+      'Enter the 6-digit verification code sent to';
+
+  @override
+  String get signUpEnterOtpKey => 'Enter OTP';
+
+  @override
+  String get signUpVerifyEmailOtpKey => 'Verify Email OTP';
+
+  @override
+  String get signUpVerifyPhoneOtpKey => 'Verify Phone OTP';
+
+  @override
+  String get signUpResendOtpKey => 'Resend OTP';
+
+  @override
+  String get signUpDidntReceiveOtpKey => "Didn't receive OTP? ";
+
+  @override
+  String signUpResendOtpCountdown(int seconds) => 'Resend OTP in ${seconds}s';
+
+  @override
+  String get signUpVerifiedKey => 'Verified';
+
+  @override
+  String get signUpCompleteYourProfileKey => 'Complete Your Profile';
+
+  @override
+  String get signUpSetupWekoAccountKey => 'Setup your secure WEKO account';
+
+  @override
+  String get signUpUsernameKey => 'Username';
+
+  @override
+  String get signUpChooseUsernameKey => 'Choose username';
+
+  @override
+  String get signUpCreateStrongPasswordKey => 'Create strong password';
+
+  @override
+  String get signUpConfirmPasswordKey => 'Confirm Password';
+
+  @override
+  String get signUpConfirmPasswordHintKey => 'Confirm password';
+
+  @override
+  String get signUpPleaseEnterUsernameKey => 'Please enter username';
+
+  @override
+  String get signUpPleaseEnterValidUsernameKey =>
+      'Please enter a valid username (min 3 characters, no spaces)';
+
+  @override
+  String get signUpPleaseConfirmPasswordKey => 'Please confirm your password';
+
+  @override
+  String get signUpPasswordsDoNotMatchKey => 'Passwords do not match';
+
+  @override
+  String get signUpPleaseEnterOtpKey => 'Please enter OTP';
+
+  @override
+  String get signUpPleaseEnterValidOtpKey =>
+      'Please enter a valid 6-digit OTP';
+
+  @override
+  String get signUpVerifyEmailFirstKey =>
+      'Please verify your email OTP before continuing';
+
+  @override
+  String get signUpVerifyPhoneFirstKey =>
+      'Please verify your phone OTP before continuing';
+
+  @override
+  String get signUpEmailVerifiedSuccessKey => 'Email verified successfully';
+
+  @override
+  String get signUpPhoneVerifiedSuccessKey => 'Phone verified successfully';
+
+  @override
+  String get signUpOtpResentEmailKey => 'OTP resent to your email';
+
+  @override
+  String get signUpOtpResentPhoneKey => 'OTP resent to your phone';
+
+  @override
+  String get signUpRegistrationCompleteKey =>
+      'Registration completed successfully';
+
+  @override
+  String get signUpSelectCountryKey => 'Select Country';
+
+  @override
+  String get signUpSearchCountryKey => 'Search country';
+
+  @override
+  String get signUpNoCountryFoundKey => 'No country found';
+
+  @override
+  String get verificationPendingTitleKey => 'Verification Pending';
+
+  @override
+  String get verificationPendingSubtitleKey =>
+      "We're reviewing your account verification details.";
+
+  @override
+  String get verificationPendingDescriptionKey =>
+      'Your documents have been successfully submitted and are currently being reviewed by our verification team. This process usually takes up to 24 hours, although it may be completed sooner.';
+
+  @override
+  String get verificationPendingCurrentStatusKey => 'Current Status';
+
+  @override
+  String get verificationPendingUnderReviewKey => 'Under Review';
+
+  @override
+  String get verificationPendingNotifyKey =>
+      "We'll notify you via email and mobile notification once your account has been verified.";
+
+  @override
+  String get verificationPendingThankYouKey =>
+      'Thank you for your patience while we complete this process.';
+
+  @override
+  String get verificationPendingNeedAssistanceKey => 'Need assistance? ';
+
+  @override
+  String get verificationPendingContactSupportKey =>
+      'Contact our support team for help.';
+
+  @override
+  String get verificationPendingSupportEmailSubjectKey =>
+      'Account Verification Help';
 }

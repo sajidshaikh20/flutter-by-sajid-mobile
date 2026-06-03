@@ -52,11 +52,13 @@ class SocialLoginCubit extends Cubit<SocialLoginState> {
         arabicNationality: '',
       );
 
+      await AccountVerificationHelper.setPending();
+
       emit(
         state.copyWith(
           status: BaseStateStatus.success,
           msg: 'Successfully logged in with Google',
-          redirectRoute: const DashboardRoute(),
+          redirectRoute: AccountVerificationHelper.resolvePostLoginRoute(),
         ),
       );
     } on FirebaseAuthException catch (e) {

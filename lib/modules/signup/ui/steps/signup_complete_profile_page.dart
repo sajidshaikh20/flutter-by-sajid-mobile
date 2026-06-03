@@ -8,9 +8,6 @@ class SignUpCompleteProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SignUpStepPlaceholder(
-      title: context.appString.signUpCompleteProfileKey,
-      subtitle: context.appString.signUpCompleteProfileSubtitleKey,
-    );
+    return const SignUpCompleteProfileForm();
   }
 }

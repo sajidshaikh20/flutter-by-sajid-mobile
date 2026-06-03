@@ -66,10 +66,12 @@ class LoginCubit extends Cubit<LoginState> {
         arabicNationality: 'كويتي',
       );
 
+      await AccountVerificationHelper.setPending();
+
       emit(state.copyWith(
         status: BaseStateStatus.success,
         msg: 'Successfully logged in (Mock)',
-        redirectRoute: const DashboardRoute(),
+        redirectRoute: AccountVerificationHelper.resolvePostLoginRoute(),
       ));
     } on Exception {
       emit(state.copyWith(

@@ -6,10 +6,29 @@ class SignUpPage extends BaseResponsiveView {
   /// Creates [SignUpPage].
   const SignUpPage({super.key});
 
+  SignUpState _createInitialState() {
+    return SignUpState(
+      status: BaseStateStatus.initial,
+      formKey: GlobalKey<FormState>(),
+      fullNameController: TextEditingController(),
+      emailController: TextEditingController(),
+      phoneController: TextEditingController(),
+      usernameController: TextEditingController(),
+      passwordController: TextEditingController(),
+      confirmPasswordController: TextEditingController(),
+      fullNameFocusNode: FocusNode(),
+      emailFocusNode: FocusNode(),
+      phoneFocusNode: FocusNode(),
+      usernameFocusNode: FocusNode(),
+      passwordFocusNode: FocusNode(),
+      confirmPasswordFocusNode: FocusNode(),
+    );
+  }
+
   Widget _buildView(BuildContext context) {
     return BlocProvider<SignUpCubit>(
       create: (BuildContext ctx) => SignUpCubit(
-        initialState: const SignUpState(status: BaseStateStatus.initial),
+        initialState: _createInitialState(),
       ),
       child: const SignUpFlowWidget(),
     );

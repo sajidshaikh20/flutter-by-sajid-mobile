@@ -60,6 +60,7 @@ dependencies:
   firebase_auth:
   google_sign_in:
   step_progress: ^2.7.1
+  otp_pin_field: ^1.4.1
 
 dev_dependencies:
   flutter_test:

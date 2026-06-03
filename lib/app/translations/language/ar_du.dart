@@ -177,11 +177,11 @@ class ArDu extends AppString {
 
   @override
   String get signUpBasicInfoSubtitleKey =>
-      'أدخل اسمك وبريدك الإلكتروني ورقم هاتفك للبدء.';
+      'أدخل اسمك الكامل وبريدك الإلكتروني للبدء.';
 
   @override
   String get signUpVerificationSubtitleKey =>
-      'تحقق من بريدك الإلكتروني أو هاتفك باستخدام الرمز الذي نرسله إليك.';
+      'تحقق من بريدك الإلكتروني وهاتفك باستخدام الرموز التي نرسلها إليك.';
 
   @override
   String get signUpCompleteProfileSubtitleKey =>
@@ -195,4 +195,201 @@ class ArDu extends AppString {
 
   @override
   String get signUpFinishKey => 'إنهاء';
+
+  @override
+  String get signUpCreateClientAccountKey => 'إنشاء حساب عميل';
+
+  @override
+  String get signUpBasicInfoDetailsKey =>
+      'أدخل بياناتك لمتابعة التسجيل';
+
+  @override
+  String get signUpFullNameKey => 'الاسم الكامل';
+
+  @override
+  String get signUpEnterFullNameKey => 'أدخل الاسم الكامل';
+
+  @override
+  String get signUpEmailAddressKey => 'البريد الإلكتروني';
+
+  @override
+  String get signUpEnterEmailAddressKey => 'أدخل البريد الإلكتروني';
+
+  @override
+  String get signUpPleaseEnterFullNameKey => 'يرجى إدخال الاسم الكامل';
+
+  @override
+  String get signUpPleaseEnterValidFullNameKey =>
+      'يرجى إدخال اسم كامل صالح';
+
+  @override
+  String get signUpSendOtpKey => 'إرسال OTP';
+
+  @override
+  String get signUpEnterEmailToReceiveOtpKey =>
+      'أدخل بريدك الإلكتروني لاستلام رمز التحقق';
+
+  @override
+  String get signUpEnterPhoneToReceiveOtpKey =>
+      'أدخل رقم هاتفك لاستلام رمز التحقق';
+
+  @override
+  String get signUpOtpSentEmailKey => 'تم إرسال OTP إلى بريدك الإلكتروني';
+
+  @override
+  String get signUpOtpSentPhoneKey => 'تم إرسال OTP إلى هاتفك';
+
+  @override
+  String get signUpVerificationCompleteKey =>
+      'تم التحقق من البريد والهاتف. اضغط التالي لإكمال ملفك.';
+
+  @override
+  String get signUpEmailVerificationKey => 'التحقق من البريد الإلكتروني';
+
+  @override
+  String get signUpPhoneVerificationKey => 'التحقق من الهاتف';
+
+  @override
+  String get signUpEmailOtpSentToKey =>
+      'أدخل رمز التحقق المكون من 6 أرقام المرسل إلى';
+
+  @override
+  String get signUpPhoneOtpSentToKey =>
+      'أدخل رمز التحقق المكون من 6 أرقام المرسل إلى';
+
+  @override
+  String get signUpEnterOtpKey => 'أدخل رمز OTP';
+
+  @override
+  String get signUpVerifyEmailOtpKey => 'تحقق من OTP البريد الإلكتروني';
+
+  @override
+  String get signUpVerifyPhoneOtpKey => 'تحقق من OTP الهاتف';
+
+  @override
+  String get signUpResendOtpKey => 'إعادة إرسال OTP';
+
+  @override
+  String get signUpDidntReceiveOtpKey => 'لم تستلم OTP؟ ';
+
+  @override
+  String signUpResendOtpCountdown(int seconds) =>
+      'إعادة إرسال OTP خلال $seconds ث';
+
+  @override
+  String get signUpVerifiedKey => 'تم التحقق';
+
+  @override
+  String get signUpCompleteYourProfileKey => 'أكمل ملفك الشخصي';
+
+  @override
+  String get signUpSetupWekoAccountKey => 'إعداد حساب WEKO الآمن الخاص بك';
+
+  @override
+  String get signUpUsernameKey => 'اسم المستخدم';
+
+  @override
+  String get signUpChooseUsernameKey => 'اختر اسم المستخدم';
+
+  @override
+  String get signUpCreateStrongPasswordKey => 'أنشئ كلمة مرور قوية';
+
+  @override
+  String get signUpConfirmPasswordKey => 'تأكيد كلمة المرور';
+
+  @override
+  String get signUpConfirmPasswordHintKey => 'تأكيد كلمة المرور';
+
+  @override
+  String get signUpPleaseEnterUsernameKey => 'يرجى إدخال اسم المستخدم';
+
+  @override
+  String get signUpPleaseEnterValidUsernameKey =>
+      'يرجى إدخال اسم مستخدم صالح (3 أحرف على الأقل، بدون مسافات)';
+
+  @override
+  String get signUpPleaseConfirmPasswordKey =>
+      'يرجى تأكيد كلمة المرور';
+
+  @override
+  String get signUpPasswordsDoNotMatchKey =>
+      'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get signUpPleaseEnterOtpKey => 'يرجى إدخال OTP';
+
+  @override
+  String get signUpPleaseEnterValidOtpKey =>
+      'يرجى إدخال OTP صالح مكون من 6 أرقام';
+
+  @override
+  String get signUpVerifyEmailFirstKey =>
+      'يرجى التحقق من OTP البريد الإلكتروني قبل المتابعة';
+
+  @override
+  String get signUpVerifyPhoneFirstKey =>
+      'يرجى التحقق من OTP الهاتف قبل المتابعة';
+
+  @override
+  String get signUpEmailVerifiedSuccessKey =>
+      'تم التحقق من البريد الإلكتروني بنجاح';
+
+  @override
+  String get signUpPhoneVerifiedSuccessKey =>
+      'تم التحقق من الهاتف بنجاح';
+
+  @override
+  String get signUpOtpResentEmailKey =>
+      'تم إعادة إرسال OTP إلى بريدك الإلكتروني';
+
+  @override
+  String get signUpOtpResentPhoneKey => 'تم إعادة إرسال OTP إلى هاتفك';
+
+  @override
+  String get signUpRegistrationCompleteKey => 'تم التسجيل بنجاح';
+
+  @override
+  String get signUpSelectCountryKey => 'اختر الدولة';
+
+  @override
+  String get signUpSearchCountryKey => 'ابحث عن الدولة';
+
+  @override
+  String get signUpNoCountryFoundKey => 'لم يتم العثور على دولة';
+
+  @override
+  String get verificationPendingTitleKey => 'التحقق قيد الانتظار';
+
+  @override
+  String get verificationPendingSubtitleKey =>
+      'نحن نراجع تفاصيل التحقق من حسابك.';
+
+  @override
+  String get verificationPendingDescriptionKey =>
+      'تم إرسال مستنداتك بنجاح وهي قيد المراجعة من قبل فريق التحقق لدينا. تستغرق هذه العملية عادةً ما يصل إلى 24 ساعة، وقد تكتمل في وقت أقرب.';
+
+  @override
+  String get verificationPendingCurrentStatusKey => 'الحالة الحالية';
+
+  @override
+  String get verificationPendingUnderReviewKey => 'قيد المراجعة';
+
+  @override
+  String get verificationPendingNotifyKey =>
+      'سنُعلمك عبر البريد الإلكتروني والإشعارات على الهاتف بمجرد التحقق من حسابك.';
+
+  @override
+  String get verificationPendingThankYouKey =>
+      'شكراً لصبرك بينما نكمل هذه العملية.';
+
+  @override
+  String get verificationPendingNeedAssistanceKey => 'هل تحتاج إلى مساعدة؟ ';
+
+  @override
+  String get verificationPendingContactSupportKey =>
+      'تواصل مع فريق الدعم للحصول على المساعدة.';
+
+  @override
+  String get verificationPendingSupportEmailSubjectKey =>
+      'مساعدة التحقق من الحساب';
 }

@@ -74,6 +74,14 @@ class AppRouter extends RootStackRouter {
       ],
     ),
 
+    CustomRoute<dynamic>(
+      page: VerificationPendingRoute.page,
+      path: AppPaths.verificationPending,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+
     /// Dashboard with 4 tabs
     CustomRoute<dynamic>(
       page: DashboardRoute.page,

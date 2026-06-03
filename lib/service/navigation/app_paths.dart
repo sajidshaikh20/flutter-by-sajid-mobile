@@ -58,4 +58,7 @@ abstract class AppPaths {
 
   /// Sign up step 3 – complete profile (sub-path).
   static const String signUpCompleteProfile = 'complete_profile';
+
+  /// Account verification pending screen (post-login).
+  static const String verificationPending = '/verification_pending';
 }

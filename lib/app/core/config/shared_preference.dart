@@ -49,6 +49,10 @@ class PrefsKey {
   /// Key for the quote ID.
   static const String quoteIdKey = 'quoteIdKey';
 
+  /// Key for account verification status (`pending` / `verified`).
+  static const String accountVerificationStatusKey =
+      'accountVerificationStatusKey';
+
   /// Key to check if the English language is loaded.
   static const String isEnglishLanguageLoadedKey = 'isEnglishLanguageLoaded';
 
