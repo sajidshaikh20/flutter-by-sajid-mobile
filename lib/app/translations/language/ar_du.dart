@@ -36,6 +36,21 @@ class ArDu extends AppString {
   String get navWishlistKey => 'قائمة الرغبات';
 
   @override
+  String get navMyTradesKey => 'صفقاتي';
+
+  @override
+  String get navTradesKey => 'التداول';
+
+  @override
+  String get navToolKey => 'الأدوات';
+
+  @override
+  String get navSettingsKey => 'الإعدادات';
+
+  @override
+  String get comingSoonKey => 'قريباً';
+
+  @override
   String get noInternetConnectionKey => 'لا يوجد اتصال بالإنترنت!';
 
   @override
@@ -396,4 +411,7 @@ class ArDu extends AppString {
   @override
   String get verificationPendingSupportEmailSubjectKey =>
       'مساعدة التحقق من الحساب';
+
+  @override
+  String get verificationPendingMarkVerifiedKey => 'اكتمل التحقق';
 }

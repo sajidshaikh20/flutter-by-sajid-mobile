@@ -29,7 +29,7 @@ class MaintenanceMiddleware extends AutoRouteGuard {
           forceUpdate.getUpdateOrMaintenanceType(config);
 
       if (type != UpdateMaintenanceType.none &&
-          router.navigatorKey.currentContext?.mounted == true) {
+          (router.navigatorKey.currentContext?.mounted ?? false)) {
         await router.pushPath(AppPaths.maintenance);
       }
     } on Exception catch (e) {

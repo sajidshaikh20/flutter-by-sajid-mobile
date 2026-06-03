@@ -12,6 +12,9 @@ class SplashViewWidget extends StatelessWidget {
   /// Builds the splash view for the specified screen type.
   Widget buildViews(ScreenType screenType, BuildContext context) {
     final bool isDark = _isDarkTheme(context);
+
+
+
     final AssetGenImage backgroundImage = isDark
         ? Assets.webp.icDarkBackgroundSplash
         : Assets.webp.icLightBackgroundSplash;

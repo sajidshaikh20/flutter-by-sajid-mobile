@@ -142,11 +142,26 @@ enum ProductListUpdateType {
 enum TabState {
   /// Home tab.
   home,
-  /// Transaction history tab.
+
+  /// My trades tab.
+  myTrades,
+
+  /// Trades tab.
+  trades,
+
+  /// Tool tab.
+  tool,
+
+  /// Settings tab.
+  settings,
+
+  /// Legacy: transaction history.
   transactionHistory,
-  /// Bank transfer tab.
+
+  /// Legacy: bank transfer.
   bankTransfer,
-  /// Chat support tab.
+
+  /// Legacy: chat support.
   chatSupport,
   /// Legacy: category (kept for compatibility).
   category,

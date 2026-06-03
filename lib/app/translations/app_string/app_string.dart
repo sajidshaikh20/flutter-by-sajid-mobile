@@ -17,6 +17,11 @@ abstract class AppString {
   String get navHomeKey;
   String get navNotificationsKey;
   String get navWishlistKey;
+  String get navMyTradesKey;
+  String get navTradesKey;
+  String get navToolKey;
+  String get navSettingsKey;
+  String get comingSoonKey;
   String get noInternetConnectionKey;
   String get okayKey;
   String get otherKey;
@@ -135,4 +140,5 @@ abstract class AppString {
   String get verificationPendingNeedAssistanceKey;
   String get verificationPendingContactSupportKey;
   String get verificationPendingSupportEmailSubjectKey;
+  String get verificationPendingMarkVerifiedKey;
 }

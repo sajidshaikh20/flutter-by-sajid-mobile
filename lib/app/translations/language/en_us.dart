@@ -36,6 +36,21 @@ class EnUS extends AppString {
   String get navWishlistKey => 'Wishlist';
 
   @override
+  String get navMyTradesKey => 'My Trades';
+
+  @override
+  String get navTradesKey => 'Trades';
+
+  @override
+  String get navToolKey => 'Tool';
+
+  @override
+  String get navSettingsKey => 'Settings';
+
+  @override
+  String get comingSoonKey => 'Coming soon';
+
+  @override
   String get noInternetConnectionKey => 'No Internet Connection!';
 
   @override
@@ -392,4 +407,7 @@ class EnUS extends AppString {
   @override
   String get verificationPendingSupportEmailSubjectKey =>
       'Account Verification Help';
+
+  @override
+  String get verificationPendingMarkVerifiedKey => 'Verification Done';
 }

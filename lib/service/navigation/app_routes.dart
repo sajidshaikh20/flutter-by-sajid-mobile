@@ -82,7 +82,7 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: fadePageTransition,
     ),
 
-    /// Dashboard with 4 tabs
+    /// Dashboard with 5 tabs
     CustomRoute<dynamic>(
       page: DashboardRoute.page,
       path: AppPaths.dashboard,
@@ -90,7 +90,6 @@ class AppRouter extends RootStackRouter {
       reverseDurationInMilliseconds: Dimens.milliseconds400,
       transitionsBuilder: fadePageTransition,
       children: <AutoRoute>[
-        /// Home tab shell (AutoRouter); children show inside tab so bottom nav stays visible.
         CustomRoute<dynamic>(
           initial: true,
           page: HomeRoute.page,
@@ -100,24 +99,32 @@ class AppRouter extends RootStackRouter {
           transitionsBuilder: fadePageTransition,
         ),
         CustomRoute<dynamic>(
-          page: TransactionHistoryRoute.page,
-          path: AppPaths.transactionHistory,
+          page: MyTradesRoute.page,
+          path: AppPaths.myTrades,
           maintainState: false,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
         ),
         CustomRoute<dynamic>(
-          page: BankTransferRoute.page,
+          page: TradesRoute.page,
+          path: AppPaths.trades,
           maintainState: false,
-          path: AppPaths.bankTransfer,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,
           transitionsBuilder: fadePageTransition,
         ),
         CustomRoute<dynamic>(
-          page: ChatSupportRoute.page,
-          path: AppPaths.chatSupport,
+          page: ToolRoute.page,
+          path: AppPaths.tool,
+          maintainState: false,
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
+        CustomRoute<dynamic>(
+          page: SettingsRoute.page,
+          path: AppPaths.settings,
           maintainState: false,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,

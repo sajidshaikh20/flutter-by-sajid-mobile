@@ -94,7 +94,16 @@ class VerificationPendingContent extends StatelessWidget {
                           iconCircleColor: iconCircleColor,
                           iconCircleBorder: iconCircleBorder,
                         ),
-                        Dimens.size48.heightBox,
+                        Dimens.size32.heightBox,
+                        CustomButtonWidget(
+                          title: context
+                              .appString
+                              .verificationPendingMarkVerifiedKey,
+                          height: Dimens.size52,
+                          borderRadius: Dimens.radius12,
+                          onTap: () => _onVerificationDone(context),
+                        ),
+                        Dimens.size32.heightBox,
                         CustomTextLabelWidget(
                           label:
                               context.appString.verificationPendingNeedAssistanceKey,
@@ -129,6 +138,16 @@ class VerificationPendingContent extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _onVerificationDone(BuildContext context) async {
+    await AccountVerificationHelper.setVerified();
+    if (!context.mounted) {
+      return;
+    }
+    await context.router.replaceAll(<PageRouteInfo>[
+      const DashboardRoute(),
+    ]);
   }
 
   Future<void> _onContactSupport(BuildContext context) async {

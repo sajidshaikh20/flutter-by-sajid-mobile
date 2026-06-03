@@ -13,6 +13,7 @@ class HomeCubit extends BaseCubit<HomeState> {
   /// Selects the given All Services tab.
   void selectServiceTab(ServiceCategoryTab tab) {
     emit(state.copyWith(selectedServiceTab: tab));
+
   }
 
   /// Toggles the visibility of the available balance.

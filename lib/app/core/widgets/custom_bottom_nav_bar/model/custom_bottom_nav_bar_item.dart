@@ -1,28 +1,32 @@
 import 'package:flutter/widgets.dart';
 
 /// Data model for one bottom nav bar item.
-///
-/// [activeIcon] is shown when the item is selected (e.g. white icon).
-/// [inactiveIcon] is shown when not selected (e.g. grey icon).
-/// Use [routeName] for navigation or analytics; [label] is optional.
 class CustomBottomNavBarItem {
-  /// Creates a bottom nav item with [activeIcon] and [inactiveIcon] widgets.
+  /// Creates a bottom nav item.
   const CustomBottomNavBarItem({
-    required this.activeIcon,
-    required this.inactiveIcon,
+    this.activeIcon,
+    this.inactiveIcon,
+    this.iconBuilder,
     this.routeName,
     this.label,
-  });
+  }) : assert(
+          iconBuilder != null ||
+              (activeIcon != null && inactiveIcon != null),
+          'Provide iconBuilder or both activeIcon and inactiveIcon',
+        );
 
-  /// Icon widget when the item is selected (e.g. white icon on green).
-  final Widget activeIcon;
+  /// Icon when selected (legacy).
+  final Widget? activeIcon;
 
-  /// Icon widget when the item is not selected (e.g. grey icon).
-  final Widget inactiveIcon;
+  /// Icon when not selected (legacy).
+  final Widget? inactiveIcon;
+
+  /// Builds icon with theme color and size (preferred).
+  final Widget Function(Color color, double size)? iconBuilder;
 
   /// Optional route or identifier for navigation.
   final String? routeName;
 
-  /// Optional label for accessibility or debugging.
+  /// Tab label shown below the icon.
   final String? label;
 }

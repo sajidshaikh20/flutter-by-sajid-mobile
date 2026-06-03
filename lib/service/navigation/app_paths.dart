@@ -20,13 +20,25 @@ abstract class AppPaths {
   /// Home page route (sub-path).
   static const String home = 'home';
 
-  /// Transaction history page route (sub-path).
+  /// My trades tab (sub-path).
+  static const String myTrades = 'my_trades';
+
+  /// Trades tab (sub-path).
+  static const String trades = 'trades';
+
+  /// Tool tab (sub-path).
+  static const String tool = 'tool';
+
+  /// Settings tab (sub-path).
+  static const String settings = 'settings';
+
+  /// Transaction history page route (sub-path) — legacy.
   static const String transactionHistory = 'transaction_history';
 
-  /// Bank transfer page route (sub-path).
+  /// Bank transfer page route (sub-path) — legacy.
   static const String bankTransfer = 'bank_transfer';
 
-  /// Chat support page route (sub-path).
+  /// Chat support page route (sub-path) — legacy.
   static const String chatSupport = 'chat_support';
 
   /// Service details page route.
