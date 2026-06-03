@@ -375,11 +375,15 @@ class EnUS extends AppString {
       "We'll notify you via email and mobile notification once your account has been verified.";
 
   @override
+  String get verificationPendingProcessingTimeKey =>
+      'This process usually takes up to 24 hours, although it may be completed sooner.';
+
+  @override
   String get verificationPendingThankYouKey =>
       'Thank you for your patience while we complete this process.';
 
   @override
-  String get verificationPendingNeedAssistanceKey => 'Need assistance? ';
+  String get verificationPendingNeedAssistanceKey => 'Need assistance?';
 
   @override
   String get verificationPendingContactSupportKey =>

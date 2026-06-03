@@ -379,11 +379,15 @@ class ArDu extends AppString {
       'سنُعلمك عبر البريد الإلكتروني والإشعارات على الهاتف بمجرد التحقق من حسابك.';
 
   @override
+  String get verificationPendingProcessingTimeKey =>
+      'تستغرق هذه العملية عادةً ما يصل إلى 24 ساعة، وقد تكتمل في وقت أقرب.';
+
+  @override
   String get verificationPendingThankYouKey =>
       'شكراً لصبرك بينما نكمل هذه العملية.';
 
   @override
-  String get verificationPendingNeedAssistanceKey => 'هل تحتاج إلى مساعدة؟ ';
+  String get verificationPendingNeedAssistanceKey => 'هل تحتاج إلى مساعدة؟';
 
   @override
   String get verificationPendingContactSupportKey =>

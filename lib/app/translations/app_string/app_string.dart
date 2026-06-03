@@ -130,6 +130,7 @@ abstract class AppString {
   String get verificationPendingCurrentStatusKey;
   String get verificationPendingUnderReviewKey;
   String get verificationPendingNotifyKey;
+  String get verificationPendingProcessingTimeKey;
   String get verificationPendingThankYouKey;
   String get verificationPendingNeedAssistanceKey;
   String get verificationPendingContactSupportKey;
