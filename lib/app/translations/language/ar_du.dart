@@ -414,4 +414,83 @@ class ArDu extends AppString {
 
   @override
   String get verificationPendingMarkVerifiedKey => 'اكتمل التحقق';
+
+  // Settings & Edit Profile Keys
+  @override
+  String get settingsAccountHeaderKey => 'الحساب';
+  @override
+  String get settingsSupportHeaderKey => 'الدعم';
+  @override
+  String get settingsProfileTitleKey => 'الملف الشخصي';
+  @override
+  String get settingsProfileSubtitleKey => 'إدارة تفاصيل حسابك';
+  @override
+  String get settingsSecurityTitleKey => 'الأمان';
+  @override
+  String get settingsSecuritySubtitleKey => 'كلمة المرور والمقاييس الحيوية';
+  @override
+  String get settingsNotificationsTitleKey => 'الإشعارات';
+  @override
+  String get settingsNotificationsSubtitleKey => 'تنبيهات الدفع والبريد الإلكتروني';
+  @override
+  String get settingsAppearanceTitleKey => 'المظهر';
+  @override
+  String get settingsAppearanceSubtitleKey => 'الوضع الداكن / الفاتح';
+  @override
+  String get settingsLanguageTitleKey => 'اللغة';
+  @override
+  String get settingsLanguageSubtitleKey => 'العربية';
+  @override
+  String get settingsVerificationTitleKey => 'حالة التحقق';
+  @override
+  String get settingsVerificationSubtitleVerifiedKey => 'تم التحقق';
+  @override
+  String get settingsVerificationSubtitleUnverifiedKey => 'غير متحقق';
+  @override
+  String get settingsSubscriptionTitleKey => 'الاشتراك';
+  @override
+  String get settingsSubscriptionSubtitleKey => 'إدارة خطتك';
+  @override
+  String get settingsTradingTitleKey => 'تفضيلات التداول';
+  @override
+  String get settingsTradingSubtitleKey => 'الإعدادات الافتراضية';
+  @override
+  String get settingsRiskTitleKey => 'إعدادات المخاطر';
+  @override
+  String get settingsRiskSubtitleKey => 'إدارة مستوى المخاطر';
+  @override
+  String get settingsHelpTitleKey => 'المساعدة والدعم';
+  @override
+  String get settingsHelpSubtitleKey => 'احصل على المساعدة بشأن حسابك';
+  @override
+  String get settingsPrivacyTitleKey => 'سياسة الخصوصية';
+  @override
+  String get settingsPrivacySubtitleKey => 'اقرأ سياستنا';
+  @override
+  String get settingsTermsTitleKey => 'الشروط والأحكام';
+  @override
+  String get settingsTermsSubtitleKey => 'اقرأ الشروط والأحكام';
+  @override
+  String get settingsAboutTitleKey => 'حول WEKO';
+  @override
+  String get settingsAboutSubtitleKey => 'الإصدار 1.0.0';
+  @override
+  String get settingsLogOutKey => 'تسجيل الخروج';
+
+  @override
+  String get editProfileTitleKey => 'تعديل الملف الشخصي';
+  @override
+  String get editProfileTapToChangePhotoKey => 'انقر لتغيير الصورة الشخصية';
+  @override
+  String get editProfileNameLabelKey => 'الاسم';
+  @override
+  String get editProfileUsernameLabelKey => 'اسم المستخدم';
+  @override
+  String get editProfileEmailLabelKey => 'البريد الإلكتروني';
+  @override
+  String get editProfilePhoneLabelKey => 'الهاتف';
+  @override
+  String get editProfileUpdateBtnKey => 'تحديث الملف الشخصي';
+  @override
+  String get editProfileSuccessKey => 'تم تحديث الملف الشخصي بنجاح';
 }

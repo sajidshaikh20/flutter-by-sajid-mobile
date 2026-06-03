@@ -73,4 +73,7 @@ abstract class AppPaths {
 
   /// Account verification pending screen (post-login).
   static const String verificationPending = '/verification_pending';
+
+  /// Edit profile screen route.
+  static const String editProfile = '/edit_profile';
 }

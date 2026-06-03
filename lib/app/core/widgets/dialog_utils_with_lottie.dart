@@ -100,9 +100,14 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
     }
 
     final FileType type = getFileType(widget.lottieAnimationFilePath);
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color dialogBgColor = isDark ? AppColors.surfaceDark : MainConfig.appColors.backgroundWhite;
+    final Color dividerColor = isDark ? AppColors.dividerDark : AppColors.deviderBorderColor;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtitleColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
     return Dialog(
-      backgroundColor: MainConfig.appColors.backgroundWhite,
+      backgroundColor: dialogBgColor,
       shape: RoundedRectangleBorder(borderRadius: Dimens.radius16.borderRadius),
       child: Container(
         constraints: BoxConstraints(maxWidth: spaceMobTab400_600),
@@ -131,6 +136,7 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
                     height: Dimens.lineHeight24
                         .toLineHeight(Dimens.fontSize16),
                     fontWeight: FontWeight.w700,
+                    color: textColor,
                     fontSize: Dimens.fontSize16),
                 label: widget.title1 ?? '',
               ),
@@ -152,6 +158,7 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
                             height: Dimens.lineHeight20
                                 .toLineHeight(Dimens.fontSize14),
                             fontWeight: FontWeight.w600,
+                            color: subtitleColor,
                             fontSize: Dimens.fontSize14),
                       ),
                     ),
@@ -182,9 +189,9 @@ class _DialogUtilsWithLottieState extends State<DialogUtilsWithLottie> {
             ),
             widget.child ?? const SizedBox.shrink(),
             Dimens.size14.heightBox,
-            const Divider(
+            Divider(
               height: Dimens.sizePoint5,
-              color: AppColors.deviderBorderColor,
+              color: dividerColor,
             ),
             GestureDetector(
               behavior: HitTestBehavior.translucent,

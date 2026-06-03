@@ -66,6 +66,9 @@ class UserProfileModel {
   /// The total number of orders placed by the customer.
   final int totalOrder;
 
+  /// The customer's username.
+  final String? username;
+
 
   /// Creates an instance of [UserProfileModel].
   UserProfileModel({
@@ -91,7 +94,7 @@ class UserProfileModel {
     required this.birthday,
     required this.nationality,
     required this.arabicNationality,
-
+    this.username,
   });
 
   /// Creates an instance of [UserProfileModel] from a JSON map.
@@ -119,6 +122,7 @@ class UserProfileModel {
       fcmToken: json['fcmToken'],
       referralCode: json['referralCode'],
       arabicNationality: json['arabicNationality'],
+      username: json['username'],
     );
   }
 
@@ -147,6 +151,7 @@ class UserProfileModel {
       'birthday': birthday,
       'nationality': nationality,
       'arabicNationality': arabicNationality,
+      'username': username,
     };
   }
 
@@ -174,6 +179,7 @@ class UserProfileModel {
     String? fcmToken,
     String? arabicNationality,
     int? totalOrder,
+    String? username,
   }) {
     return UserProfileModel(
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -198,6 +204,7 @@ class UserProfileModel {
       nationality: nationality ?? this.nationality,
       birthday: birthday ?? this.birthday,
       arabicNationality: arabicNationality ?? this.arabicNationality,
+      username: username ?? this.username,
     );
   }
 }

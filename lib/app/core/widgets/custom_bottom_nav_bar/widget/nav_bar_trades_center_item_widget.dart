@@ -1,6 +1,8 @@
 import '../../../../../utils/exports.dart';
 
-/// Center Trades tab — gradient circle when selected, subtle lift.
+import 'nav_bar_selection_animation.dart';
+
+/// Center Trades tab — fixed height; gradient circle only when selected.
 class NavBarTradesCenterItemWidget extends StatelessWidget {
   const NavBarTradesCenterItemWidget({
     super.key,
@@ -17,97 +19,110 @@ class NavBarTradesCenterItemWidget extends StatelessWidget {
   final Color inactiveColor;
   final VoidCallback onTap;
 
-  /// Base icon tile size (aligned with other nav tabs).
+  /// Fixed size — same as other nav tabs so bar height stays constant.
   static const double _iconBoxSize = 44;
-
-  static const double _sizeSelected = 48;
-  static const double _liftSelected = 6;
   static const double _indicatorWidth = 28;
   static const double _indicatorHeight = 3;
   static const double _indicatorSlotHeight = 6;
 
-  static const Duration _animDuration =
-      Duration(milliseconds: Dimens.milliseconds300);
-
   @override
   Widget build(BuildContext context) {
-    final double circleSize = isSelected ? _sizeSelected : _iconBoxSize;
-    final Color iconColor = isSelected ? AppColors.whiteColor : inactiveColor;
-    final Color labelColor = isSelected ? activeColor : inactiveColor;
+    final Color targetIconColor =
+        isSelected ? AppColors.whiteColor : inactiveColor;
+    final Color targetLabelColor = isSelected ? activeColor : inactiveColor;
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: Dimens.space2),
-        child: AnimatedContainer(
-          duration: _animDuration,
-          curve: Curves.easeOutCubic,
-          transform: isSelected
-              ? Matrix4.translationValues(0, -_liftSelected, 0)
-              : Matrix4.identity(),
-          transformAlignment: Alignment.bottomCenter,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              AnimatedContainer(
-                duration: _animDuration,
-                curve: Curves.easeOutCubic,
-                width: circleSize,
-                height: circleSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: isSelected ? AppColors.primaryButtonGradient : null,
-                  color: isSelected ? null : Colors.transparent,
-                  boxShadow: isSelected
-                      ? <BoxShadow>[
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              width: _iconBoxSize,
+              height: _iconBoxSize,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  AnimatedOpacity(
+                    duration: NavBarSelectionAnimation.duration,
+                    curve: NavBarSelectionAnimation.curve,
+                    opacity: isSelected ? 1 : 0,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.primaryButtonGradient,
+                        boxShadow: <BoxShadow>[
                           BoxShadow(
                             color: AppColors.primaryPurple.withValues(
-                              alpha: 0.4,
+                              alpha: 0.35,
                             ),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
-                        ]
-                      : null,
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.show_chart_rounded,
-                  color: iconColor,
-                  size: isSelected ? Dimens.size24 : Dimens.size22,
-                ),
+                        ],
+                      ),
+                      child: const SizedBox(
+                        width: _iconBoxSize,
+                        height: _iconBoxSize,
+                      ),
+                    ),
+                  ),
+                  TweenAnimationBuilder<Color?>(
+                    duration: NavBarSelectionAnimation.duration,
+                    curve: NavBarSelectionAnimation.curve,
+                    tween: ColorTween(end: targetIconColor),
+                    builder: (
+                      BuildContext context,
+                      Color? color,
+                      Widget? child,
+                    ) {
+                      return Icon(
+                        Icons.show_chart_rounded,
+                        color: color ?? targetIconColor,
+                        size: Dimens.size24,
+                      );
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: Dimens.space4),
-              if (item.label != null && item.label!.isNotEmpty)
-                Text(
+            ),
+            const SizedBox(height: Dimens.space4),
+            if (item.label != null && item.label!.isNotEmpty)
+              AnimatedDefaultTextStyle(
+                duration: NavBarSelectionAnimation.duration,
+                curve: NavBarSelectionAnimation.curve,
+                style: TextStyle(
+                  fontSize: Dimens.fontSize11,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: targetLabelColor,
+                  height: 1.1,
+                ),
+                child: Text(
                   item.label!,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: Dimens.fontSize11,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: labelColor,
-                    height: 1.1,
-                  ),
                 ),
-              const SizedBox(height: Dimens.space4),
-              SizedBox(
-                height: _indicatorSlotHeight,
-                child: Center(
-                  child: Container(
-                    width: _indicatorWidth,
-                    height: _indicatorHeight,
-                    decoration: BoxDecoration(
-                      color: isSelected ? activeColor : Colors.transparent,
-                      borderRadius: BorderRadius.circular(Dimens.radius2),
-                    ),
+              ),
+            const SizedBox(height: Dimens.space4),
+            SizedBox(
+              height: _indicatorSlotHeight,
+              child: Center(
+                child: AnimatedContainer(
+                  duration: NavBarSelectionAnimation.duration,
+                  curve: NavBarSelectionAnimation.curve,
+                  width: isSelected ? _indicatorWidth : 0,
+                  height: _indicatorHeight,
+                  decoration: BoxDecoration(
+                    color: isSelected ? activeColor : Colors.transparent,
+                    borderRadius: BorderRadius.circular(Dimens.radius2),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

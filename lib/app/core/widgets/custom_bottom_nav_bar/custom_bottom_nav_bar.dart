@@ -40,9 +40,6 @@ class CustomBottomNavBar extends StatelessWidget {
 
   static const double _topRadius = 24;
 
-  /// Small top inset when center tab lifts on select.
-  static const double _centerTabTopInset = 6;
-
   /// Slightly more top padding on the bar sheet.
   static const double _paddingTop = 10;
 
@@ -62,8 +59,6 @@ class CustomBottomNavBar extends StatelessWidget {
     final Color activeIconBg = activeIconBackgroundColor ??
         AppColors.primaryPurple.withValues(alpha: isDark ? 0.22 : 0.12);
     final double radius = topBorderRadius ?? _topRadius;
-    final bool hasCenterElevated =
-        items.any((CustomBottomNavBarItem i) => i.isCenterElevated);
 
     return ClipRect(
       clipBehavior: Clip.none,
@@ -92,9 +87,9 @@ class CustomBottomNavBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(
+          padding: const EdgeInsets.fromLTRB(
             Dimens.space4,
-            hasCenterElevated ? _centerTabTopInset : _paddingTop,
+            _paddingTop,
             Dimens.space4,
             Dimens.space4,
           ),

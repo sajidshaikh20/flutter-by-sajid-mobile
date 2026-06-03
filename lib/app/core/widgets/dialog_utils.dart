@@ -75,9 +75,15 @@ class DialogUtils extends StatelessWidget {
       maxWidth = Dimens.space600;
     }
 
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color dialogBgColor = isDark ? AppColors.surfaceDark : MainConfig.appColors.backgroundWhiteColor;
+    final Color dividerColor = isDark ? AppColors.dividerDark : AppColors.deviderBorderColor;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color messageColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+
     return Dialog(
       elevation: Dimens.elevation4,
-      backgroundColor: MainConfig.appColors.backgroundWhiteColor,
+      backgroundColor: dialogBgColor,
       shape: RoundedRectangleBorder(
         borderRadius: Dimens.radius16.borderRadius,
       ),
@@ -102,6 +108,7 @@ class DialogUtils extends StatelessWidget {
                               .toLineHeight(Dimens.fontSize16),
                           fontWeight: FontWeight.w700,
                           fontSize: Dimens.fontSize16,
+                          color: textColor,
                         ),
                   ),
                 ),
@@ -130,6 +137,7 @@ class DialogUtils extends StatelessWidget {
                           .toLineHeight(Dimens.fontSize14),
                       fontWeight: FontWeight.w400,
                       fontSize: Dimens.fontSize14,
+                      color: messageColor,
                     ),
                     textAlign: textAlign,
                   ),
@@ -139,9 +147,9 @@ class DialogUtils extends StatelessWidget {
             // Bottom actions (optional)
             if (okBtnTitle.isNotBlank || cancelBtnTitle.isNotBlank) ...<Widget>[
               SizedBox(height: space16_32),
-              const CustomDivider(
+              CustomDivider(
                 height: 1,
-                color: AppColors.deviderBorderColor,
+                color: dividerColor,
               ),
               if (okBtnTitle.isNotBlank && cancelBtnTitle.isNotBlank)
                 _buildTwoButtonRow(context, space10_22)
@@ -155,6 +163,8 @@ class DialogUtils extends StatelessWidget {
   }
 
   Widget _buildTwoButtonRow(BuildContext context, double space) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color dividerColor = isDark ? AppColors.dividerDark : AppColors.deviderBorderColor;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -177,10 +187,10 @@ class DialogUtils extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(
+        SizedBox(
           height: Dimens.size50,
           child: VerticalDivider(
-            color: AppColors.deviderBorderColor,
+            color: dividerColor,
           ),
         ),
         Expanded(

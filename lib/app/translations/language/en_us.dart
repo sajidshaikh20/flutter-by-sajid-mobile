@@ -410,4 +410,83 @@ class EnUS extends AppString {
 
   @override
   String get verificationPendingMarkVerifiedKey => 'Verification Done';
+
+  // Settings & Edit Profile Keys
+  @override
+  String get settingsAccountHeaderKey => 'ACCOUNT';
+  @override
+  String get settingsSupportHeaderKey => 'SUPPORT';
+  @override
+  String get settingsProfileTitleKey => 'Profile';
+  @override
+  String get settingsProfileSubtitleKey => 'Manage your account details';
+  @override
+  String get settingsSecurityTitleKey => 'Security';
+  @override
+  String get settingsSecuritySubtitleKey => 'Password & biometrics';
+  @override
+  String get settingsNotificationsTitleKey => 'Notifications';
+  @override
+  String get settingsNotificationsSubtitleKey => 'Push & email alerts';
+  @override
+  String get settingsAppearanceTitleKey => 'Appearance';
+  @override
+  String get settingsAppearanceSubtitleKey => 'Dark / Light Mode';
+  @override
+  String get settingsLanguageTitleKey => 'Language';
+  @override
+  String get settingsLanguageSubtitleKey => 'English';
+  @override
+  String get settingsVerificationTitleKey => 'Verification Status';
+  @override
+  String get settingsVerificationSubtitleVerifiedKey => 'Verified';
+  @override
+  String get settingsVerificationSubtitleUnverifiedKey => 'Unverified';
+  @override
+  String get settingsSubscriptionTitleKey => 'Subscription';
+  @override
+  String get settingsSubscriptionSubtitleKey => 'Manage your plan';
+  @override
+  String get settingsTradingTitleKey => 'Trading Preferences';
+  @override
+  String get settingsTradingSubtitleKey => 'Default settings';
+  @override
+  String get settingsRiskTitleKey => 'Risk Settings';
+  @override
+  String get settingsRiskSubtitleKey => 'Manage risk level';
+  @override
+  String get settingsHelpTitleKey => 'Help & Support';
+  @override
+  String get settingsHelpSubtitleKey => 'Get help with your account';
+  @override
+  String get settingsPrivacyTitleKey => 'Privacy Policy';
+  @override
+  String get settingsPrivacySubtitleKey => 'Read our policy';
+  @override
+  String get settingsTermsTitleKey => 'Terms & Conditions';
+  @override
+  String get settingsTermsSubtitleKey => 'Read terms and conditions';
+  @override
+  String get settingsAboutTitleKey => 'About WEKO';
+  @override
+  String get settingsAboutSubtitleKey => 'Version 1.0.0';
+  @override
+  String get settingsLogOutKey => 'Log Out';
+
+  @override
+  String get editProfileTitleKey => 'Edit Profile';
+  @override
+  String get editProfileTapToChangePhotoKey => 'Tap to change profile photo';
+  @override
+  String get editProfileNameLabelKey => 'Name';
+  @override
+  String get editProfileUsernameLabelKey => 'Username';
+  @override
+  String get editProfileEmailLabelKey => 'Email';
+  @override
+  String get editProfilePhoneLabelKey => 'Phone';
+  @override
+  String get editProfileUpdateBtnKey => 'Update Profile';
+  @override
+  String get editProfileSuccessKey => 'Profile updated successfully';
 }

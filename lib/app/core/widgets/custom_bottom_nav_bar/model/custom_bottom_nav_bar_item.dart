@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 /// Data model for one bottom nav bar item.
 class CustomBottomNavBarItem {
   /// Creates a bottom nav item.
-  const CustomBottomNavBarItem({
+  const   CustomBottomNavBarItem({
     this.activeIcon,
     this.inactiveIcon,
     this.iconBuilder,

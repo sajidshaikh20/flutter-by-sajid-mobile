@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../theme/dimens.dart';
 import '../model/custom_bottom_nav_bar_item.dart';
+import 'nav_bar_selection_animation.dart';
 
 /// Single bottom-nav tab: icon tile, label, underline indicator.
 class NavBarItemWidget extends StatelessWidget {
@@ -31,7 +32,7 @@ class NavBarItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color iconColor = isSelected ? activeColor : inactiveColor;
+    final Color targetIconColor = isSelected ? activeColor : inactiveColor;
 
     return GestureDetector(
       onTap: onTap,
@@ -41,7 +42,9 @@ class NavBarItemWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Container(
+            AnimatedContainer(
+              duration: NavBarSelectionAnimation.duration,
+              curve: NavBarSelectionAnimation.curve,
               width: _iconBoxSize,
               height: _iconBoxSize,
               decoration: BoxDecoration(
@@ -51,28 +54,34 @@ class NavBarItemWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(Dimens.radius12),
               ),
               alignment: Alignment.center,
-              child: _buildIcon(iconColor),
+              child: _buildIcon(targetIconColor),
             ),
             const SizedBox(height: Dimens.space4),
             if (item.label != null && item.label!.isNotEmpty)
-              Text(
-                item.label!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
+              AnimatedDefaultTextStyle(
+                duration: NavBarSelectionAnimation.duration,
+                curve: NavBarSelectionAnimation.curve,
                 style: TextStyle(
                   fontSize: Dimens.fontSize11,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: iconColor,
+                  color: targetIconColor,
                   height: 1.1,
+                ),
+                child: Text(
+                  item.label!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
               ),
             const SizedBox(height: Dimens.space4),
             SizedBox(
               height: _indicatorSlotHeight,
               child: Center(
-                child: Container(
-                  width: _indicatorWidth,
+                child: AnimatedContainer(
+                  duration: NavBarSelectionAnimation.duration,
+                  curve: NavBarSelectionAnimation.curve,
+                  width: isSelected ? _indicatorWidth : 0,
                   height: _indicatorHeight,
                   decoration: BoxDecoration(
                     color: isSelected ? activeColor : Colors.transparent,
@@ -89,8 +98,28 @@ class NavBarItemWidget extends StatelessWidget {
 
   Widget _buildIcon(Color iconColor) {
     if (item.iconBuilder != null) {
-      return item.iconBuilder!(iconColor, iconSize);
+      return TweenAnimationBuilder<Color?>(
+        duration: NavBarSelectionAnimation.duration,
+        curve: NavBarSelectionAnimation.curve,
+        tween: ColorTween(end: iconColor),
+        builder: (BuildContext context, Color? color, Widget? child) {
+          return item.iconBuilder!(color ?? iconColor, iconSize);
+        },
+      );
     }
-    return isSelected ? item.activeIcon! : item.inactiveIcon!;
+
+    final Widget icon = isSelected ? item.activeIcon! : item.inactiveIcon!;
+    return AnimatedSwitcher(
+      duration: NavBarSelectionAnimation.duration,
+      switchInCurve: NavBarSelectionAnimation.curve,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      child: KeyedSubtree(
+        key: ValueKey<bool>(isSelected),
+        child: icon,
+      ),
+    );
   }
 }

@@ -141,4 +141,45 @@ abstract class AppString {
   String get verificationPendingContactSupportKey;
   String get verificationPendingSupportEmailSubjectKey;
   String get verificationPendingMarkVerifiedKey;
+
+  // Settings & Edit Profile Keys
+  String get settingsAccountHeaderKey;
+  String get settingsSupportHeaderKey;
+  String get settingsProfileTitleKey;
+  String get settingsProfileSubtitleKey;
+  String get settingsSecurityTitleKey;
+  String get settingsSecuritySubtitleKey;
+  String get settingsNotificationsTitleKey;
+  String get settingsNotificationsSubtitleKey;
+  String get settingsAppearanceTitleKey;
+  String get settingsAppearanceSubtitleKey;
+  String get settingsLanguageTitleKey;
+  String get settingsLanguageSubtitleKey;
+  String get settingsVerificationTitleKey;
+  String get settingsVerificationSubtitleVerifiedKey;
+  String get settingsVerificationSubtitleUnverifiedKey;
+  String get settingsSubscriptionTitleKey;
+  String get settingsSubscriptionSubtitleKey;
+  String get settingsTradingTitleKey;
+  String get settingsTradingSubtitleKey;
+  String get settingsRiskTitleKey;
+  String get settingsRiskSubtitleKey;
+  String get settingsHelpTitleKey;
+  String get settingsHelpSubtitleKey;
+  String get settingsPrivacyTitleKey;
+  String get settingsPrivacySubtitleKey;
+  String get settingsTermsTitleKey;
+  String get settingsTermsSubtitleKey;
+  String get settingsAboutTitleKey;
+  String get settingsAboutSubtitleKey;
+  String get settingsLogOutKey;
+
+  String get editProfileTitleKey;
+  String get editProfileTapToChangePhotoKey;
+  String get editProfileNameLabelKey;
+  String get editProfileUsernameLabelKey;
+  String get editProfileEmailLabelKey;
+  String get editProfilePhoneLabelKey;
+  String get editProfileUpdateBtnKey;
+  String get editProfileSuccessKey;
 }

@@ -5,7 +5,7 @@ import '../../utils/exports.dart';
 /// This service provides functionality to load, update, and store user
 /// profile information, such as the customer's name, email, phone numbers,
 /// order information, and more.
-class UserProfileService {
+class UserProfileService extends ChangeNotifier {
   /// The model that holds the user profile data.
   UserProfileModel? _dataModel;
 
@@ -48,6 +48,7 @@ class UserProfileService {
       );
       DebugLog.instance.w('UserProfileService.loadUserData: Created empty model with default values');
     }
+    notifyListeners();
   }
 
   /// Ensures user data is loaded before accessing
@@ -95,6 +96,10 @@ class UserProfileService {
   String get fcmToken => _dataModel?.fcmToken ?? '';
   ///arabicNationality
   String get arabicNationality => _dataModel?.arabicNationality ?? '';
+
+  /// The customer's username.
+  String get username => _dataModel?.username ?? '';
+
 
   /// The customer's authentication token.
   String get customerToken {
@@ -145,6 +150,7 @@ class UserProfileService {
     String? nationality,
     String? fcmToken,
     String? arabicNationality,
+    String? username,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -169,7 +175,9 @@ class UserProfileService {
         customerId: '',
         cartCount: 0,
         arabicNationality: '',
+        username: '',
       );
+
 
     // Update only the fields that are provided, keeping others unchanged
     _dataModel = _dataModel?.copyWith(
@@ -193,12 +201,15 @@ class UserProfileService {
       birthday: birthday ?? _dataModel?.birthday,
       nationality: nationality ?? _dataModel?.nationality,
       arabicNationality: arabicNationality ?? _dataModel?.arabicNationality,
+      username: username ?? _dataModel?.username,
     );
 
     // Save updated model back to shared preferences
     String jsonString = jsonEncode(_dataModel?.toJson());
     await SharedPref.instance.setValue(PrefsKey.userProfileKey, jsonString);
+    notifyListeners();
   }
+
 
   /// Checks if user data is loaded
   bool get isDataLoaded => _dataModel != null;
@@ -212,9 +223,11 @@ class UserProfileService {
     // Save updated model back to shared preferences
     String jsonString = jsonEncode(_dataModel?.toJson());
     await SharedPref.instance.setValue(PrefsKey.userProfileKey, jsonString);
+    notifyListeners();
 
     DebugLog.instance.i('UserProfileService.clearQuoteId: Quote ID cleared');
   }
+
 
   /// Updates the user's profile data and clears the quote ID
   /// This method should be used when you want to update profile and reset quote ID
@@ -237,6 +250,7 @@ class UserProfileService {
     String? birthday,
     String? nationality,
     String? fcmToken,
+    String? username,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -261,7 +275,9 @@ class UserProfileService {
         customerId: '',
         cartCount: 0,
         arabicNationality: '',
+        username: '',
       );
+
 
     // Update only the fields that are provided, keeping others unchanged
     // Always set quoteId to null
@@ -284,14 +300,17 @@ class UserProfileService {
       gender: gender ?? _dataModel?.gender,
       birthday: birthday ?? _dataModel?.birthday,
       nationality: nationality ?? _dataModel?.nationality,
+      username: username ?? _dataModel?.username,
     );
 
     // Save updated model back to shared preferences
     String jsonString = jsonEncode(_dataModel?.toJson());
     await SharedPref.instance.setValue(PrefsKey.userProfileKey, jsonString);
+    notifyListeners();
 
     DebugLog.instance.i('UserProfileService.updateUserProfileAndClearQuoteId: Profile updated and quote ID cleared');
   }
+
 
 
 }
