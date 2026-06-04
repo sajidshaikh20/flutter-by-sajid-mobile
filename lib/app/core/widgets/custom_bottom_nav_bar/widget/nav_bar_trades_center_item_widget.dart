@@ -39,7 +39,14 @@ class NavBarTradesCenterItemWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(
+            AnimatedContainer(
+              duration: NavBarSelectionAnimation.duration,
+              curve: NavBarSelectionAnimation.curve,
+              transform: Matrix4.translationValues(
+                0,
+                isSelected ? -8.0 : -3.0,
+                0,
+              ),
               width: _iconBoxSize,
               height: _iconBoxSize,
               child: Stack(
@@ -78,10 +85,11 @@ class NavBarTradesCenterItemWidget extends StatelessWidget {
                       Color? color,
                       Widget? child,
                     ) {
-                      return Icon(
-                        Icons.show_chart_rounded,
+                      return Assets.png.icWekoWhiteCrop.image(
                         color: color ?? targetIconColor,
-                        size: Dimens.size24,
+                        height: Dimens.size22,
+                        width: Dimens.size22,
+                        fit: BoxFit.contain,
                       );
                     },
                   ),
