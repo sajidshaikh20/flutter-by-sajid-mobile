@@ -28,7 +28,7 @@ class HomeRecentTradesTable extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  // View all trades action
+                  AutoTabsRouter.of(context).setActiveIndex(2);
                 },
                 child: const CustomTextLabelWidget(
                   label: 'View All',

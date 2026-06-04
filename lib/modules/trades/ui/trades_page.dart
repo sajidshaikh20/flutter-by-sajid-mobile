@@ -1,6 +1,5 @@
 import '../../../utils/exports.dart';
 
-
 @RoutePage()
 /// Trades tab displaying dashboard metrics, recent history, live trades, and market summaries.
 class TradesPage extends BaseResponsiveView {
@@ -16,8 +15,213 @@ class TradesPage extends BaseResponsiveView {
   Widget buildMobileWidget(BuildContext context) => _build(context);
 
   Widget _build(BuildContext context) {
-    return DashboardTabPlaceholder(
-      title: context.appString.navTradesKey,
+    return BlocProvider<TradesCubit>(
+      create: (BuildContext context) => TradesCubit(),
+      child: const TradesViewBody(),
+    );
+  }
+}
+
+class TradesViewBody extends StatefulWidget {
+  const TradesViewBody({super.key});
+
+  @override
+  State<TradesViewBody> createState() => _TradesViewBodyState();
+}
+
+class _TradesViewBodyState extends State<TradesViewBody> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDark = context.isDark;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+
+    return BlocBuilder<TradesCubit, TradesState>(
+      builder: (BuildContext context, TradesState state) {
+        // Filter logic
+        final List<TradingSignalModel> allSignals = TradingSignalsMockData.signals;
+        final List<TradingSignalModel> filteredSignals = allSignals.where((TradingSignalModel s) {
+          // Filter by status
+          bool matchesStatus = true;
+          switch (state.selectedFilter) {
+            case SignalFilter.all:
+              matchesStatus = true;
+            case SignalFilter.active:
+              matchesStatus = s.isActive;
+            case SignalFilter.pending:
+              matchesStatus = s.isPending;
+            case SignalFilter.closed:
+              matchesStatus = s.isClosed;
+            case SignalFilter.cancelled:
+              matchesStatus = s.isCancelled;
+          }
+
+          // Filter by search query (trading pair or category name)
+          bool matchesSearch = true;
+          if (state.searchQuery.isNotEmpty) {
+            matchesSearch = s.pair.toLowerCase().contains(state.searchQuery.toLowerCase()) ||
+                s.category.toLowerCase().contains(state.searchQuery.toLowerCase());
+          }
+
+          return matchesStatus && matchesSearch;
+        }).toList();
+
+        return Scaffold(
+          backgroundColor: pageBg,
+          body: SafeArea(
+            child: Column(
+              children: <Widget>[
+                // Common Header App Bar matching Home tab styling (No back button, notification hidden)
+                const HomeHeaderAppBar(
+                  showProfileImage: false,
+                  showNotification: false,
+                  title: 'Trading Signals',
+                  subtitle: 'Explore high-quality trades from professional traders',
+                ),
+                // Scrolling Body list content with sticky headers
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: <Widget>[
+                      // Search Bar positioned directly above the filters row
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
+                          child: Container(
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.cardDark : AppColors.cardLight,
+                              borderRadius: BorderRadius.circular(Dimens.radius12),
+                              border: Border.all(
+                                color: isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: Dimens.space12),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.search_rounded,
+                                  color: subtextColor,
+                                  size: Dimens.size20,
+                                ),
+                                const SizedBox(width: Dimens.space10),
+                                Expanded(
+                                  child: TextField(
+                                    controller: _searchController,
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontSize: Dimens.fontSize13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: 'Search pair (e.g. BTCU)',
+                                      hintStyle: TextStyle(
+                                        color: subtextColor,
+                                        fontSize: Dimens.fontSize13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                    onChanged: (String value) {
+                                      context.read<TradesCubit>().updateSearchQuery(value);
+                                    },
+                                  ),
+                                ),
+                                if (state.searchQuery.isNotEmpty) ...<Widget>[
+                                  const SizedBox(width: Dimens.space10),
+                                  GestureDetector(
+                                    onTap: () {
+                                      _searchController.clear();
+                                      context.read<TradesCubit>().clearSearch();
+                                    },
+                                    child: Icon(
+                                      Icons.clear_rounded,
+                                      color: subtextColor,
+                                      size: Dimens.size18,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Metric Summary Cards (will scroll off-screen with Search Bar)
+                      const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: Dimens.space8),
+                          child: TradesSummaryCards(),
+                        ),
+                      ),
+                      // Sticky Filter bar section
+                      SliverStickyHeader(
+                        header: Container(
+                          color: pageBg,
+                          padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
+                          child: TradesFilterBar(
+                            selectedFilter: state.selectedFilter,
+                            onFilterChanged: (SignalFilter filter) {
+                              context.read<TradesCubit>().selectFilter(filter);
+                            },
+                          ),
+                        ),
+                        // Signals List content
+                        sliver: filteredSignals.isEmpty
+                            ? SliverToBoxAdapter(
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: Dimens.space40),
+                                    child: CustomTextLabelWidget(
+                                      label: 'No signals available for this filter',
+                                      style: TextStyle(
+                                        color: subtextColor,
+                                        fontSize: Dimens.fontSize13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SliverPadding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: Dimens.space16,
+                                  vertical: Dimens.space12,
+                                ),
+                                sliver: SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (BuildContext context, int index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: Dimens.space12),
+                                        child: TradingSignalCard(signal: filteredSignals[index]),
+                                      );
+                                    },
+                                    childCount: filteredSignals.length,
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

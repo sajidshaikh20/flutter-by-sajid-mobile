@@ -1,9 +1,4 @@
 import '../../../../utils/exports.dart';
-import 'widget/home_header_app_bar.dart';
-import 'widget/home_live_trades_card.dart';
-import 'widget/home_overview_grid.dart';
-import 'widget/home_promo_banner.dart';
-import 'widget/home_recent_trades_table.dart';
 
 @RoutePage()
 class HomePage extends BaseResponsiveView {

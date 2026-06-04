@@ -61,6 +61,7 @@ dependencies:
   google_sign_in:
   step_progress: ^2.7.1
   otp_pin_field: ^1.4.1
+  flutter_sticky_header: ^0.8.0
 
 dev_dependencies:
   flutter_test:

@@ -20,6 +20,7 @@ export 'package:flutter_html/flutter_html.dart' hide Marker;
 export 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 export 'package:flutter_native_splash/flutter_native_splash.dart';
 export 'package:flutter_rating_bar/flutter_rating_bar.dart';
+export 'package:flutter_sticky_header/flutter_sticky_header.dart';
 export 'package:flutter_svg/flutter_svg.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:google_sign_in/google_sign_in.dart';
