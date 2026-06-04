@@ -1,7 +1,8 @@
 import '../../../utils/exports.dart';
 
+
 @RoutePage()
-/// Trades tab.
+/// Trades tab displaying dashboard metrics, recent history, live trades, and market summaries.
 class TradesPage extends BaseResponsiveView {
   const TradesPage({super.key});
 
