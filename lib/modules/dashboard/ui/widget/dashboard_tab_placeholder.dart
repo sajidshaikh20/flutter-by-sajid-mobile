@@ -43,7 +43,6 @@ class DashboardTabPlaceholder extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   fontSize: Dimens.fontSize22,
                 ),
-                textAlign: TextAlign.center,
               ),
               Dimens.size8.heightBox,
               CustomTextLabelWidget(
@@ -52,7 +51,6 @@ class DashboardTabPlaceholder extends StatelessWidget {
                   color: subtitleColor,
                   fontSize: Dimens.fontSize14,
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
