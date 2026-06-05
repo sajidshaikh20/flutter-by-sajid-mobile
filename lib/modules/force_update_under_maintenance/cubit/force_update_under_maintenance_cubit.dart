@@ -17,7 +17,18 @@ class ForceUpdateUnderMaintenanceCubit
             underMaintenanceType: UnderMaintenanceType.none,
             updateMaintenanceType: UpdateMaintenanceType.none,
           ),
-        );
+        ) {
+    FirebaseRemoteConfig.instance.onConfigUpdated.listen(
+      (RemoteConfigUpdate event) async {
+        try {
+          await FirebaseRemoteConfig.instance.activate();
+          await checkAppUpdate(syncNavigation: true);
+        } on Object catch (e) {
+          debugPrint('Error applying remote config update: $e');
+        }
+      },
+    );
+  }
   /// Static method to get the instance of ForceUpdateUnderMaintenanceCubit from
   /// the service locator (e.g., GetIt).
   static ForceUpdateUnderMaintenanceCubit instance() =>
@@ -39,70 +50,98 @@ class ForceUpdateUnderMaintenanceCubit
           jsonDecode(remoteConfig.getString(AppConstant.updateApp)),
         );
       }
-    } on Exception catch (e) {
+    } on Object catch (e) {
       debugPrint('Error fetching remote config: $e');
     }
-    remoteConfig.onConfigUpdated.listen((RemoteConfigUpdate event) async {
-      await checkAppUpdate();
-    });
     return null;
   }
 
-  ///check update or maintenance
-  Future<void> checkAppUpdate() async {
-    // showLoader(value: true);
-    ForceUpdateConfigModel? config = await readRemoteConfig();
-    UpdateMaintenanceType type = getUpdateOrMaintenanceType(config);
+  /// Fetches remote config, updates state, and returns the required action.
+  ///
+  /// When [syncNavigation] is true, navigates to/from the maintenance route
+  /// based on the result (used after remote-config changes or app resume).
+  Future<UpdateMaintenanceType> checkAppUpdate({
+    bool syncNavigation = false,
+  }) async {
+    final ForceUpdateConfigModel? config = await readRemoteConfig();
+    final UpdateMaintenanceType type = getUpdateOrMaintenanceType(config);
+    _emitForUpdateType(type, config);
+    if (syncNavigation) {
+      syncNavigationWithUpdateType(type);
+    }
+    return type;
+  }
 
-    //showLoader(value: false);
+  /// Aligns the navigation stack with [type] when the router is mounted.
+  void syncNavigationWithUpdateType(UpdateMaintenanceType type) {
+    if (!getIt.isRegistered<AppRouter>()) {
+      return;
+    }
+    final AppRouter router = getIt<AppRouter>();
+    if (router.navigatorKey.currentContext == null) {
+      return;
+    }
+
+    final bool onMaintenance = _isOnMaintenanceRoute(router);
+
+    if (type == UpdateMaintenanceType.none) {
+      if (onMaintenance) {
+        unawaited(router.replacePath(AppPaths.splash));
+      }
+      return;
+    }
+
+    if (!onMaintenance) {
+      unawaited(router.pushPath(AppPaths.maintenance));
+    }
+  }
+
+  bool _isOnMaintenanceRoute(AppRouter router) {
+    final String path = router.currentPath;
+    return path == AppPaths.maintenance || path.endsWith(AppPaths.maintenance);
+  }
+
+  void _emitForUpdateType(
+    UpdateMaintenanceType type,
+    ForceUpdateConfigModel? config,
+  ) {
     switch (type) {
       case UpdateMaintenanceType.none:
-        {
-          bool isCountryAndLanguageSelected = SharedPref.instance.getBool(
-            PrefsKey.isCountryAndLanguageSelectedKey,
-            defValue: false,
-          );
-
-          emit(
-            state.copyWith(
-              updateMaintenanceType: UpdateMaintenanceType.none,
-              underMaintenanceType: UnderMaintenanceType.none,
-              redirectRoute: isCountryAndLanguageSelected
-                  ? const DashboardRoute()
-                  : const DashboardRoute(),
-              status: BaseStateStatus.success,
-            ),
-          );
-          // redirectToLogin(MainConfig.context);
-        }
+        emit(
+          state.copyWith(
+            updateMaintenanceType: UpdateMaintenanceType.none,
+            underMaintenanceType: UnderMaintenanceType.none,
+            isAlertDialogVisible: false,
+            status: BaseStateStatus.success,
+          ),
+        );
       case UpdateMaintenanceType.force:
-        {
-          emit(
-            state.copyWith(
-              updateMaintenanceType: UpdateMaintenanceType.force,
-              underMaintenanceType: UnderMaintenanceType.none,
-              forceUpdateConfigModel: config,
-              status: BaseStateStatus.success,
-            ),
-          );
-        }
+        emit(
+          state.copyWith(
+            updateMaintenanceType: UpdateMaintenanceType.force,
+            underMaintenanceType: UnderMaintenanceType.none,
+            forceUpdateConfigModel: config,
+            isAlertDialogVisible: false,
+            status: BaseStateStatus.success,
+          ),
+        );
       case UpdateMaintenanceType.optional:
-        {
-          emit(
-            state.copyWith(
-              updateMaintenanceType: UpdateMaintenanceType.optional,
-              underMaintenanceType: UnderMaintenanceType.none,
-              forceUpdateConfigModel: config,
-              status: BaseStateStatus.success,
-            ),
-          );
-        }
+        emit(
+          state.copyWith(
+            updateMaintenanceType: UpdateMaintenanceType.optional,
+            underMaintenanceType: UnderMaintenanceType.none,
+            forceUpdateConfigModel: config,
+            isAlertDialogVisible: false,
+            status: BaseStateStatus.success,
+          ),
+        );
       case UpdateMaintenanceType.maintenance:
         emit(
           state.copyWith(
             forceUpdateConfigModel: config,
             updateMaintenanceType: UpdateMaintenanceType.maintenance,
             underMaintenanceType: _underMaintenanceType(config),
+            isAlertDialogVisible: false,
             status: BaseStateStatus.success,
           ),
         );
@@ -127,53 +166,69 @@ class ForceUpdateUnderMaintenanceCubit
 
     // Check if maintenance mode is enabled in the configuration.
     if (config?.underMaintenance?.isMaintainanceModeEnable ?? false) {
-      // If maintenance mode is enabled, return maintenance type.
       return UpdateMaintenanceType.maintenance;
     }
 
     // Check for updates if not in web platform.
     if (!kIsWeb) {
       if (Platform.isAndroid) {
-        // For Android, check the version details.
-        if (androidMinVersion != null) {
-          // If the current app version is less than the minimum Android
-          // version,
-          // force update is required.
-          if (currentAppVersion.compareTo(androidMinVersion) < 0) {
-            return UpdateMaintenanceType.force;
-          } else if (androidMaxVersion != null &&
-              currentAppVersion.compareTo(androidMinVersion) >= 0 &&
-              currentAppVersion.compareTo(androidMaxVersion) < 0) {
-            // If the current app version is between the min and max version,
-            // optional update is required.
-            return UpdateMaintenanceType.optional;
-          }
-        }
-        // If none of the above conditions are met, no update is needed.
-        return UpdateMaintenanceType.none;
+        return _androidUpdateType(
+          currentAppVersion: currentAppVersion,
+          minVersion: androidMinVersion,
+          maxVersion: androidMaxVersion,
+        );
       } else if (Platform.isIOS) {
-        // For iOS, check the version details.
-        if (iosMinVersion != null) {
-          // If the current app version is less than the minimum iOS version,
-          // force update is required.
-          if (currentAppVersion.compareTo(iosMinVersion) < 0) {
-            return UpdateMaintenanceType.force;
-          } else if (iosMaxVersion != null &&
-              currentAppVersion.compareTo(iosMinVersion) >= 0 &&
-              currentAppVersion.compareTo(iosMaxVersion) < 0) {
-            // If the current app version is between the min and max version,
-            // optional update is required.
-            return UpdateMaintenanceType.optional;
-          }
-        }
-        // If none of the above conditions are met, no update is needed.
-        return UpdateMaintenanceType.none;
+        return _iosUpdateType(
+          currentAppVersion: currentAppVersion,
+          minVersion: iosMinVersion,
+          maxVersion: iosMaxVersion,
+        );
       }
     }
     // If the platform is web, no update is required.
     return UpdateMaintenanceType.none;
   }
 
+
+  UpdateMaintenanceType _androidUpdateType({
+    required String currentAppVersion,
+    required String? minVersion,
+    required String? maxVersion,
+  }) {
+    if (minVersion == null || minVersion.isEmpty) {
+      return UpdateMaintenanceType.none;
+    }
+    if (compareAppVersions(currentAppVersion, minVersion) < 0) {
+      return UpdateMaintenanceType.force;
+    }
+    if (maxVersion != null &&
+        maxVersion.isNotEmpty &&
+        compareAppVersions(currentAppVersion, minVersion) >= 0 &&
+        compareAppVersions(currentAppVersion, maxVersion) < 0) {
+      return UpdateMaintenanceType.optional;
+    }
+    return UpdateMaintenanceType.none;
+  }
+
+  UpdateMaintenanceType _iosUpdateType({
+    required String currentAppVersion,
+    required String? minVersion,
+    required String? maxVersion,
+  }) {
+    if (minVersion == null || minVersion.isEmpty) {
+      return UpdateMaintenanceType.none;
+    }
+    if (compareAppVersions(currentAppVersion, minVersion) < 0) {
+      return UpdateMaintenanceType.force;
+    }
+    if (maxVersion != null &&
+        maxVersion.isNotEmpty &&
+        compareAppVersions(currentAppVersion, minVersion) >= 0 &&
+        compareAppVersions(currentAppVersion, maxVersion) < 0) {
+      return UpdateMaintenanceType.optional;
+    }
+    return UpdateMaintenanceType.none;
+  }
 
   ///check if under maintenance image
   static UnderMaintenanceType _underMaintenanceType(
@@ -187,7 +242,7 @@ class ForceUpdateUnderMaintenanceCubit
     }
   }
 
-  /// open play store or app store
+  /// Opens the platform store in an external browser/app.
   Future<void> openPlayStoreAppStore(BuildContext context) async {
     Uri parseUrl;
     try {
@@ -205,10 +260,7 @@ class ForceUpdateUnderMaintenanceCubit
       }
 
       if (await canLaunchUrl(parseUrl)) {
-        await launchUrl(parseUrl);
-        if (context.mounted) {
-          goBack(context);
-        }
+        await launchUrl(parseUrl, mode: LaunchMode.externalApplication);
       } else {
         throw Exception('Could not launch $parseUrl');
       }

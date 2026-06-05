@@ -123,6 +123,53 @@ Future<void> logCrashlyticsError(
   }
 }
 
+/// Parses remote-config booleans that may arrive as bool, int, or string.
+bool parseRemoteConfigBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) {
+    return defaultValue;
+  }
+  if (value is bool) {
+    return value;
+  }
+  if (value is num) {
+    return value != 0;
+  }
+  if (value is String) {
+    final String normalized = value.trim().toLowerCase();
+    if (normalized == 'true' || normalized == '1') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == '0') {
+      return false;
+    }
+  }
+  return defaultValue;
+}
+
+/// Compares two semantic version strings (e.g. `1.0.0`, `1.0.0+5`).
+/// Returns negative if [current] < [target], zero if equal, positive if greater.
+int compareAppVersions(String current, String target) {
+  final List<int> currentParts = _appVersionParts(current);
+  final List<int> targetParts = _appVersionParts(target);
+  final int length = max(currentParts.length, targetParts.length);
+  for (int i = 0; i < length; i++) {
+    final int currentPart = i < currentParts.length ? currentParts[i] : 0;
+    final int targetPart = i < targetParts.length ? targetParts[i] : 0;
+    if (currentPart != targetPart) {
+      return currentPart.compareTo(targetPart);
+    }
+  }
+  return 0;
+}
+
+List<int> _appVersionParts(String version) {
+  final String normalized = version.split('+').first.trim();
+  return normalized
+      .split('.')
+      .map((String part) => int.tryParse(part) ?? 0)
+      .toList();
+}
+
 ///getPlatformName
 String getPlatformName() {
   if (kIsWeb) return AppConstant.web;

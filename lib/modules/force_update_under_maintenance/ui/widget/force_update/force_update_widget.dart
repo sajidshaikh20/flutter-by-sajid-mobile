@@ -7,30 +7,113 @@ class ForceUpdateWidget extends BaseResponsiveView {
   /// screens based on the app's current state.
   const ForceUpdateWidget({super.key});
 
-  /// Builds the desktop version of the widget.
-  /// Returns the same view as mobile and tablet for consistency.
   @override
-  Widget buildDesktopWidget(BuildContext context) => _buildView(context);
+  Widget buildDesktopWidget(BuildContext context) => const _ForceUpdateView();
 
-  /// Builds the mobile version of the widget.
-  /// Returns the same view as desktop and tablet for consistency.
   @override
-  Widget buildMobileWidget(BuildContext context) => _buildView(context);
+  Widget buildMobileWidget(BuildContext context) => const _ForceUpdateView();
 
-  /// Builds the tablet version of the widget.
-  /// Returns the same view as desktop and mobile for consistency.
   @override
-  Widget buildTabletWidget(BuildContext context) => _buildView(context);
+  Widget buildTabletWidget(BuildContext context) => const _ForceUpdateView();
+}
 
-  /// A helper function that constructs the widget view based on the current
-  /// app state. Displays a different widget depending on the type of
-  /// under maintenance (image or text).
-  Widget _buildView(BuildContext context) => BlocConsumer<
-          ForceUpdateUnderMaintenanceCubit, ForceUpdateUnderMaintenanceState>(
-        builder:
-            (BuildContext context, ForceUpdateUnderMaintenanceState state) => Visibility(
+class _ForceUpdateView extends StatefulWidget {
+  const _ForceUpdateView();
+
+  @override
+  State<_ForceUpdateView> createState() => _ForceUpdateViewState();
+}
+
+class _ForceUpdateViewState extends State<_ForceUpdateView> {
+  bool _updateDialogShown = false;
+  bool _isLeaving = false;
+  UpdateMaintenanceType? _dialogUpdateType;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handleUpdateState(
+        context.read<ForceUpdateUnderMaintenanceCubit>().state,
+      );
+    });
+  }
+
+  bool get _isOnMaintenanceRoute {
+    final String path = context.router.currentPath;
+    return path == AppPaths.maintenance || path.endsWith(AppPaths.maintenance);
+  }
+
+  void _handleUpdateState(ForceUpdateUnderMaintenanceState state) {
+    if (!mounted || state.status != BaseStateStatus.success) {
+      return;
+    }
+
+    if (state.updateMaintenanceType == UpdateMaintenanceType.none) {
+      _updateDialogShown = false;
+      _dialogUpdateType = null;
+      if (_isOnMaintenanceRoute) {
+        unawaited(_leaveMaintenanceFlow());
+      }
+      return;
+    }
+
+    if (state.updateMaintenanceType == UpdateMaintenanceType.maintenance) {
+      _dismissUpdateDialogIfNeeded();
+      _updateDialogShown = false;
+      _dialogUpdateType = null;
+      return;
+    }
+
+    final bool shouldShowDialog = !_updateDialogShown ||
+        _dialogUpdateType != state.updateMaintenanceType;
+
+    if (shouldShowDialog) {
+      _dismissUpdateDialogIfNeeded();
+      _updateDialogShown = true;
+      _dialogUpdateType = state.updateMaintenanceType;
+      _showUpdateDialog(
+        state.forceUpdateConfigModel,
+        isMandatory:
+            state.updateMaintenanceType == UpdateMaintenanceType.force,
+      );
+    }
+  }
+
+  void _dismissUpdateDialogIfNeeded() {
+    if (_updateDialogShown && mounted) {
+      final NavigatorState navigator = Navigator.of(context);
+      if (navigator.canPop()) {
+        navigator.pop();
+      }
+    }
+  }
+
+  Future<void> _leaveMaintenanceFlow() async {
+    if (!mounted || _isLeaving || !_isOnMaintenanceRoute) {
+      return;
+    }
+    _isLeaving = true;
+    _dismissUpdateDialogIfNeeded();
+    _updateDialogShown = false;
+    _dialogUpdateType = null;
+    await context.router.replacePath(AppPaths.splash);
+    _isLeaving = false;
+  }
+
+  @override
+  Widget build(BuildContext context) => BlocConsumer<
+        ForceUpdateUnderMaintenanceCubit,
+        ForceUpdateUnderMaintenanceState
+      >(
+        builder: (
+          BuildContext context,
+          ForceUpdateUnderMaintenanceState state,
+        ) =>
+            Visibility(
           replacement: Container(color: MainConfig.appColors.transparent),
-          visible: state.underMaintenanceType != UnderMaintenanceType.none,
+          visible: state.updateMaintenanceType ==
+              UpdateMaintenanceType.maintenance,
           child: Center(
             child: state.underMaintenanceType == UnderMaintenanceType.image
                 ? UnderMaintenanceImageWidget(
@@ -41,89 +124,54 @@ class ForceUpdateWidget extends BaseResponsiveView {
                   ),
           ),
         ),
-        listener:
-            (BuildContext context, ForceUpdateUnderMaintenanceState state) {
-          // Show update dialog if a force update is required or if there's
-          // a redirect route provided
-          if (state.updateMaintenanceType != UpdateMaintenanceType.none &&
-              state.updateMaintenanceType !=
-                  UpdateMaintenanceType.maintenance) {
-            _showUpdateDialog(
-              state.forceUpdateConfigModel,
-              isMandatory:
-                  state.updateMaintenanceType == UpdateMaintenanceType.force,
-              context: context,
-            );
-          }
-          if (state.updateMaintenanceType != UpdateMaintenanceType.none &&
-              state.redirectRoute != null) {
-            goBack(context);
-            unawaited(
-              context.router.pushAndPopUntil(
-                state.redirectRoute!,
-                predicate: (Route<dynamic> route) => false,
-              ),
-            );
-          }
-        },
-        buildWhen: (ForceUpdateUnderMaintenanceState previous,
-                ForceUpdateUnderMaintenanceState current) =>
-            (current.status == BaseStateStatus.success) &&
-            (current.underMaintenanceType != previous.underMaintenanceType),
-        listenWhen: (ForceUpdateUnderMaintenanceState previous,
-                ForceUpdateUnderMaintenanceState current) =>
-            (current.status == BaseStateStatus.success) &&
-            (current.updateMaintenanceType != previous.updateMaintenanceType),
+        listener: (
+          BuildContext context,
+          ForceUpdateUnderMaintenanceState state,
+        ) =>
+            _handleUpdateState(state),
+        buildWhen: (
+          ForceUpdateUnderMaintenanceState previous,
+          ForceUpdateUnderMaintenanceState current,
+        ) =>
+            current.status == BaseStateStatus.success &&
+            (current.updateMaintenanceType != previous.updateMaintenanceType ||
+                current.underMaintenanceType != previous.underMaintenanceType),
+        listenWhen: (
+          ForceUpdateUnderMaintenanceState previous,
+          ForceUpdateUnderMaintenanceState current,
+        ) =>
+            current.status == BaseStateStatus.success &&
+            current.updateMaintenanceType != previous.updateMaintenanceType,
       );
 
-  /// Displays a dialog that informs the user about the force update.
-  /// If the update is mandatory, the cancel button is hidden.
-  ///
-  /// [configModel] contains the force update details.
-  /// [isMandatory] indicates if the update is mandatory or not.
-  /// [context] is used to trigger the dialog display.
   void _showUpdateDialog(
     ForceUpdateConfigModel? configModel, {
     required bool isMandatory,
-    required BuildContext context,
   }) {
     unawaited(
-      showDialog(
-        context: MainConfig.context,
+      showDialog<void>(
+        context: context,
         barrierDismissible: false,
-        useRootNavigator: false,
-        builder: (BuildContext ctx) => PopScope(
+        builder: (BuildContext dialogContext) => PopScope(
           canPop: false,
           child: DialogUtils(
             isDialogHideOnClick: false,
             message: configModel?.forceUpdate?.forceUpdateMsg ?? '',
             title: configModel?.forceUpdate?.forceUpdateTitle ?? '',
             okBtnTitle: AppConstant.update,
-            cancelBtnTitle: isMandatory
-                ? null
-                : context.appString.cancelKey,
+            cancelBtnTitle:
+                isMandatory ? null : context.appString.cancelKey,
             onOkClicked: () async {
-              // Initiates the opening of the Play Store or App
-              // Store for the update
               await context
-                  .instance<ForceUpdateUnderMaintenanceCubit>()
-                  .openPlayStoreAppStore(context);
+                  .read<ForceUpdateUnderMaintenanceCubit>()
+                  .openPlayStoreAppStore(dialogContext);
             },
             onCancelClicked: isMandatory
                 ? null
                 : () async {
-                    goBack(ctx);
-                    bool isCountryAndLanguageSelected = SharedPref.instance.getBool(
-                      PrefsKey.isCountryAndLanguageSelectedKey,
-                      defValue: false,
-                    );
-                    // Redirects based on country and language selection
-                    await ctx.router.pushAndPopUntil(
-                      isCountryAndLanguageSelected
-                          ? const DashboardRoute()
-                          : const DashboardRoute(),
-                      predicate: (Route<dynamic> route) => false,
-                    );
+                    goBack(dialogContext);
+                    _updateDialogShown = false;
+                    await _leaveMaintenanceFlow();
                   },
           ),
         ),

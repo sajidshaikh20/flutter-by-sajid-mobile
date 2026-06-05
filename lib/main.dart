@@ -42,7 +42,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   @override
-  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {}
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      await ForceUpdateUnderMaintenanceCubit.instance().checkAppUpdate(
+        syncNavigation: true,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

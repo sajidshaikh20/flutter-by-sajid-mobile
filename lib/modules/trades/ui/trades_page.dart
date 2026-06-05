@@ -31,10 +31,12 @@ class TradesViewBody extends StatefulWidget {
 
 class _TradesViewBodyState extends State<TradesViewBody> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -90,6 +92,7 @@ class _TradesViewBodyState extends State<TradesViewBody> {
                 // Scrolling Body list content with sticky headers
                 Expanded(
                   child: CustomScrollView(
+                    controller: _scrollController,
                     slivers: <Widget>[
                       // Search Bar positioned directly above the filters row
                       SliverToBoxAdapter(
@@ -174,8 +177,15 @@ class _TradesViewBodyState extends State<TradesViewBody> {
                           padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
                           child: TradesFilterBar(
                             selectedFilter: state.selectedFilter,
-                            onFilterChanged: (SignalFilter filter) {
+                            onFilterChanged: (SignalFilter filter) async {
                               context.read<TradesCubit>().selectFilter(filter);
+                              if (_scrollController.hasClients) {
+                                await _scrollController.animateTo(
+                                  0.0,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
                             },
                           ),
                         ),

@@ -10,30 +10,23 @@ class MaintenanceMiddleware extends AutoRouteGuard {
   /// Otherwise, the navigation continues as usual.
   @override
   Future<void> onNavigation(
-      NavigationResolver resolver,
-      StackRouter router,
-      ) async {
-    // Do not block first paint on Remote Config (network can take several seconds).
-    resolver.next();
-    unawaited(_checkMaintenanceInBackground(router));
-  }
+    NavigationResolver resolver,
+    StackRouter router,
+  ) async {
+    // If launched via a notification, let navigation continue; maintenance screen can be handled later if needed
 
-  Future<void> _checkMaintenanceInBackground(StackRouter router) async {
-    try {
-      final ForceUpdateUnderMaintenanceCubit forceUpdate =
-          ForceUpdateUnderMaintenanceCubit.instance();
-      final ForceUpdateConfigModel? config = await forceUpdate
-          .readRemoteConfig()
-          .timeout(const Duration(seconds: 3), onTimeout: () => null);
-      final UpdateMaintenanceType type =
-          forceUpdate.getUpdateOrMaintenanceType(config);
+    // Get the ForceUpdate instance to check the app's update or
+    // maintenance status
+    ForceUpdateUnderMaintenanceCubit forceUpdate =
+        ForceUpdateUnderMaintenanceCubit.instance();
 
-      if (type != UpdateMaintenanceType.none &&
-          (router.navigatorKey.currentContext?.mounted ?? false)) {
-        await router.pushPath(AppPaths.maintenance);
-      }
-    } on Exception catch (e) {
-      DebugLog.instance.i('MaintenanceMiddleware: remote config skipped: $e');
+    final UpdateMaintenanceType type = await forceUpdate.checkAppUpdate();
+
+    if (type == UpdateMaintenanceType.none) {
+      resolver.next();
+    } else {
+      await router.pushPath(AppPaths.maintenance);
+      resolver.next(false);
     }
   }
 }

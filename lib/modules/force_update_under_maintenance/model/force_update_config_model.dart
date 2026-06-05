@@ -113,7 +113,9 @@ class UnderMaintainance {
 
   /// Creates an [UnderMaintainance] instance from a JSON map.
   UnderMaintainance.fromJson(Map<String, dynamic> json) {
-    isMaintainanceModeEnable = json['is_maintainance_mode_enable'];
+    isMaintainanceModeEnable = _parseRemoteConfigBool(
+      json['is_maintainance_mode_enable'],
+    );
     maintainanceTitle = json['maintainance_title'];
     maintainanceDescription = json['maintainance_description'];
     maintainanceImage = json['maintainance_image'];
@@ -130,4 +132,26 @@ class UnderMaintainance {
     data['maintainance_priority'] = maintainancePriority;
     return data;
   }
+}
+
+bool _parseRemoteConfigBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) {
+    return defaultValue;
+  }
+  if (value is bool) {
+    return value;
+  }
+  if (value is num) {
+    return value != 0;
+  }
+  if (value is String) {
+    final String normalized = value.trim().toLowerCase();
+    if (normalized == 'true' || normalized == '1') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == '0') {
+      return false;
+    }
+  }
+  return defaultValue;
 }

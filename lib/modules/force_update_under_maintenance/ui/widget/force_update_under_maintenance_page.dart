@@ -14,23 +14,20 @@ class ForceUpdateUnderMaintenancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initiates a microtask to check for app updates
-    // asynchronously when the page is mounted.
-    // This prevents blocking the main thread and ensures the update check
-    // happens in the background.
     scheduleMicrotask(
       () async {
-        if (context.mounted) {
-          // Calls the cubit to check if an app update is available.
-          await context
-              .instance<ForceUpdateUnderMaintenanceCubit>()
-              .checkAppUpdate();
+        if (!context.mounted) {
+          return;
         }
+        await context
+            .read<ForceUpdateUnderMaintenanceCubit>()
+            .checkAppUpdate();
       },
     );
 
-    // Returns the ForceUpdateWidget that handles the rendering of
-    // either the force update screen or under maintenance screen.
-    return const ForceUpdateWidget();
+    return Scaffold(
+      backgroundColor: MainConfig.appColors.backgroundWhiteColor,
+      body: const ForceUpdateWidget(),
+    );
   }
 }
