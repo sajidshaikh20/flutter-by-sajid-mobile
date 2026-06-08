@@ -158,8 +158,8 @@ class HomeHeaderAppBar extends StatelessWidget {
                             : AppColors.textPrimaryLight,
                         size: Dimens.size28,
                       ),
-                      onPressed: () {
-                        // Notification action placeholder
+                      onPressed: () async {
+                        await context.router.push(const NotificationRoute());
                       },
                     ),
                     Positioned(

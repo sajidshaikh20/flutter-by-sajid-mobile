@@ -1,7 +1,18 @@
 import '../../../../utils/exports.dart';
 
 class TradesSummaryCards extends StatelessWidget {
-  const TradesSummaryCards({super.key});
+  const TradesSummaryCards({
+    super.key,
+    this.activeCount = '3',
+    this.pendingCount = '2',
+    this.closedCount = '18',
+    this.lossesCount = '5',
+  });
+
+  final String activeCount;
+  final String pendingCount;
+  final String closedCount;
+  final String lossesCount;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +26,7 @@ class TradesSummaryCards extends StatelessWidget {
           // Active Card
           Expanded(
             child: _SummaryCard(
-              count: '3',
+              count: activeCount,
               label: 'Active',
               icon: Icons.multiline_chart_rounded,
               color: isDark ? AppColors.successColor : AppColors.greenTextColor,
@@ -27,7 +38,7 @@ class TradesSummaryCards extends StatelessWidget {
           // Pending Card
           Expanded(
             child: _SummaryCard(
-              count: '2',
+              count: pendingCount,
               label: 'Pending',
               icon: Icons.schedule_rounded,
               color: AppColors.infoColor,
@@ -39,7 +50,7 @@ class TradesSummaryCards extends StatelessWidget {
           // Closed Card
           Expanded(
             child: _SummaryCard(
-              count: '18',
+              count: closedCount,
               label: 'Closed',
               icon: Icons.check_circle_outline_rounded,
               color: AppColors.primaryPurple,
@@ -51,7 +62,7 @@ class TradesSummaryCards extends StatelessWidget {
           // Losses Card
           Expanded(
             child: _SummaryCard(
-              count: '5',
+              count: lossesCount,
               label: 'Losses',
               icon: Icons.trending_down_rounded,
               color: AppColors.errorColor,

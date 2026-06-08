@@ -17,3 +17,4 @@ export 'login/login.dart';
 export 'forgot_password/forgot_password.dart';
 export 'signup/signup.dart';
 export 'verification_pending/verification_pending.dart';
+export 'notifications/notifications.dart';

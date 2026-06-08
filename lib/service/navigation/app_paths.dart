@@ -76,4 +76,7 @@ abstract class AppPaths {
 
   /// Edit profile screen route.
   static const String editProfile = '/edit_profile';
+
+  /// Notifications screen route.
+  static const String notifications = '/notifications';
 }

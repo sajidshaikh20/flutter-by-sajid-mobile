@@ -4,9 +4,11 @@ class TradingSignalCard extends StatelessWidget {
   const TradingSignalCard({
     super.key,
     required this.signal,
+    this.showTakeTrade = true,
   });
 
   final TradingSignalModel signal;
+  final bool showTakeTrade;
 
   @override
   Widget build(BuildContext context) {
@@ -461,37 +463,80 @@ class TradingSignalCard extends StatelessWidget {
                   ),
                 ],
               ),
-              // View Details button
-              GestureDetector(
-                onTap: () {
-                  // View details action
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: isDark ? 0.15 : 0.08),
-                    borderRadius: BorderRadius.circular(Dimens.radius8),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      CustomTextLabelWidget(
-                        label: 'View Details',
-                        style: TextStyle(
-                          color: AppColors.primaryPurple,
-                          fontWeight: FontWeight.w700,
-                          fontSize: Dimens.fontSize10,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (showTakeTrade && (signal.isActive || signal.isPending)) ...<Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        context.scaffoldMessenger.showSnackBar(
+                          SnackBar(
+                            content: Text('Taking trade for ${signal.pair}...'),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryButtonGradient,
+                          borderRadius: BorderRadius.circular(Dimens.radius8),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            CustomTextLabelWidget(
+                              label: 'Take Trade',
+                              style: TextStyle(
+                                color: AppColors.whiteColor,
+                                fontWeight: FontWeight.w800,
+                                fontSize: Dimens.fontSize10,
+                              ),
+                            ),
+                            SizedBox(width: Dimens.space4),
+                            Icon(
+                              Icons.trending_up_rounded,
+                              color: AppColors.whiteColor,
+                              size: Dimens.size12,
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(width: Dimens.space4),
-                      Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: AppColors.primaryPurple,
-                        size: Dimens.size8,
+                    ),
+                    const SizedBox(width: Dimens.space8),
+                  ],
+                  GestureDetector(
+                    onTap: () {
+                      // View details action
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryPurple.withValues(alpha: isDark ? 0.15 : 0.08),
+                        borderRadius: BorderRadius.circular(Dimens.radius8),
                       ),
-                    ],
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          CustomTextLabelWidget(
+                            label: 'View Details',
+                            style: TextStyle(
+                              color: AppColors.primaryPurple,
+                              fontWeight: FontWeight.w700,
+                              fontSize: Dimens.fontSize10,
+                            ),
+                      ),
+                          SizedBox(width: Dimens.space4),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: AppColors.primaryPurple,
+                            size: Dimens.size8,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
