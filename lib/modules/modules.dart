@@ -1,20 +1,21 @@
 export 'package:flutter_bloc/flutter_bloc.dart';
 export 'package:intl/intl.dart' hide TextDirection;
 export 'package:lottie/lottie.dart' hide Marker;
+
 export 'dashboard/dashboard.dart';
 export 'force_update_under_maintenance/force_update_under_maintenance.dart';
+export 'forgot_password/forgot_password.dart';
 export 'home/home.dart';
 export 'localization/localization.dart';
+export 'login/login.dart';
 export 'my_trades/my_trades.dart';
 export 'no_internet/no_internet.dart';
+export 'notifications/notifications.dart';
 export 'settings/settings.dart';
+export 'signup/signup.dart';
 export 'social_login/social_login.dart';
 export 'splash/splash.dart';
 export 'tool/tool.dart';
 export 'trades/trades.dart';
 export 'transaction_history/transaction_history.dart';
-export 'login/login.dart';
-export 'forgot_password/forgot_password.dart';
-export 'signup/signup.dart';
 export 'verification_pending/verification_pending.dart';
-export 'notifications/notifications.dart';

@@ -6,7 +6,6 @@ class DashboardPage extends BaseResponsiveView {
   /// Creates [DashboardPage].
   const DashboardPage({super.key});
 
-  static const int _tabCount = 5;
 
   /// Handles system back on dashboard tabs.
   static Future<bool> systemBackButtonPressed(
@@ -83,7 +82,6 @@ class DashboardPage extends BaseResponsiveView {
           child: Scaffold(
             body: child,
             bottomNavigationBar: CustomBottomNavBar(
-              itemCount: _tabCount,
               currentIndex: tabsRouter.activeIndex,
               iconSize: iconSize,
               onTap: (int index) {

@@ -1,4 +1,4 @@
-import '../utils/exports.dart';
+  import '../utils/exports.dart';
 
 ///When app is in background this method will be call
 @pragma('vm:entry-point')
