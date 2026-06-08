@@ -28,7 +28,8 @@ class HomeLiveTradesCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  AutoTabsRouter.of(context).setActiveIndex(2);
+                 // AutoTabsRouter.of(context).setActiveIndex(2);
+                  displaySnackBar("Under development", context);
                 },
                 child: const CustomTextLabelWidget(
                   label: 'View All',
