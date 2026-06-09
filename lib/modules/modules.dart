@@ -16,6 +16,8 @@ export 'signup/signup.dart';
 export 'social_login/social_login.dart';
 export 'splash/splash.dart';
 export 'tool/tool.dart';
+export 'pip_calculator/pip_calculator.dart';
+export 'compound_interest/compound_interest.dart';
 export 'trades/trades.dart';
 export 'transaction_history/transaction_history.dart';
 export 'verification_pending/verification_pending.dart';

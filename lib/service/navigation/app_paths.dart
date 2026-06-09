@@ -79,4 +79,11 @@ abstract class AppPaths {
 
   /// Notifications screen route.
   static const String notifications = '/notifications';
+
+  /// PIP Calculator screen route.
+  static const String pipCalculator = '/pip_calculator';
+
+  /// Compound Interest screen route.
+  static const String compoundInterest = '/compound_interest';
 }
+

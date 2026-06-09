@@ -154,21 +154,23 @@ class ToolPage extends BaseResponsiveView {
     final Color cardBg = isDark ? const Color(0xFF0F0B22) : Colors.white;
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.7);
 
-    return Container(
-      width: double.infinity,
-      height: 140,
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(Dimens.radius16),
-        border: Border.all(color: borderCol),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return GestureDetector(
+      onTap: () => context.router.push(const PipCalculatorRoute()),
+      child: Container(
+        width: double.infinity,
+        height: 140,
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(Dimens.radius16),
+          border: Border.all(color: borderCol),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(Dimens.radius16),
         child: Padding(
@@ -291,28 +293,31 @@ class ToolPage extends BaseResponsiveView {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildCompoundInterestCard(BuildContext context, bool isDark, Color textColor, Color subtextColor) {
     final Color cardBg = isDark ? const Color(0xFF0F0B22) : Colors.white;
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.7);
 
-    return Container(
-      width: double.infinity,
-      height: 140,
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(Dimens.radius16),
-        border: Border.all(color: borderCol),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return GestureDetector(
+      onTap: () => context.router.push(const CompoundInterestRoute()),
+      child: Container(
+        width: double.infinity,
+        height: 140,
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(Dimens.radius16),
+          border: Border.all(color: borderCol),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(Dimens.radius16),
         child: Padding(
@@ -435,8 +440,9 @@ class ToolPage extends BaseResponsiveView {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
 }
 
@@ -501,7 +507,6 @@ class HeaderGraphic extends StatelessWidget {
                   ],
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.2),
-                    width: 1,
                   ),
                 ),
                 padding: const EdgeInsets.all(7),
