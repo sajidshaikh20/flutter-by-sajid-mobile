@@ -1,130 +1,121 @@
 import '../../../utils/exports.dart';
 
-/// Cubit managing Pip Calculator page state and calculation logic.
+/// Cubit managing Pip and Position Size Calculator page state and calculation logic.
 class PipCalculatorCubit extends BaseCubit<PipCalculatorState> {
-  PipCalculatorCubit() : super(PipCalculatorState.initial()) {
-    calculate();
-  }
+  PipCalculatorCubit() : super(PipCalculatorState.initial());
 
-  /// Updates selected currency pair and auto-sets default current price and pip size.
-  void updateCurrencyPair(String pair) {
-    double defaultPrice = 1.08500;
-    double defaultPipSize = 0.0001;
+  static const List<Map<String, dynamic>> currencyPairs = <Map<String, dynamic>>[
+    <String, dynamic>{'name': 'EUR/USD', 'value': 10.0},
+    <String, dynamic>{'name': 'GBP/USD', 'value': 10.0},
+    <String, dynamic>{'name': 'USD/CHF', 'value': 10.0},
+    <String, dynamic>{'name': 'AUD/USD', 'value': 10.0},
+    <String, dynamic>{'name': 'NZD/USD', 'value': 10.0},
+    <String, dynamic>{'name': 'USD/CAD', 'value': 10.0},
+    <String, dynamic>{'name': 'USD/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'EUR/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'GBP/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'AUD/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'NZD/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'CAD/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'CHF/JPY', 'value': 100.0},
+    <String, dynamic>{'name': 'EUR/GBP', 'value': 100.0},
+    <String, dynamic>{'name': 'EUR/AUD', 'value': 100.0},
+    <String, dynamic>{'name': 'GBP/AUD', 'value': 100.0},
+    <String, dynamic>{'name': 'GBP/CAD', 'value': 100.0},
+    <String, dynamic>{'name': 'USD/ZAR', 'value': 100.0},
+    <String, dynamic>{'name': 'USD/SGD', 'value': 100.0},
+    <String, dynamic>{'name': 'USD/HKD', 'value': 100.0},
+    <String, dynamic>{'name': 'EUR/NZD', 'value': 100.0},
+    <String, dynamic>{'name': 'USD/MXN', 'value': 100.0},
+    <String, dynamic>{'name': 'USD/INR', 'value': 100.0},
+    <String, dynamic>{'name': 'USD/CNH', 'value': 100.0},
+    <String, dynamic>{'name': 'BTC/USD', 'value': 1.0},
+    <String, dynamic>{'name': 'ETH/USD', 'value': 10.0},
+    <String, dynamic>{'name': 'USOIL', 'value': 100.0},
+  ];
 
-    switch (pair) {
-      case 'EUR/USD':
-        defaultPrice = 1.08500;
-        defaultPipSize = 0.0001;
-      case 'GBP/USD':
-        defaultPrice = 1.27200;
-        defaultPipSize = 0.0001;
-      case 'USD/JPY':
-        defaultPrice = 156.50;
-        defaultPipSize = 0.01;
-      case 'AUD/USD':
-        defaultPrice = 0.66500;
-        defaultPipSize = 0.0001;
-      case 'USD/CAD':
-        defaultPrice = 1.36500;
-        defaultPipSize = 0.0001;
-      case 'USD/CHF':
-        defaultPrice = 0.89500;
-        defaultPipSize = 0.0001;
-      case 'NZD/USD':
-        defaultPrice = 0.61200;
-        defaultPipSize = 0.0001;
-      case 'EUR/GBP':
-        defaultPrice = 0.85200;
-        defaultPipSize = 0.0001;
-    }
-
+  /// Switches between calculator tabs and resets results.
+  void updateActiveTab(String tab) {
     emit(state.copyWith(
-      selectedCurrencyPair: pair,
-      currentPrice: defaultPrice,
-      selectedPipSize: defaultPipSize,
+      activeTab: tab,
+      clearPositionSize: true,
+      clearPipValue: true,
     ));
-    calculate();
   }
 
-  /// Updates selected account currency.
-  void updateAccountCurrency(String currency) {
-    emit(state.copyWith(selectedAccountCurrency: currency));
-    calculate();
+  /// Sets selected currency pair and recalculates/resets results.
+  void selectCurrencyPair(String name, double value) {
+    emit(state.copyWith(
+      selectedCurrencyName: name,
+      selectedCurrencyValue: value,
+      clearPositionSize: true,
+      clearPipValue: true,
+    ));
+  }
+
+  /// Updates account balance.
+  void updateBalance(double? val) {
+    emit(state.copyWith(
+      balance: val,
+      clearPositionSize: true,
+    ));
+  }
+
+  /// Updates risk percentage.
+  void updateRiskPercentage(double? val) {
+    emit(state.copyWith(
+      riskPercentage: val,
+      clearPositionSize: true,
+    ));
+  }
+
+  /// Updates stop loss.
+  void updateStopLoss(double? val) {
+    emit(state.copyWith(
+      stopLoss: val,
+      clearPositionSize: true,
+    ));
   }
 
   /// Updates lot size.
-  void updateLotSize(double size) {
-    emit(state.copyWith(lotSize: size));
-    calculate();
+  void updateLotSize(double? val) {
+    emit(state.copyWith(
+      lotSize: val,
+      clearPipValue: true,
+    ));
   }
 
-  /// Updates current price.
-  void updateCurrentPrice(double price) {
-    emit(state.copyWith(currentPrice: price));
-    calculate();
-  }
+  /// Calculates position size in lots:
+  /// positionSize = riskAmount / (stopLoss * currencyValue)
+  void calculatePositionSize() {
+    final double? balance = state.balance;
+    final double? riskPercentage = state.riskPercentage;
+    final double? stopLoss = state.stopLoss;
+    final double currencyValue = state.selectedCurrencyValue;
 
-  /// Updates pip size.
-  void updatePipSize(double pipSize) {
-    emit(state.copyWith(selectedPipSize: pipSize));
-    calculate();
-  }
-
-  /// Calculates pip value based on inputs.
-  void calculate() {
-    final String pair = state.selectedCurrencyPair;
-    final List<String> parts = pair.split('/');
-    if (parts.length != 2) return;
-
-    final String base = parts[0];
-    final String quote = parts[1];
-    final String acc = state.selectedAccountCurrency;
-    final double lotSize = state.lotSize;
-    final double currentPrice = state.currentPrice;
-    final double pipSize = state.selectedPipSize;
-
-    // Lot size in units (standard forex lot is 100,000 units)
-    final double units = lotSize * 100000;
-
-    // Pip value in Quote Currency (YYY)
-    final double pipValQuote = pipSize * units;
-
-    // Convert to Account Currency (ACC)
-    double conversionRate = 1.0;
-    if (quote == acc) {
-      conversionRate = 1.0;
-    } else if (base == acc) {
-      conversionRate = 1.0 / (currentPrice > 0 ? currentPrice : 1.0);
-    } else {
-      conversionRate = _getRateToUsd(quote) / _getRateToUsd(acc);
+    if (balance == null || riskPercentage == null || stopLoss == null || stopLoss == 0) {
+      emit(state.copyWith(clearPositionSize: true));
+      return;
     }
 
-    final double pipValAcc = pipValQuote * conversionRate;
-
-    emit(state.copyWith(pipValue: pipValAcc));
+    final double riskAmount = balance * (riskPercentage / 100.0);
+    final double positionSizeResult = riskAmount / (stopLoss * currencyValue);
+    emit(state.copyWith(positionSize: positionSizeResult));
   }
 
-  double _getRateToUsd(String currency) {
-    switch (currency) {
-      case 'USD':
-        return 1.0;
-      case 'EUR':
-        return 1.0850;
-      case 'GBP':
-        return 1.2720;
-      case 'JPY':
-        return 1.0 / 156.50;
-      case 'AUD':
-        return 0.6650;
-      case 'CAD':
-        return 1.0 / 1.3650;
-      case 'CHF':
-        return 1.0 / 0.8950;
-      case 'NZD':
-        return 0.6120;
-      default:
-        return 1.0;
+  /// Calculates pip value:
+  /// pipValue = lotSize * currencyValue
+  void calculatePipValue() {
+    final double? lotSize = state.lotSize;
+    final double currencyValue = state.selectedCurrencyValue;
+
+    if (lotSize == null) {
+      emit(state.copyWith(clearPipValue: true));
+      return;
     }
+
+    final double pipValueResult = lotSize * currencyValue;
+    emit(state.copyWith(pipValue: pipValueResult));
   }
 
   @override
@@ -133,3 +124,4 @@ class PipCalculatorCubit extends BaseCubit<PipCalculatorState> {
   @override
   PipCalculatorState getResetRedirectionState() => state.copyWith();
 }
+

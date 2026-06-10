@@ -4,15 +4,16 @@ import '../../../utils/exports.dart';
 class CompoundInterestState extends BaseState {
   const CompoundInterestState({
     this.initialInvestment = 10000.0,
-    this.monthlyContribution = 500.0,
-    this.annualInterestRate = 12.0,
-    this.compoundFrequency = 'Monthly',
+    this.monthlyContribution = 0.0,
+    this.annualInterestRate = 7.0,
+    this.compoundFrequency = 'Annually',
     this.years = 10,
-    this.futureValue = 148023.21,
-    this.totalInvested = 70000.0,
-    this.interestEarned = 78023.21,
-    this.totalContributions = 60000.0,
-    this.yearlyGrowth = const <double>[10000.0, 148023.21],
+    this.futureValue = 0.0,
+    this.totalInvested = 0.0,
+    this.interestEarned = 0.0,
+    this.totalContributions = 0.0,
+    this.yearlyGrowth = const <double>[],
+    this.selectedCurrency = 'USD',
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -28,6 +29,7 @@ class CompoundInterestState extends BaseState {
   final double interestEarned;
   final double totalContributions;
   final List<double> yearlyGrowth;
+  final String selectedCurrency;
 
   factory CompoundInterestState.initial() => const CompoundInterestState();
 
@@ -45,6 +47,7 @@ class CompoundInterestState extends BaseState {
     double? interestEarned,
     double? totalContributions,
     List<double>? yearlyGrowth,
+    String? selectedCurrency,
   }) =>
       CompoundInterestState(
         status: status ?? this.status,
@@ -60,6 +63,7 @@ class CompoundInterestState extends BaseState {
         interestEarned: interestEarned ?? this.interestEarned,
         totalContributions: totalContributions ?? this.totalContributions,
         yearlyGrowth: yearlyGrowth ?? this.yearlyGrowth,
+        selectedCurrency: selectedCurrency ?? this.selectedCurrency,
       );
 
   @override
@@ -77,5 +81,6 @@ class CompoundInterestState extends BaseState {
         interestEarned,
         totalContributions,
         yearlyGrowth,
+        selectedCurrency,
       ];
 }

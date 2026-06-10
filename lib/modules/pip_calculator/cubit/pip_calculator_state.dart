@@ -1,25 +1,31 @@
 import '../../../utils/exports.dart';
 
-/// State class for PIP Calculator screen.
+/// State class for PIP / Position Size Calculator screen.
 class PipCalculatorState extends BaseState {
   const PipCalculatorState({
-    this.selectedCurrencyPair = 'EUR/USD',
-    this.selectedAccountCurrency = 'USD',
-    this.lotSize = 1.0,
-    this.currentPrice = 1.08500,
-    this.selectedPipSize = 0.0001,
-    this.pipValue = 10.0,
+    this.activeTab = 'position',
+    this.selectedCurrencyName = 'EUR/USD',
+    this.selectedCurrencyValue = 10.0,
+    this.balance,
+    this.riskPercentage,
+    this.stopLoss,
+    this.positionSize,
+    this.lotSize = 0.01,
+    this.pipValue,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
   });
 
-  final String selectedCurrencyPair;
-  final String selectedAccountCurrency;
-  final double lotSize;
-  final double currentPrice;
-  final double selectedPipSize;
-  final double pipValue;
+  final String activeTab;
+  final String selectedCurrencyName;
+  final double selectedCurrencyValue;
+  final double? balance;
+  final double? riskPercentage;
+  final double? stopLoss;
+  final double? positionSize;
+  final double? lotSize;
+  final double? pipValue;
 
   factory PipCalculatorState.initial() => const PipCalculatorState();
 
@@ -27,23 +33,31 @@ class PipCalculatorState extends BaseState {
     BaseStateStatus? status,
     String? msg,
     PageRouteInfo? redirectRoute,
-    String? selectedCurrencyPair,
-    String? selectedAccountCurrency,
+    String? activeTab,
+    String? selectedCurrencyName,
+    double? selectedCurrencyValue,
+    double? balance,
+    double? riskPercentage,
+    double? stopLoss,
+    double? positionSize,
     double? lotSize,
-    double? currentPrice,
-    double? selectedPipSize,
     double? pipValue,
+    bool clearPositionSize = false,
+    bool clearPipValue = false,
   }) =>
       PipCalculatorState(
         status: status ?? this.status,
         msg: msg ?? this.msg,
         redirectRoute: redirectRoute ?? this.redirectRoute,
-        selectedCurrencyPair: selectedCurrencyPair ?? this.selectedCurrencyPair,
-        selectedAccountCurrency: selectedAccountCurrency ?? this.selectedAccountCurrency,
+        activeTab: activeTab ?? this.activeTab,
+        selectedCurrencyName: selectedCurrencyName ?? this.selectedCurrencyName,
+        selectedCurrencyValue: selectedCurrencyValue ?? this.selectedCurrencyValue,
+        balance: balance ?? this.balance,
+        riskPercentage: riskPercentage ?? this.riskPercentage,
+        stopLoss: stopLoss ?? this.stopLoss,
+        positionSize: clearPositionSize ? null : (positionSize ?? this.positionSize),
         lotSize: lotSize ?? this.lotSize,
-        currentPrice: currentPrice ?? this.currentPrice,
-        selectedPipSize: selectedPipSize ?? this.selectedPipSize,
-        pipValue: pipValue ?? this.pipValue,
+        pipValue: clearPipValue ? null : (pipValue ?? this.pipValue),
       );
 
   @override
@@ -51,11 +65,15 @@ class PipCalculatorState extends BaseState {
         status,
         msg,
         redirectRoute,
-        selectedCurrencyPair,
-        selectedAccountCurrency,
+        activeTab,
+        selectedCurrencyName,
+        selectedCurrencyValue,
+        balance,
+        riskPercentage,
+        stopLoss,
+        positionSize,
         lotSize,
-        currentPrice,
-        selectedPipSize,
         pipValue,
       ];
 }
+

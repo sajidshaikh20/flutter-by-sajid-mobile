@@ -30,119 +30,9 @@ class CompoundInterestViewBody extends StatefulWidget {
 }
 
 class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
-  final TextEditingController _initialController = TextEditingController();
-  final TextEditingController _monthlyController = TextEditingController();
-  final TextEditingController _rateController = TextEditingController();
-  final TextEditingController _yearsController = TextEditingController();
 
-  final FocusNode _initialFocus = FocusNode();
-  final FocusNode _monthlyFocus = FocusNode();
-  final FocusNode _rateFocus = FocusNode();
-  final FocusNode _yearsFocus = FocusNode();
 
-  @override
-  void initState() {
-    super.initState();
-    final CompoundInterestState state = context.read<CompoundInterestCubit>().state;
-    _initialController.text = state.initialInvestment.toStringAsFixed(0);
-    _monthlyController.text = state.monthlyContribution.toStringAsFixed(0);
-    _rateController.text = state.annualInterestRate.toStringAsFixed(0);
-    _yearsController.text = state.years.toString();
-  }
 
-  @override
-  void dispose() {
-    _initialController.dispose();
-    _monthlyController.dispose();
-    _rateController.dispose();
-    _yearsController.dispose();
-    _initialFocus.dispose();
-    _monthlyFocus.dispose();
-    _rateFocus.dispose();
-    _yearsFocus.dispose();
-    super.dispose();
-  }
-
-  void _showFrequencySelector(BuildContext context, CompoundInterestState state) {
-    final List<String> frequencies = <String>[
-      'Daily',
-      'Weekly',
-      'Monthly',
-      'Quarterly',
-      'Semi-Annually',
-      'Annually',
-    ];
-
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext sheetContext) {
-        final bool isDark = context.isDark;
-        final Color bg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-        final Color textCol = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-
-        return Container(
-          padding: const EdgeInsets.all(Dimens.space24),
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(Dimens.radius24),
-              topRight: Radius.circular(Dimens.radius24),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                width: Dimens.size40,
-                height: Dimens.size4,
-                margin: const EdgeInsets.only(bottom: Dimens.space20),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black26,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              CustomTextLabelWidget(
-                label: 'Select Compounding Frequency',
-                style: TextStyle(
-                  color: textCol,
-                  fontSize: Dimens.fontSize18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: Dimens.space16),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: frequencies.length,
-                  itemBuilder: (BuildContext ctx, int index) {
-                    final String freq = frequencies[index];
-                    return ListTile(
-                      title: CustomTextLabelWidget(
-                        label: freq,
-                        style: TextStyle(
-                          color: textCol,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.start,
-                      ),
-                      trailing: state.compoundFrequency == freq
-                          ? const Icon(Icons.check_circle, color: AppColors.primaryPurple)
-                          : null,
-                      onTap: () {
-                        context.read<CompoundInterestCubit>().updateCompoundFrequency(freq);
-                        Navigator.pop(sheetContext);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    ));
-  }
 
   void _showInfoDialog(BuildContext context) {
     unawaited(showDialog<void>(
@@ -176,9 +66,30 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
     ));
   }
 
-  String _formatCurrency(double val) {
+  String _getCurrencySymbol(String currencyCode) {
+    switch (currencyCode) {
+      case 'EUR':
+        return '€';
+      case 'INR':
+        return '₹';
+      case 'GBP':
+        return '£';
+      case 'JPY':
+        return '¥';
+      case 'AUD':
+        return r'A$';
+      case 'CAD':
+        return r'C$';
+      case 'USD':
+      default:
+        return r'$';
+    }
+  }
+
+  String _formatCurrency(double val, String currencyCode) {
     final NumberFormat formatter = NumberFormat('#,##0.00', 'en_US');
-    return '\$${formatter.format(val)}';
+    final String symbol = _getCurrencySymbol(currencyCode);
+    return '$symbol${formatter.format(val)}';
   }
 
   @override
@@ -190,9 +101,11 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
     final Color cardBg = isDark ? AppColors.surfaceDark : Colors.white;
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight;
     final Color headerBannerBg = isDark ? const Color(0xFF130E26) : const Color(0xFFF1EAFF);
+    final Color inputBg = isDark ? const Color(0xFF1E1736) : Colors.black.withValues(alpha: 0.03);
 
     return BlocBuilder<CompoundInterestCubit, CompoundInterestState>(
       builder: (BuildContext context, CompoundInterestState state) {
+        final String curSymbol = _getCurrencySymbol(state.selectedCurrency);
         return Scaffold(
           backgroundColor: pageBg,
           body: SafeArea(
@@ -363,208 +276,111 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
                         ),
                         const SizedBox(height: Dimens.space24),
 
-                        // Initial Investment Input
-                        CustomTextLabelWidget(
-                          label: 'Initial Investment',
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: Dimens.fontSize13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: Dimens.space8),
-                        CustomTextFormFieldInputWidget(
-                          controller: _initialController,
-                          focusNode: _initialFocus,
-                          fillColor: cardBg,
-                          borderColor: borderCol,
-                          textInputType: TextInputType.number,
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
-                          prefix: Padding(
-                            padding: const EdgeInsets.only(right: Dimens.space8, left: Dimens.space4),
-                            child: CustomTextLabelWidget(
-                              label: r'$',
-                              style: TextStyle(color: subtextColor, fontWeight: FontWeight.bold),
+                        // Currency Selector Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            CustomTextLabelWidget(
+                              label: 'Currency',
+                              style: TextStyle(
+                                color: subtextColor,
+                                fontSize: Dimens.fontSize14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          onChange: (String val) {
-                            final double? d = double.tryParse(val);
-                            if (d != null) {
-                              context.read<CompoundInterestCubit>().updateInitialInvestment(d);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: Dimens.space20),
-
-                        // Monthly Contribution Input
-                        CustomTextLabelWidget(
-                          label: 'Monthly Contribution',
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: Dimens.fontSize13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: Dimens.space8),
-                        CustomTextFormFieldInputWidget(
-                          controller: _monthlyController,
-                          focusNode: _monthlyFocus,
-                          fillColor: cardBg,
-                          borderColor: borderCol,
-                          textInputType: TextInputType.number,
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
-                          prefix: Padding(
-                            padding: const EdgeInsets.only(right: Dimens.space8, left: Dimens.space4),
-                            child: CustomTextLabelWidget(
-                              label: r'$',
-                              style: TextStyle(color: subtextColor, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          onChange: (String val) {
-                            final double? d = double.tryParse(val);
-                            if (d != null) {
-                              context.read<CompoundInterestCubit>().updateMonthlyContribution(d);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: Dimens.space20),
-
-                        // Annual Interest Rate Input
-                        CustomTextLabelWidget(
-                          label: 'Annual Interest Rate (%)',
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: Dimens.fontSize13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: Dimens.space8),
-                        CustomTextFormFieldInputWidget(
-                          controller: _rateController,
-                          focusNode: _rateFocus,
-                          fillColor: cardBg,
-                          borderColor: borderCol,
-                          textInputType: const TextInputType.numberWithOptions(decimal: true),
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
-                          suffix: Padding(
-                            padding: const EdgeInsets.only(left: Dimens.space8, right: Dimens.space4),
-                            child: CustomTextLabelWidget(
-                              label: '%',
-                              style: TextStyle(color: subtextColor, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          onChange: (String val) {
-                            final double? d = double.tryParse(val);
-                            if (d != null) {
-                              context.read<CompoundInterestCubit>().updateAnnualInterestRate(d);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: Dimens.space20),
-
-                        // Compound Frequency
-                        CustomTextLabelWidget(
-                          label: 'Compound Frequency',
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: Dimens.fontSize13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: Dimens.space8),
-                        GestureDetector(
-                          onTap: () => _showFrequencySelector(context, state),
-                          child: Container(
-                            height: 52,
-                            padding: const EdgeInsets.symmetric(horizontal: Dimens.space12),
-                            decoration: BoxDecoration(
-                              color: cardBg,
-                              borderRadius: BorderRadius.circular(Dimens.radius12),
-                              border: Border.all(color: borderCol),
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                CustomTextLabelWidget(
-                                  label: state.compoundFrequency,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: Dimens.space12),
+                              decoration: BoxDecoration(
+                                color: inputBg,
+                                borderRadius: BorderRadius.circular(Dimens.radius8),
+                                border: Border.all(color: borderCol),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: state.selectedCurrency,
+                                  dropdownColor: cardBg,
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: subtextColor,
+                                  ),
                                   style: TextStyle(
                                     color: textColor,
-                                    fontSize: Dimens.fontSize15,
-                                    fontWeight: FontWeight.w600,
+                                    fontSize: Dimens.fontSize14,
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      context.read<CompoundInterestCubit>().updateCurrency(newValue);
+                                    }
+                                  },
+                                  items: <String>['USD', 'EUR', 'INR', 'GBP', 'JPY', 'AUD', 'CAD']
+                                      .map<DropdownMenuItem<String>>((String value) {
+                                    final String symbol = _getCurrencySymbol(value);
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: CustomTextLabelWidget(
+                                        label: '$value ($symbol)',
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontSize: Dimens.fontSize14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                                const Spacer(),
-                                Icon(Icons.keyboard_arrow_down_rounded, color: subtextColor),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                         const SizedBox(height: Dimens.space20),
 
-                        // Years Input
-                        CustomTextLabelWidget(
-                          label: 'Years',
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: Dimens.fontSize13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: Dimens.space8),
-                        CustomTextFormFieldInputWidget(
-                          controller: _yearsController,
-                          focusNode: _yearsFocus,
-                          fillColor: cardBg,
-                          borderColor: borderCol,
-                          textInputType: TextInputType.number,
-                          style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
-                          suffix: Padding(
-                            padding: const EdgeInsets.only(left: Dimens.space8, right: Dimens.space4),
-                            child: CustomTextLabelWidget(
-                              label: 'Years',
-                              style: TextStyle(color: subtextColor, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          onChange: (String val) {
-                            final int? v = int.tryParse(val);
-                            if (v != null && v > 0) {
-                              context.read<CompoundInterestCubit>().updateYears(v);
-                            }
+                        // Principal Amount Slider
+                        SliderInputRowWidget(
+                          label: 'Principal Amount',
+                          value: state.initialInvestment,
+                          min: 1000.0,
+                          max: 10000000.0,
+                          isCurrency: true,
+                          currencySymbol: curSymbol,
+                          onChanged: (double val) {
+                            context.read<CompoundInterestCubit>().updateInitialInvestment(val);
                           },
                         ),
-                        const SizedBox(height: Dimens.space28),
+                        const SizedBox(height: Dimens.space20),
 
-                        // Calculate Button
-                        GestureDetector(
-                          onTap: () {
-                            _initialFocus.unfocus();
-                            _monthlyFocus.unfocus();
-                            _rateFocus.unfocus();
-                            _yearsFocus.unfocus();
-                            context.read<CompoundInterestCubit>().calculate();
+                        // Rate of Interest (%) Slider
+                        SliderInputRowWidget(
+                          label: 'Rate of Interest (%)',
+                          value: state.annualInterestRate,
+                          min: 1.0,
+                          max: 30.0,
+                          suffix: '%',
+                          onChanged: (double val) {
+                            context.read<CompoundInterestCubit>().updateAnnualInterestRate(val);
                           },
-                          child: Container(
-                            width: double.infinity,
-                            height: 52,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Dimens.radius12),
-                              color: AppColors.primaryPurple,
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(Icons.trending_up_rounded, color: Colors.white),
-                                SizedBox(width: Dimens.space8),
-                                CustomTextLabelWidget(
-                                  label: 'Calculate Returns',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: Dimens.fontSize16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        ),
+                        const SizedBox(height: Dimens.space20),
+
+                        // Time Period (Years) Slider
+                        SliderInputRowWidget(
+                          label: 'Time Period (Years)',
+                          value: state.years.toDouble(),
+                          min: 1.0,
+                          max: 40.0,
+                          suffix: ' Yr',
+                          onChanged: (double val) {
+                            context.read<CompoundInterestCubit>().updateYears(val.toInt());
+                          },
+                        ),
+                        const SizedBox(height: Dimens.space20),
+
+                        // Compounding Frequency Selector
+                        CompoundInterestFrequencySwitcher(
+                          activeFrequency: state.compoundFrequency,
+                          onFrequencyChanged: (String freq) {
+                            context.read<CompoundInterestCubit>().updateCompoundFrequency(freq);
+                          },
                         ),
                         const SizedBox(height: Dimens.space24),
 
@@ -582,69 +398,55 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              // Future Value Header
-                              Row(
-                                children: <Widget>[
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.primaryPurple.withValues(alpha: 0.15),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: const Icon(Icons.show_chart_rounded,
-                                        color: AppColors.primaryPurple, size: Dimens.size24),
-                                  ),
-                                  const SizedBox(width: Dimens.space12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        CustomTextLabelWidget(
-                                          label: 'Future Value',
-                                          style: TextStyle(
-                                            color: subtextColor,
-                                            fontSize: Dimens.fontSize12,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        CustomTextLabelWidget(
-                                          label: _formatCurrency(state.futureValue),
-                                          style: const TextStyle(
-                                            color: AppColors.primaryPurple,
-                                            fontSize: Dimens.fontSize24,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        const SizedBox(height: 2),
-                                        CustomTextLabelWidget(
-                                          label: 'Total amount after ${state.years} years',
-                                          style: TextStyle(
-                                            color: subtextColor,
-                                            fontSize: Dimens.fontSize11,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              CompoundInterestDetailRowWidget(
+                                label: 'Principal Amount',
+                                value: _formatCurrency(state.initialInvestment, state.selectedCurrency),
+                                textColor: textColor,
+                                bulletColor: isDark ? Colors.white24 : Colors.grey.shade300,
+                              ),
+                              const SizedBox(height: Dimens.space12),
+                              CompoundInterestDetailRowWidget(
+                                label: 'Total Interest',
+                                value: _formatCurrency(state.interestEarned, state.selectedCurrency),
+                                textColor: textColor,
+                                bulletColor: AppColors.primaryPurple,
                               ),
                               const SizedBox(height: Dimens.space16),
                               const Divider(color: AppColors.borderDark, height: 1),
                               const SizedBox(height: Dimens.space16),
-
-                              _buildDetailRow('Total Invested', _formatCurrency(state.totalInvested), textColor,
-                                  AppColors.skyBlueDarkColor),
-                              const SizedBox(height: Dimens.space12),
-                              _buildDetailRow('Interest Earned', _formatCurrency(state.interestEarned), textColor,
-                                  AppColors.successColor),
-                              const SizedBox(height: Dimens.space12),
-                              _buildDetailRow('Total Contributions', _formatCurrency(state.totalContributions),
-                                  textColor, AppColors.warningColor),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: CustomTextLabelWidget(
+                                      label: 'Amount in ${state.years} Yr',
+                                      style: TextStyle(
+                                        color: subtextColor,
+                                        fontSize: Dimens.fontSize14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                  const SizedBox(width: Dimens.space8),
+                                  Flexible(
+                                    child: CustomTextLabelWidget(
+                                      label: _formatCurrency(state.futureValue, state.selectedCurrency),
+                                      style: const TextStyle(
+                                        color: AppColors.primaryPurple,
+                                        fontSize: Dimens.fontSize20,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: Dimens.space20),
+                              CompoundInterestBreakdownBar(
+                                principal: state.initialInvestment,
+                                interest: state.interestEarned,
+                              ),
                             ],
                           ),
                         ),
@@ -681,6 +483,7 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
                                     data: state.yearlyGrowth,
                                     years: state.years,
                                     isDark: isDark,
+                                    currencySymbol: curSymbol,
                                   ),
                                 ),
                               ),
@@ -699,8 +502,24 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
       },
     );
   }
+}
 
-  Widget _buildDetailRow(String label, String value, Color textCol, Color bulletColor) {
+class CompoundInterestDetailRowWidget extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color textColor;
+  final Color bulletColor;
+
+  const CompoundInterestDetailRowWidget({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.textColor,
+    required this.bulletColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
         Container(
@@ -712,21 +531,27 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
           ),
         ),
         const SizedBox(width: Dimens.space10),
-        CustomTextLabelWidget(
-          label: label,
-          style: TextStyle(
-            color: textCol.withValues(alpha: 0.7),
-            fontSize: Dimens.fontSize13,
-            fontWeight: FontWeight.w500,
+        Expanded(
+          child: CustomTextLabelWidget(
+            label: label,
+            style: TextStyle(
+              color: textColor.withValues(alpha: 0.7),
+              fontSize: Dimens.fontSize13,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.start,
           ),
         ),
-        const Spacer(),
-        CustomTextLabelWidget(
-          label: value,
-          style: TextStyle(
-            color: bulletColor,
-            fontSize: Dimens.fontSize13,
-            fontWeight: FontWeight.bold,
+        const SizedBox(width: Dimens.space8),
+        Flexible(
+          child: CustomTextLabelWidget(
+            label: value,
+            style: TextStyle(
+              color: bulletColor,
+              fontSize: Dimens.fontSize13,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.end,
           ),
         ),
       ],
@@ -735,11 +560,17 @@ class _CompoundInterestViewBodyState extends State<CompoundInterestViewBody> {
 }
 
 class ChartPainter extends CustomPainter {
-  ChartPainter({required this.data, required this.years, required this.isDark});
+  ChartPainter({
+    required this.data,
+    required this.years,
+    required this.isDark,
+    required this.currencySymbol,
+  });
 
   final List<double> data;
   final int years;
   final bool isDark;
+  final String currencySymbol;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -885,7 +716,7 @@ class ChartPainter extends CustomPainter {
     // Draw Tooltip on the last point
     if (points.isNotEmpty) {
       final Offset lastPoint = points.last;
-      final String tooltipText = '\$${_formatTooltipAmount(maxVal)}\nat $years Years';
+      final String tooltipText = '$currencySymbol${_formatTooltipAmount(maxVal)}\nat $years Years';
 
       final TextPainter tooltipPainter = TextPainter(
         text: TextSpan(
@@ -934,11 +765,11 @@ class ChartPainter extends CustomPainter {
 
   String _formatYAxisLabel(double val) {
     if (val >= 1000000) {
-      return '\$${(val / 1000000.0).toStringAsFixed(1)}M';
+      return '$currencySymbol${(val / 1000000.0).toStringAsFixed(1)}M';
     } else if (val >= 1000) {
-      return '\$${(val / 1000.0).toStringAsFixed(0)}K';
+      return '$currencySymbol${(val / 1000.0).toStringAsFixed(0)}K';
     } else {
-      return '\$${val.toStringAsFixed(0)}';
+      return '$currencySymbol${val.toStringAsFixed(0)}';
     }
   }
 
@@ -950,3 +781,363 @@ class ChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
+class SliderInputRowWidget extends StatefulWidget {
+  final String label;
+  final double value;
+  final double min;
+  final double max;
+  final String suffix;
+  final bool isCurrency;
+  final String currencySymbol;
+  final ValueChanged<double> onChanged;
+
+  const SliderInputRowWidget({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    this.suffix = '',
+    this.isCurrency = false,
+    this.currencySymbol = r'$',
+  });
+
+  @override
+  State<SliderInputRowWidget> createState() => _SliderInputRowWidgetState();
+}
+
+class _SliderInputRowWidgetState extends State<SliderInputRowWidget> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _formatValue(widget.value));
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(SliderInputRowWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.value != widget.value || oldWidget.currencySymbol != widget.currencySymbol) && !_focusNode.hasFocus) {
+      _controller.text = _formatValue(widget.value);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus) {
+      final double? parsed = _parseText(_controller.text);
+      if (parsed != null) {
+        final double clamped = parsed.clamp(widget.min, widget.max);
+        widget.onChanged(clamped);
+        _controller.text = _formatValue(clamped);
+      } else {
+        _controller.text = _formatValue(widget.value);
+      }
+    }
+  }
+
+  String _formatValue(double val) {
+    if (widget.isCurrency) {
+      final NumberFormat formatter = NumberFormat('#,##0', 'en_US');
+      return '${widget.currencySymbol}${formatter.format(val)}';
+    } else {
+      return '${val.toStringAsFixed(widget.suffix == '%' ? 1 : 0)}${widget.suffix}';
+    }
+  }
+
+  double? _parseText(String text) {
+    final String cleanText = text.replaceAll(RegExp(r'[^\d.]'), '');
+    return double.tryParse(cleanText);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDark = context.isDark;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color inputBg = isDark ? const Color(0xFF1E1736) : Colors.black.withValues(alpha: 0.03);
+    final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            CustomTextLabelWidget(
+              label: widget.label,
+              style: TextStyle(
+                color: subtextColor,
+                fontSize: Dimens.fontSize14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Container(
+              width: 120,
+              height: 38,
+              alignment: Alignment.centerRight,
+              decoration: BoxDecoration(
+                color: inputBg,
+                borderRadius: BorderRadius.circular(Dimens.radius8),
+                border: Border.all(color: borderCol),
+              ),
+              child: TextField(
+                controller: _controller,
+                focusNode: _focusNode,
+                textAlign: TextAlign.center,
+                textAlignVertical: TextAlignVertical.center,
+                keyboardType: TextInputType.number,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: Dimens.fontSize14,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  isDense: true,
+                ),
+                onSubmitted: (String val) {
+                  _focusNode.unfocus();
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: Dimens.space8),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: AppColors.primaryPurple,
+            inactiveTrackColor: isDark ? Colors.white12 : Colors.black12,
+            thumbColor: Colors.white,
+            overlayColor: AppColors.primaryPurple.withValues(alpha: 0.12),
+            valueIndicatorColor: AppColors.primaryPurple,
+            trackHeight: 4.0,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
+          ),
+          child: Slider(
+            value: widget.value.clamp(widget.min, widget.max),
+            min: widget.min,
+            max: widget.max,
+            onChanged: (double val) {
+              widget.onChanged(val);
+              setState(() {
+                _controller.text = _formatValue(val);
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CompoundInterestBreakdownBar extends StatelessWidget {
+  final double principal;
+  final double interest;
+
+  const CompoundInterestBreakdownBar({
+    super.key,
+    required this.principal,
+    required this.interest,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double total = principal + interest;
+    if (total == 0) return const SizedBox.shrink();
+
+    final double principalRatio = principal / total;
+    final double interestRatio = interest / total;
+
+    final bool isDark = context.isDark;
+    final Color principalColor = isDark ? Colors.white24 : Colors.grey.shade300;
+    final Color interestColor = AppColors.primaryPurple;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(Dimens.radius6),
+          child: SizedBox(
+            height: 12,
+            width: double.infinity,
+            child: Row(
+              children: <Widget>[
+                Flexible(
+                  flex: (principalRatio * 1000).toInt(),
+                  child: Container(
+                    color: principalColor,
+                  ),
+                ),
+                Flexible(
+                  flex: (interestRatio * 1000).toInt(),
+                  child: Container(
+                    color: interestColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: Dimens.space12),
+        Row(
+          children: <Widget>[
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: principalColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: Dimens.space6),
+            CustomTextLabelWidget(
+              label: 'Principal',
+              style: TextStyle(
+                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                fontSize: Dimens.fontSize12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: Dimens.space24),
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: interestColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(width: Dimens.space6),
+            CustomTextLabelWidget(
+              label: 'Interest',
+              style: TextStyle(
+                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                fontSize: Dimens.fontSize12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class CompoundInterestFrequencySwitcher extends StatelessWidget {
+  final String activeFrequency;
+  final ValueChanged<String> onFrequencyChanged;
+
+  const CompoundInterestFrequencySwitcher({
+    super.key,
+    required this.activeFrequency,
+    required this.onFrequencyChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDark = context.isDark;
+    final Color activeColor = AppColors.primaryPurple;
+    final Color inactiveBgColor = isDark ? const Color(0xFF1E1736) : Colors.black.withValues(alpha: 0.05);
+    final Color activeTextColor = Colors.white;
+    final Color inactiveTextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+
+    final List<Map<String, String>> frequencies = <Map<String, String>>[
+      <String, String>{'state': 'Annually', 'ui': 'Yearly'},
+      <String, String>{'state': 'Semi-Annually', 'ui': 'Half Yearly'},
+      <String, String>{'state': 'Quarterly', 'ui': 'Quarterly'},
+      <String, String>{'state': 'Monthly', 'ui': 'Monthly'},
+    ];
+
+    final int activeIndex = frequencies.indexWhere((Map<String, String> f) => f['state'] == activeFrequency);
+    final double alignX = frequencies.length > 1
+        ? -1.0 + (activeIndex / (frequencies.length - 1)) * 2.0
+        : 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        CustomTextLabelWidget(
+          label: 'Compounding Frequency',
+          style: TextStyle(
+            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            fontSize: Dimens.fontSize13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: Dimens.space12),
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: inactiveBgColor,
+            borderRadius: BorderRadius.circular(Dimens.radius12),
+          ),
+          child: SizedBox(
+            height: 40,
+            child: Stack(
+              children: <Widget>[
+                AnimatedAlign(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  alignment: Alignment(alignX, 0.0),
+                  child: FractionallySizedBox(
+                    widthFactor: 1.0 / frequencies.length,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: activeColor,
+                        borderRadius: BorderRadius.circular(Dimens.radius8),
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: frequencies.map((Map<String, String> freq) {
+                    final String stateName = freq['state']!;
+                    final String uiName = freq['ui']!;
+                    final bool isActive = stateName == activeFrequency;
+
+                    return Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => onFrequencyChanged(stateName),
+                        child: Center(
+                          child: Text(
+                            uiName,
+                            style: TextStyle(
+                              color: isActive ? activeTextColor : inactiveTextColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: Dimens.fontSize12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+

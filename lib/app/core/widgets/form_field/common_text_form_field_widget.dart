@@ -407,7 +407,7 @@ class _CommonTextFormFieldWidgetState extends State<CommonTextFormFieldWidget> {
                           maxHeight: Dimens.size50,
                         ),
                     prefix: widget.prefix,
-                    labelText: widget.label,
+                    labelText: widget.label.isEmpty ? null : widget.label,
                     isDense: false,
                     hintStyle: widget.hintStyle,
                     hintText: widget.hint,

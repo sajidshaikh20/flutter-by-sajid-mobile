@@ -36,6 +36,12 @@ class CompoundInterestCubit extends BaseCubit<CompoundInterestState> {
     calculate();
   }
 
+  /// Updates selected currency.
+  void updateCurrency(String currency) {
+    emit(state.copyWith(selectedCurrency: currency));
+    calculate();
+  }
+
   /// Performs the compound interest month-by-month calculation and populates historical growth.
   void calculate() {
     final double p = state.initialInvestment;
