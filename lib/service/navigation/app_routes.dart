@@ -109,6 +109,13 @@ class AppRouter extends RootStackRouter {
       reverseDurationInMilliseconds: Dimens.milliseconds400,
       transitionsBuilder: fadePageTransition,
     ),
+    CustomRoute<dynamic>(
+      page: TradingOverviewRoute.page,
+      path: AppPaths.tradingOverview,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
 
     /// Dashboard with 5 tabs
     CustomRoute<dynamic>(

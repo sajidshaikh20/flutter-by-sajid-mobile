@@ -85,5 +85,8 @@ abstract class AppPaths {
 
   /// Compound Interest screen route.
   static const String compoundInterest = '/compound_interest';
+
+  /// Trading Overview screen route.
+  static const String tradingOverview = '/trading_overview';
 }
 

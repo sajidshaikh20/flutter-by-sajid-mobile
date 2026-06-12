@@ -506,9 +506,7 @@ class TradingSignalCard extends StatelessWidget {
                     const SizedBox(width: Dimens.space8),
                   ],
                   GestureDetector(
-                    onTap: () {
-                      // View details action
-                    },
+                    onTap: () => context.router.push(TradingOverviewRoute(signal: signal)),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
                       decoration: BoxDecoration(
