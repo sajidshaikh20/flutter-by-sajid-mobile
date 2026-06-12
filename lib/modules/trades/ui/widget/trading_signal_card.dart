@@ -338,6 +338,69 @@ class TradingSignalCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: Dimens.space12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                _buildLevelPill(
+                  label: 'SL',
+                  value: signal.stopLoss.toString(),
+                  color: AppColors.errorColor,
+                  isDark: isDark,
+                ),
+                _buildLevelPill(
+                  label: 'ENTRY',
+                  value: signal.entryPrice.toString(),
+                  color: AppColors.warningColor,
+                  isDark: isDark,
+                ),
+                _buildLevelPill(
+                  label: 'TP',
+                  value: signal.takeProfit.toString(),
+                  color: themeGreen,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+            const SizedBox(height: Dimens.space12),
+            Stack(
+              alignment: Alignment.centerLeft,
+              children: <Widget>[
+                Container(
+                  height: 6,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(3),
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        AppColors.errorColor.withValues(alpha: 0.7),
+                        AppColors.warningColor.withValues(alpha: 0.7),
+                        themeGreen.withValues(alpha: 0.7),
+                      ],
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment(2 * (signal.progress ?? 0.0) - 1, 0),
+                  child: Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.grey.shade400, width: 1.5),
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 3,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: Dimens.space12),
           ] else ...<Widget>[
             // Closed/Cancelled Details Row
             Row(
@@ -597,6 +660,46 @@ class TradingSignalCard extends StatelessWidget {
     }
   }
 
+  Widget _buildLevelPill({
+    required String label,
+    required String value,
+    required Color color,
+    required bool isDark,
+  }) {
+    final Color bg = color.withValues(alpha: isDark ? 0.15 : 0.08);
+    final Color border = color.withValues(alpha: isDark ? 0.3 : 0.2);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(Dimens.radius6),
+        border: Border.all(color: border),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          CustomTextLabelWidget(
+            label: label,
+            style: TextStyle(
+              color: color,
+              fontSize: Dimens.fontSize9,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 2),
+          CustomTextLabelWidget(
+            label: value,
+            style: TextStyle(
+              color: color,
+              fontSize: Dimens.fontSize11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ValueColumn extends StatelessWidget {
