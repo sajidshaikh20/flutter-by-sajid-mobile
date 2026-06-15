@@ -88,5 +88,17 @@ abstract class AppPaths {
 
   /// Trading Overview screen route.
   static const String tradingOverview = '/trading_overview';
+
+  /// Leaderboard screen route.
+  static const String leaderboard = '/leaderboard';
+
+  /// Training screen route.
+  static const String training = '/training';
+
+  /// Broker screen route.
+  static const String broker = '/broker';
+
+  /// Result screen route.
+  static const String result = '/result';
 }
 

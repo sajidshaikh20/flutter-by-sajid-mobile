@@ -472,6 +472,10 @@ class EnUS extends AppString {
   String get settingsAboutSubtitleKey => 'Version 1.0.0';
   @override
   String get settingsLogOutKey => 'Log Out';
+  @override
+  String get settingsLeaderboardTitleKey => 'Leaderboard';
+  @override
+  String get settingsLeaderboardSubtitleKey => 'Top performing traders ranked';
 
   @override
   String get editProfileTitleKey => 'Edit Profile';

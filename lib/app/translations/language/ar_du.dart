@@ -476,6 +476,10 @@ class ArDu extends AppString {
   String get settingsAboutSubtitleKey => 'الإصدار 1.0.0';
   @override
   String get settingsLogOutKey => 'تسجيل الخروج';
+  @override
+  String get settingsLeaderboardTitleKey => 'لوحة الصدارة';
+  @override
+  String get settingsLeaderboardSubtitleKey => 'ترتيب أفضل المتداولين أداءً';
 
   @override
   String get editProfileTitleKey => 'تعديل الملف الشخصي';

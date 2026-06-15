@@ -21,3 +21,7 @@ export 'compound_interest/compound_interest.dart';
 export 'trades/trades.dart';
 export 'transaction_history/transaction_history.dart';
 export 'verification_pending/verification_pending.dart';
+export 'leaderboard/leaderboard.dart';
+export 'training/training.dart';
+export 'broker/broker.dart';
+export 'result/result.dart';

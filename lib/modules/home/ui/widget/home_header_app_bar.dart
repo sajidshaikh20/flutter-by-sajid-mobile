@@ -42,20 +42,23 @@ class HomeHeaderAppBar extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     if (showProfileImage) ...<Widget>[
-                      Container(
-                        width: Dimens.size40,
-                        height: Dimens.size40,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: AppColors.primaryButtonGradient,
-                        ),
-                        alignment: Alignment.center,
-                        child: CustomTextLabelWidget(
-                          label: initial,
-                          style: const TextStyle(
-                            color: AppColors.whiteColor,
-                            fontWeight: FontWeight.w800,
-                            fontSize: Dimens.fontSize16,
+                      GestureDetector(
+                        onTap: () => Scaffold.of(context).openDrawer(),
+                        child: Container(
+                          width: Dimens.size40,
+                          height: Dimens.size40,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: AppColors.primaryButtonGradient,
+                          ),
+                          alignment: Alignment.center,
+                          child: CustomTextLabelWidget(
+                            label: initial,
+                            style: const TextStyle(
+                              color: AppColors.whiteColor,
+                              fontWeight: FontWeight.w800,
+                              fontSize: Dimens.fontSize16,
+                            ),
                           ),
                         ),
                       ),
@@ -146,6 +149,18 @@ class HomeHeaderAppBar extends StatelessWidget {
                 ),
               ),
 
+              IconButton(
+                icon: Icon(
+                  Icons.emoji_events_outlined,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  size: Dimens.size28,
+                ),
+                onPressed: () async {
+                  await context.router.push(const LeaderboardRoute());
+                },
+              ),
               if (showNotification)
                 Stack(
                   alignment: Alignment.center,

@@ -242,6 +242,18 @@ class _SettingsViewState extends State<SettingsView> {
 
 
                                 SettingsListTileWidget(
+                                  icon: Icons.emoji_events_outlined,
+                                  title: context.appString.settingsLeaderboardTitleKey,
+                                  subtitle: context.appString.settingsLeaderboardSubtitleKey,
+                                  trailing: Icon(
+                                    Icons.keyboard_arrow_right_rounded,
+                                    color: subtitleColor,
+                                    size: Dimens.size18,
+                                  ),
+                                  onTap: () => context.router.push(const LeaderboardRoute()),
+                                ),
+                                _Divider(isDark: isDark),
+                                SettingsListTileWidget(
                                   icon: Icons.lock_outline_rounded,
                                   title: context.appString.settingsSecurityTitleKey,
                                   subtitle: context.appString.settingsSecuritySubtitleKey,
@@ -286,8 +298,8 @@ class _SettingsViewState extends State<SettingsView> {
                                     }
                                   },
                                 ),
-                                _Divider(isDark: isDark),
-                                SettingsListTileWidget(
+                               // _Divider(isDark: isDark),
+                               /* SettingsListTileWidget(
                                   icon: Icons.verified_user_outlined,
                                   title: context.appString.settingsVerificationTitleKey,
                                   subtitle: context.appString.settingsVerificationSubtitleVerifiedKey,
@@ -303,7 +315,7 @@ class _SettingsViewState extends State<SettingsView> {
                                     ),
                                   ),
                                   onTap: () {},
-                                ),
+                                ),*/
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(
                                   icon: Icons.card_membership_outlined,
@@ -329,6 +341,7 @@ class _SettingsViewState extends State<SettingsView> {
                                   onTap: () => _showComingSoon('Trading Preferences'),
                                 ),
                                 _Divider(isDark: isDark),
+/*
                                 SettingsListTileWidget(
                                   icon: Icons.analytics_outlined,
                                   title: context.appString.settingsRiskTitleKey,
@@ -340,6 +353,7 @@ class _SettingsViewState extends State<SettingsView> {
                                   ),
                                   onTap: () => _showComingSoon('Risk Settings'),
                                 ),
+*/
                               ],
                             ),
                           ),

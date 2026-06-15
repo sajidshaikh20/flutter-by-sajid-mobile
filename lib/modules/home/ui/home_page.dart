@@ -15,6 +15,7 @@ class HomePage extends BaseResponsiveView {
         backgroundColor: isDark
             ? AppColors.backgroundDark
             : AppColors.backgroundLight,
+        drawer: const HomeNavigationDrawer(),
         body: const SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,5 +58,218 @@ class HomePage extends BaseResponsiveView {
   @override
   Widget buildTabletWidget(BuildContext context) {
     return buildview(context);
+  }
+}
+
+class HomeNavigationDrawer extends StatelessWidget {
+  const HomeNavigationDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDark = context.isDark;
+    final Color drawerBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtitleColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color dividerColor = isDark ? AppColors.dividerDark : AppColors.dividerLight;
+
+    return Drawer(
+      backgroundColor: drawerBg,
+      child: Column(
+        children: <Widget>[
+          // Header Profile Details
+          ListenableBuilder(
+            listenable: UserProfileService.instance(),
+            builder: (BuildContext context, Widget? child) {
+              final UserProfileService profile = UserProfileService.instance();
+              final String name = profile.customerName.isNotEmpty
+                  ? profile.customerName
+                  : (profile.username.isNotEmpty ? profile.username : 'Guest User');
+              final String email = profile.customerEmail.isNotEmpty
+                  ? profile.customerEmail
+                  : 'guest@example.com';
+              final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'G';
+
+              return Container(
+                padding: const EdgeInsets.only(
+                  top: 64.0,
+                  bottom: 24.0,
+                  left: 24.0,
+                  right: 24.0,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: dividerColor, width: 0.5),
+                  ),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: Dimens.size50,
+                      height: Dimens.size50,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.primaryButtonGradient,
+                      ),
+                      alignment: Alignment.center,
+                      child: CustomTextLabelWidget(
+                        label: initial,
+                        style: const TextStyle(
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w900,
+                          fontSize: Dimens.fontSize18,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: Dimens.space16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          CustomTextLabelWidget(
+                            label: name,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: Dimens.fontSize15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: Dimens.space4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Dimens.space8,
+                              vertical: Dimens.space2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryPurple.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(Dimens.radius6),
+                              border: Border.all(
+                                color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                                width: 0.5,
+                              ),
+                            ),
+                            child: const CustomTextLabelWidget(
+                              label: 'CLIENT',
+                              style: TextStyle(
+                                color: AppColors.primaryPurple,
+                                fontSize: Dimens.fontSize10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: Dimens.space4),
+                          CustomTextLabelWidget(
+                            label: email,
+                            style: TextStyle(
+                              color: subtitleColor,
+                              fontSize: Dimens.fontSize11,
+                            ),
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          // Menu List Options
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: Dimens.space12, horizontal: Dimens.space8),
+              children: <Widget>[
+                // Leaderboard Menu
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.emoji_events_outlined,
+                  title: 'Leaderboard',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await context.router.push(const LeaderboardRoute());
+                  },
+                ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // Training Menu
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.school_outlined,
+                  title: 'Training',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await context.router.push(const TrainingRoute());
+                  },
+                ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // Broker Menu
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.business_center_outlined,
+                  title: 'Broker',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await context.router.push(const BrokerRoute());
+                  },
+                ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // Result Menu
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.analytics_outlined,
+                  title: 'Result',
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await context.router.push(const ResultRoute());
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required Color textColor,
+    required Color subtitleColor,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: AppColors.primaryPurple, size: Dimens.size22),
+      title: CustomTextLabelWidget(
+        label: title,
+        style: TextStyle(
+          color: textColor,
+          fontSize: Dimens.fontSize14,
+          fontWeight: FontWeight.w600,
+        ),
+        textAlign: TextAlign.start,
+      ),
+      trailing: Icon(Icons.keyboard_arrow_right_rounded, color: subtitleColor, size: Dimens.size18),
+      onTap: onTap,
+    );
   }
 }

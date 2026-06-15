@@ -116,6 +116,34 @@ class AppRouter extends RootStackRouter {
       reverseDurationInMilliseconds: Dimens.milliseconds400,
       transitionsBuilder: fadePageTransition,
     ),
+    CustomRoute<dynamic>(
+      page: LeaderboardRoute.page,
+      path: AppPaths.leaderboard,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
+      page: TrainingRoute.page,
+      path: AppPaths.training,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
+      page: BrokerRoute.page,
+      path: AppPaths.broker,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
+      page: ResultRoute.page,
+      path: AppPaths.result,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
 
     /// Dashboard with 5 tabs
     CustomRoute<dynamic>(

@@ -173,6 +173,8 @@ abstract class AppString {
   String get settingsAboutTitleKey;
   String get settingsAboutSubtitleKey;
   String get settingsLogOutKey;
+  String get settingsLeaderboardTitleKey;
+  String get settingsLeaderboardSubtitleKey;
 
   String get editProfileTitleKey;
   String get editProfileTapToChangePhotoKey;
