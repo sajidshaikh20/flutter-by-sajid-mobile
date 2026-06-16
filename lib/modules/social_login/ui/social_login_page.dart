@@ -256,6 +256,19 @@ class SocialLoginPage extends BaseResponsiveView {
                               ),
                               TextSpan(
                                 text: context.appString.termsOfServiceKey,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    unawaited(
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute<void>(
+                                          builder: (BuildContext context) => const InAppWebViewPage(
+                                            title: 'Terms & Conditions',
+                                            url: 'https://weko.pro/terms-and-conditions',
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: titleColor,
@@ -265,6 +278,19 @@ class SocialLoginPage extends BaseResponsiveView {
                               TextSpan(text: ' ${context.appString.andKey} '),
                               TextSpan(
                                 text: context.appString.privacyPolicyKey,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    unawaited(
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute<void>(
+                                          builder: (BuildContext context) => const InAppWebViewPage(
+                                            title: 'Privacy Policy',
+                                            url: 'https://weko.pro/privacy-policy',
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: titleColor,

@@ -100,5 +100,8 @@ abstract class AppPaths {
 
   /// Result screen route.
   static const String result = '/result';
+
+  /// Subscription Plans screen route.
+  static const String subscriptionPlans = '/subscription_plans';
 }
 

@@ -624,6 +624,11 @@ class HttpHandleInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    final String savedCookies = SharedPref.instance.getString(PrefsKey.apiCookiesKey, '');
+    if (savedCookies.isNotEmpty && !options.headers.containsKey('Cookie')) {
+      options.headers['Cookie'] = savedCookies;
+    }
+
     if (options.path == Apis.reviewAndPayment) {
       final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
       final String authToken = _tokenFromProfileJson(profileJson);
@@ -663,21 +668,19 @@ class HttpHandleInterceptor extends Interceptor {
         MainConfig.context.router.popUntilRoot();
       } else {
         DebugLog.instance.w('Non-critical API 401 - Not clearing user data, just logging error');
-        // For non-critical APIs, just log the error but don't clear data
-        // This prevents accidental data clearing for minor API issues
       }
 
       is401InProgress = false;
-    } else {
-      return handler.next(err);
     }
+
+    await EasyLoading.dismiss();
+    handler.next(err);
   }
 
   /// Check if the API endpoint is critical and should trigger logout on 401
   bool _isCriticalApi(String path) {
     // Define critical APIs that should trigger logout on 401
     final List<String> criticalApis = <String>[
-      Apis.login,
       Apis.getAccountInfo,
       Apis.editProfile,
       Apis.logout,
@@ -688,8 +691,56 @@ class HttpHandleInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) =>
-      handler.next(response);
+  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+    final List<String>? setCookies = response.headers['set-cookie'];
+    if (setCookies != null && setCookies.isNotEmpty) {
+      DebugLog.instance.e(setCookies.toString());
+      _saveCookies(setCookies);
+    }
+    handler.next(response);
+  }
+
+  void _saveCookies(List<String> setCookies) {
+    final String existingCookiesStr = SharedPref.instance.getString(PrefsKey.apiCookiesKey, '');
+    final Map<String, String> cookiesMap = <String, String>{};
+
+    // Parse existing cookies
+    if (existingCookiesStr.isNotEmpty) {
+      for (final String cookie in existingCookiesStr.split(';')) {
+        final List<String> parts = cookie.split('=');
+        if (parts.length >= 2) {
+          final String name = parts[0].trim();
+          final String value = parts.sublist(1).join('=').trim();
+          if (name.isNotEmpty) {
+            cookiesMap[name] = value;
+          }
+        }
+      }
+    }
+
+    // Parse new cookies
+    for (final String rawCookie in setCookies) {
+      final String cookiePair = rawCookie.split(';')[0];
+      final List<String> parts = cookiePair.split('=');
+      if (parts.length >= 2) {
+        final String name = parts[0].trim();
+        final String value = parts.sublist(1).join('=').trim();
+        if (name.isNotEmpty) {
+          cookiesMap[name] = value;
+        }
+      }
+    }
+
+    // Reconstruct the cookie string
+    if (cookiesMap.isNotEmpty) {
+      final String newCookiesStr = cookiesMap.entries
+          .map((MapEntry<String, String> entry) => '${entry.key}=${entry.value}')
+          .join('; ');
+
+      unawaited(SharedPref.instance.setValue(PrefsKey.apiCookiesKey, newCookiesStr));
+      DebugLog.instance.d('HttpHandleInterceptor: Saved cookies: $newCookiesStr');
+    }
+  }
 
   Future<void> _dismissLoading() async {
     await EasyLoading.dismiss();

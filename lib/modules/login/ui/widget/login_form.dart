@@ -29,10 +29,12 @@ class LoginForm extends StatelessWidget {
       // Listen only when relevant state changes occur
       listenWhen: (LoginState previous, LoginState current) {
         return previous.redirectRoute != current.redirectRoute ||
-            previous.msg != current.msg;
+            previous.msg != current.msg ||
+            previous.status != current.status;
       },
       listener: (BuildContext context, LoginState state) async {
-        if (state.msg != null && (state.msg?.isNotEmpty ?? false)) {
+        if (state.status == BaseStateStatus.failure &&
+            (state.msg?.isNotEmpty ?? false)) {
           displaySnackBar(state.msg ?? '', context);
         }
         if (state.redirectRoute != null) {
@@ -254,6 +256,7 @@ class LoginForm extends StatelessWidget {
                               ),
                               Dimens.size15.heightBox,
                               const OtherAuthView(),
+
                               Dimens.size40.heightBox,
                               CustomButtonWidget(
                                 title: context.appString.loginKey,

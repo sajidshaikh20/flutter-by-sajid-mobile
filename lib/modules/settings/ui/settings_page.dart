@@ -326,7 +326,7 @@ class _SettingsViewState extends State<SettingsView> {
                                     color: subtitleColor,
                                     size: Dimens.size18,
                                   ),
-                                  onTap: () => _showComingSoon('Subscription'),
+                                  onTap: () => context.router.push(const SubscriptionPlansRoute()),
                                 ),
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(

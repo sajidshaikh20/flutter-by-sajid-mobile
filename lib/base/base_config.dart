@@ -8,6 +8,7 @@ const String _androidApiKey = 'androidApiKey';
 const String _sentryDSNKey = 'sentryDSN';
 const String _envKey = 'envKey';
 const String _googleApiKey = 'googleApiKey';
+const String _googleClientId = 'googleClientId';
 
 
 ///configBaseUrl
@@ -55,3 +56,9 @@ String get configAndroidApiKey {
 String get configGoogleApiKey {
   return const String.fromEnvironment(_googleApiKey);
 }
+
+///configGoogleClientId
+String get configGoogleClientId {
+  return const String.fromEnvironment(_googleClientId);
+}
+

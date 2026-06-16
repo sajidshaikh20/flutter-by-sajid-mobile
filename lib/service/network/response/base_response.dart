@@ -49,7 +49,10 @@ class BaseResponse<T> {
       ) {
     return BaseResponse<T>(
       statusCode: json['status_code'] ?? 0,
-      success: json['success'] == true && json['status_code'] == 200,
+      success: json['success'] == true &&
+          (json['status_code'] == null ||
+              json['status_code'] == 200 ||
+              json['status_code'] == 0),
       message: json['message']?.toString() ?? '',
       data: json['data'] != null ? fromJsonT(json['data']) : null,
       cartCount: json.containsKey('cartCount') ? json['cartCount'] : null,

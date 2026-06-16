@@ -2,7 +2,7 @@
 abstract class Apis {
   /// Base URL for the service.
 
-  static const String subBaseUrl = '/_svc/api/md';
+  static const String subBaseUrl = 'api';
 
   ///version number
   static const String apiVersion = '/v1';
@@ -34,7 +34,7 @@ abstract class Apis {
       '$apiVersion/list_of_country_and_language';
 
   /// Endpoint for user login.
-  static const String login = '$apiVersion/login';
+  static const String login = '$subBaseUrl/auth/login';
 
   /// Endpoint to reset password using mobile number.
   static const String forgotPasswordWithMobile =

@@ -100,6 +100,51 @@ class UserProfileService extends ChangeNotifier {
   /// The customer's username.
   String get username => _dataModel?.username ?? '';
 
+  /// The user's role ID.
+  int? get roleId => _dataModel?.roleId;
+
+  /// The user's role name.
+  String get roleName => _dataModel?.roleName ?? '';
+
+  /// Subscription public ID.
+  String get subscriptionPublicId => _dataModel?.subscriptionPublicId ?? '';
+
+  /// Subscription plan name.
+  String get planName => _dataModel?.planName ?? '';
+
+  /// Subscription plan code.
+  String get planCode => _dataModel?.planCode ?? '';
+
+  /// Subscription category.
+  String get category => _dataModel?.category ?? '';
+
+  /// Subscription billing cycle.
+  String get billingCycle => _dataModel?.billingCycle ?? '';
+
+  /// Subscription amount.
+  double? get amount => _dataModel?.amount;
+
+  /// Subscription currency code.
+  String get currencyCode => _dataModel?.currencyCode ?? '';
+
+  /// Subscription payment status.
+  String get paymentStatus => _dataModel?.paymentStatus ?? '';
+
+  /// Subscription status.
+  String get subscriptionStatus => _dataModel?.subscriptionStatus ?? '';
+
+  /// Subscription start date.
+  String get startDate => _dataModel?.startDate ?? '';
+
+  /// Subscription end date.
+  String get endDate => _dataModel?.endDate ?? '';
+
+  /// Whether subscription is active.
+  bool get isSubscriptionActive => _dataModel?.isActive ?? false;
+
+  /// Subscription duration in days.
+  int get durationDays => _dataModel?.durationDays ?? 0;
+
 
   /// The customer's authentication token.
   String get customerToken {
@@ -151,6 +196,21 @@ class UserProfileService extends ChangeNotifier {
     String? fcmToken,
     String? arabicNationality,
     String? username,
+    int? roleId,
+    String? roleName,
+    String? subscriptionPublicId,
+    String? planName,
+    String? planCode,
+    String? category,
+    String? billingCycle,
+    double? amount,
+    String? currencyCode,
+    String? paymentStatus,
+    String? subscriptionStatus,
+    String? startDate,
+    String? endDate,
+    bool? isActive,
+    int? durationDays,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -202,6 +262,21 @@ class UserProfileService extends ChangeNotifier {
       nationality: nationality ?? _dataModel?.nationality,
       arabicNationality: arabicNationality ?? _dataModel?.arabicNationality,
       username: username ?? _dataModel?.username,
+      roleId: roleId ?? _dataModel?.roleId,
+      roleName: roleName ?? _dataModel?.roleName,
+      subscriptionPublicId: subscriptionPublicId ?? _dataModel?.subscriptionPublicId,
+      planName: planName ?? _dataModel?.planName,
+      planCode: planCode ?? _dataModel?.planCode,
+      category: category ?? _dataModel?.category,
+      billingCycle: billingCycle ?? _dataModel?.billingCycle,
+      amount: amount ?? _dataModel?.amount,
+      currencyCode: currencyCode ?? _dataModel?.currencyCode,
+      paymentStatus: paymentStatus ?? _dataModel?.paymentStatus,
+      subscriptionStatus: subscriptionStatus ?? _dataModel?.subscriptionStatus,
+      startDate: startDate ?? _dataModel?.startDate,
+      endDate: endDate ?? _dataModel?.endDate,
+      isActive: isActive ?? _dataModel?.isActive,
+      durationDays: durationDays ?? _dataModel?.durationDays,
     );
 
     // Save updated model back to shared preferences
@@ -251,6 +326,21 @@ class UserProfileService extends ChangeNotifier {
     String? nationality,
     String? fcmToken,
     String? username,
+    int? roleId,
+    String? roleName,
+    String? subscriptionPublicId,
+    String? planName,
+    String? planCode,
+    String? category,
+    String? billingCycle,
+    double? amount,
+    String? currencyCode,
+    String? paymentStatus,
+    String? subscriptionStatus,
+    String? startDate,
+    String? endDate,
+    bool? isActive,
+    int? durationDays,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -301,6 +391,21 @@ class UserProfileService extends ChangeNotifier {
       birthday: birthday ?? _dataModel?.birthday,
       nationality: nationality ?? _dataModel?.nationality,
       username: username ?? _dataModel?.username,
+      roleId: roleId ?? _dataModel?.roleId,
+      roleName: roleName ?? _dataModel?.roleName,
+      subscriptionPublicId: subscriptionPublicId ?? _dataModel?.subscriptionPublicId,
+      planName: planName ?? _dataModel?.planName,
+      planCode: planCode ?? _dataModel?.planCode,
+      category: category ?? _dataModel?.category,
+      billingCycle: billingCycle ?? _dataModel?.billingCycle,
+      amount: amount ?? _dataModel?.amount,
+      currencyCode: currencyCode ?? _dataModel?.currencyCode,
+      paymentStatus: paymentStatus ?? _dataModel?.paymentStatus,
+      subscriptionStatus: subscriptionStatus ?? _dataModel?.subscriptionStatus,
+      startDate: startDate ?? _dataModel?.startDate,
+      endDate: endDate ?? _dataModel?.endDate,
+      isActive: isActive ?? _dataModel?.isActive,
+      durationDays: durationDays ?? _dataModel?.durationDays,
     );
 
     // Save updated model back to shared preferences

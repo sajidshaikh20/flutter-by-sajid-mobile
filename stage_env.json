@@ -1,5 +1,5 @@
 {
-  "base_url": "https://weko.ngrok.app/api/",
+  "base_url": "https://weko.pro/",
   "envKey": "stage",
   "androidAppId": "1:81561226063:android:2a3d1ca8f93f1bde75933a",
   "iosAppId": "1:81561226063:ios:f46c17a2c56c203675933a",
@@ -8,5 +8,6 @@
   "iosApiKey": "AIzaSyDjQfpXVc_Gl6RBgbsgY3uEb9b_oHd-Sq4",
   "androidApiKey": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs",
   "sentryDSN": "",
-  "googleApiKey": ""
+  "googleApiKey": "",
+  "googleClientId": "593611057195-qql63p73pv0po7br8uqtjfbvsasu2v5g.apps.googleusercontent.com"
 }

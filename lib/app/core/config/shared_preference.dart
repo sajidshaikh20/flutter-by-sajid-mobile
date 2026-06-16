@@ -5,6 +5,9 @@ class PrefsKey {
   /// Key to check if the user is logged in.
   static const String isLoggedInKey = 'isLoggedInKey';
 
+  /// Key for storing API session cookies.
+  static const String apiCookiesKey = 'apiCookiesKey';
+
 
   /// Key for the currently selected locale.
   static const String currentLocaleKey = 'currentLocaleKey';
@@ -365,6 +368,7 @@ class SharedPref {
       PrefsKey.socialLoginTypeKey,
       PrefsKey.quoteIdKey,
       PrefsKey.selectedAddressKey,
+      PrefsKey.apiCookiesKey,
     ];
 
     // Remove only user-related keys

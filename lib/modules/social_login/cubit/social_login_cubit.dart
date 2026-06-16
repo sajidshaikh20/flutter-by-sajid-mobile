@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../../utils/exports.dart';
 
 /// Cubit that handles social login functionality.
@@ -10,7 +9,7 @@ class SocialLoginCubit extends Cubit<SocialLoginState> {
   /// Service responsible for Google sign-in.
   final SocialLoginServices _socialLoginServices = getIt<SocialLoginServices>();
 
-  /// Performs Firebase Google login and stores profile locally.
+  /// Performs Google login and prints details in console.
   Future<void> socialLoginWithGoogle() async {
     try {
       emit(state.copyWith(status: BaseStateStatus.loading));
@@ -21,54 +20,32 @@ class SocialLoginCubit extends Cubit<SocialLoginState> {
         return;
       }
 
-      final User user = result.user;
-      DebugLog.instance.d('Google idToken: ${result.idToken}');
-      DebugLog.instance.d('Google accessToken: ${result.accessToken}');
+      // Print all Google details to the console as requested by the user
+      final String consoleLog = '''
+==================================================
+GOOGLE SIGN-IN SUCCESSFUL (WITHOUT FIREBASE)
+--------------------------------------------------
+Google ID:       ${result.id}
+Email:           ${result.email}
+Display Name:    ${result.displayName}
+Photo URL:       ${result.photoUrl}
+ID Token:        ${result.idToken}
+Access Token:    ${result.accessToken}
+==================================================
+''';
 
-      await SharedPref.instance.setValue(PrefsKey.isLoggedInKey, true);
-      await SharedPref.instance.setValue(
-        PrefsKey.socialLoginTypeKey,
-        SocialLoginType.google.name,
-      );
+      // Use DebugLog to guarantee visibility and comply with lint rules
+      DebugLog.instance.i(consoleLog);
 
-      await UserProfileService.instance().updateUserProfile(
-        customerName: user.displayName ?? user.email?.split('@').first ?? '',
-        customerEmail: user.email ?? '',
-        phoneNumber: user.phoneNumber ?? '',
-        customerToken: result.idToken ?? result.accessToken ?? '',
-        customerId: user.uid,
-        quoteId: '',
-        totalOrderValue: '0.0',
-        lastOrderDate: '',
-        storeCredit: '0.0',
-        rewardPoints: '0',
-        totalOrder: 0,
-        cartCount: 0,
-        referralCode: '',
-        gender: '',
-        birthday: '',
-        nationality: '',
-        prefix: '',
-        arabicNationality: '',
-      );
-
-      await AccountVerificationHelper.setPending();
-
+      // We stay on the same page by emitting initial status with a success message
       emit(
         state.copyWith(
-          status: BaseStateStatus.success,
-          msg: 'Successfully logged in with Google',
-          redirectRoute: AccountVerificationHelper.resolvePostLoginRoute(),
+          status: BaseStateStatus.initial,
+          msg: 'Google Sign-In Successful! Details printed to console.',
         ),
       );
-    } on FirebaseAuthException catch (e) {
-      emit(
-        state.copyWith(
-          status: BaseStateStatus.failure,
-          msg: e.message ?? AppConstant.googleSignInFailed,
-        ),
-      );
-    } on Exception {
+    } on Exception catch (e) {
+      DebugLog.instance.e('Google Sign-In failed in Cubit: $e');
       emit(
         state.copyWith(
           status: BaseStateStatus.failure,

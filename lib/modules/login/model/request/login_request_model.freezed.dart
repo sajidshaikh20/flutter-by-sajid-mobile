@@ -15,18 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginRequestModel {
 
-/// Language identifier for the user's preferred language.
- int? get languageId;/// Platform identifier (e.g., "iOS", "Android", "Web").
- String? get platform;/// Application version.
- String? get version;/// User's email or mobile number for login.
- String? get emailMobile;/// User's password for authentication.
- String? get password;/// Indicates if this is a social login request.
- bool? get isSocialLogin;/// Type of social login (e.g., "google", "facebook", "apple").
- String? get socialLoginType;/// Apple authentication token for Apple Sign-In.
- String? get appleToken;/// Device identifier for tracking and analytics.
- String? get deviceId;/// Device token for push notifications (FCM token).
- String? get deviceToken;/// General authentication token.
- String? get token;
+/// User's email or username for login.
+@JsonKey(name: 'emailOrUsername') String get emailOrUsername;/// User's password for authentication.
+ String get password;
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -39,16 +30,16 @@ $LoginRequestModelCopyWith<LoginRequestModel> get copyWith => _$LoginRequestMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginRequestModel&&(identical(other.languageId, languageId) || other.languageId == languageId)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.version, version) || other.version == version)&&(identical(other.emailMobile, emailMobile) || other.emailMobile == emailMobile)&&(identical(other.password, password) || other.password == password)&&(identical(other.isSocialLogin, isSocialLogin) || other.isSocialLogin == isSocialLogin)&&(identical(other.socialLoginType, socialLoginType) || other.socialLoginType == socialLoginType)&&(identical(other.appleToken, appleToken) || other.appleToken == appleToken)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.deviceToken, deviceToken) || other.deviceToken == deviceToken)&&(identical(other.token, token) || other.token == token));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginRequestModel&&(identical(other.emailOrUsername, emailOrUsername) || other.emailOrUsername == emailOrUsername)&&(identical(other.password, password) || other.password == password));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,languageId,platform,version,emailMobile,password,isSocialLogin,socialLoginType,appleToken,deviceId,deviceToken,token);
+int get hashCode => Object.hash(runtimeType,emailOrUsername,password);
 
 @override
 String toString() {
-  return 'LoginRequestModel(languageId: $languageId, platform: $platform, version: $version, emailMobile: $emailMobile, password: $password, isSocialLogin: $isSocialLogin, socialLoginType: $socialLoginType, appleToken: $appleToken, deviceId: $deviceId, deviceToken: $deviceToken, token: $token)';
+  return 'LoginRequestModel(emailOrUsername: $emailOrUsername, password: $password)';
 }
 
 
@@ -59,7 +50,7 @@ abstract mixin class $LoginRequestModelCopyWith<$Res>  {
   factory $LoginRequestModelCopyWith(LoginRequestModel value, $Res Function(LoginRequestModel) _then) = _$LoginRequestModelCopyWithImpl;
 @useResult
 $Res call({
- int? languageId, String? platform, String? version, String? emailMobile, String? password, bool? isSocialLogin, String? socialLoginType, String? appleToken, String? deviceId, String? deviceToken, String? token
+@JsonKey(name: 'emailOrUsername') String emailOrUsername, String password
 });
 
 
@@ -76,20 +67,11 @@ class _$LoginRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? languageId = freezed,Object? platform = freezed,Object? version = freezed,Object? emailMobile = freezed,Object? password = freezed,Object? isSocialLogin = freezed,Object? socialLoginType = freezed,Object? appleToken = freezed,Object? deviceId = freezed,Object? deviceToken = freezed,Object? token = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? emailOrUsername = null,Object? password = null,}) {
   return _then(_self.copyWith(
-languageId: freezed == languageId ? _self.languageId : languageId // ignore: cast_nullable_to_non_nullable
-as int?,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
-as String?,version: freezed == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
-as String?,emailMobile: freezed == emailMobile ? _self.emailMobile : emailMobile // ignore: cast_nullable_to_non_nullable
-as String?,password: freezed == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
-as String?,isSocialLogin: freezed == isSocialLogin ? _self.isSocialLogin : isSocialLogin // ignore: cast_nullable_to_non_nullable
-as bool?,socialLoginType: freezed == socialLoginType ? _self.socialLoginType : socialLoginType // ignore: cast_nullable_to_non_nullable
-as String?,appleToken: freezed == appleToken ? _self.appleToken : appleToken // ignore: cast_nullable_to_non_nullable
-as String?,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
-as String?,deviceToken: freezed == deviceToken ? _self.deviceToken : deviceToken // ignore: cast_nullable_to_non_nullable
-as String?,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
-as String?,
+emailOrUsername: null == emailOrUsername ? _self.emailOrUsername : emailOrUsername // ignore: cast_nullable_to_non_nullable
+as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -174,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? languageId,  String? platform,  String? version,  String? emailMobile,  String? password,  bool? isSocialLogin,  String? socialLoginType,  String? appleToken,  String? deviceId,  String? deviceToken,  String? token)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginRequestModel() when $default != null:
-return $default(_that.languageId,_that.platform,_that.version,_that.emailMobile,_that.password,_that.isSocialLogin,_that.socialLoginType,_that.appleToken,_that.deviceId,_that.deviceToken,_that.token);case _:
+return $default(_that.emailOrUsername,_that.password);case _:
   return orElse();
 
 }
@@ -195,10 +177,10 @@ return $default(_that.languageId,_that.platform,_that.version,_that.emailMobile,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? languageId,  String? platform,  String? version,  String? emailMobile,  String? password,  bool? isSocialLogin,  String? socialLoginType,  String? appleToken,  String? deviceId,  String? deviceToken,  String? token)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password)  $default,) {final _that = this;
 switch (_that) {
 case _LoginRequestModel():
-return $default(_that.languageId,_that.platform,_that.version,_that.emailMobile,_that.password,_that.isSocialLogin,_that.socialLoginType,_that.appleToken,_that.deviceId,_that.deviceToken,_that.token);case _:
+return $default(_that.emailOrUsername,_that.password);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -215,10 +197,10 @@ return $default(_that.languageId,_that.platform,_that.version,_that.emailMobile,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? languageId,  String? platform,  String? version,  String? emailMobile,  String? password,  bool? isSocialLogin,  String? socialLoginType,  String? appleToken,  String? deviceId,  String? deviceToken,  String? token)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginRequestModel() when $default != null:
-return $default(_that.languageId,_that.platform,_that.version,_that.emailMobile,_that.password,_that.isSocialLogin,_that.socialLoginType,_that.appleToken,_that.deviceId,_that.deviceToken,_that.token);case _:
+return $default(_that.emailOrUsername,_that.password);case _:
   return null;
 
 }
@@ -230,31 +212,13 @@ return $default(_that.languageId,_that.platform,_that.version,_that.emailMobile,
 @JsonSerializable()
 
 class _LoginRequestModel implements LoginRequestModel {
-  const _LoginRequestModel({this.languageId, this.platform, this.version, this.emailMobile, this.password, this.isSocialLogin, this.socialLoginType, this.appleToken, this.deviceId, this.deviceToken, this.token});
+  const _LoginRequestModel({@JsonKey(name: 'emailOrUsername') required this.emailOrUsername, required this.password});
   factory _LoginRequestModel.fromJson(Map<String, dynamic> json) => _$LoginRequestModelFromJson(json);
 
-/// Language identifier for the user's preferred language.
-@override final  int? languageId;
-/// Platform identifier (e.g., "iOS", "Android", "Web").
-@override final  String? platform;
-/// Application version.
-@override final  String? version;
-/// User's email or mobile number for login.
-@override final  String? emailMobile;
+/// User's email or username for login.
+@override@JsonKey(name: 'emailOrUsername') final  String emailOrUsername;
 /// User's password for authentication.
-@override final  String? password;
-/// Indicates if this is a social login request.
-@override final  bool? isSocialLogin;
-/// Type of social login (e.g., "google", "facebook", "apple").
-@override final  String? socialLoginType;
-/// Apple authentication token for Apple Sign-In.
-@override final  String? appleToken;
-/// Device identifier for tracking and analytics.
-@override final  String? deviceId;
-/// Device token for push notifications (FCM token).
-@override final  String? deviceToken;
-/// General authentication token.
-@override final  String? token;
+@override final  String password;
 
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
@@ -269,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginRequestModel&&(identical(other.languageId, languageId) || other.languageId == languageId)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.version, version) || other.version == version)&&(identical(other.emailMobile, emailMobile) || other.emailMobile == emailMobile)&&(identical(other.password, password) || other.password == password)&&(identical(other.isSocialLogin, isSocialLogin) || other.isSocialLogin == isSocialLogin)&&(identical(other.socialLoginType, socialLoginType) || other.socialLoginType == socialLoginType)&&(identical(other.appleToken, appleToken) || other.appleToken == appleToken)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.deviceToken, deviceToken) || other.deviceToken == deviceToken)&&(identical(other.token, token) || other.token == token));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginRequestModel&&(identical(other.emailOrUsername, emailOrUsername) || other.emailOrUsername == emailOrUsername)&&(identical(other.password, password) || other.password == password));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,languageId,platform,version,emailMobile,password,isSocialLogin,socialLoginType,appleToken,deviceId,deviceToken,token);
+int get hashCode => Object.hash(runtimeType,emailOrUsername,password);
 
 @override
 String toString() {
-  return 'LoginRequestModel(languageId: $languageId, platform: $platform, version: $version, emailMobile: $emailMobile, password: $password, isSocialLogin: $isSocialLogin, socialLoginType: $socialLoginType, appleToken: $appleToken, deviceId: $deviceId, deviceToken: $deviceToken, token: $token)';
+  return 'LoginRequestModel(emailOrUsername: $emailOrUsername, password: $password)';
 }
 
 
@@ -289,7 +253,7 @@ abstract mixin class _$LoginRequestModelCopyWith<$Res> implements $LoginRequestM
   factory _$LoginRequestModelCopyWith(_LoginRequestModel value, $Res Function(_LoginRequestModel) _then) = __$LoginRequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- int? languageId, String? platform, String? version, String? emailMobile, String? password, bool? isSocialLogin, String? socialLoginType, String? appleToken, String? deviceId, String? deviceToken, String? token
+@JsonKey(name: 'emailOrUsername') String emailOrUsername, String password
 });
 
 
@@ -306,20 +270,11 @@ class __$LoginRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? languageId = freezed,Object? platform = freezed,Object? version = freezed,Object? emailMobile = freezed,Object? password = freezed,Object? isSocialLogin = freezed,Object? socialLoginType = freezed,Object? appleToken = freezed,Object? deviceId = freezed,Object? deviceToken = freezed,Object? token = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? emailOrUsername = null,Object? password = null,}) {
   return _then(_LoginRequestModel(
-languageId: freezed == languageId ? _self.languageId : languageId // ignore: cast_nullable_to_non_nullable
-as int?,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
-as String?,version: freezed == version ? _self.version : version // ignore: cast_nullable_to_non_nullable
-as String?,emailMobile: freezed == emailMobile ? _self.emailMobile : emailMobile // ignore: cast_nullable_to_non_nullable
-as String?,password: freezed == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
-as String?,isSocialLogin: freezed == isSocialLogin ? _self.isSocialLogin : isSocialLogin // ignore: cast_nullable_to_non_nullable
-as bool?,socialLoginType: freezed == socialLoginType ? _self.socialLoginType : socialLoginType // ignore: cast_nullable_to_non_nullable
-as String?,appleToken: freezed == appleToken ? _self.appleToken : appleToken // ignore: cast_nullable_to_non_nullable
-as String?,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
-as String?,deviceToken: freezed == deviceToken ? _self.deviceToken : deviceToken // ignore: cast_nullable_to_non_nullable
-as String?,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
-as String?,
+emailOrUsername: null == emailOrUsername ? _self.emailOrUsername : emailOrUsername // ignore: cast_nullable_to_non_nullable
+as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

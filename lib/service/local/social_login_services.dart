@@ -1,13 +1,28 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../utils/exports.dart';
 
 /// Result model for a successful Google sign-in operation.
 class SocialLoginResult {
   /// Creates a [SocialLoginResult] with token and user details.
-  const SocialLoginResult({required this.user, this.idToken, this.accessToken});
+  const SocialLoginResult({
+    required this.id,
+    required this.email,
+    this.displayName,
+    this.photoUrl,
+    this.idToken,
+    this.accessToken,
+  });
 
-  /// Firebase authenticated user.
-  final User user;
+  /// Google user ID.
+  final String id;
+
+  /// Google email.
+  final String email;
+
+  /// Google display name.
+  final String? displayName;
+
+  /// Google profile picture URL.
+  final String? photoUrl;
 
   /// Google ID token.
   final String? idToken;
@@ -20,14 +35,17 @@ class SocialLoginResult {
 class SocialLoginServices {
   bool _isGoogleSignInInitialized = false;
 
-  /// Signs in the current user with Google and Firebase Authentication.
+  /// Signs in the current user with Google.
   Future<SocialLoginResult?> signInWithGoogle() async {
     if (!_isGoogleSignInInitialized) {
-      await GoogleSignIn.instance.initialize();
+      await GoogleSignIn.instance.initialize(
+        clientId: configGoogleClientId,
+        serverClientId: configGoogleClientId,
+      );
       _isGoogleSignInInitialized = true;
     }
 
-    GoogleSignInAccount googleUser;
+    final GoogleSignInAccount googleUser;
     try {
       googleUser = await GoogleSignIn.instance.authenticate();
     } on GoogleSignInException catch (e) {
@@ -37,6 +55,9 @@ class SocialLoginServices {
         return null;
       }
       rethrow;
+    } catch (e) {
+      DebugLog.instance.e('Google Sign-In Error: $e');
+      rethrow;
     }
 
     final GoogleSignInAuthentication googleAuth = googleUser.authentication;
@@ -44,31 +65,11 @@ class SocialLoginServices {
         .authorizationClient
         .authorizationForScopes(<String>['email', 'profile']);
 
-    if (googleAuth.idToken == null && authorization?.accessToken == null) {
-      throw FirebaseAuthException(
-        code: 'google-token-missing',
-        message: 'Google Sign-In did not return auth tokens.',
-      );
-    }
-
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: authorization?.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final UserCredential firebaseCredential = await FirebaseAuth.instance
-        .signInWithCredential(credential);
-    final User? firebaseUser = firebaseCredential.user;
-
-    if (firebaseUser == null) {
-      throw FirebaseAuthException(
-        code: 'firebase-user-null',
-        message: 'Firebase user was null after Google sign-in.',
-      );
-    }
-
     return SocialLoginResult(
-      user: firebaseUser,
+      id: googleUser.id,
+      email: googleUser.email,
+      displayName: googleUser.displayName,
+      photoUrl: googleUser.photoUrl,
       idToken: googleAuth.idToken,
       accessToken: authorization?.accessToken,
     );

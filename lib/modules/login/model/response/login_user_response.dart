@@ -22,6 +22,9 @@ part 'login_user_response.g.dart';
 abstract class LoginUserResponse with _$LoginUserResponse {
   /// Creates a new [LoginUserResponse] instance.
   const factory LoginUserResponse({
+    /// Nested user data returned from the backend.
+    UserResponseData? user,
+
     /// Unique user identifier.
     int? id,
 
@@ -89,4 +92,63 @@ abstract class LoginUserResponse with _$LoginUserResponse {
   /// Creates a [LoginUserResponse] instance from a JSON map.
   factory LoginUserResponse.fromJson(Map<String, dynamic> json) =>
       _$LoginUserResponseFromJson(json);
+}
+
+/// Detailed user profile data inside LoginUserResponse.
+@freezed
+abstract class UserResponseData with _$UserResponseData {
+  /// Factory constructor for UserResponseData.
+  const factory UserResponseData({
+    String? publicId,
+    String? name,
+    String? email,
+    String? username,
+    String? countryCode,
+    String? phone,
+    UserRoleData? role,
+    UserSubscriptionData? activeSubscription,
+  }) = _UserResponseData;
+
+  /// Creates a [UserResponseData] instance from a JSON map.
+  factory UserResponseData.fromJson(Map<String, dynamic> json) =>
+      _$UserResponseDataFromJson(json);
+}
+
+/// Role information for the user.
+@freezed
+abstract class UserRoleData with _$UserRoleData {
+  /// Factory constructor for UserRoleData.
+  const factory UserRoleData({
+    int? id,
+    String? name,
+  }) = _UserRoleData;
+
+  /// Creates a [UserRoleData] instance from a JSON map.
+  factory UserRoleData.fromJson(Map<String, dynamic> json) =>
+      _$UserRoleDataFromJson(json);
+}
+
+/// Subscription details for the user.
+@freezed
+abstract class UserSubscriptionData with _$UserSubscriptionData {
+  /// Factory constructor for UserSubscriptionData.
+  const factory UserSubscriptionData({
+    String? subscriptionPublicId,
+    String? planName,
+    String? planCode,
+    String? category,
+    String? billingCycle,
+    dynamic amount,
+    String? currencyCode,
+    String? paymentStatus,
+    String? subscriptionStatus,
+    String? startDate,
+    String? endDate,
+    bool? isActive,
+    int? durationDays,
+  }) = _UserSubscriptionData;
+
+  /// Creates a [UserSubscriptionData] instance from a JSON map.
+  factory UserSubscriptionData.fromJson(Map<String, dynamic> json) =>
+      _$UserSubscriptionDataFromJson(json);
 }

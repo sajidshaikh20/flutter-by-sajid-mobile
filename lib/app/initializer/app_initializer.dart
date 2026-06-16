@@ -49,6 +49,11 @@ class AppInitializer {
   Future<void> _initCriticalServices() async {
     await setupLocator();
     await DebugLog.instance.init();
+    if (kDebugMode) {
+      DebugLog.instance.i(
+        'App config → env: $configEnv, baseUrl: $configBaseUrl',
+      );
+    }
     // SharedPref encryption key is derived from packageName — must run before storage.
     await _getPackageAndDeviceInfo();
     await _initStorage();

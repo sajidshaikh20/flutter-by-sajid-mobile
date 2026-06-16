@@ -69,6 +69,50 @@ class UserProfileModel {
   /// The customer's username.
   final String? username;
 
+  /// The user's role ID.
+  final int? roleId;
+
+  /// The user's role name.
+  final String? roleName;
+
+  /// Subscription public ID.
+  final String? subscriptionPublicId;
+
+  /// Subscription plan name.
+  final String? planName;
+
+  /// Subscription plan code.
+  final String? planCode;
+
+  /// Subscription category.
+  final String? category;
+
+  /// Subscription billing cycle.
+  final String? billingCycle;
+
+  /// Subscription amount.
+  final double? amount;
+
+  /// Subscription currency code.
+  final String? currencyCode;
+
+  /// Subscription payment status.
+  final String? paymentStatus;
+
+  /// Subscription status.
+  final String? subscriptionStatus;
+
+  /// Subscription start date.
+  final String? startDate;
+
+  /// Subscription end date.
+  final String? endDate;
+
+  /// Whether the subscription is active.
+  final bool? isActive;
+
+  /// Duration of subscription in days.
+  final int? durationDays;
 
   /// Creates an instance of [UserProfileModel].
   UserProfileModel({
@@ -95,34 +139,64 @@ class UserProfileModel {
     required this.nationality,
     required this.arabicNationality,
     this.username,
+    this.roleId,
+    this.roleName,
+    this.subscriptionPublicId,
+    this.planName,
+    this.planCode,
+    this.category,
+    this.billingCycle,
+    this.amount,
+    this.currencyCode,
+    this.paymentStatus,
+    this.subscriptionStatus,
+    this.startDate,
+    this.endDate,
+    this.isActive,
+    this.durationDays,
   });
 
   /// Creates an instance of [UserProfileModel] from a JSON map.
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
     return UserProfileModel(
-      phoneNumber: json['phoneNumber'],
-      mobileNumber: json['mobileNumber'],
-      prefix: json['prefix'],
-      customerName: json['customerName'],
-      customerEmail: json['customerEmail'],
-      customerId: json['customerId'],
-      customerToken: json['customerToken'],
+      phoneNumber: json['phoneNumber'] ?? '',
+      mobileNumber: json['mobileNumber'] ?? '',
+      prefix: json['prefix'] ?? '',
+      customerName: json['customerName'] ?? '',
+      customerEmail: json['customerEmail'] ?? '',
+      customerId: json['customerId'] ?? '',
+      customerToken: json['customerToken'] ?? '',
       lastName: json['lastName'],
       firstName: json['firstName'],
       cartCount: json['cartCount'],
-      quoteId: json['quoteId'],
-      totalOrderValue: json['totalOrderValue'],
-      lastOrderDate: json['lastOrderDate'],
-      storeCredit: json['storeCredit'],
-      rewardPoints: json['rewardPoints'],
-      totalOrder: json['totalOrder'],
-      nationality: json['nationality'],
-      birthday: json['birthday'],
-      gender: json['gender'],
-      fcmToken: json['fcmToken'],
-      referralCode: json['referralCode'],
-      arabicNationality: json['arabicNationality'],
+      quoteId: json['quoteId'] ?? '',
+      totalOrderValue: json['totalOrderValue'] ?? '',
+      lastOrderDate: json['lastOrderDate'] ?? '',
+      storeCredit: json['storeCredit'] ?? '',
+      rewardPoints: json['rewardPoints'] ?? '',
+      totalOrder: json['totalOrder'] ?? 0,
+      nationality: json['nationality'] ?? '',
+      birthday: json['birthday'] ?? '',
+      gender: json['gender'] ?? '',
+      fcmToken: json['fcmToken'] ?? '',
+      referralCode: json['referralCode'] ?? '',
+      arabicNationality: json['arabicNationality'] ?? '',
       username: json['username'],
+      roleId: json['roleId'],
+      roleName: json['roleName'],
+      subscriptionPublicId: json['subscriptionPublicId'],
+      planName: json['planName'],
+      planCode: json['planCode'],
+      category: json['category'],
+      billingCycle: json['billingCycle'],
+      amount: json['amount'] != null ? double.tryParse(json['amount'].toString()) : null,
+      currencyCode: json['currencyCode'],
+      paymentStatus: json['paymentStatus'],
+      subscriptionStatus: json['subscriptionStatus'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
+      isActive: json['isActive'],
+      durationDays: json['durationDays'],
     );
   }
 
@@ -152,6 +226,21 @@ class UserProfileModel {
       'nationality': nationality,
       'arabicNationality': arabicNationality,
       'username': username,
+      'roleId': roleId,
+      'roleName': roleName,
+      'subscriptionPublicId': subscriptionPublicId,
+      'planName': planName,
+      'planCode': planCode,
+      'category': category,
+      'billingCycle': billingCycle,
+      'amount': amount,
+      'currencyCode': currencyCode,
+      'paymentStatus': paymentStatus,
+      'subscriptionStatus': subscriptionStatus,
+      'startDate': startDate,
+      'endDate': endDate,
+      'isActive': isActive,
+      'durationDays': durationDays,
     };
   }
 
@@ -180,6 +269,21 @@ class UserProfileModel {
     String? arabicNationality,
     int? totalOrder,
     String? username,
+    int? roleId,
+    String? roleName,
+    String? subscriptionPublicId,
+    String? planName,
+    String? planCode,
+    String? category,
+    String? billingCycle,
+    double? amount,
+    String? currencyCode,
+    String? paymentStatus,
+    String? subscriptionStatus,
+    String? startDate,
+    String? endDate,
+    bool? isActive,
+    int? durationDays,
   }) {
     return UserProfileModel(
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -205,6 +309,21 @@ class UserProfileModel {
       birthday: birthday ?? this.birthday,
       arabicNationality: arabicNationality ?? this.arabicNationality,
       username: username ?? this.username,
+      roleId: roleId ?? this.roleId,
+      roleName: roleName ?? this.roleName,
+      subscriptionPublicId: subscriptionPublicId ?? this.subscriptionPublicId,
+      planName: planName ?? this.planName,
+      planCode: planCode ?? this.planCode,
+      category: category ?? this.category,
+      billingCycle: billingCycle ?? this.billingCycle,
+      amount: amount ?? this.amount,
+      currencyCode: currencyCode ?? this.currencyCode,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      subscriptionStatus: subscriptionStatus ?? this.subscriptionStatus,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      isActive: isActive ?? this.isActive,
+      durationDays: durationDays ?? this.durationDays,
     );
   }
 }

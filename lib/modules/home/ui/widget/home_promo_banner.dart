@@ -85,8 +85,8 @@ class HomePromoBanner extends StatelessWidget {
                       borderRadius: BorderRadius.circular(Dimens.radius10),
                     ),
                     child: InkWell(
-                      onTap: () {
-                        // Explore action
+                      onTap: () async {
+                        await context.router.push(const SubscriptionPlansRoute());
                       },
                       borderRadius: BorderRadius.circular(Dimens.radius10),
                       child: const Padding(
