@@ -118,7 +118,7 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
                         cubit.clearMsg();
                       }
                       if (state.status == BaseStateStatus.success && cubit.isLastStep) {
-                        goBack(context);
+                        unawaited(context.router.replaceAll(<PageRouteInfo>[const SocialLoginRoute()]));
                       }
                     },
                     child: Column(

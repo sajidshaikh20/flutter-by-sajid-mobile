@@ -58,9 +58,10 @@ class SignUpCubit extends Cubit<SignUpState> {
   }
 
   void updateCountryCode(CountryCode country) {
+    final String cleanDialCode = (country.dialCode ?? '+91').replaceAll(RegExp(r'[^\d+]'), '').trim();
     emit(
       state.copyWith(
-        countryDialCode: country.dialCode ?? '+91',
+        countryDialCode: cleanDialCode,
         countryIsoCode: country.code ?? 'IN',
         phoneErrorMessage: '',
       ),
@@ -314,7 +315,7 @@ class SignUpCubit extends Cubit<SignUpState> {
   bool _validatePhoneForOtp(BuildContext context) {
     final AppString strings = context.appString;
     final String phone = state.phoneController.text.trim();
-    final String dialCode = state.countryDialCode;
+    final String dialCode = state.countryDialCode.replaceAll(RegExp(r'[^\d+]'), '').trim();
 
     if (phone.isEmpty) {
       setPhoneError(strings.pleaseEnterMobileNumberKey);
@@ -345,16 +346,34 @@ class SignUpCubit extends Cubit<SignUpState> {
       _requiredPhoneLength(dialCode);
 
   int? _requiredPhoneLength(String dialCode) {
-    switch (dialCode) {
+    final String cleanDialCode = dialCode.replaceAll(RegExp(r'[^\d+]'), '').trim();
+    switch (cleanDialCode) {
       case '+91':
+      case '91':
         return 10;
       case '+965':
+      case '965':
         return 8;
       case '+971':
+      case '971':
         return 9;
       case '+966':
+      case '966':
         return 9;
       case '+1':
+      case '1':
+        return 10;
+      case '+974':
+      case '974':
+        return 8;
+      case '+973':
+      case '973':
+        return 8;
+      case '+968':
+      case '968':
+        return 8;
+      case '+44':
+      case '44':
         return 10;
       default:
         return null;

@@ -99,7 +99,7 @@ class SignUpStepNodeCircle extends StatelessWidget {
                     ? const Icon(
                         Icons.check,
                         size: Dimens.size18,
-                        color: AppColors.whiteColor,
+                        color: AppColors.greenTextColor,
                       )
                     : Text(
                         '$stepNumber',
