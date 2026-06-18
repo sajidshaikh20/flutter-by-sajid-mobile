@@ -143,7 +143,3 @@ void configLoader() {
     ..userInteractions = false
     ..dismissOnTap = false;
 }
-//sajid
-
-  sadfasdfsadf
-  //shaikh
