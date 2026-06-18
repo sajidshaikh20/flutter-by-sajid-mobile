@@ -15,9 +15,15 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
       final List<LeaderboardItemResponse> items = baseResponse?.data ?? <LeaderboardItemResponse>[];
 
       if (items.isNotEmpty) {
-        final List<LeaderboardItemModel> mappedItems = items.map((LeaderboardItemResponse e) {
-          return LeaderboardItemModel(
-            rank: e.rank,
+        // Sort items by winRate descending to make sure they are in order
+        final List<LeaderboardItemResponse> sortedItems = List<LeaderboardItemResponse>.from(items)
+          ..sort((LeaderboardItemResponse a, LeaderboardItemResponse b) => b.winRate.compareTo(a.winRate));
+
+        final List<LeaderboardItemModel> mappedItems = <LeaderboardItemModel>[];
+        for (int i = 0; i < sortedItems.length; i++) {
+          final LeaderboardItemResponse e = sortedItems[i];
+          mappedItems.add(LeaderboardItemModel(
+            rank: e.rank != 0 ? e.rank : i + 1,
             name: e.name,
             winRate: e.winRate,
             status: e.status,
@@ -25,13 +31,14 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
             pnl: e.pnl,
             tradesCount: e.tradesCount,
             avatarUrl: e.avatarUrl,
-          );
-        }).toList();
+          ));
+        }
 
         emit(state.copyWith(
           leaderboardItems: mappedItems,
           shimmerLoading: false,
           status: BaseStateStatus.success,
+          isMockData: false,
         ));
       } else {
         _loadMockData();
@@ -47,6 +54,7 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
       leaderboardItems: _getMockData(state.activeTimeframe),
       shimmerLoading: false,
       status: BaseStateStatus.success,
+      isMockData: true,
     ));
   }
 
@@ -70,7 +78,7 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
   void updateTimeframe(String timeframe) {
     emit(state.copyWith(
       activeTimeframe: timeframe,
-      leaderboardItems: _getMockData(timeframe),
+      leaderboardItems: state.isMockData ? _getMockData(timeframe) : state.leaderboardItems,
     ));
   }
 

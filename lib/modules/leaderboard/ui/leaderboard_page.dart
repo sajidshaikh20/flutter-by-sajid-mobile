@@ -642,20 +642,67 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             padding: const EdgeInsets.symmetric(vertical: Dimens.space12, horizontal: Dimens.space12),
             child: Row(
               children: <Widget>[
-                Container(width: 25, height: 16, color: Colors.white),
-                const SizedBox(width: 20),
-                const CircleAvatar(radius: Dimens.size16, backgroundColor: Colors.white),
-                const SizedBox(width: 12),
-                Container(width: 120, height: 14, color: Colors.white),
-                const Spacer(),
-                Container(width: 50, height: 14, color: Colors.white),
-                const SizedBox(width: 30),
-                Container(
-                  width: 70,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
+                // Rank
+                const SizedBox(
+                  width: Dimens.size40,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: 20,
+                      height: 16,
+                      child: DecoratedBox(decoration: BoxDecoration(color: Colors.white)),
+                    ),
+                  ),
+                ),
+
+                // Trader Image & Name
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      const CircleAvatar(radius: Dimens.size16, backgroundColor: Colors.white),
+                      const SizedBox(width: Dimens.space12),
+                      Expanded(
+                        child: Container(
+                          height: 14,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(2)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: Dimens.space12),
+                    ],
+                  ),
+                ),
+
+                // Win Rate
+                const SizedBox(
+                  width: Dimens.size80,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: 45,
+                      height: 14,
+                      child: DecoratedBox(decoration: BoxDecoration(color: Colors.white)),
+                    ),
+                  ),
+                ),
+
+                // Status Badge
+                const SizedBox(
+                  width: Dimens.size80,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      width: 55,
+                      height: 20,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

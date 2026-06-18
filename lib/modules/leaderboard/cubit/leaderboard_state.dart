@@ -8,6 +8,7 @@ class LeaderboardState extends BaseState {
     this.sortBy = 'Win Rate', // 'Win Rate', 'Trades', 'PnL'
     this.leaderboardItems = const <LeaderboardItemModel>[],
     this.shimmerLoading = false,
+    this.isMockData = false,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -19,6 +20,7 @@ class LeaderboardState extends BaseState {
   final String sortBy;
   final List<LeaderboardItemModel> leaderboardItems;
   final bool shimmerLoading;
+  final bool isMockData;
 
   factory LeaderboardState.initial() => const LeaderboardState();
 
@@ -55,6 +57,7 @@ class LeaderboardState extends BaseState {
     String? sortBy,
     List<LeaderboardItemModel>? leaderboardItems,
     bool? shimmerLoading,
+    bool? isMockData,
   }) =>
       LeaderboardState(
         status: status ?? this.status,
@@ -66,6 +69,7 @@ class LeaderboardState extends BaseState {
         sortBy: sortBy ?? this.sortBy,
         leaderboardItems: leaderboardItems ?? this.leaderboardItems,
         shimmerLoading: shimmerLoading ?? this.shimmerLoading,
+        isMockData: isMockData ?? this.isMockData,
       );
 
   @override
@@ -79,5 +83,6 @@ class LeaderboardState extends BaseState {
         sortBy,
         leaderboardItems,
         shimmerLoading,
+        isMockData,
       ];
 }
