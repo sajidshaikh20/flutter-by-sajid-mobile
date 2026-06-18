@@ -532,12 +532,15 @@ class TradingSignalCard extends StatelessWidget {
                   if (showTakeTrade && (signal.isActive || signal.isPending)) ...<Widget>[
                     GestureDetector(
                       onTap: () {
-                        context.scaffoldMessenger.showSnackBar(
-                          SnackBar(
-                            content: Text('Taking trade for ${signal.pair}...'),
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
+                        if (signal.publicId.isNotEmpty) {
+                          unawaited(context.read<TradesCubit>().takeTrade(signal.publicId));
+                        } else {
+                          context.scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Cannot take trade: invalid ID'),
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),

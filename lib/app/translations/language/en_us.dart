@@ -124,6 +124,9 @@ class EnUS extends AppString {
   String get dontHaveAccountKey => "Don't have an account? Sign Up";
 
   @override
+  String get alreadyHaveAccountKey => 'Already have an account? Login';
+
+  @override
   String get forgotPasswordKey => 'Forgot Password?';
 
   @override

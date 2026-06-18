@@ -26,6 +26,8 @@ class EditProfileForm extends StatefulWidget {
 }
 
 class _EditProfileFormState extends State<EditProfileForm> {
+  final ProfileRepository _profileRepository = ProfileRepositoryImpl();
+
   late final TextEditingController _nameController;
   late final TextEditingController _usernameController;
   late final TextEditingController _emailController;
@@ -53,6 +55,37 @@ class _EditProfileFormState extends State<EditProfileForm> {
     _usernameFocusNode = FocusNode();
     _emailFocusNode = FocusNode();
     _phoneFocusNode = FocusNode();
+
+    WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
+      unawaited(_fetchProfileFromServer());
+    });
+  }
+
+  Future<void> _fetchProfileFromServer() async {
+    final ResponseHandler<BaseResponse<ClientProfileResponse>> response = await _profileRepository.getProfile();
+    if (response.isSuccess()) {
+      final BaseResponse<ClientProfileResponse>? baseResponse = response.getSuccessInstance()?.response;
+      final ClientProfileResponse? profile = baseResponse?.data;
+      if (profile != null) {
+        if (mounted) {
+          setState(() {
+            _nameController.text = profile.name;
+            _emailController.text = profile.email;
+            _phoneController.text = profile.phone ?? '';
+            _usernameController.text = profile.username;
+          });
+        }
+
+        await UserProfileService.instance().updateUserProfile(
+          customerName: profile.name,
+          customerEmail: profile.email,
+          phoneNumber: profile.phone ?? '',
+          username: profile.username,
+          customerId: profile.publicId,
+          prefix: profile.countryCode,
+        );
+      }
+    }
   }
 
   @override
@@ -135,26 +168,59 @@ class _EditProfileFormState extends State<EditProfileForm> {
       final String username = _usernameController.text.trim();
       final String email = _emailController.text.trim();
       final String phone = _phoneController.text.trim();
+      final String countryCode = UserProfileService.instance().prefix?.toString() ?? '+1';
 
+      unawaited(EasyLoading.show(status: 'Updating...'));
 
-      await UserProfileService.instance().updateUserProfile(
-        customerName: name,
-        username: username,
-        customerEmail: email,
-        phoneNumber: phone,
-      );
-
-      if (mounted) {
-        context.scaffoldMessenger.showSnackBar(
-          SnackBar(
-            backgroundColor: AppColors.successColor,
-            content: Text(
-              context.appString.editProfileSuccessKey,
-              style: const TextStyle(color: Colors.white),
-            ),
+      try {
+        final ResponseHandler<BaseResponse<ClientProfileResponse>> response = await _profileRepository.updateProfile(
+          UpdateClientProfileRequest(
+            name: name,
+            phone: phone,
+            countryCode: countryCode,
           ),
         );
-        context.router.back();
+
+        if (response.isSuccess()) {
+          final BaseResponse<ClientProfileResponse>? baseResponse = response.getSuccessInstance()?.response;
+          final ClientProfileResponse? updated = baseResponse?.data;
+
+          await UserProfileService.instance().updateUserProfile(
+            customerName: updated?.name ?? name,
+            username: updated?.username ?? username,
+            customerEmail: updated?.email ?? email,
+            phoneNumber: updated?.phone ?? phone,
+            prefix: updated?.countryCode ?? countryCode,
+          );
+
+          if (mounted) {
+            context.scaffoldMessenger.showSnackBar(
+              SnackBar(
+                backgroundColor: AppColors.successColor,
+                content: Text(
+                  context.appString.editProfileSuccessKey,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            );
+            context.router.back();
+          }
+        } else {
+          final OnFailureResponse<BaseResponse<ClientProfileResponse>>? failure = response.getFailureInstance();
+          if (mounted) {
+            context.scaffoldMessenger.showSnackBar(
+              SnackBar(
+                backgroundColor: AppColors.errorColor,
+                content: Text(
+                  failure?.error?.errorMessage ?? 'Failed to update profile.',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            );
+          }
+        }
+      } finally {
+        unawaited(EasyLoading.dismiss());
       }
     }
   }

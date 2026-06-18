@@ -33,15 +33,9 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
     AutoTabsRouter.of(context).setActiveIndex(step);
   }
 
-  void _handleNext(BuildContext context, SignUpCubit cubit, SignUpState state) {
+  Future<void> _handleNext(BuildContext context, SignUpCubit cubit, SignUpState state) async {
     if (cubit.isLastStep) {
-      if (cubit.tryProceedFromCurrentStep(context)) {
-        displaySnackBar(
-          context.appString.signUpRegistrationCompleteKey,
-          context,
-        );
-        goBack(context);
-      }
+      await cubit.registerUser(context);
       return;
     }
 
@@ -106,7 +100,9 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
                     listenWhen: (SignUpState p, SignUpState c) =>
                         p.currentStep != c.currentStep ||
                         p.isEmailVerified != c.isEmailVerified ||
-                        p.isPhoneVerified != c.isPhoneVerified,
+                        p.isPhoneVerified != c.isPhoneVerified ||
+                        p.status != c.status ||
+                        p.msg != c.msg,
                     listener: (BuildContext context, SignUpState state) {
                       if (tabsRouter.activeIndex != state.currentStep) {
                         tabsRouter.setActiveIndex(state.currentStep);
@@ -116,6 +112,13 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
                         _stepProgressController.setCurrentStep(
                           state.currentStep,
                         );
+                      }
+                      if (state.msg != null && (state.msg?.isNotEmpty ?? false)) {
+                        displaySnackBar(state.msg!, context);
+                        cubit.clearMsg();
+                      }
+                      if (state.status == BaseStateStatus.success && cubit.isLastStep) {
+                        goBack(context);
                       }
                     },
                     child: Column(

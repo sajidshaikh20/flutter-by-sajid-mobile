@@ -15,7 +15,9 @@ class SubscriptionPlansPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<SubscriptionPlansCubit>(
-      create: (BuildContext context) => SubscriptionPlansCubit(),
+      create: (BuildContext context) => SubscriptionPlansCubit(
+        repository: PlansRepositoryImpl(),
+      ),
       child: const SubscriptionPlansViewBody(),
     );
   }
@@ -39,8 +41,56 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
     final Color bottomBarBg = isDark ? AppColors.surfaceDark : Colors.white;
     final Color dividerColor = isDark ? AppColors.dividerDark : AppColors.dividerLight;
 
-    return BlocBuilder<SubscriptionPlansCubit, SubscriptionPlansState>(
+    return BlocConsumer<SubscriptionPlansCubit, SubscriptionPlansState>(
+      listener: (BuildContext context, SubscriptionPlansState state) {
+        if (state.status == BaseStateStatus.loading) {
+          unawaited(EasyLoading.show(status: 'Loading...'));
+        } else {
+          unawaited(EasyLoading.dismiss());
+        }
+
+        if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
+          showCustomDialog(
+            state.msg!,
+            title: 'Success',
+            okBtnTitle: 'Awesome',
+            isDialogHideOnClick: true,
+            onOkClicked: () {
+              context.router.back();
+            },
+          );
+        }
+
+        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+          context.scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(state.msg!),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+          context.read<SubscriptionPlansCubit>().resetError();
+        }
+      },
       builder: (BuildContext context, SubscriptionPlansState state) {
+        if (state.plans.isEmpty) {
+          return Scaffold(
+            backgroundColor: pageBg,
+            body: SafeArea(
+              child: Column(
+                children: <Widget>[
+                  _buildHeader(context, isDark, textColor, cardBorder),
+                  const Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryPurple,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
         // Find currently selected plan
         final SubscriptionPlanModel selectedPlan = state.plans.firstWhere(
           (SubscriptionPlanModel p) => p.id == state.selectedPlanId,
@@ -570,12 +620,6 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
   }
 
   void _handleChoosePlan(BuildContext context, String planName) {
-    showCustomDialog(
-      'Thank you for selecting the $planName. Our team will contact you shortly to activate your premium strategies access.',
-      title: 'Plan Selection',
-      okBtnTitle: 'Awesome',
-      isDialogHideOnClick: true,
-      onOkClicked: () {},
-    );
+    unawaited(context.read<SubscriptionPlansCubit>().createSubscription(context));
   }
 }

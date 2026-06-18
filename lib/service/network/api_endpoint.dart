@@ -36,6 +36,24 @@ abstract class Apis {
   /// Endpoint for user login.
   static const String login = '$subBaseUrl/auth/login';
 
+  /// Endpoint for Google login.
+  static const String googleLogin = '$subBaseUrl/auth/google';
+
+  /// Endpoint to start registration
+  static const String startRegistration = '$subBaseUrl/auth/start-registration';
+
+  /// Endpoint to verify email OTP
+  static const String verifyEmailOtp = '$subBaseUrl/auth/verify-email-otp';
+
+  /// Endpoint to send phone OTP
+  static const String sendPhoneOtp = '$subBaseUrl/auth/send-phone-otp';
+
+  /// Endpoint to verify phone OTP
+  static const String verifyPhoneOtp = '$subBaseUrl/auth/verify-phone-otp';
+
+  /// Endpoint to complete registration
+  static const String completeRegistration = '$subBaseUrl/auth/complete-registration';
+
   /// Endpoint to reset password using mobile number.
   static const String forgotPasswordWithMobile =
       '$apiVersion/forgot_password_with_mobile';
@@ -111,4 +129,31 @@ abstract class Apis {
   ///Endpoint for Read Notification Count
   static const String readNotificationCount =
       '$apiVersion/readNotificatonCount';
+
+  /// Endpoint to get the logged-in user profile
+  static const String getMe = '$subBaseUrl/auth/me';
+
+  /// Endpoint to get all subscription plans
+  static const String getAllPlans = '$subBaseUrl/plans/getAll';
+
+  /// Endpoint to create subscription
+  static const String createSubscription = '$subBaseUrl/subscriptions/create';
+
+  /// Endpoint to get leaderboard
+  static const String getLeaderboard = '$subBaseUrl/common/leaderboard';
+
+  /// Endpoint to get all trades
+  static const String getAllTrades = '$subBaseUrl/common/trades/getAll';
+
+  /// Endpoint to get client profile
+  static const String getClientProfile = '$subBaseUrl/client/profile';
+
+  /// Endpoint to update client profile
+  static const String updateClientProfile = '$subBaseUrl/client/update-profile';
+
+  /// Endpoint prefix to take a trade
+  static const String takeTrade = '$subBaseUrl/client/trades';
+
+  /// Endpoint to get client's taken trades
+  static const String myTrades = '$subBaseUrl/client/my-trades';
 }

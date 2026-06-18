@@ -619,6 +619,20 @@ class HttpHandleInterceptor extends Interceptor {
     }
   }
 
+  static String? _extractTokenFromCookies(String cookies) {
+    for (final String cookie in cookies.split(';')) {
+      final List<String> parts = cookie.split('=');
+      if (parts.length >= 2) {
+        final String key = parts[0].trim();
+        final String value = parts.sublist(1).join('=').trim();
+        if (key == 'access_token') {
+          return value;
+        }
+      }
+    }
+    return null;
+  }
+
   @override
   Future<void> onRequest(
     RequestOptions options,
@@ -627,6 +641,13 @@ class HttpHandleInterceptor extends Interceptor {
     final String savedCookies = SharedPref.instance.getString(PrefsKey.apiCookiesKey, '');
     if (savedCookies.isNotEmpty && !options.headers.containsKey('Cookie')) {
       options.headers['Cookie'] = savedCookies;
+    }
+
+    if (savedCookies.isNotEmpty && !options.headers.containsKey('Authorization')) {
+      final String? token = _extractTokenFromCookies(savedCookies);
+      if (token != null && token.isNotEmpty) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
     }
 
     if (options.path == Apis.reviewAndPayment) {

@@ -124,6 +124,9 @@ class ArDu extends AppString {
   String get dontHaveAccountKey => 'ليس لديك حساب؟ سجل الآن';
 
   @override
+  String get alreadyHaveAccountKey => 'لديك حساب بالفعل؟ تسجيل الدخول';
+
+  @override
   String get forgotPasswordKey => 'هل نسيت كلمة المرور؟';
 
   @override

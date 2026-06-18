@@ -98,6 +98,9 @@ class PrefsKey {
 
   /// Persisted app theme mode (`ThemeMode.name`: system, light, dark).
   static const String themeModeKey = 'themeModeKey';
+
+  /// Key to check if the user is already registered/has completed registration.
+  static const String isRegisteredKey = 'isRegisteredKey';
 }
 
 /// Minimal model for storing biometric login data in SharedPreferences.

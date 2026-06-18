@@ -16,7 +16,9 @@ class TradesPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<TradesCubit>(
-      create: (BuildContext context) => TradesCubit(),
+      create: (BuildContext context) => TradesCubit(
+        repository: TradesRepositoryImpl(),
+      ),
       child: const TradesViewBody(),
     );
   }
@@ -47,10 +49,37 @@ class _TradesViewBodyState extends State<TradesViewBody> {
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
     final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
-    return BlocBuilder<TradesCubit, TradesState>(
+    return BlocConsumer<TradesCubit, TradesState>(
+      listener: (BuildContext context, TradesState state) {
+        if (state.status == BaseStateStatus.loading) {
+          unawaited(EasyLoading.show(status: 'Loading...'));
+        } else {
+          unawaited(EasyLoading.dismiss());
+        }
+
+        if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
+          context.scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(state.msg!),
+              backgroundColor: AppColors.successColor,
+            ),
+          );
+          context.read<TradesCubit>().resetError();
+        }
+
+        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+          context.scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(state.msg!),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+          context.read<TradesCubit>().resetError();
+        }
+      },
       builder: (BuildContext context, TradesState state) {
         // Filter logic
-        final List<TradingSignalModel> allSignals = TradingSignalsMockData.signals;
+        final List<TradingSignalModel> allSignals = state.signals;
         final List<TradingSignalModel> filteredSignals = allSignals.where((TradingSignalModel s) {
           // Filter by status
           bool matchesStatus = true;

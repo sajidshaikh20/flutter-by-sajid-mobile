@@ -61,8 +61,9 @@ class LoginCubit extends Cubit<LoginState> {
           final UserResponseData? user = userResponse.user;
 
           if (user != null) {
-            // Save login status
+            // Save login status and registration status
             await SharedPref.instance.setValue(PrefsKey.isLoggedInKey, true);
+            await SharedPref.instance.setValue(PrefsKey.isRegisteredKey, true);
 
             // Update user profile service with actual values
             await UserProfileService.instance().updateUserProfile(

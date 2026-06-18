@@ -47,6 +47,7 @@ abstract class AppString {
   String get pleaseEnterValidEmailKey;
   String get passAllCriteriaKey;
   String get dontHaveAccountKey;
+  String get alreadyHaveAccountKey;
   String get forgotPasswordKey;
   String get welcomeBackKey;
   String get byContinuingAgreeKey;

@@ -1,4 +1,5 @@
 class TradingSignalModel {
+  final String publicId;
   final String pair;
   final String category; // CRYPTO, FOREX
   final String type; // BUY MARKET, BUY LIMIT, etc.
@@ -17,6 +18,7 @@ class TradingSignalModel {
   final List<double> sparklineData;
 
   const TradingSignalModel({
+    this.publicId = '',
     required this.pair,
     required this.category,
     required this.type,

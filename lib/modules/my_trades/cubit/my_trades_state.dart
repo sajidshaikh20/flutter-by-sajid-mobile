@@ -1,10 +1,11 @@
 import '../../../utils/exports.dart';
 
-/// State class for My Trades tab managing filter, search and standard BaseState properties.
+/// State class for My Trades tab managing filter, search, signals list and standard BaseState properties.
 class MyTradesState extends BaseState {
   const MyTradesState({
     this.selectedFilter = SignalFilter.all,
     this.searchQuery = '',
+    this.signals = const <TradingSignalModel>[],
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -12,6 +13,7 @@ class MyTradesState extends BaseState {
 
   final SignalFilter selectedFilter;
   final String searchQuery;
+  final List<TradingSignalModel> signals;
 
   factory MyTradesState.initial() => const MyTradesState();
 
@@ -21,6 +23,7 @@ class MyTradesState extends BaseState {
     PageRouteInfo? redirectRoute,
     SignalFilter? selectedFilter,
     String? searchQuery,
+    List<TradingSignalModel>? signals,
   }) =>
       MyTradesState(
         status: status ?? this.status,
@@ -28,6 +31,7 @@ class MyTradesState extends BaseState {
         redirectRoute: redirectRoute ?? this.redirectRoute,
         selectedFilter: selectedFilter ?? this.selectedFilter,
         searchQuery: searchQuery ?? this.searchQuery,
+        signals: signals ?? this.signals,
       );
 
   @override
@@ -37,5 +41,6 @@ class MyTradesState extends BaseState {
         redirectRoute,
         selectedFilter,
         searchQuery,
+        signals,
       ];
 }

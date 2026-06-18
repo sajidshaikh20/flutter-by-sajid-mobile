@@ -2,11 +2,12 @@ import '../../../utils/exports.dart';
 
 enum SignalFilter { all, active, pending, closed, cancelled }
 
-/// State class for Trades tab managing filter, search and standard BaseState properties.
+/// State class for Trades tab managing filter, search, signals list and standard BaseState properties.
 class TradesState extends BaseState {
   const TradesState({
     this.selectedFilter = SignalFilter.all,
     this.searchQuery = '',
+    this.signals = const <TradingSignalModel>[],
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -14,6 +15,7 @@ class TradesState extends BaseState {
 
   final SignalFilter selectedFilter;
   final String searchQuery;
+  final List<TradingSignalModel> signals;
 
   factory TradesState.initial() => const TradesState();
 
@@ -23,6 +25,7 @@ class TradesState extends BaseState {
     PageRouteInfo? redirectRoute,
     SignalFilter? selectedFilter,
     String? searchQuery,
+    List<TradingSignalModel>? signals,
   }) =>
       TradesState(
         status: status ?? this.status,
@@ -30,6 +33,7 @@ class TradesState extends BaseState {
         redirectRoute: redirectRoute ?? this.redirectRoute,
         selectedFilter: selectedFilter ?? this.selectedFilter,
         searchQuery: searchQuery ?? this.searchQuery,
+        signals: signals ?? this.signals,
       );
 
   @override
@@ -39,5 +43,6 @@ class TradesState extends BaseState {
         redirectRoute,
         selectedFilter,
         searchQuery,
+        signals,
       ];
 }

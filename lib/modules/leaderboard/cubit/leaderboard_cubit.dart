@@ -1,15 +1,58 @@
 import '../../../utils/exports.dart';
 
 class LeaderboardCubit extends BaseCubit<LeaderboardState> {
-  LeaderboardCubit() : super(LeaderboardState.initial()) {
-    _loadInitialData();
+  final LeaderboardRepository repository;
+
+  LeaderboardCubit({required this.repository}) : super(LeaderboardState.initial()) {
+    unawaited(loadLeaderboard());
   }
 
-  void _loadInitialData() {
+  Future<void> loadLeaderboard() async {
+    emit(state.copyWith(shimmerLoading: true));
+    final ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>> response = await repository.getLeaderboard();
+    if (response.isSuccess()) {
+      final BaseResponse<List<LeaderboardItemResponse>>? baseResponse = response.getSuccessInstance()?.response;
+      final List<LeaderboardItemResponse> items = baseResponse?.data ?? <LeaderboardItemResponse>[];
+
+      if (items.isNotEmpty) {
+        final List<LeaderboardItemModel> mappedItems = items.map((LeaderboardItemResponse e) {
+          return LeaderboardItemModel(
+            rank: e.rank,
+            name: e.name,
+            winRate: e.winRate,
+            status: e.status,
+            type: e.type,
+            pnl: e.pnl,
+            tradesCount: e.tradesCount,
+            avatarUrl: e.avatarUrl,
+          );
+        }).toList();
+
+        emit(state.copyWith(
+          leaderboardItems: mappedItems,
+          shimmerLoading: false,
+          status: BaseStateStatus.success,
+        ));
+      } else {
+        _loadMockData();
+      }
+    } else {
+      DebugLog.instance.w('Leaderboard API failed, falling back to mock data.');
+      _loadMockData();
+    }
+  }
+
+  void _loadMockData() {
     emit(state.copyWith(
       leaderboardItems: _getMockData(state.activeTimeframe),
+      shimmerLoading: false,
       status: BaseStateStatus.success,
     ));
+  }
+
+  /// Simulated pull-to-refresh action
+  Future<void> refreshLeaderboard() async {
+    await loadLeaderboard();
   }
 
   /// Updates the text search query
@@ -36,19 +79,8 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
     emit(state.copyWith(sortBy: sortBy));
   }
 
-  /// Simulated pull-to-refresh action
-  Future<void> refreshLeaderboard() async {
-    emit(state.copyWith(shimmerLoading: true));
-    await Future<void>.delayed(const Duration(milliseconds: 700));
-    emit(state.copyWith(
-      shimmerLoading: false,
-      leaderboardItems: _getMockData(state.activeTimeframe),
-    ));
-  }
-
   /// Generates clean mock records for demonstration
   List<LeaderboardItemModel> _getMockData(String timeframe) {
-    // Modify values slightly based on timeframe
     final double scale = switch (timeframe) {
       'Daily' => 0.2,
       'Weekly' => 0.5,
@@ -57,7 +89,6 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
     };
 
     return <LeaderboardItemModel>[
-      // Traders
       LeaderboardItemModel(
         rank: 1,
         name: 'Olivia Carter',
@@ -130,8 +161,6 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
         pnl: 1200.0 * scale,
         tradesCount: (35 * scale).round(),
       ),
-
-      // Clients
       LeaderboardItemModel(
         rank: 1,
         name: 'Liam Neeson',

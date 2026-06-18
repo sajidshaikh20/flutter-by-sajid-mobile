@@ -3,7 +3,13 @@ import '../../../utils/exports.dart';
 /// Cubit for sign up multi-step flow.
 class SignUpCubit extends Cubit<SignUpState> {
   /// Creates [SignUpCubit].
-  SignUpCubit({required SignUpState initialState}) : super(initialState);
+  SignUpCubit({
+    required this.repository,
+    required SignUpState initialState,
+  }) : super(initialState);
+
+  /// SignUp repository.
+  final SignUpRepository repository;
 
   Timer? _emailResendTimer;
   Timer? _phoneResendTimer;
@@ -355,38 +361,113 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  /// Sends email OTP — shows pin field (wire API later).
-  void sendEmailOtp(BuildContext context) {
+  /// Sends email OTP.
+  Future<void> sendEmailOtp(BuildContext context) async {
     if (!_validateEmailForOtp(context)) {
       return;
     }
-    emit(
-      state.copyWith(
-        showEmailOtpField: true,
-        emailOtp: '',
-        emailOtpErrorMessage: '',
-        msg: context.appString.signUpOtpSentEmailKey,
-        status: BaseStateStatus.success,
-      ),
-    );
-    _startEmailResendTimer();
+    final String defaultMsg = context.appString.signUpOtpSentEmailKey;
+    try {
+      emit(state.copyWith(status: BaseStateStatus.loading));
+      final ResponseHandler<BaseResponse<SignUpResponse>> response =
+          await repository.startRegistration(
+        StartRegistrationRequest(
+          name: state.fullName,
+          email: state.email,
+        ),
+      );
+
+      if (response.isSuccess()) {
+        final BaseResponse<SignUpResponse>? baseResponse =
+            response.getSuccessInstance()?.response;
+        if (baseResponse != null && baseResponse.success) {
+          emit(
+            state.copyWith(
+              showEmailOtpField: true,
+              emailOtp: '',
+              emailOtpErrorMessage: '',
+              msg: baseResponse.message.isNotEmpty
+                  ? baseResponse.message
+                  : defaultMsg,
+              status: BaseStateStatus.success,
+            ),
+          );
+          _startEmailResendTimer();
+        } else {
+          emit(state.copyWith(
+            status: BaseStateStatus.failure,
+            msg: baseResponse?.message ?? 'Failed to send verification email.',
+          ));
+        }
+      } else {
+        final String? errorMsg =
+            response.getFailureInstance()?.error?.errorMessage;
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: errorMsg ?? 'Failed to send verification email.',
+        ));
+      }
+    } on Exception {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'An error occurred while sending OTP.',
+      ));
+    }
   }
 
-  /// Sends phone OTP — shows pin field (wire API later).
-  void sendPhoneOtp(BuildContext context) {
+  /// Sends phone OTP.
+  Future<void> sendPhoneOtp(BuildContext context) async {
     if (!_validatePhoneForOtp(context)) {
       return;
     }
-    emit(
-      state.copyWith(
-        showPhoneOtpField: true,
-        phoneOtp: '',
-        phoneOtpErrorMessage: '',
-        msg: context.appString.signUpOtpSentPhoneKey,
-        status: BaseStateStatus.success,
-      ),
-    );
-    _startPhoneResendTimer();
+    final String defaultMsg = context.appString.signUpOtpSentPhoneKey;
+    try {
+      emit(state.copyWith(status: BaseStateStatus.loading));
+      final ResponseHandler<BaseResponse<SignUpResponse>> response =
+          await repository.sendPhoneOtp(
+        SendPhoneOtpRequest(
+          email: state.email,
+          countryCode: state.countryDialCode,
+          phone: state.phoneController.text.trim(),
+        ),
+      );
+
+      if (response.isSuccess()) {
+        final BaseResponse<SignUpResponse>? baseResponse =
+            response.getSuccessInstance()?.response;
+        if (baseResponse != null && baseResponse.success) {
+          emit(
+            state.copyWith(
+              showPhoneOtpField: true,
+              phoneOtp: '',
+              phoneOtpErrorMessage: '',
+              msg: baseResponse.message.isNotEmpty
+                  ? baseResponse.message
+                  : defaultMsg,
+              status: BaseStateStatus.success,
+            ),
+          );
+          _startPhoneResendTimer();
+        } else {
+          emit(state.copyWith(
+            status: BaseStateStatus.failure,
+            msg: baseResponse?.message ?? 'Failed to send phone OTP.',
+          ));
+        }
+      } else {
+        final String? errorMsg =
+            response.getFailureInstance()?.error?.errorMessage;
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: errorMsg ?? 'Failed to send phone OTP.',
+        ));
+      }
+    } on Exception {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'An error occurred while sending phone OTP.',
+      ));
+    }
   }
 
   /// Verifies email OTP.
@@ -396,17 +477,54 @@ class SignUpCubit extends Cubit<SignUpState> {
       setEmailOtpError(error);
       return;
     }
-    _stopEmailResendTimer(resetSeconds: true);
-    emit(
-      state.copyWith(
-        isEmailVerified: true,
-        showEmailOtpField: false,
-        emailOtp: '',
-        emailOtpErrorMessage: '',
-        status: BaseStateStatus.success,
-        msg: context.appString.signUpEmailVerifiedSuccessKey,
-      ),
-    );
+    final String defaultMsg = context.appString.signUpEmailVerifiedSuccessKey;
+    try {
+      emit(state.copyWith(status: BaseStateStatus.loading));
+      final ResponseHandler<BaseResponse<SignUpResponse>> response =
+          await repository.verifyEmailOtp(
+        VerifyEmailOtpRequest(
+          email: state.email,
+          otp: state.emailOtp,
+        ),
+      );
+
+      if (response.isSuccess()) {
+        final BaseResponse<SignUpResponse>? baseResponse =
+            response.getSuccessInstance()?.response;
+        if (baseResponse != null && baseResponse.success) {
+          _stopEmailResendTimer(resetSeconds: true);
+          emit(
+            state.copyWith(
+              isEmailVerified: true,
+              showEmailOtpField: false,
+              emailOtp: '',
+              emailOtpErrorMessage: '',
+              status: BaseStateStatus.success,
+              msg: baseResponse.message.isNotEmpty
+                  ? baseResponse.message
+                  : defaultMsg,
+            ),
+          );
+        } else {
+          emit(state.copyWith(
+            status: BaseStateStatus.failure,
+            emailOtpErrorMessage: baseResponse?.message ?? 'Invalid OTP code.',
+          ));
+        }
+      } else {
+        final String? errorMsg =
+            response.getFailureInstance()?.error?.errorMessage;
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          emailOtpErrorMessage: errorMsg ?? 'Invalid OTP code.',
+        ));
+      }
+    } on Exception {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'An error occurred during verification.',
+      ));
+    }
   }
 
   /// Verifies phone OTP.
@@ -416,51 +534,124 @@ class SignUpCubit extends Cubit<SignUpState> {
       setPhoneOtpError(error);
       return;
     }
-    _stopPhoneResendTimer(resetSeconds: true);
-    emit(
-      state.copyWith(
-        isPhoneVerified: true,
-        showPhoneOtpField: false,
-        phoneOtp: '',
-        phoneOtpErrorMessage: '',
-        status: BaseStateStatus.success,
-        msg: context.appString.signUpPhoneVerifiedSuccessKey,
-      ),
-    );
+    final String defaultMsg = context.appString.signUpPhoneVerifiedSuccessKey;
+    try {
+      emit(state.copyWith(status: BaseStateStatus.loading));
+      final ResponseHandler<BaseResponse<SignUpResponse>> response =
+          await repository.verifyPhoneOtp(
+        VerifyPhoneOtpRequest(
+          email: state.email,
+          countryCode: state.countryDialCode,
+          phone: state.phoneController.text.trim(),
+          otp: state.phoneOtp,
+        ),
+      );
+
+      if (response.isSuccess()) {
+        final BaseResponse<SignUpResponse>? baseResponse =
+            response.getSuccessInstance()?.response;
+        if (baseResponse != null && baseResponse.success) {
+          _stopPhoneResendTimer(resetSeconds: true);
+          emit(
+            state.copyWith(
+              isPhoneVerified: true,
+              showPhoneOtpField: false,
+              phoneOtp: '',
+              phoneOtpErrorMessage: '',
+              status: BaseStateStatus.success,
+              msg: baseResponse.message.isNotEmpty
+                  ? baseResponse.message
+                  : defaultMsg,
+            ),
+          );
+        } else {
+          emit(state.copyWith(
+            status: BaseStateStatus.failure,
+            phoneOtpErrorMessage: baseResponse?.message ?? 'Invalid OTP code.',
+          ));
+        }
+      } else {
+        final String? errorMsg =
+            response.getFailureInstance()?.error?.errorMessage;
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          phoneOtpErrorMessage: errorMsg ?? 'Invalid OTP code.',
+        ));
+      }
+    } on Exception {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'An error occurred during phone verification.',
+      ));
+    }
   }
 
   /// Resend email OTP.
-  void resendEmailOtp(BuildContext context) {
+  Future<void> resendEmailOtp(BuildContext context) async {
     if (!state.canResendEmailOtp) {
       return;
     }
-    emit(
-      state.copyWith(
-        showEmailOtpField: true,
-        emailOtp: '',
-        emailOtpErrorMessage: '',
-        msg: context.appString.signUpOtpResentEmailKey,
-        status: BaseStateStatus.success,
-      ),
-    );
-    _startEmailResendTimer();
+    await sendEmailOtp(context);
   }
 
   /// Resend phone OTP.
-  void resendPhoneOtp(BuildContext context) {
+  Future<void> resendPhoneOtp(BuildContext context) async {
     if (!state.canResendPhoneOtp) {
       return;
     }
-    emit(
-      state.copyWith(
-        showPhoneOtpField: true,
-        phoneOtp: '',
-        phoneOtpErrorMessage: '',
-        msg: context.appString.signUpOtpResentPhoneKey,
-        status: BaseStateStatus.success,
-      ),
-    );
-    _startPhoneResendTimer();
+    await sendPhoneOtp(context);
+  }
+
+  /// Completes user registration.
+  Future<void> registerUser(BuildContext context) async {
+    if (!validateCompleteProfile(context)) {
+      return;
+    }
+    final String defaultMsg = context.appString.signUpRegistrationCompleteKey;
+    try {
+      emit(state.copyWith(status: BaseStateStatus.loading));
+      final ResponseHandler<BaseResponse<SignUpResponse>> response =
+          await repository.completeRegistration(
+        CompleteRegistrationRequest(
+          email: state.email,
+          username: state.usernameController.text.trim(),
+          password: state.passwordController.text.trim(),
+          name: state.fullName,
+          phone: state.fullPhoneNumber,
+        ),
+      );
+
+      if (response.isSuccess()) {
+        final BaseResponse<SignUpResponse>? baseResponse =
+            response.getSuccessInstance()?.response;
+        if (baseResponse != null && baseResponse.success) {
+          await SharedPref.instance.setValue(PrefsKey.isRegisteredKey, true);
+          emit(state.copyWith(
+            status: BaseStateStatus.success,
+            msg: baseResponse.message.isNotEmpty
+                ? baseResponse.message
+                : defaultMsg,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BaseStateStatus.failure,
+            msg: baseResponse?.message ?? 'Failed to complete registration.',
+          ));
+        }
+      } else {
+        final String? errorMsg =
+            response.getFailureInstance()?.error?.errorMessage;
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: errorMsg ?? 'Failed to complete registration.',
+        ));
+      }
+    } on Exception {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'An error occurred during registration.',
+      ));
+    }
   }
 
   /// Attempts to advance from the current step after validation.

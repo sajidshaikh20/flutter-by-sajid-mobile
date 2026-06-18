@@ -26,37 +26,29 @@ class _SignUpVerificationFormState extends State<SignUpVerificationForm> {
     final SignUpCubit cubit = context.read<SignUpCubit>();
 
     return BlocListener<SignUpCubit, SignUpState>(
-      listenWhen: (SignUpState p, SignUpState c) => p.msg != c.msg,
+      listenWhen: (SignUpState p, SignUpState c) =>
+          p.showEmailOtpField != c.showEmailOtpField ||
+          p.showPhoneOtpField != c.showPhoneOtpField ||
+          p.isEmailVerified != c.isEmailVerified ||
+          (c.showEmailOtpField &&
+              p.emailOtp != c.emailOtp &&
+              c.emailOtp.isEmpty) ||
+          (c.showPhoneOtpField &&
+              p.phoneOtp != c.phoneOtp &&
+              c.phoneOtp.isEmpty),
       listener: (BuildContext context, SignUpState state) {
-        if (state.msg?.isNotEmpty ?? false) {
-          displaySnackBar(state.msg!, context);
-          cubit.clearMsg();
+        if (!state.showEmailOtpField) {
+          _emailOtpKey.currentState?.clearOtp();
+        } else if (state.emailOtp.isEmpty) {
+          _emailOtpKey.currentState?.clearOtp();
+        }
+        if (!state.showPhoneOtpField) {
+          _phoneOtpKey.currentState?.clearOtp();
+        } else if (state.phoneOtp.isEmpty) {
+          _phoneOtpKey.currentState?.clearOtp();
         }
       },
-      child: BlocListener<SignUpCubit, SignUpState>(
-        listenWhen: (SignUpState p, SignUpState c) =>
-            p.showEmailOtpField != c.showEmailOtpField ||
-            p.showPhoneOtpField != c.showPhoneOtpField ||
-            p.isEmailVerified != c.isEmailVerified ||
-            (c.showEmailOtpField &&
-                p.emailOtp != c.emailOtp &&
-                c.emailOtp.isEmpty) ||
-            (c.showPhoneOtpField &&
-                p.phoneOtp != c.phoneOtp &&
-                c.phoneOtp.isEmpty),
-        listener: (BuildContext context, SignUpState state) {
-          if (!state.showEmailOtpField) {
-            _emailOtpKey.currentState?.clearOtp();
-          } else if (state.emailOtp.isEmpty) {
-            _emailOtpKey.currentState?.clearOtp();
-          }
-          if (!state.showPhoneOtpField) {
-            _phoneOtpKey.currentState?.clearOtp();
-          } else if (state.phoneOtp.isEmpty) {
-            _phoneOtpKey.currentState?.clearOtp();
-          }
-        },
-        child: BlocBuilder<SignUpCubit, SignUpState>(
+      child: BlocBuilder<SignUpCubit, SignUpState>(
         builder: (BuildContext context, SignUpState state) {
           final String displayEmail =
               widget.email.isNotEmpty ? widget.email : state.email;
@@ -96,7 +88,6 @@ class _SignUpVerificationFormState extends State<SignUpVerificationForm> {
             ),
           );
         },
-      ),
       ),
     );
   }

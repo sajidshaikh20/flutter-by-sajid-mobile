@@ -555,3 +555,17 @@ enum TrackOrderStatus {
   }
 }
 
+/// Represents the user role (CLIENT or TRADER).
+enum UserRole {
+  /// CLIENT role.
+  client('CLIENT'),
+
+  /// TRADER role.
+  trader('TRADER');
+
+  /// String value representing the role in API requests.
+  final String value;
+
+  const UserRole(this.value);
+}
+

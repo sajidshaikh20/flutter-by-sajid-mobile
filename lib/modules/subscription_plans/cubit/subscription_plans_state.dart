@@ -4,6 +4,7 @@ class SubscriptionPlansState extends BaseState {
   const SubscriptionPlansState({
     this.isYearly = false,
     this.plans = const <SubscriptionPlanModel>[],
+    this.rawPlans = const <PlanResponse>[],
     this.selectedPlanId,
     super.status = BaseStateStatus.initial,
     super.msg = '',
@@ -12,6 +13,7 @@ class SubscriptionPlansState extends BaseState {
 
   final bool isYearly;
   final List<SubscriptionPlanModel> plans;
+  final List<PlanResponse> rawPlans;
   final String? selectedPlanId;
 
   factory SubscriptionPlansState.initial() => const SubscriptionPlansState();
@@ -22,6 +24,7 @@ class SubscriptionPlansState extends BaseState {
     PageRouteInfo? redirectRoute,
     bool? isYearly,
     List<SubscriptionPlanModel>? plans,
+    List<PlanResponse>? rawPlans,
     String? selectedPlanId,
   }) =>
       SubscriptionPlansState(
@@ -30,6 +33,7 @@ class SubscriptionPlansState extends BaseState {
         redirectRoute: redirectRoute ?? this.redirectRoute,
         isYearly: isYearly ?? this.isYearly,
         plans: plans ?? this.plans,
+        rawPlans: rawPlans ?? this.rawPlans,
         selectedPlanId: selectedPlanId ?? this.selectedPlanId,
       );
 
@@ -40,6 +44,7 @@ class SubscriptionPlansState extends BaseState {
         redirectRoute,
         isYearly,
         plans,
+        rawPlans,
         selectedPlanId,
       ];
 }

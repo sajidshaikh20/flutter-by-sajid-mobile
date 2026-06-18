@@ -8,6 +8,7 @@ class SignUpBasicInfoForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SignUpCubit cubit = context.read<SignUpCubit>();
+    final bool isDark = context.isDark;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: Dimens.size16),

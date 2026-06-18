@@ -16,7 +16,9 @@ class MyTradesPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<MyTradesCubit>(
-      create: (BuildContext context) => MyTradesCubit(),
+      create: (BuildContext context) => MyTradesCubit(
+        repository: TradesRepositoryImpl(),
+      ),
       child: const MyTradesViewBody(),
     );
   }
@@ -47,10 +49,26 @@ class _MyTradesViewBodyState extends State<MyTradesViewBody> {
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
     final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
-    return BlocBuilder<MyTradesCubit, MyTradesState>(
+    return BlocConsumer<MyTradesCubit, MyTradesState>(
+      listener: (BuildContext context, MyTradesState state) {
+        if (state.status == BaseStateStatus.loading) {
+          unawaited(EasyLoading.show(status: 'Loading...'));
+        } else {
+          unawaited(EasyLoading.dismiss());
+        }
+
+        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+          context.scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(state.msg!),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+          context.read<MyTradesCubit>().resetError();
+        }
+      },
       builder: (BuildContext context, MyTradesState state) {
-        // Fetch all mock signals
-        final List<TradingSignalModel> allSignals = TradingSignalsMockData.signals;
+        final List<TradingSignalModel> allSignals = state.signals;
 
         // Compute dynamic counts for the metrics cards (based on all signals)
         final int activeCount = allSignals.where((TradingSignalModel s) => s.isActive).length;
@@ -95,7 +113,6 @@ class _MyTradesViewBodyState extends State<MyTradesViewBody> {
                 // Header App Bar matching design requirements with notifications icon active
                 const HomeHeaderAppBar(
                   showProfileImage: false,
-                  showNotification: true,
                   title: 'My Trades',
                   subtitle: 'Track and manage your active and past trades',
                 ),

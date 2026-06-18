@@ -15,7 +15,9 @@ class LeaderboardPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<LeaderboardCubit>(
-      create: (BuildContext context) => LeaderboardCubit(),
+      create: (BuildContext context) => LeaderboardCubit(
+        repository: LeaderboardRepositoryImpl(),
+      ),
       child: const LeaderboardViewBody(),
     );
   }

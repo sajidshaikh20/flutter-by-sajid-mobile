@@ -28,6 +28,7 @@ class SignUpPage extends BaseResponsiveView {
   Widget _buildView(BuildContext context) {
     return BlocProvider<SignUpCubit>(
       create: (BuildContext ctx) => SignUpCubit(
+        repository: SignUpRepositoryImpl(),
         initialState: _createInitialState(),
       ),
       child: const SignUpFlowWidget(),
