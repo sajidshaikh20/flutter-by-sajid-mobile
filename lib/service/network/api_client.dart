@@ -619,6 +619,16 @@ class HttpHandleInterceptor extends Interceptor {
     }
   }
 
+  static String _accessTokenFromProfileJson(String jsonStr) {
+    if (jsonStr.isEmpty) return '';
+    try {
+      final Map<String, dynamic> map = jsonDecode(jsonStr) as Map<String, dynamic>;
+      return map['accessToken'] as String? ?? '';
+    } on Object catch (_) {
+      return '';
+    }
+  }
+
   static String? _extractTokenFromCookies(String cookies) {
     for (final String cookie in cookies.split(';')) {
       final List<String> parts = cookie.split('=');
@@ -647,6 +657,15 @@ class HttpHandleInterceptor extends Interceptor {
       final String? token = _extractTokenFromCookies(savedCookies);
       if (token != null && token.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
+      }
+    }
+
+    // Use stored access token if no Authorization header was set yet
+    if (!options.headers.containsKey('Authorization')) {
+      final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+      final String savedAccessToken = _accessTokenFromProfileJson(profileJson);
+      if (savedAccessToken.isNotEmpty) {
+        options.headers['Authorization'] = 'Bearer $savedAccessToken';
       }
     }
 

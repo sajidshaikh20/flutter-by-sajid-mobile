@@ -49,6 +49,12 @@ abstract class LoginUserResponse with _$LoginUserResponse {
     /// Authentication token for the customer.
     String? customerToken,
 
+    /// Access token returned from the login endpoint.
+    String? accessToken,
+
+    /// Refresh token returned from the login endpoint.
+    String? refreshToken,
+
     /// Number of items in the user's cart.
     int? cartCount,
 

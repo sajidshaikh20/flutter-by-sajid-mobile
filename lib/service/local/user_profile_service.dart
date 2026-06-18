@@ -33,18 +33,12 @@ class UserProfileService extends ChangeNotifier {
     } else {
       DebugLog.instance.w('UserProfileService.loadUserData: No valid data found - jsonString: "$jsonString"');
       _dataModel = UserProfileModel(
-          phoneNumber: '',
-          mobileNumber: '',
-          prefix: 0,
-          quoteId: '',
-          customerName: '',
-          customerEmail: '',
-          customerToken: '',
-          totalOrderValue: '',
-          lastOrderDate: '',
-          storeCredit: '',
-          rewardPoints: '',
-          totalOrder: 0, referralCode: '', fcmToken: '', gender: '', birthday: '', nationality: '',customerId: '',cartCount: 0,arabicNationality : ''
+        phoneNumber: '',
+        prefix: 0,
+        customerName: '',
+        customerEmail: '',
+        customerId: '',
+        customerToken: '',
       );
       DebugLog.instance.w('UserProfileService.loadUserData: Created empty model with default values');
     }
@@ -61,41 +55,14 @@ class UserProfileService extends ChangeNotifier {
 
   // Getters for user profile data
 
-  /// The customer's first name.
+  /// The customer's full name.
   String get customerName => _dataModel?.customerName ?? '';
-
-  /// The customer's last name.
-  String get customerLastName => _dataModel?.lastName ?? '';
-
-  /// The customer's first name.
-  String get firstName => _dataModel?.firstName ?? '';
-
-  /// The customer's last name.
-  String get lastName => _dataModel?.lastName ?? '';
 
   /// The customer's email address.
   String get customerEmail => _dataModel?.customerEmail ?? '';
 
   /// The customer's phone number.
   String get phoneNumber => _dataModel?.phoneNumber ?? '';
-
-  /// The customer's mobile number.
-  String get mobileNumber => _dataModel?.mobileNumber ?? '';
-
-  /// The customer's mobile number.
-  String get nationality => _dataModel?.nationality ?? '';
-
-  /// The customer' birthday.
-  String get birthday => _dataModel?.birthday ?? '';
-
-  ///referralCode
-  String get referralCode => _dataModel?.referralCode ?? '';
-  ///gender
-  String get gender => _dataModel?.gender ?? '';
-  ///fcmToken
-  String get fcmToken => _dataModel?.fcmToken ?? '';
-  ///arabicNationality
-  String get arabicNationality => _dataModel?.arabicNationality ?? '';
 
   /// The customer's username.
   String get username => _dataModel?.username ?? '';
@@ -153,6 +120,12 @@ class UserProfileService extends ChangeNotifier {
     return token;
   }
 
+  /// The access token for API calls.
+  String get accessToken => _dataModel?.accessToken ?? '';
+
+  /// The refresh token to renew session.
+  String get refreshToken => _dataModel?.refreshToken ?? '';
+
   /// Ensures user data is loaded and returns the customer token.
   /// This method should be used when you need to guarantee that user data is loaded.
   Future<String> getCustomerToken() async {
@@ -162,9 +135,6 @@ class UserProfileService extends ChangeNotifier {
 
   /// The customer's unique ID.
   String? get customerId => _dataModel?.customerId ?? '';
-
-  /// The current quote ID for the customer.
-  dynamic get quoteId => _dataModel?.quoteId ?? '';
 
   /// The customer's phone number prefix.
   dynamic get prefix => _dataModel?.prefix ?? "";
@@ -179,22 +149,10 @@ class UserProfileService extends ChangeNotifier {
     String? customerEmail,
     String? phoneNumber,
     String? customerToken,
+    String? accessToken,
+    String? refreshToken,
     String? customerId,
-    dynamic quoteId,
-    String? totalOrderValue,
-    String? lastOrderDate,
-    String? storeCredit,
-    String? rewardPoints,
-    int? totalOrder,
     dynamic prefix,
-    String? lastName,
-    int? cartCount,
-    String? referralCode,
-    String? gender,
-    String? birthday,
-    String? nationality,
-    String? fcmToken,
-    String? arabicNationality,
     String? username,
     int? roleId,
     String? roleName,
@@ -215,28 +173,13 @@ class UserProfileService extends ChangeNotifier {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
     _dataModel ??= UserProfileModel(
-        phoneNumber: '',
-        mobileNumber: '',
-        prefix: 0,
-        quoteId: '',
-        customerName: '',
-        customerEmail: '',
-        customerToken: '',
-        totalOrderValue: '',
-        lastOrderDate: '',
-        storeCredit: '',
-        rewardPoints: '',
-        totalOrder: 0,
-        referralCode: '',
-        fcmToken: '',
-        gender: '',
-        birthday: '',
-        nationality: '',
-        customerId: '',
-        cartCount: 0,
-        arabicNationality: '',
-        username: '',
-      );
+      phoneNumber: '',
+      prefix: 0,
+      customerName: '',
+      customerEmail: '',
+      customerId: '',
+      customerToken: '',
+    );
 
 
     // Update only the fields that are provided, keeping others unchanged
@@ -245,22 +188,10 @@ class UserProfileService extends ChangeNotifier {
       customerEmail: customerEmail ?? _dataModel?.customerEmail,
       phoneNumber: phoneNumber ?? _dataModel?.phoneNumber,
       customerToken: customerToken ?? _dataModel?.customerToken,
+      accessToken: accessToken ?? _dataModel?.accessToken,
+      refreshToken: refreshToken ?? _dataModel?.refreshToken,
       customerId: customerId ?? _dataModel?.customerId,
-      quoteId: quoteId ?? _dataModel?.quoteId,
-      totalOrderValue: totalOrderValue ?? _dataModel?.totalOrderValue,
-      lastOrderDate: lastOrderDate ?? _dataModel?.lastOrderDate,
-      storeCredit: storeCredit ?? _dataModel?.storeCredit,
-      rewardPoints: rewardPoints ?? _dataModel?.rewardPoints,
-      totalOrder: totalOrder ?? _dataModel?.totalOrder,
       prefix: prefix ?? _dataModel?.prefix,
-      lastName: lastName ?? _dataModel?.lastName,
-      cartCount: cartCount ?? _dataModel?.cartCount,
-      fcmToken: fcmToken ?? _dataModel?.fcmToken,
-      referralCode: referralCode ?? _dataModel?.referralCode,
-      gender: gender ?? _dataModel?.gender,
-      birthday: birthday ?? _dataModel?.birthday,
-      nationality: nationality ?? _dataModel?.nationality,
-      arabicNationality: arabicNationality ?? _dataModel?.arabicNationality,
       username: username ?? _dataModel?.username,
       roleId: roleId ?? _dataModel?.roleId,
       roleName: roleName ?? _dataModel?.roleName,
@@ -288,134 +219,4 @@ class UserProfileService extends ChangeNotifier {
 
   /// Checks if user data is loaded
   bool get isDataLoaded => _dataModel != null;
-
-  /// Clears the quote ID by setting it to null
-  /// This should be called when you want to reset the quote ID
-  Future<void> clearQuoteId() async {
-    await ensureUserDataLoaded();
-    _dataModel = _dataModel?.copyWith();
-
-    // Save updated model back to shared preferences
-    String jsonString = jsonEncode(_dataModel?.toJson());
-    await SharedPref.instance.setValue(PrefsKey.userProfileKey, jsonString);
-    notifyListeners();
-
-    DebugLog.instance.i('UserProfileService.clearQuoteId: Quote ID cleared');
-  }
-
-
-  /// Updates the user's profile data and clears the quote ID
-  /// This method should be used when you want to update profile and reset quote ID
-  Future<void> updateUserProfileAndClearQuoteId({
-    String? customerName,
-    String? customerEmail,
-    String? phoneNumber,
-    String? customerToken,
-    String? customerId,
-    String? totalOrderValue,
-    String? lastOrderDate,
-    String? storeCredit,
-    String? rewardPoints,
-    int? totalOrder,
-    dynamic prefix,
-    String? lastName,
-    int? cartCount,
-    String? referralCode,
-    String? gender,
-    String? birthday,
-    String? nationality,
-    String? fcmToken,
-    String? username,
-    int? roleId,
-    String? roleName,
-    String? subscriptionPublicId,
-    String? planName,
-    String? planCode,
-    String? category,
-    String? billingCycle,
-    double? amount,
-    String? currencyCode,
-    String? paymentStatus,
-    String? subscriptionStatus,
-    String? startDate,
-    String? endDate,
-    bool? isActive,
-    int? durationDays,
-  }) async {
-    // Ensure user data exists before updating; initialize if needed
-    await ensureUserDataLoaded();
-    _dataModel ??= UserProfileModel(
-        phoneNumber: '',
-        mobileNumber: '',
-        prefix: 0,
-        quoteId: '',
-        customerName: '',
-        customerEmail: '',
-        customerToken: '',
-        totalOrderValue: '',
-        lastOrderDate: '',
-        storeCredit: '',
-        rewardPoints: '',
-        totalOrder: 0,
-        referralCode: '',
-        fcmToken: '',
-        gender: '',
-        birthday: '',
-        nationality: '',
-        customerId: '',
-        cartCount: 0,
-        arabicNationality: '',
-        username: '',
-      );
-
-
-    // Update only the fields that are provided, keeping others unchanged
-    // Always set quoteId to null
-    _dataModel = _dataModel?.copyWith(
-      customerName: customerName ?? _dataModel?.customerName,
-      customerEmail: customerEmail ?? _dataModel?.customerEmail,
-      phoneNumber: phoneNumber ?? _dataModel?.phoneNumber,
-      customerToken: customerToken ?? _dataModel?.customerToken,
-      customerId: customerId ?? _dataModel?.customerId,
-      totalOrderValue: totalOrderValue ?? _dataModel?.totalOrderValue,
-      lastOrderDate: lastOrderDate ?? _dataModel?.lastOrderDate,
-      storeCredit: storeCredit ?? _dataModel?.storeCredit,
-      rewardPoints: rewardPoints ?? _dataModel?.rewardPoints,
-      totalOrder: totalOrder ?? _dataModel?.totalOrder,
-      prefix: prefix ?? _dataModel?.prefix,
-      lastName: lastName ?? _dataModel?.lastName,
-      cartCount: cartCount ?? _dataModel?.cartCount,
-      fcmToken: fcmToken ?? _dataModel?.fcmToken,
-      referralCode: referralCode ?? _dataModel?.referralCode,
-      gender: gender ?? _dataModel?.gender,
-      birthday: birthday ?? _dataModel?.birthday,
-      nationality: nationality ?? _dataModel?.nationality,
-      username: username ?? _dataModel?.username,
-      roleId: roleId ?? _dataModel?.roleId,
-      roleName: roleName ?? _dataModel?.roleName,
-      subscriptionPublicId: subscriptionPublicId ?? _dataModel?.subscriptionPublicId,
-      planName: planName ?? _dataModel?.planName,
-      planCode: planCode ?? _dataModel?.planCode,
-      category: category ?? _dataModel?.category,
-      billingCycle: billingCycle ?? _dataModel?.billingCycle,
-      amount: amount ?? _dataModel?.amount,
-      currencyCode: currencyCode ?? _dataModel?.currencyCode,
-      paymentStatus: paymentStatus ?? _dataModel?.paymentStatus,
-      subscriptionStatus: subscriptionStatus ?? _dataModel?.subscriptionStatus,
-      startDate: startDate ?? _dataModel?.startDate,
-      endDate: endDate ?? _dataModel?.endDate,
-      isActive: isActive ?? _dataModel?.isActive,
-      durationDays: durationDays ?? _dataModel?.durationDays,
-    );
-
-    // Save updated model back to shared preferences
-    String jsonString = jsonEncode(_dataModel?.toJson());
-    await SharedPref.instance.setValue(PrefsKey.userProfileKey, jsonString);
-    notifyListeners();
-
-    DebugLog.instance.i('UserProfileService.updateUserProfileAndClearQuoteId: Profile updated and quote ID cleared');
-  }
-
-
-
 }

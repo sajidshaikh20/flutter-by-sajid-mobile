@@ -24,7 +24,9 @@ mixin _$LoginUserResponse {
  String? get customerName;/// Customer's email address.
  String? get customerEmail;/// Customer's unique identifier.
  String? get customerId;/// Authentication token for the customer.
- String? get customerToken;/// Number of items in the user's cart.
+ String? get customerToken;/// Access token returned from the login endpoint.
+ String? get accessToken;/// Refresh token returned from the login endpoint.
+ String? get refreshToken;/// Number of items in the user's cart.
  int? get cartCount;/// Quote identifier for the current session.
  dynamic get quoteId;/// Total value of all orders placed by the user.
  String? get totalOrderValue;/// Date of the user's last order.
@@ -50,16 +52,16 @@ $LoginUserResponseCopyWith<LoginUserResponse> get copyWith => _$LoginUserRespons
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginUserResponse&&(identical(other.user, user) || other.user == user)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.login, login) || other.login == login)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.customerName, customerName) || other.customerName == customerName)&&(identical(other.customerEmail, customerEmail) || other.customerEmail == customerEmail)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.customerToken, customerToken) || other.customerToken == customerToken)&&(identical(other.cartCount, cartCount) || other.cartCount == cartCount)&&const DeepCollectionEquality().equals(other.quoteId, quoteId)&&(identical(other.totalOrderValue, totalOrderValue) || other.totalOrderValue == totalOrderValue)&&(identical(other.lastOrderDate, lastOrderDate) || other.lastOrderDate == lastOrderDate)&&(identical(other.walletBalance, walletBalance) || other.walletBalance == walletBalance)&&(identical(other.loyaltyPoints, loyaltyPoints) || other.loyaltyPoints == loyaltyPoints)&&(identical(other.totalOrder, totalOrder) || other.totalOrder == totalOrder)&&(identical(other.referralCode, referralCode) || other.referralCode == referralCode)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.arabicNationality, arabicNationality) || other.arabicNationality == arabicNationality)&&const DeepCollectionEquality().equals(other.prefix, prefix));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginUserResponse&&(identical(other.user, user) || other.user == user)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.login, login) || other.login == login)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.customerName, customerName) || other.customerName == customerName)&&(identical(other.customerEmail, customerEmail) || other.customerEmail == customerEmail)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.customerToken, customerToken) || other.customerToken == customerToken)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.cartCount, cartCount) || other.cartCount == cartCount)&&const DeepCollectionEquality().equals(other.quoteId, quoteId)&&(identical(other.totalOrderValue, totalOrderValue) || other.totalOrderValue == totalOrderValue)&&(identical(other.lastOrderDate, lastOrderDate) || other.lastOrderDate == lastOrderDate)&&(identical(other.walletBalance, walletBalance) || other.walletBalance == walletBalance)&&(identical(other.loyaltyPoints, loyaltyPoints) || other.loyaltyPoints == loyaltyPoints)&&(identical(other.totalOrder, totalOrder) || other.totalOrder == totalOrder)&&(identical(other.referralCode, referralCode) || other.referralCode == referralCode)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.arabicNationality, arabicNationality) || other.arabicNationality == arabicNationality)&&const DeepCollectionEquality().equals(other.prefix, prefix));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,user,id,name,login,phoneNumber,customerName,customerEmail,customerId,customerToken,cartCount,const DeepCollectionEquality().hash(quoteId),totalOrderValue,lastOrderDate,walletBalance,loyaltyPoints,totalOrder,referralCode,gender,birthday,nationality,arabicNationality,const DeepCollectionEquality().hash(prefix)]);
+int get hashCode => Object.hashAll([runtimeType,user,id,name,login,phoneNumber,customerName,customerEmail,customerId,customerToken,accessToken,refreshToken,cartCount,const DeepCollectionEquality().hash(quoteId),totalOrderValue,lastOrderDate,walletBalance,loyaltyPoints,totalOrder,referralCode,gender,birthday,nationality,arabicNationality,const DeepCollectionEquality().hash(prefix)]);
 
 @override
 String toString() {
-  return 'LoginUserResponse(user: $user, id: $id, name: $name, login: $login, phoneNumber: $phoneNumber, customerName: $customerName, customerEmail: $customerEmail, customerId: $customerId, customerToken: $customerToken, cartCount: $cartCount, quoteId: $quoteId, totalOrderValue: $totalOrderValue, lastOrderDate: $lastOrderDate, walletBalance: $walletBalance, loyaltyPoints: $loyaltyPoints, totalOrder: $totalOrder, referralCode: $referralCode, gender: $gender, birthday: $birthday, nationality: $nationality, arabicNationality: $arabicNationality, prefix: $prefix)';
+  return 'LoginUserResponse(user: $user, id: $id, name: $name, login: $login, phoneNumber: $phoneNumber, customerName: $customerName, customerEmail: $customerEmail, customerId: $customerId, customerToken: $customerToken, accessToken: $accessToken, refreshToken: $refreshToken, cartCount: $cartCount, quoteId: $quoteId, totalOrderValue: $totalOrderValue, lastOrderDate: $lastOrderDate, walletBalance: $walletBalance, loyaltyPoints: $loyaltyPoints, totalOrder: $totalOrder, referralCode: $referralCode, gender: $gender, birthday: $birthday, nationality: $nationality, arabicNationality: $arabicNationality, prefix: $prefix)';
 }
 
 
@@ -70,7 +72,7 @@ abstract mixin class $LoginUserResponseCopyWith<$Res>  {
   factory $LoginUserResponseCopyWith(LoginUserResponse value, $Res Function(LoginUserResponse) _then) = _$LoginUserResponseCopyWithImpl;
 @useResult
 $Res call({
- UserResponseData? user, int? id, String? name, String? login, String? phoneNumber, String? customerName, String? customerEmail, String? customerId, String? customerToken, int? cartCount, dynamic quoteId, String? totalOrderValue, String? lastOrderDate, String? walletBalance, String? loyaltyPoints, int? totalOrder, String? referralCode, String? gender, String? birthday, String? nationality, String? arabicNationality, dynamic prefix
+ UserResponseData? user, int? id, String? name, String? login, String? phoneNumber, String? customerName, String? customerEmail, String? customerId, String? customerToken, String? accessToken, String? refreshToken, int? cartCount, dynamic quoteId, String? totalOrderValue, String? lastOrderDate, String? walletBalance, String? loyaltyPoints, int? totalOrder, String? referralCode, String? gender, String? birthday, String? nationality, String? arabicNationality, dynamic prefix
 });
 
 
@@ -87,7 +89,7 @@ class _$LoginUserResponseCopyWithImpl<$Res>
 
 /// Create a copy of LoginUserResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? user = freezed,Object? id = freezed,Object? name = freezed,Object? login = freezed,Object? phoneNumber = freezed,Object? customerName = freezed,Object? customerEmail = freezed,Object? customerId = freezed,Object? customerToken = freezed,Object? cartCount = freezed,Object? quoteId = freezed,Object? totalOrderValue = freezed,Object? lastOrderDate = freezed,Object? walletBalance = freezed,Object? loyaltyPoints = freezed,Object? totalOrder = freezed,Object? referralCode = freezed,Object? gender = freezed,Object? birthday = freezed,Object? nationality = freezed,Object? arabicNationality = freezed,Object? prefix = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = freezed,Object? id = freezed,Object? name = freezed,Object? login = freezed,Object? phoneNumber = freezed,Object? customerName = freezed,Object? customerEmail = freezed,Object? customerId = freezed,Object? customerToken = freezed,Object? accessToken = freezed,Object? refreshToken = freezed,Object? cartCount = freezed,Object? quoteId = freezed,Object? totalOrderValue = freezed,Object? lastOrderDate = freezed,Object? walletBalance = freezed,Object? loyaltyPoints = freezed,Object? totalOrder = freezed,Object? referralCode = freezed,Object? gender = freezed,Object? birthday = freezed,Object? nationality = freezed,Object? arabicNationality = freezed,Object? prefix = freezed,}) {
   return _then(_self.copyWith(
 user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserResponseData?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
@@ -98,6 +100,8 @@ as String?,customerName: freezed == customerName ? _self.customerName : customer
 as String?,customerEmail: freezed == customerEmail ? _self.customerEmail : customerEmail // ignore: cast_nullable_to_non_nullable
 as String?,customerId: freezed == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
 as String?,customerToken: freezed == customerToken ? _self.customerToken : customerToken // ignore: cast_nullable_to_non_nullable
+as String?,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
+as String?,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
 as String?,cartCount: freezed == cartCount ? _self.cartCount : cartCount // ignore: cast_nullable_to_non_nullable
 as int?,quoteId: freezed == quoteId ? _self.quoteId : quoteId // ignore: cast_nullable_to_non_nullable
 as dynamic,totalOrderValue: freezed == totalOrderValue ? _self.totalOrderValue : totalOrderValue // ignore: cast_nullable_to_non_nullable
@@ -208,10 +212,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserResponseData? user,  int? id,  String? name,  String? login,  String? phoneNumber,  String? customerName,  String? customerEmail,  String? customerId,  String? customerToken,  int? cartCount,  dynamic quoteId,  String? totalOrderValue,  String? lastOrderDate,  String? walletBalance,  String? loyaltyPoints,  int? totalOrder,  String? referralCode,  String? gender,  String? birthday,  String? nationality,  String? arabicNationality,  dynamic prefix)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserResponseData? user,  int? id,  String? name,  String? login,  String? phoneNumber,  String? customerName,  String? customerEmail,  String? customerId,  String? customerToken,  String? accessToken,  String? refreshToken,  int? cartCount,  dynamic quoteId,  String? totalOrderValue,  String? lastOrderDate,  String? walletBalance,  String? loyaltyPoints,  int? totalOrder,  String? referralCode,  String? gender,  String? birthday,  String? nationality,  String? arabicNationality,  dynamic prefix)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginUserResponse() when $default != null:
-return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_that.customerName,_that.customerEmail,_that.customerId,_that.customerToken,_that.cartCount,_that.quoteId,_that.totalOrderValue,_that.lastOrderDate,_that.walletBalance,_that.loyaltyPoints,_that.totalOrder,_that.referralCode,_that.gender,_that.birthday,_that.nationality,_that.arabicNationality,_that.prefix);case _:
+return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_that.customerName,_that.customerEmail,_that.customerId,_that.customerToken,_that.accessToken,_that.refreshToken,_that.cartCount,_that.quoteId,_that.totalOrderValue,_that.lastOrderDate,_that.walletBalance,_that.loyaltyPoints,_that.totalOrder,_that.referralCode,_that.gender,_that.birthday,_that.nationality,_that.arabicNationality,_that.prefix);case _:
   return orElse();
 
 }
@@ -229,10 +233,10 @@ return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserResponseData? user,  int? id,  String? name,  String? login,  String? phoneNumber,  String? customerName,  String? customerEmail,  String? customerId,  String? customerToken,  int? cartCount,  dynamic quoteId,  String? totalOrderValue,  String? lastOrderDate,  String? walletBalance,  String? loyaltyPoints,  int? totalOrder,  String? referralCode,  String? gender,  String? birthday,  String? nationality,  String? arabicNationality,  dynamic prefix)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserResponseData? user,  int? id,  String? name,  String? login,  String? phoneNumber,  String? customerName,  String? customerEmail,  String? customerId,  String? customerToken,  String? accessToken,  String? refreshToken,  int? cartCount,  dynamic quoteId,  String? totalOrderValue,  String? lastOrderDate,  String? walletBalance,  String? loyaltyPoints,  int? totalOrder,  String? referralCode,  String? gender,  String? birthday,  String? nationality,  String? arabicNationality,  dynamic prefix)  $default,) {final _that = this;
 switch (_that) {
 case _LoginUserResponse():
-return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_that.customerName,_that.customerEmail,_that.customerId,_that.customerToken,_that.cartCount,_that.quoteId,_that.totalOrderValue,_that.lastOrderDate,_that.walletBalance,_that.loyaltyPoints,_that.totalOrder,_that.referralCode,_that.gender,_that.birthday,_that.nationality,_that.arabicNationality,_that.prefix);case _:
+return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_that.customerName,_that.customerEmail,_that.customerId,_that.customerToken,_that.accessToken,_that.refreshToken,_that.cartCount,_that.quoteId,_that.totalOrderValue,_that.lastOrderDate,_that.walletBalance,_that.loyaltyPoints,_that.totalOrder,_that.referralCode,_that.gender,_that.birthday,_that.nationality,_that.arabicNationality,_that.prefix);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -249,10 +253,10 @@ return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserResponseData? user,  int? id,  String? name,  String? login,  String? phoneNumber,  String? customerName,  String? customerEmail,  String? customerId,  String? customerToken,  int? cartCount,  dynamic quoteId,  String? totalOrderValue,  String? lastOrderDate,  String? walletBalance,  String? loyaltyPoints,  int? totalOrder,  String? referralCode,  String? gender,  String? birthday,  String? nationality,  String? arabicNationality,  dynamic prefix)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserResponseData? user,  int? id,  String? name,  String? login,  String? phoneNumber,  String? customerName,  String? customerEmail,  String? customerId,  String? customerToken,  String? accessToken,  String? refreshToken,  int? cartCount,  dynamic quoteId,  String? totalOrderValue,  String? lastOrderDate,  String? walletBalance,  String? loyaltyPoints,  int? totalOrder,  String? referralCode,  String? gender,  String? birthday,  String? nationality,  String? arabicNationality,  dynamic prefix)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginUserResponse() when $default != null:
-return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_that.customerName,_that.customerEmail,_that.customerId,_that.customerToken,_that.cartCount,_that.quoteId,_that.totalOrderValue,_that.lastOrderDate,_that.walletBalance,_that.loyaltyPoints,_that.totalOrder,_that.referralCode,_that.gender,_that.birthday,_that.nationality,_that.arabicNationality,_that.prefix);case _:
+return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_that.customerName,_that.customerEmail,_that.customerId,_that.customerToken,_that.accessToken,_that.refreshToken,_that.cartCount,_that.quoteId,_that.totalOrderValue,_that.lastOrderDate,_that.walletBalance,_that.loyaltyPoints,_that.totalOrder,_that.referralCode,_that.gender,_that.birthday,_that.nationality,_that.arabicNationality,_that.prefix);case _:
   return null;
 
 }
@@ -264,7 +268,7 @@ return $default(_that.user,_that.id,_that.name,_that.login,_that.phoneNumber,_th
 @JsonSerializable()
 
 class _LoginUserResponse implements LoginUserResponse {
-  const _LoginUserResponse({this.user, this.id, this.name, this.login, this.phoneNumber, this.customerName, this.customerEmail, this.customerId, this.customerToken, this.cartCount, this.quoteId, this.totalOrderValue, this.lastOrderDate, this.walletBalance, this.loyaltyPoints, this.totalOrder, this.referralCode, this.gender, this.birthday, this.nationality, this.arabicNationality, this.prefix});
+  const _LoginUserResponse({this.user, this.id, this.name, this.login, this.phoneNumber, this.customerName, this.customerEmail, this.customerId, this.customerToken, this.accessToken, this.refreshToken, this.cartCount, this.quoteId, this.totalOrderValue, this.lastOrderDate, this.walletBalance, this.loyaltyPoints, this.totalOrder, this.referralCode, this.gender, this.birthday, this.nationality, this.arabicNationality, this.prefix});
   factory _LoginUserResponse.fromJson(Map<String, dynamic> json) => _$LoginUserResponseFromJson(json);
 
 /// Nested user data returned from the backend.
@@ -285,6 +289,10 @@ class _LoginUserResponse implements LoginUserResponse {
 @override final  String? customerId;
 /// Authentication token for the customer.
 @override final  String? customerToken;
+/// Access token returned from the login endpoint.
+@override final  String? accessToken;
+/// Refresh token returned from the login endpoint.
+@override final  String? refreshToken;
 /// Number of items in the user's cart.
 @override final  int? cartCount;
 /// Quote identifier for the current session.
@@ -325,16 +333,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginUserResponse&&(identical(other.user, user) || other.user == user)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.login, login) || other.login == login)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.customerName, customerName) || other.customerName == customerName)&&(identical(other.customerEmail, customerEmail) || other.customerEmail == customerEmail)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.customerToken, customerToken) || other.customerToken == customerToken)&&(identical(other.cartCount, cartCount) || other.cartCount == cartCount)&&const DeepCollectionEquality().equals(other.quoteId, quoteId)&&(identical(other.totalOrderValue, totalOrderValue) || other.totalOrderValue == totalOrderValue)&&(identical(other.lastOrderDate, lastOrderDate) || other.lastOrderDate == lastOrderDate)&&(identical(other.walletBalance, walletBalance) || other.walletBalance == walletBalance)&&(identical(other.loyaltyPoints, loyaltyPoints) || other.loyaltyPoints == loyaltyPoints)&&(identical(other.totalOrder, totalOrder) || other.totalOrder == totalOrder)&&(identical(other.referralCode, referralCode) || other.referralCode == referralCode)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.arabicNationality, arabicNationality) || other.arabicNationality == arabicNationality)&&const DeepCollectionEquality().equals(other.prefix, prefix));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginUserResponse&&(identical(other.user, user) || other.user == user)&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.login, login) || other.login == login)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.customerName, customerName) || other.customerName == customerName)&&(identical(other.customerEmail, customerEmail) || other.customerEmail == customerEmail)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.customerToken, customerToken) || other.customerToken == customerToken)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.cartCount, cartCount) || other.cartCount == cartCount)&&const DeepCollectionEquality().equals(other.quoteId, quoteId)&&(identical(other.totalOrderValue, totalOrderValue) || other.totalOrderValue == totalOrderValue)&&(identical(other.lastOrderDate, lastOrderDate) || other.lastOrderDate == lastOrderDate)&&(identical(other.walletBalance, walletBalance) || other.walletBalance == walletBalance)&&(identical(other.loyaltyPoints, loyaltyPoints) || other.loyaltyPoints == loyaltyPoints)&&(identical(other.totalOrder, totalOrder) || other.totalOrder == totalOrder)&&(identical(other.referralCode, referralCode) || other.referralCode == referralCode)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthday, birthday) || other.birthday == birthday)&&(identical(other.nationality, nationality) || other.nationality == nationality)&&(identical(other.arabicNationality, arabicNationality) || other.arabicNationality == arabicNationality)&&const DeepCollectionEquality().equals(other.prefix, prefix));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,user,id,name,login,phoneNumber,customerName,customerEmail,customerId,customerToken,cartCount,const DeepCollectionEquality().hash(quoteId),totalOrderValue,lastOrderDate,walletBalance,loyaltyPoints,totalOrder,referralCode,gender,birthday,nationality,arabicNationality,const DeepCollectionEquality().hash(prefix)]);
+int get hashCode => Object.hashAll([runtimeType,user,id,name,login,phoneNumber,customerName,customerEmail,customerId,customerToken,accessToken,refreshToken,cartCount,const DeepCollectionEquality().hash(quoteId),totalOrderValue,lastOrderDate,walletBalance,loyaltyPoints,totalOrder,referralCode,gender,birthday,nationality,arabicNationality,const DeepCollectionEquality().hash(prefix)]);
 
 @override
 String toString() {
-  return 'LoginUserResponse(user: $user, id: $id, name: $name, login: $login, phoneNumber: $phoneNumber, customerName: $customerName, customerEmail: $customerEmail, customerId: $customerId, customerToken: $customerToken, cartCount: $cartCount, quoteId: $quoteId, totalOrderValue: $totalOrderValue, lastOrderDate: $lastOrderDate, walletBalance: $walletBalance, loyaltyPoints: $loyaltyPoints, totalOrder: $totalOrder, referralCode: $referralCode, gender: $gender, birthday: $birthday, nationality: $nationality, arabicNationality: $arabicNationality, prefix: $prefix)';
+  return 'LoginUserResponse(user: $user, id: $id, name: $name, login: $login, phoneNumber: $phoneNumber, customerName: $customerName, customerEmail: $customerEmail, customerId: $customerId, customerToken: $customerToken, accessToken: $accessToken, refreshToken: $refreshToken, cartCount: $cartCount, quoteId: $quoteId, totalOrderValue: $totalOrderValue, lastOrderDate: $lastOrderDate, walletBalance: $walletBalance, loyaltyPoints: $loyaltyPoints, totalOrder: $totalOrder, referralCode: $referralCode, gender: $gender, birthday: $birthday, nationality: $nationality, arabicNationality: $arabicNationality, prefix: $prefix)';
 }
 
 
@@ -345,7 +353,7 @@ abstract mixin class _$LoginUserResponseCopyWith<$Res> implements $LoginUserResp
   factory _$LoginUserResponseCopyWith(_LoginUserResponse value, $Res Function(_LoginUserResponse) _then) = __$LoginUserResponseCopyWithImpl;
 @override @useResult
 $Res call({
- UserResponseData? user, int? id, String? name, String? login, String? phoneNumber, String? customerName, String? customerEmail, String? customerId, String? customerToken, int? cartCount, dynamic quoteId, String? totalOrderValue, String? lastOrderDate, String? walletBalance, String? loyaltyPoints, int? totalOrder, String? referralCode, String? gender, String? birthday, String? nationality, String? arabicNationality, dynamic prefix
+ UserResponseData? user, int? id, String? name, String? login, String? phoneNumber, String? customerName, String? customerEmail, String? customerId, String? customerToken, String? accessToken, String? refreshToken, int? cartCount, dynamic quoteId, String? totalOrderValue, String? lastOrderDate, String? walletBalance, String? loyaltyPoints, int? totalOrder, String? referralCode, String? gender, String? birthday, String? nationality, String? arabicNationality, dynamic prefix
 });
 
 
@@ -362,7 +370,7 @@ class __$LoginUserResponseCopyWithImpl<$Res>
 
 /// Create a copy of LoginUserResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? user = freezed,Object? id = freezed,Object? name = freezed,Object? login = freezed,Object? phoneNumber = freezed,Object? customerName = freezed,Object? customerEmail = freezed,Object? customerId = freezed,Object? customerToken = freezed,Object? cartCount = freezed,Object? quoteId = freezed,Object? totalOrderValue = freezed,Object? lastOrderDate = freezed,Object? walletBalance = freezed,Object? loyaltyPoints = freezed,Object? totalOrder = freezed,Object? referralCode = freezed,Object? gender = freezed,Object? birthday = freezed,Object? nationality = freezed,Object? arabicNationality = freezed,Object? prefix = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = freezed,Object? id = freezed,Object? name = freezed,Object? login = freezed,Object? phoneNumber = freezed,Object? customerName = freezed,Object? customerEmail = freezed,Object? customerId = freezed,Object? customerToken = freezed,Object? accessToken = freezed,Object? refreshToken = freezed,Object? cartCount = freezed,Object? quoteId = freezed,Object? totalOrderValue = freezed,Object? lastOrderDate = freezed,Object? walletBalance = freezed,Object? loyaltyPoints = freezed,Object? totalOrder = freezed,Object? referralCode = freezed,Object? gender = freezed,Object? birthday = freezed,Object? nationality = freezed,Object? arabicNationality = freezed,Object? prefix = freezed,}) {
   return _then(_LoginUserResponse(
 user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserResponseData?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
@@ -373,6 +381,8 @@ as String?,customerName: freezed == customerName ? _self.customerName : customer
 as String?,customerEmail: freezed == customerEmail ? _self.customerEmail : customerEmail // ignore: cast_nullable_to_non_nullable
 as String?,customerId: freezed == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
 as String?,customerToken: freezed == customerToken ? _self.customerToken : customerToken // ignore: cast_nullable_to_non_nullable
+as String?,accessToken: freezed == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
+as String?,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
 as String?,cartCount: freezed == cartCount ? _self.cartCount : cartCount // ignore: cast_nullable_to_non_nullable
 as int?,quoteId: freezed == quoteId ? _self.quoteId : quoteId // ignore: cast_nullable_to_non_nullable
 as dynamic,totalOrderValue: freezed == totalOrderValue ? _self.totalOrderValue : totalOrderValue // ignore: cast_nullable_to_non_nullable

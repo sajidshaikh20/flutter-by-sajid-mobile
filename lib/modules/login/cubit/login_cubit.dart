@@ -59,7 +59,6 @@ class LoginCubit extends Cubit<LoginState> {
             baseResponse.data != null) {
           final LoginUserResponse userResponse = baseResponse.data!;
           final UserResponseData? user = userResponse.user;
-
           if (user != null) {
             // Save login status and registration status
             await SharedPref.instance.setValue(PrefsKey.isLoggedInKey, true);
@@ -70,6 +69,9 @@ class LoginCubit extends Cubit<LoginState> {
               customerName: user.name,
               customerEmail: user.email,
               phoneNumber: user.phone,
+              customerToken: userResponse.accessToken,
+              accessToken: userResponse.accessToken,
+              refreshToken: userResponse.refreshToken,
               customerId: user.publicId,
               username: user.username,
               prefix: user.countryCode,
