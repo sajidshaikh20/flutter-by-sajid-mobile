@@ -67,6 +67,26 @@ class SignUpBasicInfoForm extends StatelessWidget {
               );
             },
           ),
+          Dimens.size32.heightBox,
+          Align(
+            alignment: Alignment.center,
+            child: GestureDetector(
+              onTap: () async {
+                await context.router.push(LoginRoute());
+              },
+              child: CustomTextLabelWidget(
+                label: context.appString.alreadyHaveAccountKey,
+                style: context.textTheme.titleLarge?.copyWith(
+                  height: Dimens.lineHeight20.toLineHeight(
+                    Dimens.fontSize14,
+                  ),
+                  fontWeight: FontWeight.w600,
+                  fontSize: Dimens.fontSize14,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                ),
+              ),
+            ),
+          ),
           Dimens.size24.heightBox,
         ],
       ),

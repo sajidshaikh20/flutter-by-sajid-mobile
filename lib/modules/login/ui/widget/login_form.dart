@@ -399,7 +399,7 @@ class LoginForm extends StatelessWidget {
                                 child: CustomTextLabelWidget(
                                   onTap: () async {
                                     await context.router.push(
-                                      const SignUpRoute(),
+                                      SignUpRoute(),
                                     );
                                   },
                                   label: context.appString.dontHaveAccountKey,

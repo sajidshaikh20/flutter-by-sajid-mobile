@@ -27,6 +27,7 @@ class SocialLoginPage extends BaseResponsiveView {
     return BlocProvider<SocialLoginCubit>(
       create: (BuildContext ctx) => SocialLoginCubit(
         initialState: const SocialLoginState(status: BaseStateStatus.initial),
+        loginRepository: LoginRepositoryImpl(),
       ),
       child: BlocConsumer<SocialLoginCubit, SocialLoginState>(
         listener: (BuildContext context, SocialLoginState state) async {
@@ -36,6 +37,7 @@ class SocialLoginPage extends BaseResponsiveView {
 
           if (state.msg != null && (state.msg?.isNotEmpty ?? false)) {
             displaySnackBar(state.msg ?? '', context);
+            context.read<SocialLoginCubit>().clearMsg();
           }
 
           // Navigate on success status with a small delay
@@ -50,7 +52,7 @@ class SocialLoginPage extends BaseResponsiveView {
                 final PageRouteInfo route =
                     state.redirectRoute ??
                     AccountVerificationHelper.resolvePostLoginRoute();
-                await context.router.replaceAll(<PageRouteInfo>[route]);
+                await context.router.push(route);
                 DebugLog.instance.i('Navigation completed successfully');
               }
             } on Exception catch (e) {

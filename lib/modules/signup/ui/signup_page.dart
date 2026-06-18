@@ -4,14 +4,22 @@ import '../../../utils/exports.dart';
 /// Page for user sign up.
 class SignUpPage extends BaseResponsiveView {
   /// Creates [SignUpPage].
-  const SignUpPage({super.key});
+  const SignUpPage({
+    super.key,
+    this.prefilledName,
+    this.prefilledEmail,
+  });
+
+  /// Prefilled fields from external authentications
+  final String? prefilledName;
+  final String? prefilledEmail;
 
   SignUpState _createInitialState() {
     return SignUpState(
       status: BaseStateStatus.initial,
       formKey: GlobalKey<FormState>(),
-      fullNameController: TextEditingController(),
-      emailController: TextEditingController(),
+      fullNameController: TextEditingController(text: prefilledName),
+      emailController: TextEditingController(text: prefilledEmail),
       phoneController: TextEditingController(),
       usernameController: TextEditingController(),
       passwordController: TextEditingController(),
