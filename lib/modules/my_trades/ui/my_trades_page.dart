@@ -49,24 +49,52 @@ class _MyTradesViewBodyState extends State<MyTradesViewBody> {
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
     final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
-    return BlocConsumer<MyTradesCubit, MyTradesState>(
-      listener: (BuildContext context, MyTradesState state) {
-        if (state.status == BaseStateStatus.loading) {
-          unawaited(EasyLoading.show(status: 'Loading...'));
-        } else {
-          unawaited(EasyLoading.dismiss());
-        }
+    return ListenableBuilder(
+      listenable: UserProfileService.instance(),
+      builder: (BuildContext context, Widget? child) {
+        final bool isSubscribed = UserProfileService.instance().isSubscriptionActive;
 
-        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
-          context.scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(state.msg!),
-              backgroundColor: AppColors.errorColor,
+        if (!isSubscribed) {
+          return Scaffold(
+            backgroundColor: pageBg,
+            body: const SafeArea(
+              child: Column(
+                children: <Widget>[
+                  HomeHeaderAppBar(
+                    showProfileImage: false,
+                    title: 'My Trades',
+                    subtitle: 'Track and manage your active and past trades',
+                  ),
+                  Expanded(
+                    child: SubscriptionLockWidget(
+                      title: 'Unlock My Trades',
+                      subtitle: 'Subscribe to view and track your customized trade history.',
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
-          context.read<MyTradesCubit>().resetError();
         }
-      },
+
+        return BlocConsumer<MyTradesCubit, MyTradesState>(
+          listener: (BuildContext context, MyTradesState state) {
+            if (state.status == BaseStateStatus.loading) {
+              unawaited(EasyLoading.show(status: 'Loading...'));
+            } else {
+              unawaited(EasyLoading.dismiss());
+            }
+
+            if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+              context.scaffoldMessenger.showSnackBar(
+                SnackBar(
+                  content: Text(state.msg!),
+                  backgroundColor: AppColors.errorColor,
+                ),
+              );
+              context.read<MyTradesCubit>().resetError();
+            }
+          },
       builder: (BuildContext context, MyTradesState state) {
         final List<TradingSignalModel> allSignals = state.signals;
 
@@ -274,6 +302,8 @@ class _MyTradesViewBodyState extends State<MyTradesViewBody> {
             ),
           ),
         );
+      },
+    );
       },
     );
   }

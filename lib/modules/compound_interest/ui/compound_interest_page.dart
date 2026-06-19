@@ -610,16 +610,16 @@ class ChartPainter extends CustomPainter {
         gridPaint,
       );
 
-      textPainter.text = TextSpan(
+      textPainter..text = TextSpan(
         text: _formatYAxisLabel(yVal),
         style: TextStyle(
           color: isDark ? Colors.white60 : Colors.black54,
           fontSize: 10,
           fontFamily: 'inter',
         ),
-      );
-      textPainter.layout();
-      textPainter.paint(
+      )
+      ..layout()
+      ..paint(
         canvas,
         Offset(leftPadding - textPainter.width - 8.0, yPos - textPainter.height / 2),
       );

@@ -21,7 +21,10 @@ class TradingOverviewPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<TradingOverviewCubit>(
-      create: (BuildContext context) => TradingOverviewCubit(signal: signal),
+      create: (BuildContext context) => TradingOverviewCubit(
+        signal: signal,
+        repository: TradesRepositoryImpl(),
+      ),
       child: TradingOverviewViewBody(signal: signal),
     );
   }
@@ -80,10 +83,60 @@ class TradingOverviewViewBody extends StatelessWidget {
       statusBgColor = AppColors.neutralColor;
     }
 
-    return BlocBuilder<TradingOverviewCubit, TradingOverviewState>(
+    return BlocConsumer<TradingOverviewCubit, TradingOverviewState>(
+      listener: (BuildContext context, TradingOverviewState state) {
+        if (state.status == BaseStateStatus.loading) {
+          unawaited(EasyLoading.show(status: 'Loading...'));
+        } else {
+          unawaited(EasyLoading.dismiss());
+        }
+
+        if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
+          context.scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(state.msg!),
+              backgroundColor: AppColors.successColor,
+            ),
+          );
+          context.read<TradingOverviewCubit>().resetError();
+        }
+
+        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+          context.scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(state.msg!),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+          context.read<TradingOverviewCubit>().resetError();
+        }
+      },
       builder: (BuildContext context, TradingOverviewState state) {
         return Scaffold(
           backgroundColor: pageBg,
+          bottomNavigationBar: (signal.isActive || signal.isPending)
+              ? SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
+                    child: CustomGradientButtonWidget(
+                      title: 'Take Trade',
+                      onTap: () {
+                        if (signal.publicId.isNotEmpty) {
+                          unawaited(context.read<TradingOverviewCubit>().takeTrade(signal.publicId));
+                        } else {
+                          context.scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Cannot take trade: invalid ID'),
+                            ),
+                          );
+                        }
+                      },
+                      borderRadius: Dimens.radius12,
+                      height: 50,
+                    ),
+                  ),
+                )
+              : null,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

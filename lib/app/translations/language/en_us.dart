@@ -474,6 +474,10 @@ class EnUS extends AppString {
   @override
   String get settingsAboutSubtitleKey => 'Version 1.0.0';
   @override
+  String get settingsContactUsTitleKey => 'Contact Us';
+  @override
+  String get settingsContactUsSubtitleKey => 'Get in touch with our team';
+  @override
   String get settingsLogOutKey => 'Log Out';
   @override
   String get settingsLeaderboardTitleKey => 'Leaderboard';

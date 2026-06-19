@@ -28,6 +28,10 @@ abstract class AppConstant {
   static const String appstoreURL = "https://apps.apple.com/app/";
   static const String appId = "com.wekopro.app";
   static const String appStoreId = "kdd-online-grocery/id1551339483";
+  static const String aboutUsUrl = 'https://weko.pro/about';
+  static const String termsAndConditionsUrl = 'https://weko.pro/terms-and-conditions';
+  static const String privacyPolicyUrl = 'https://weko.pro/privacy-policy';
+  static const String contactUsUrl = 'https://weko.pro/contact-us';
   static const String platformNotSupportedCode = 'PlatformNotSupported';
   static const String platformNotSupportedMessage =
       'This platform is not supported';

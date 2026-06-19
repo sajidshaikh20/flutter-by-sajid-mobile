@@ -384,17 +384,6 @@ class _SettingsViewState extends State<SettingsView> {
                             ),
                             child: Column(
                               children: <Widget>[
-                                SettingsListTileWidget(
-                                  icon: Icons.help_outline_rounded,
-                                  title: context.appString.settingsHelpTitleKey,
-                                  subtitle: context.appString.settingsHelpSubtitleKey,
-                                  trailing: Icon(
-                                    Icons.keyboard_arrow_right_rounded,
-                                    color: subtitleColor,
-                                    size: Dimens.size18,
-                                  ),
-                                  onTap: () => _showComingSoon('Help & Support'),
-                                ),
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(
                                   icon: Icons.privacy_tip_outlined,
@@ -405,7 +394,15 @@ class _SettingsViewState extends State<SettingsView> {
                                     color: subtitleColor,
                                     size: Dimens.size18,
                                   ),
-                                  onTap: () => _showComingSoon('Privacy Policy'),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute<dynamic>(
+                                      builder: (BuildContext context) => const InAppWebViewPage(
+                                        title: 'Privacy Policy',
+                                        url: AppConstant.privacyPolicyUrl,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(
@@ -417,7 +414,15 @@ class _SettingsViewState extends State<SettingsView> {
                                     color: subtitleColor,
                                     size: Dimens.size18,
                                   ),
-                                  onTap: () => _showComingSoon('Terms & Conditions'),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute<dynamic>(
+                                      builder: (BuildContext context) => const InAppWebViewPage(
+                                        title: 'Terms & Conditions',
+                                        url: AppConstant.termsAndConditionsUrl,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(
@@ -429,7 +434,35 @@ class _SettingsViewState extends State<SettingsView> {
                                     color: subtitleColor,
                                     size: Dimens.size18,
                                   ),
-                                  onTap: () => _showComingSoon('About WEKO'),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute<dynamic>(
+                                      builder: (BuildContext context) => const InAppWebViewPage(
+                                        title: 'About WEKO',
+                                        url: AppConstant.aboutUsUrl,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                _Divider(isDark: isDark),
+                                SettingsListTileWidget(
+                                  icon: Icons.contact_support_outlined,
+                                  title: context.appString.settingsContactUsTitleKey,
+                                  subtitle: context.appString.settingsContactUsSubtitleKey,
+                                  trailing: Icon(
+                                    Icons.keyboard_arrow_right_rounded,
+                                    color: subtitleColor,
+                                    size: Dimens.size18,
+                                  ),
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute<dynamic>(
+                                      builder: (BuildContext context) => const InAppWebViewPage(
+                                        title: 'Contact Us',
+                                        url: AppConstant.contactUsUrl,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

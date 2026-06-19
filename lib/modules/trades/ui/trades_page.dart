@@ -49,34 +49,63 @@ class _TradesViewBodyState extends State<TradesViewBody> {
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
     final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
 
-    return BlocConsumer<TradesCubit, TradesState>(
-      listener: (BuildContext context, TradesState state) {
-        if (state.status == BaseStateStatus.loading) {
-          unawaited(EasyLoading.show(status: 'Loading...'));
-        } else {
-          unawaited(EasyLoading.dismiss());
-        }
+    return ListenableBuilder(
+      listenable: UserProfileService.instance(),
+      builder: (BuildContext context, Widget? child) {
+        final bool isSubscribed = UserProfileService.instance().isSubscriptionActive;
 
-        if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
-          context.scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(state.msg!),
-              backgroundColor: AppColors.successColor,
+        if (!isSubscribed) {
+          return Scaffold(
+            backgroundColor: pageBg,
+            body: const SafeArea(
+              child: Column(
+                children: <Widget>[
+                  HomeHeaderAppBar(
+                    showProfileImage: false,
+                    showNotification: false,
+                    title: 'Trading Signals',
+                    subtitle: 'Explore high-quality trades from professional traders',
+                  ),
+                  Expanded(
+                    child: SubscriptionLockWidget(
+                      title: 'Unlock Trading Signals',
+                      subtitle: 'Subscribe to view high-probability signals from professional traders.',
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
-          context.read<TradesCubit>().resetError();
         }
 
-        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
-          context.scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(state.msg!),
-              backgroundColor: AppColors.errorColor,
-            ),
-          );
-          context.read<TradesCubit>().resetError();
-        }
-      },
+        return BlocConsumer<TradesCubit, TradesState>(
+          listener: (BuildContext context, TradesState state) {
+            if (state.status == BaseStateStatus.loading) {
+              unawaited(EasyLoading.show(status: 'Loading...'));
+            } else {
+              unawaited(EasyLoading.dismiss());
+            }
+
+            if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
+              context.scaffoldMessenger.showSnackBar(
+                SnackBar(
+                  content: Text(state.msg!),
+                  backgroundColor: AppColors.successColor,
+                ),
+              );
+              context.read<TradesCubit>().resetError();
+            }
+
+            if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+              context.scaffoldMessenger.showSnackBar(
+                SnackBar(
+                  content: Text(state.msg!),
+                  backgroundColor: AppColors.errorColor,
+                ),
+              );
+              context.read<TradesCubit>().resetError();
+            }
+          },
       builder: (BuildContext context, TradesState state) {
         // Filter logic
         final List<TradingSignalModel> allSignals = state.signals;
@@ -260,6 +289,8 @@ class _TradesViewBodyState extends State<TradesViewBody> {
             ),
           ),
         );
+      },
+    );
       },
     );
   }

@@ -165,6 +165,18 @@ class ApiClient {
           needToCache: needToCache,
           cacheDurationMnt: cacheDurationMnt,
         );
+      } else if (apiType == ApiType.put) {
+        handler = await put<T>(
+          endUrl,
+          data: data,
+          params: params,
+          options: options,
+          cancelToken: cancelToken,
+          formData: formData,
+          isMultipartFormData: isMultipartFormData,
+          needToCache: needToCache,
+          cacheDurationMnt: cacheDurationMnt,
+        );
       }
       else if (apiType == ApiType.delete) {
         handler = await delete<T>(
@@ -311,6 +323,37 @@ class ApiClient {
         ),
       );
 
+  /// put api call
+  FutureOr<ResponseHandler<T?>> put<T>(
+      String endUrl, {
+        Map<String, dynamic>? data,
+        Map<String, dynamic>? params,
+        Options? options,
+        FormData? formData,
+        CancelToken? cancelToken,
+        bool isMultipartFormData = false,
+        bool needToCache = false,
+        int? cacheDurationMnt,
+      }) async =>
+      _responseHandler<T>(
+        // Performing the PUT request using Dio.
+        await _dio?.put<T>(
+          endUrl, // Endpoint URL
+          data: isMultipartFormData ? formData : data,
+          // Use formData if multipart, else use data
+          queryParameters: params,
+          // Query parameters for the request
+          cancelToken: cancelToken ?? _cancelToken,
+          // Use provided cancelToken or default one
+          options: _handleCacheOption(
+            // Handling cache option (if required)
+            options,
+            needToCache: needToCache,
+            cacheDuration: cacheDurationMnt,
+          ),
+        ),
+      );
+
   /// Performs a DELETE request and returns a response handler.
   ///
   /// [T] is the type of the response body.
@@ -420,7 +463,8 @@ class ApiClient {
   }
 
   ResponseHandler<T?> _responseHandler<T>(Response<T>? response) {
-    if (response?.statusCode == 200) {
+    final int? statusCode = response?.statusCode;
+    if (statusCode != null && statusCode >= 200 && statusCode < 300) {
       return OnSuccessResponse<T?>(response: response?.data);
     } else if (response?.statusCode == 400) {
       final String message = _extractErrorMessage(response?.data, APIConstant.badRequestStateKey);

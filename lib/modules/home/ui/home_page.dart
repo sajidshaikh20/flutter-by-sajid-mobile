@@ -241,6 +241,98 @@ class HomeNavigationDrawer extends StatelessWidget {
                     await context.router.push(const ResultRoute());
                   },
                 ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // About Us
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.info_outline_rounded,
+                  title: context.appString.settingsAboutTitleKey,
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<dynamic>(
+                        builder: (BuildContext context) => const InAppWebViewPage(
+                          title: 'About WEKO',
+                          url: AppConstant.aboutUsUrl,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // Terms & Conditions
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.description_outlined,
+                  title: context.appString.settingsTermsTitleKey,
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<dynamic>(
+                        builder: (BuildContext context) => const InAppWebViewPage(
+                          title: 'Terms & Conditions',
+                          url: AppConstant.termsAndConditionsUrl,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // Privacy Policy
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.privacy_tip_outlined,
+                  title: context.appString.settingsPrivacyTitleKey,
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<dynamic>(
+                        builder: (BuildContext context) => const InAppWebViewPage(
+                          title: 'Privacy Policy',
+                          url: AppConstant.privacyPolicyUrl,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+
+                // Contact Us
+                _buildDrawerItem(
+                  context: context,
+                  icon: Icons.contact_support_outlined,
+                  title: context.appString.settingsContactUsTitleKey,
+                  textColor: textColor,
+                  subtitleColor: subtitleColor,
+                  onTap: () async {
+                    Navigator.pop(context); // Close Drawer
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute<dynamic>(
+                        builder: (BuildContext context) => const InAppWebViewPage(
+                          title: 'Contact Us',
+                          url: AppConstant.contactUsUrl,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

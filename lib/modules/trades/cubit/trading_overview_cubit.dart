@@ -2,13 +2,33 @@ import '../../../utils/exports.dart';
 
 /// Cubit managing Trading Overview page live updates and state calculations.
 class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
-  TradingOverviewCubit({required this.signal})
-      : super(TradingOverviewState.initial(signal.livePrice ?? signal.entryPrice)) {
+  TradingOverviewCubit({
+    required this.signal,
+    required this.repository,
+  }) : super(TradingOverviewState.initial(signal.livePrice ?? signal.entryPrice)) {
     _startSimulation();
   }
 
   final TradingSignalModel signal;
+  final TradesRepository repository;
   Timer? _timer;
+
+  Future<void> takeTrade(String tradePublicId) async {
+    emit(state.copyWith(status: BaseStateStatus.loading));
+    final ResponseHandler<BaseResponse<dynamic>> response = await repository.takeTrade(tradePublicId);
+    if (response.isSuccess()) {
+      emit(state.copyWith(
+        status: BaseStateStatus.success,
+        msg: 'Trade taken successfully!',
+      ));
+    } else {
+      final OnFailureResponse<BaseResponse<dynamic>>? failure = response.getFailureInstance();
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: failure?.error?.errorMessage ?? 'Failed to take trade.',
+      ));
+    }
+  }
   final Random _random = Random();
 
   void _startSimulation() {

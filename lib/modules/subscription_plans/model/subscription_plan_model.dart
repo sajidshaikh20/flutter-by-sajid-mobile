@@ -7,6 +7,7 @@ class SubscriptionPlanModel extends Equatable {
     required this.monthlyPrice,
     required this.yearlyPrice,
     required this.features,
+    required this.description,
     this.isPopular = false,
   });
 
@@ -15,6 +16,7 @@ class SubscriptionPlanModel extends Equatable {
   final int monthlyPrice;
   final int yearlyPrice;
   final List<String> features;
+  final String description;
   final bool isPopular;
 
   @override
@@ -24,6 +26,7 @@ class SubscriptionPlanModel extends Equatable {
         monthlyPrice,
         yearlyPrice,
         features,
+        description,
         isPopular,
       ];
 }

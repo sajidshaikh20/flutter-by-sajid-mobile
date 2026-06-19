@@ -29,7 +29,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
           endUrl: Apis.updateClientProfile,
-          apiType: ApiType.patch,
+          apiType: ApiType.put,
           showLoader: true,
           data: request.toJson(),
         );

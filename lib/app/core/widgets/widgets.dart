@@ -6,6 +6,7 @@ export 'package:flutter/gestures.dart';
 export 'bottom_nav_with_indicator/custom_line_indicator_bottom_navbar.dart';
 export 'button/custom_button_widget.dart';
 export 'button/custom_gradient_button_widget.dart';
+export 'subscription_lock_widget.dart';
 
 export 'button/rounded_icon_button.dart';
 export 'cached_network/fast_cached_custom_network.dart';

@@ -22,6 +22,9 @@ enum ApiType {
 
   /// Represents a DELETE request.
   patch,
+
+  /// HTTP PUT request.
+  put,
 }
 
 /// Represents the possible states of a base state.

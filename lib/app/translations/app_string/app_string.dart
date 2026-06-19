@@ -173,6 +173,8 @@ abstract class AppString {
   String get settingsTermsSubtitleKey;
   String get settingsAboutTitleKey;
   String get settingsAboutSubtitleKey;
+  String get settingsContactUsTitleKey;
+  String get settingsContactUsSubtitleKey;
   String get settingsLogOutKey;
   String get settingsLeaderboardTitleKey;
   String get settingsLeaderboardSubtitleKey;

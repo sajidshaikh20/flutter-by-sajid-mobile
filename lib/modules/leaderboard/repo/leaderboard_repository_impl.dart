@@ -7,7 +7,7 @@ class LeaderboardRepositoryImpl extends LeaderboardRepository {
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
           endUrl: Apis.getLeaderboard,
-          showLoader: false,
+
         );
 
     return getParsedResponseHandler(

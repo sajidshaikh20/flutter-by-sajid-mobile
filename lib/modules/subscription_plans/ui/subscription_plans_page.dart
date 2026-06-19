@@ -79,13 +79,6 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
               child: Column(
                 children: <Widget>[
                   _buildHeader(context, isDark, textColor, cardBorder),
-                  const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primaryPurple,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -94,13 +87,7 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
         // Find currently selected plan
         final SubscriptionPlanModel selectedPlan = state.plans.firstWhere(
           (SubscriptionPlanModel p) => p.id == state.selectedPlanId,
-          orElse: () => state.plans.isNotEmpty ? state.plans.first : const SubscriptionPlanModel(
-            id: 'temp',
-            name: 'Elite Plan',
-            monthlyPrice: 300,
-            yearlyPrice: 3000,
-            features: <String>[],
-          ),
+          orElse: () => state.plans.first,
         );
 
         final int currentPrice = state.isYearly ? selectedPlan.yearlyPrice : selectedPlan.monthlyPrice;
@@ -410,12 +397,7 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
     final int price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
     final String periodLabel = isYearly ? 'yr' : 'mo';
 
-    // Descriptions matching each tier
-    final String subtitle = plan.id == 'plan_crypto'
-        ? 'Best for crypto scalping & altcoin traders'
-        : plan.id == 'plan_forex'
-            ? 'Perfect for standard currency pairs trading'
-            : 'Combined high quality Forex + Crypto strategies';
+    final String subtitle = plan.description;
 
     final Color cardBg = isSelected
         ? (isDark ? const Color(0xFF1F183C) : const Color(0xFFFAF7FF))
@@ -432,111 +414,112 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
           borderRadius: BorderRadius.circular(Dimens.radius16),
           border: Border.all(color: cardBorderColor, width: cardBorderWidth),
         ),
-        child: Stack(
-          children: <Widget>[
-            // MOST POPULAR badge overlay for Elite
-            if (plan.isPopular)
-              Positioned(
-                right: 12,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: AppColors.primaryGradient),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const CustomTextLabelWidget(
-                    label: 'MOST POPULAR',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                    ),
+        child: Padding(
+          padding: const EdgeInsets.all(Dimens.space16),
+          child: Row(
+            children: <Widget>[
+              // Radio Selector Circle
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected ? AppColors.primaryPurple : subtextColor.withValues(alpha: 0.5),
+                    width: 2.0,
                   ),
                 ),
+                alignment: Alignment.center,
+                child: isSelected
+                    ? Container(
+                        width: 11,
+                        height: 11,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primaryPurple,
+                        ),
+                      )
+                    : null,
               ),
+              const SizedBox(width: Dimens.space16),
 
-            Padding(
-              padding: const EdgeInsets.all(Dimens.space16),
-              child: Row(
-                children: <Widget>[
-                  // Radio Selector Circle
-                  Container(
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? AppColors.primaryPurple : subtextColor.withValues(alpha: 0.5),
-                        width: 2.0,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: isSelected
-                        ? Container(
-                            width: 11,
-                            height: 11,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primaryPurple,
-                            ),
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: Dimens.space16),
-
-                  // Middle details
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              // Middle details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        CustomTextLabelWidget(
-                          label: plan.name,
-                          style: TextStyle(
-                            fontSize: Dimens.fontSize14,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
+                        Flexible(
+                          child: CustomTextLabelWidget(
+                            label: plan.name,
+                            style: TextStyle(
+                              fontSize: Dimens.fontSize14,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        CustomTextLabelWidget(
-                          label: subtitle,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: subtextColor,
+                        if (plan.isPopular) ...<Widget>[
+                          const SizedBox(width: Dimens.space6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(colors: AppColors.primaryGradient),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const CustomTextLabelWidget(
+                              label: 'POPULAR',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
-                  ),
-                  const SizedBox(width: Dimens.space8),
+                    const SizedBox(height: 2),
+                    CustomTextLabelWidget(
+                      label: subtitle,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: subtextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: Dimens.space8),
 
-                  // Right price
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CustomTextLabelWidget(
-                        label: '\$${NumberFormat('#,##0').format(price)}',
-                        style: TextStyle(
-                          fontSize: Dimens.fontSize16,
-                          fontWeight: FontWeight.w900,
-                          color: textColor,
-                        ),
-                      ),
-                      CustomTextLabelWidget(
-                        label: '/$periodLabel',
-                        style: TextStyle(
-                          fontSize: 9,
-                          color: subtextColor,
-                        ),
-                      ),
-                    ],
+              // Right price
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CustomTextLabelWidget(
+                    label: '\$${NumberFormat('#,##0').format(price)}',
+                    style: TextStyle(
+                      fontSize: Dimens.fontSize16,
+                      fontWeight: FontWeight.w900,
+                      color: textColor,
+                    ),
+                  ),
+                  CustomTextLabelWidget(
+                    label: '/$periodLabel',
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: subtextColor,
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

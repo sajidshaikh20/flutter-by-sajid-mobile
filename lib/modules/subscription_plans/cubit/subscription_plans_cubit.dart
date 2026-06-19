@@ -55,21 +55,15 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
 
       final PlanResponse activePlan = monthlyPlan ?? yearlyPlan!;
       final String id = _getPlanUiId(category, activePlan.planCode);
-      final String name = activePlan.planName;
+      final String name = _getPlanDisplayName(category);
 
       final int monthlyPrice = monthlyPlan?.prices.firstOrNull?.price.toInt() ?? 
           ((yearlyPlan?.prices.firstOrNull?.price ?? 0) / 12).toInt();
       final int yearlyPrice = yearlyPlan?.prices.firstOrNull?.price.toInt() ?? 
           (monthlyPrice * 10);
 
-      List<String> features = activePlan.description
-          .split('\n')
-          .map((String s) => s.trim())
-          .where((String s) => s.isNotEmpty && s != '-')
-          .toList();
-      if (features.length <= 1) {
-        features = _getFallbackFeaturesForCategory(category);
-      }
+      final List<String> features = _getFeaturesForCategory(category);
+      final String description = _getDescriptionForCategory(category);
 
       uiPlans.add(SubscriptionPlanModel(
         id: id,
@@ -77,6 +71,7 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
         monthlyPrice: monthlyPrice,
         yearlyPrice: yearlyPrice,
         features: features,
+        description: description,
         isPopular: category.contains('ELITE') || activePlan.planCode.toLowerCase().contains('elite'),
       ));
     });
@@ -84,17 +79,7 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
     return uiPlans;
   }
 
-  String _getPlanUiId(String category, String planCode) {
-    if (category.contains('ELITE') || planCode.toLowerCase().contains('elite')) {
-      return 'plan_elite';
-    } else if (category.contains('CRYPTO')) {
-      return 'plan_crypto';
-    } else {
-      return 'plan_forex';
-    }
-  }
-
-  List<String> _getFallbackFeaturesForCategory(String category) {
+  List<String> _getFeaturesForCategory(String category) {
     if (category.contains('CRYPTO')) {
       return const <String>[
         '2-4 High quality strategies per day',
@@ -129,11 +114,41 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
         '20+ trading strategies',
         'Live price access for every trade',
         'Advance analytical tool',
-        'Risk Management Tools',
+        'Risk Managment Tools',
         'Live price access for every trades',
         'AI Suites',
         '24×7 research support',
       ];
+    }
+  }
+
+  String _getDescriptionForCategory(String category) {
+    if (category.contains('CRYPTO')) {
+      return 'Best for crypto scalping & altcoin traders';
+    } else if (category.contains('FOREX')) {
+      return 'Perfect for standard currency pairs trading';
+    } else {
+      return 'Combined high quality Forex + Crypto strategies';
+    }
+  }
+
+  String _getPlanDisplayName(String category) {
+    if (category.contains('ELITE')) {
+      return 'Elite Plan (Forex + Crypto)';
+    } else if (category.contains('CRYPTO')) {
+      return 'Crypto Plan';
+    } else {
+      return 'Forex Plan';
+    }
+  }
+
+  String _getPlanUiId(String category, String planCode) {
+    if (category.contains('ELITE') || planCode.toLowerCase().contains('elite')) {
+      return 'plan_elite';
+    } else if (category.contains('CRYPTO')) {
+      return 'plan_crypto';
+    } else {
+      return 'plan_forex';
     }
   }
 

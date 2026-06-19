@@ -47,6 +47,20 @@ class PlanResponse {
 
   factory PlanResponse.fromJson(Map<String, dynamic> json) {
     final List<dynamic> pricesList = json['prices'] as List<dynamic>? ?? <dynamic>[];
+    List<PlanPriceResponse> parsedPrices = <PlanPriceResponse>[];
+    if (pricesList.isNotEmpty) {
+      parsedPrices = pricesList
+          .map((dynamic p) => PlanPriceResponse.fromJson(p as Map<String, dynamic>))
+          .toList();
+    } else if (json['price'] != null) {
+      parsedPrices = <PlanPriceResponse>[
+        PlanPriceResponse(
+          currencyCode: json['currencyCode'] ?? 'USD',
+          price: json['price'] != null ? double.parse(json['price'].toString()) : 0.0,
+        ),
+      ];
+    }
+
     return PlanResponse(
       publicId: json['publicId'] ?? '',
       planCode: json['planCode'] ?? '',
@@ -54,9 +68,9 @@ class PlanResponse {
       category: json['category'] ?? '',
       billingCycle: json['billingCycle'] ?? '',
       description: json['description'] ?? '',
-      prices: pricesList.map((dynamic p) => PlanPriceResponse.fromJson(p as Map<String, dynamic>)).toList(),
+      prices: parsedPrices,
       durationDays: json['durationDays'] ?? 30,
-      isActive: json['isActive'] ?? true,
+      isActive: json['active'] ?? json['isActive'] ?? true,
     );
   }
 
