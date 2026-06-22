@@ -5,6 +5,7 @@ class ClientProfileResponse {
   final String username;
   final String? phone;
   final String? countryCode;
+  final String? profilePictureUrl;
 
   ClientProfileResponse({
     required this.publicId,
@@ -13,6 +14,7 @@ class ClientProfileResponse {
     required this.username,
     this.phone,
     this.countryCode,
+    this.profilePictureUrl,
   });
 
   factory ClientProfileResponse.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class ClientProfileResponse {
       username: json['username'] ?? '',
       phone: json['phone']?.toString(),
       countryCode: json['countryCode']?.toString(),
+      profilePictureUrl: json['profilePictureUrl']?.toString(),
     );
   }
 
@@ -34,26 +37,27 @@ class ClientProfileResponse {
       'username': username,
       'phone': phone,
       'countryCode': countryCode,
+      'profilePictureUrl': profilePictureUrl,
     };
   }
 }
 
 class UpdateClientProfileRequest {
   final String name;
+  final String username;
   final String phone;
-  final String countryCode;
 
   UpdateClientProfileRequest({
     required this.name,
+    required this.username,
     required this.phone,
-    required this.countryCode,
   });
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'name': name,
+      'username': username,
       'phone': phone,
-      'countryCode': countryCode,
     };
   }
 }

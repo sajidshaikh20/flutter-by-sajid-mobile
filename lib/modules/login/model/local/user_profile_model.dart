@@ -72,6 +72,9 @@ class UserProfileModel {
   /// Duration of subscription in days.
   final int? durationDays;
 
+  /// The profile picture URL from the live server.
+  final String? profilePictureUrl;
+
   /// Creates an instance of [UserProfileModel].
   UserProfileModel({
     required this.phoneNumber,
@@ -98,6 +101,7 @@ class UserProfileModel {
     this.endDate,
     this.isActive,
     this.durationDays,
+    this.profilePictureUrl,
   });
 
   /// Creates an instance of [UserProfileModel] from a JSON map.
@@ -127,6 +131,7 @@ class UserProfileModel {
       endDate: json['endDate'],
       isActive: json['isActive'],
       durationDays: json['durationDays'],
+      profilePictureUrl: json['profilePictureUrl'],
     );
   }
 
@@ -157,6 +162,7 @@ class UserProfileModel {
       'endDate': endDate,
       'isActive': isActive,
       'durationDays': durationDays,
+      'profilePictureUrl': profilePictureUrl,
     };
   }
 
@@ -186,6 +192,7 @@ class UserProfileModel {
     String? endDate,
     bool? isActive,
     int? durationDays,
+    String? profilePictureUrl,
   }) {
     return UserProfileModel(
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -212,6 +219,7 @@ class UserProfileModel {
       endDate: endDate ?? this.endDate,
       isActive: isActive ?? this.isActive,
       durationDays: durationDays ?? this.durationDays,
+      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
     );
   }
 }

@@ -77,5 +77,11 @@
 		<false/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+		<string>Weko Pro requires access to your camera to take a profile photo.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Weko Pro requires access to your photo library to select a profile photo.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Weko Pro requires access to your microphone to capture audio for profile photo verification.</string>
 	</dict>
 </plist>

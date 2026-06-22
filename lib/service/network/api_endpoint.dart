@@ -145,15 +145,21 @@ abstract class Apis {
   /// Endpoint to get all trades
   static const String getAllTrades = '$subBaseUrl/common/trades/getAll';
 
+  /// Endpoint to get client's trades by plan
+  static const String getTradesByPlan = '$subBaseUrl/trade/my-trades-by-plan';
+
   /// Endpoint to get client profile
   static const String getClientProfile = '$subBaseUrl/client/profile';
 
   /// Endpoint to update client profile
   static const String updateClientProfile = '$subBaseUrl/client/update-profile';
 
+  /// Endpoint to upload client profile picture
+  static const String uploadProfilePicture = '$subBaseUrl/client/upload-profile-picture';
+
   /// Endpoint prefix to take a trade
   static const String takeTrade = '$subBaseUrl/client/trades';
 
   /// Endpoint to get client's taken trades
-  static const String myTrades = '$subBaseUrl/client/my-trades';
+  static const String myTrades = '$subBaseUrl/trade/my-trades-by-plan';
 }

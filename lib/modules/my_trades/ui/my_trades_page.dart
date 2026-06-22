@@ -24,22 +24,17 @@ class MyTradesPage extends BaseResponsiveView {
   }
 }
 
-class MyTradesViewBody extends StatefulWidget {
+class MyTradesViewBody extends StatelessWidget {
   const MyTradesViewBody({super.key});
 
-  @override
-  State<MyTradesViewBody> createState() => _MyTradesViewBodyState();
-}
-
-class _MyTradesViewBodyState extends State<MyTradesViewBody> {
-  final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _scrollController.dispose();
-    super.dispose();
+  bool _onScrollNotification(BuildContext context, ScrollNotification notification) {
+    if (notification is ScrollEndNotification || notification is ScrollUpdateNotification) {
+      final ScrollMetrics metrics = notification.metrics;
+      if (metrics.pixels >= metrics.maxScrollExtent * 0.9) {
+        unawaited(context.read<MyTradesCubit>().loadMore());
+      }
+    }
+    return false;
   }
 
   @override
@@ -79,7 +74,7 @@ class _MyTradesViewBodyState extends State<MyTradesViewBody> {
 
         return BlocConsumer<MyTradesCubit, MyTradesState>(
           listener: (BuildContext context, MyTradesState state) {
-            if (state.status == BaseStateStatus.loading) {
+            if (state.isInitialLoading) {
               unawaited(EasyLoading.show(status: 'Loading...'));
             } else {
               unawaited(EasyLoading.dismiss());
@@ -95,215 +90,211 @@ class _MyTradesViewBodyState extends State<MyTradesViewBody> {
               context.read<MyTradesCubit>().resetError();
             }
           },
-      builder: (BuildContext context, MyTradesState state) {
-        final List<TradingSignalModel> allSignals = state.signals;
+          builder: (BuildContext context, MyTradesState state) {
+            final List<TradingSignalModel> filteredSignals = state.signals.where((TradingSignalModel s) {
+              if (state.searchQuery.isEmpty) return true;
+              final String query = state.searchQuery.toLowerCase();
+              return s.pair.toLowerCase().contains(query) ||
+                  s.category.toLowerCase().contains(query);
+            }).toList();
 
-        // Compute dynamic counts for the metrics cards (based on all signals)
-        final int activeCount = allSignals.where((TradingSignalModel s) => s.isActive).length;
-        final int pendingCount = allSignals.where((TradingSignalModel s) => s.isPending).length;
-        final int closedCount = allSignals.where((TradingSignalModel s) => s.isClosed).length;
-        final int lossesCount = allSignals
-            .where((TradingSignalModel s) => s.isClosed && s.outcome == 'LOSS')
-            .length;
+            final bool showInitialLoader = state.isInitialLoading;
+            final bool showLoadMoreIndicator = state.isLoadingMore && state.signals.isNotEmpty;
 
-        // Filter signals based on search query and status
-        final List<TradingSignalModel> filteredSignals = allSignals.where((TradingSignalModel s) {
-          // Filter by status
-          bool matchesStatus = true;
-          switch (state.selectedFilter) {
-            case SignalFilter.all:
-              matchesStatus = true;
-            case SignalFilter.active:
-              matchesStatus = s.isActive;
-            case SignalFilter.pending:
-              matchesStatus = s.isPending;
-            case SignalFilter.closed:
-              matchesStatus = s.isClosed;
-            case SignalFilter.cancelled:
-              matchesStatus = s.isCancelled;
-          }
-
-          // Filter by search query (trading pair or category name)
-          bool matchesSearch = true;
-          if (state.searchQuery.isNotEmpty) {
-            matchesSearch = s.pair.toLowerCase().contains(state.searchQuery.toLowerCase()) ||
-                s.category.toLowerCase().contains(state.searchQuery.toLowerCase());
-          }
-
-          return matchesStatus && matchesSearch;
-        }).toList();
-
-        return Scaffold(
-          backgroundColor: pageBg,
-          body: SafeArea(
-            child: Column(
-              children: <Widget>[
-                // Header App Bar matching design requirements with notifications icon active
-                const HomeHeaderAppBar(
-                  showProfileImage: false,
-                  title: 'My Trades',
-                  subtitle: 'Track and manage your active and past trades',
-                ),
-
-                // Scrollable Body
-                Expanded(
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    slivers: <Widget>[
-                      // Search Bar positioned directly above the filters row
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Dimens.space16,
-                            vertical: Dimens.space8,
-                          ),
-                          child: Container(
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: isDark ? AppColors.cardDark : AppColors.cardLight,
-                              borderRadius: BorderRadius.circular(Dimens.radius12),
-                              border: Border.all(
-                                color: isDark
-                                    ? AppColors.borderDark
-                                    : AppColors.borderLight.withValues(alpha: 0.5),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: Dimens.space12),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.search_rounded,
-                                  color: subtextColor,
-                                  size: Dimens.size20,
-                                ),
-                                const SizedBox(width: Dimens.space10),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _searchController,
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontSize: Dimens.fontSize13,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    decoration: InputDecoration(
-                                      hintText: 'Search pair (e.g. BTCU)',
-                                      hintStyle: TextStyle(
-                                        color: subtextColor,
-                                        fontSize: Dimens.fontSize13,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                    onChanged: (String value) {
-                                      context.read<MyTradesCubit>().updateSearchQuery(value);
-                                    },
-                                  ),
-                                ),
-                                if (state.searchQuery.isNotEmpty) ...<Widget>[
-                                  const SizedBox(width: Dimens.space10),
-                                  GestureDetector(
-                                    onTap: () {
-                                      _searchController.clear();
-                                      context.read<MyTradesCubit>().clearSearch();
-                                    },
-                                    child: Icon(
-                                      Icons.clear_rounded,
-                                      color: subtextColor,
-                                      size: Dimens.size18,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Metric Summary Cards with dynamic count values passed down
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
-                          child: TradesSummaryCards(
-                            activeCount: activeCount.toString(),
-                            pendingCount: pendingCount.toString(),
-                            closedCount: closedCount.toString(),
-                            lossesCount: lossesCount.toString(),
-                          ),
-                        ),
-                      ),
-
-                      // Sticky Filter Bar section
-                      SliverStickyHeader(
-                        header: Container(
-                          color: pageBg,
-                          padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
-                          child: TradesFilterBar(
-                            selectedFilter: state.selectedFilter,
-                            onFilterChanged: (SignalFilter filter) async {
-                              context.read<MyTradesCubit>().selectFilter(filter);
-                              if (_scrollController.hasClients) {
-                                await _scrollController.animateTo(
-                                  0.0,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        // List Content
-                        sliver: filteredSignals.isEmpty
-                            ? SliverToBoxAdapter(
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: Dimens.space40),
-                                    child: CustomTextLabelWidget(
-                                      label: 'No signals available for this filter',
-                                      style: TextStyle(
-                                        color: subtextColor,
-                                        fontSize: Dimens.fontSize13,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : SliverPadding(
+            return Scaffold(
+              backgroundColor: pageBg,
+              body: SafeArea(
+                child: Column(
+                  children: <Widget>[
+                    const HomeHeaderAppBar(
+                      showProfileImage: false,
+                      title: 'My Trades',
+                      subtitle: 'Track and manage your active and past trades',
+                    ),
+                    Expanded(
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification notification) =>
+                            _onScrollNotification(context, notification),
+                        child: CustomScrollView(
+                          slivers: <Widget>[
+                            SliverToBoxAdapter(
+                              child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: Dimens.space16,
-                                  vertical: Dimens.space12,
+                                  vertical: Dimens.space8,
                                 ),
-                                sliver: SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (BuildContext context, int index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(bottom: Dimens.space12),
-                                        child: TradingSignalCard(
-                                          signal: filteredSignals[index],
-                                          showTakeTrade: false,
+                                child: Container(
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: isDark ? AppColors.cardDark : AppColors.cardLight,
+                                    borderRadius: BorderRadius.circular(Dimens.radius12),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? AppColors.borderDark
+                                          : AppColors.borderLight.withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: Dimens.space12),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.search_rounded,
+                                        color: subtextColor,
+                                        size: Dimens.size20,
+                                      ),
+                                      const SizedBox(width: Dimens.space10),
+                                      Expanded(
+                                        child: TextField(
+                                          style: TextStyle(
+                                            color: textColor,
+                                            fontSize: Dimens.fontSize13,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          decoration: InputDecoration(
+                                            hintText: 'Search pair (e.g. BTCU)',
+                                            hintStyle: TextStyle(
+                                              color: subtextColor,
+                                              fontSize: Dimens.fontSize13,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            border: InputBorder.none,
+                                            focusedBorder: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            errorBorder: InputBorder.none,
+                                            disabledBorder: InputBorder.none,
+                                            isDense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                          ),
+                                          onChanged: (String value) {
+                                            context.read<MyTradesCubit>().updateSearchQuery(value);
+                                          },
                                         ),
-                                      );
-                                    },
-                                    childCount: filteredSignals.length,
+                                      ),
+                                      if (state.searchQuery.isNotEmpty) ...<Widget>[
+                                        const SizedBox(width: Dimens.space10),
+                                        GestureDetector(
+                                          onTap: () {
+                                            context.read<MyTradesCubit>().clearSearch();
+                                          },
+                                          child: Icon(
+                                            Icons.clear_rounded,
+                                            color: subtextColor,
+                                            size: Dimens.size18,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ),
                               ),
+                            ),
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
+                                child: TradesSummaryCards(
+                                  activeCount: state.activeCount.toString(),
+                                  pendingCount: state.pendingCount.toString(),
+                                  closedCount: state.closedCount.toString(),
+                                  lossesCount: state.lossesCount.toString(),
+                                ),
+                              ),
+                            ),
+                            SliverStickyHeader(
+                              header: Container(
+                                color: pageBg,
+                                padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
+                                child: TradesFilterBar(
+                                  selectedFilter: state.selectedFilter,
+                                  onFilterChanged: (SignalFilter filter) {
+                                    context.read<MyTradesCubit>().selectFilter(filter);
+                                  },
+                                ),
+                              ),
+                              sliver: showInitialLoader
+                                  ? SliverToBoxAdapter(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: Dimens.space40),
+                                        child: Center(
+                                          child: SizedBox(
+                                            width: 32,
+                                            height: 32,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.5,
+                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                MainConfig.appColors.mainColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : filteredSignals.isEmpty
+                                      ? SliverToBoxAdapter(
+                                          child: Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(top: Dimens.space40),
+                                              child: CustomTextLabelWidget(
+                                                label: 'No signals available for this filter',
+                                                style: TextStyle(
+                                                  color: subtextColor,
+                                                  fontSize: Dimens.fontSize13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : SliverPadding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: Dimens.space16,
+                                            vertical: Dimens.space12,
+                                          ),
+                                          sliver: SliverList(
+                                            delegate: SliverChildBuilderDelegate(
+                                              (BuildContext context, int index) {
+                                                if (index == filteredSignals.length) {
+                                                  return const Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                      vertical: Dimens.space16,
+                                                    ),
+                                                    child: Center(
+                                                      child: SizedBox(
+                                                        width: 24,
+                                                        height: 24,
+                                                        child: CircularProgressIndicator(
+                                                          strokeWidth: 2.5,
+                                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                                            AppColors.primaryPurple,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return Padding(
+                                                  padding: const EdgeInsets.only(bottom: Dimens.space12),
+                                                  child: TradingSignalCard(
+                                                    signal: filteredSignals[index],
+                                                    showTakeTrade: false,
+                                                  ),
+                                                );
+                                              },
+                                              childCount: filteredSignals.length +
+                                                  (showLoadMoreIndicator ? 1 : 0),
+                                            ),
+                                          ),
+                                        ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
-      },
-    );
       },
     );
   }

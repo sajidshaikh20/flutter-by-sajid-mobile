@@ -9,6 +9,9 @@ class UserProfileService extends ChangeNotifier {
   /// The model that holds the user profile data.
   UserProfileModel? _dataModel;
 
+  /// The local profile picture path.
+  String? _localProfilePicturePath;
+
   /// Singleton instance of `UserProfileService`.
   static UserProfileService instance() => getIt<UserProfileService>();
 
@@ -19,6 +22,7 @@ class UserProfileService extends ChangeNotifier {
   /// initializes the `_dataModel` with default values.
   Future<void> loadUserData() async {
     dynamic jsonString = await SharedPref.instance.getValue(PrefsKey.userProfileKey);
+    _localProfilePicturePath = SharedPref.instance.getString(PrefsKey.localProfilePicturePathKey, '');
     DebugLog.instance.i('UserProfileService.loadUserData: Raw data from SharedPref: "$jsonString" (type: ${jsonString.runtimeType})');
 
     if (jsonString is String && jsonString != 'null' && jsonString.isNotEmpty) {
@@ -55,8 +59,21 @@ class UserProfileService extends ChangeNotifier {
 
   // Getters for user profile data
 
+  /// The local profile picture path.
+  String get localProfilePicturePath => _localProfilePicturePath ?? '';
+
+  /// The user's profile picture URL from the live server.
+  String get profilePictureUrl => _dataModel?.profilePictureUrl ?? '';
+
   /// The customer's full name.
   String get customerName => _dataModel?.customerName ?? '';
+
+  /// Updates the local profile picture path.
+  Future<void> updateProfilePicture(String path) async {
+    _localProfilePicturePath = path;
+    await SharedPref.instance.setValue(PrefsKey.localProfilePicturePathKey, path);
+    notifyListeners();
+  }
 
   /// The customer's email address.
   String get customerEmail => _dataModel?.customerEmail ?? '';
@@ -169,6 +186,7 @@ class UserProfileService extends ChangeNotifier {
     String? endDate,
     bool? isActive,
     int? durationDays,
+    String? profilePictureUrl,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -208,6 +226,7 @@ class UserProfileService extends ChangeNotifier {
       endDate: endDate ?? _dataModel?.endDate,
       isActive: isActive ?? _dataModel?.isActive,
       durationDays: durationDays ?? _dataModel?.durationDays,
+      profilePictureUrl: profilePictureUrl ?? _dataModel?.profilePictureUrl,
     );
 
     // Save updated model back to shared preferences

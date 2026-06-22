@@ -5,7 +5,7 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
   TradingOverviewCubit({
     required this.signal,
     required this.repository,
-  }) : super(TradingOverviewState.initial(signal.livePrice ?? signal.entryPrice)) {
+  }) : super(TradingOverviewState.initial(signal.livePrice ?? signal.entryPrice, isTaken: signal.isTaken)) {
     _startSimulation();
   }
 
@@ -19,6 +19,7 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
     if (response.isSuccess()) {
       emit(state.copyWith(
         status: BaseStateStatus.success,
+        isTaken: true,
         msg: 'Trade taken successfully!',
       ));
     } else {

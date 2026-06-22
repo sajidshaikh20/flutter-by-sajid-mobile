@@ -119,7 +119,8 @@ class TradingOverviewViewBody extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
                     child: CustomGradientButtonWidget(
-                      title: 'Take Trade',
+                      title: state.isTaken ? 'Trade Taken' : 'Take Trade',
+                      isButtonEnabled: !state.isTaken,
                       onTap: () {
                         if (signal.publicId.isNotEmpty) {
                           unawaited(context.read<TradingOverviewCubit>().takeTrade(signal.publicId));
@@ -551,7 +552,9 @@ class TradingOverviewViewBody extends StatelessWidget {
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5);
     final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
 
-    const String chartLink = 'https://www.tradingview.com/x/kMmfTev8/';
+    final String chartLink = (signal.tradingViewUrl != null && signal.tradingViewUrl!.isNotEmpty)
+        ? signal.tradingViewUrl!
+        : 'https://www.tradingview.com/x/9EDN1OPq/';
 
     final String imageUrl = _getChartImageUrl(chartLink);
 
@@ -592,9 +595,9 @@ class TradingOverviewViewBody extends StatelessWidget {
           const SizedBox(height: Dimens.space12),
           GestureDetector(
             onTap: () => _launchUrl(chartLink),
-            child: const CustomTextLabelWidget(
+            child: CustomTextLabelWidget(
               label: chartLink,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.primaryPurple,
                 decoration: TextDecoration.underline,
                 fontSize: Dimens.fontSize12,

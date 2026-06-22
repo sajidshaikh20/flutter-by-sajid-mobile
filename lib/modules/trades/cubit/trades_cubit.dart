@@ -8,18 +8,95 @@ class TradesCubit extends BaseCubit<TradesState> {
     unawaited(loadTrades());
   }
 
-  Future<void> loadTrades() async {
+  Future<void> loadTrades({bool isRefresh = false}) async {
+    //if (state.status == BaseStateStatus.loading) return;
+
+    int currentOffset = isRefresh ? 0 : state.offset;
+    if (!isRefresh && state.hasReachedMax) return;
+
     emit(state.copyWith(status: BaseStateStatus.loading));
-    final ResponseHandler<BaseResponse<List<TradeResponse>>> response = await repository.getTrades();
+
+    String? statusParam;
+    switch (state.selectedFilter) {
+      case SignalFilter.all:
+        statusParam = null;
+      case SignalFilter.active:
+        statusParam = 'ACTIVE';
+      case SignalFilter.pending:
+        statusParam = 'PENDING';
+      case SignalFilter.closed:
+        statusParam = 'CLOSED';
+      case SignalFilter.cancelled:
+        statusParam = 'CANCEL';
+    }
+
+    const int limit = 10;
+
+    final List<Future<dynamic>> futures = <Future<dynamic>>[
+      repository.getTrades(status: statusParam, limit: limit, offset: currentOffset),
+      repository.getMyTrades(),
+    ];
+
+    final bool needCounts = currentOffset == 0;
+    if (needCounts) {
+      futures.add(repository.getTrades());
+    }
+
+    final List<dynamic> responses = await Future.wait<dynamic>(futures);
+
+    final ResponseHandler<BaseResponse<List<TradeResponse>>> response =
+        responses[0] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
+    final ResponseHandler<BaseResponse<List<TradeResponse>>> myResponse =
+        responses[1] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
+
+    int activeCount = state.activeCount;
+    int pendingCount = state.pendingCount;
+    int closedCount = state.closedCount;
+    int lossesCount = state.lossesCount;
+
+    if (needCounts && responses.length > 2) {
+      final ResponseHandler<BaseResponse<List<TradeResponse>>> allTradesResponse =
+          responses[2] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
+      if (allTradesResponse.isSuccess()) {
+        final List<TradeResponse> allApiTrades =
+            allTradesResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[];
+        activeCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'ACTIVE').length;
+        pendingCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'PENDING').length;
+        closedCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'CLOSED').length;
+        lossesCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'CLOSED' && t.outcome?.toUpperCase() == 'LOSS').length;
+      }
+    }
+
     if (response.isSuccess()) {
       final BaseResponse<List<TradeResponse>>? baseResponse = response.getSuccessInstance()?.response;
       final List<TradeResponse> apiTrades = baseResponse?.data ?? <TradeResponse>[];
-      
-      final List<TradingSignalModel> mappedSignals = apiTrades.map(_mapTradeResponseToSignal).toList();
+      final int totalCount = baseResponse?.totalCount ?? 0;
+
+      final List<TradeResponse> myTrades = myResponse.isSuccess()
+          ? (myResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[])
+          : <TradeResponse>[];
+
+      final Set<String> takenIds = myTrades.map((TradeResponse t) => t.publicId).toSet();
+
+      final List<TradingSignalModel> newMappedSignals = apiTrades.map((TradeResponse t) {
+        final TradingSignalModel signal = _mapTradeResponseToSignal(t);
+        return signal.copyWith(isTaken: takenIds.contains(t.publicId));
+      }).toList();
+
+      final List<TradingSignalModel> updatedSignals = isRefresh || currentOffset == 0
+          ? newMappedSignals
+          : <TradingSignalModel>[...state.signals, ...newMappedSignals];
 
       emit(state.copyWith(
-        signals: mappedSignals,
+        signals: updatedSignals,
         status: BaseStateStatus.success,
+        offset: currentOffset + apiTrades.length,
+        hasReachedMax: updatedSignals.length >= totalCount || apiTrades.length < limit,
+        totalCount: totalCount,
+        activeCount: activeCount,
+        pendingCount: pendingCount,
+        closedCount: closedCount,
+        lossesCount: lossesCount,
       ));
     } else {
       final OnFailureResponse<BaseResponse<List<TradeResponse>>>? failure = response.getFailureInstance();
@@ -38,7 +115,7 @@ class TradesCubit extends BaseCubit<TradesState> {
         status: BaseStateStatus.success,
         msg: 'Trade taken successfully!',
       ));
-      await loadTrades();
+      await loadTrades(isRefresh: true);
     } else {
       final OnFailureResponse<BaseResponse<dynamic>>? failure = response.getFailureInstance();
       emit(state.copyWith(
@@ -57,6 +134,7 @@ class TradesCubit extends BaseCubit<TradesState> {
       if (lvl.levelType.toUpperCase() == 'ENTRY') {
         entryPrice = double.tryParse(lvl.entryPoint) ?? 0.0;
         stopLoss = double.tryParse(lvl.stopLoss) ?? 0.0;
+      } else if (lvl.levelType.toUpperCase() == 'TAKE_PROFIT') {
         takeProfit = double.tryParse(lvl.takeProfit) ?? 0.0;
       }
     }
@@ -70,7 +148,7 @@ class TradesCubit extends BaseCubit<TradesState> {
     final String pair = t.currencyPair?['symbol'] as String? ?? t.currencyPair?['name'] as String? ?? 'EURUSD';
     final String category = t.market.toUpperCase();
     final String type = t.marketType.toUpperCase();
-    final String status = t.status.toUpperCase();
+    final String status = t.status.toUpperCase() == 'CANCEL' ? 'CANCELLED' : t.status.toUpperCase();
 
     final List<double> sparklineData = <double>[
       entryPrice * 0.998,
@@ -107,6 +185,7 @@ class TradesCubit extends BaseCubit<TradesState> {
       outcome: t.outcome,
       timeLabel: t.createdAt != null ? _formatTimeLabel(t.createdAt!) : 'Just now',
       sparklineData: sparklineData,
+      tradingViewUrl: t.tradingViewUrl,
     );
   }
 
@@ -128,7 +207,13 @@ class TradesCubit extends BaseCubit<TradesState> {
 
   /// Updates the currently selected filter.
   void selectFilter(SignalFilter filter) {
-    emit(state.copyWith(selectedFilter: filter));
+    emit(state.copyWith(
+      selectedFilter: filter,
+      offset: 0,
+      hasReachedMax: false,
+      signals: const <TradingSignalModel>[],
+    ));
+    unawaited(loadTrades(isRefresh: true));
   }
 
   /// Updates the search query text.

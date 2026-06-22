@@ -101,6 +101,9 @@ class PrefsKey {
 
   /// Key to check if the user is already registered/has completed registration.
   static const String isRegisteredKey = 'isRegisteredKey';
+
+  /// Key for local profile picture file path.
+  static const String localProfilePicturePathKey = 'localProfilePicturePathKey';
 }
 
 /// Minimal model for storing biometric login data in SharedPreferences.
@@ -372,6 +375,7 @@ class SharedPref {
       PrefsKey.quoteIdKey,
       PrefsKey.selectedAddressKey,
       PrefsKey.apiCookiesKey,
+      PrefsKey.localProfilePicturePathKey,
     ];
 
     // Remove only user-related keys

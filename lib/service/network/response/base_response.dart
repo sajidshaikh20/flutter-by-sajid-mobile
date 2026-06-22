@@ -57,7 +57,7 @@ class BaseResponse<T> {
       data: json['data'] != null ? fromJsonT(json['data']) : null,
       cartCount: json.containsKey('cartCount') ? json['cartCount'] : null,
       error: json.containsKey('error') ? json['error'] : null,
-      totalCount: json.containsKey('total_count') ? json['total_count'] : null,
+      totalCount: json['total_count'] ?? json['totalCount'],
       quoteId: json['quoteId']?.toString() ?? '',
     );
   }

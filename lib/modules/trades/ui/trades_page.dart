@@ -36,7 +36,27 @@ class _TradesViewBodyState extends State<TradesViewBody> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      unawaited(context.read<TradesCubit>().loadTrades());
+    }
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final double maxScroll = _scrollController.position.maxScrollExtent;
+    final double currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+
+  @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -80,12 +100,6 @@ class _TradesViewBodyState extends State<TradesViewBody> {
 
         return BlocConsumer<TradesCubit, TradesState>(
           listener: (BuildContext context, TradesState state) {
-            if (state.status == BaseStateStatus.loading) {
-              unawaited(EasyLoading.show(status: 'Loading...'));
-            } else {
-              unawaited(EasyLoading.dismiss());
-            }
-
             if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
               context.scaffoldMessenger.showSnackBar(
                 SnackBar(
@@ -107,24 +121,9 @@ class _TradesViewBodyState extends State<TradesViewBody> {
             }
           },
       builder: (BuildContext context, TradesState state) {
-        // Filter logic
         final List<TradingSignalModel> allSignals = state.signals;
-        final List<TradingSignalModel> filteredSignals = allSignals.where((TradingSignalModel s) {
-          // Filter by status
-          bool matchesStatus = true;
-          switch (state.selectedFilter) {
-            case SignalFilter.all:
-              matchesStatus = true;
-            case SignalFilter.active:
-              matchesStatus = s.isActive;
-            case SignalFilter.pending:
-              matchesStatus = s.isPending;
-            case SignalFilter.closed:
-              matchesStatus = s.isClosed;
-            case SignalFilter.cancelled:
-              matchesStatus = s.isCancelled;
-          }
 
+        final List<TradingSignalModel> filteredSignals = allSignals.where((TradingSignalModel s) {
           // Filter by search query (trading pair or category name)
           bool matchesSearch = true;
           if (state.searchQuery.isNotEmpty) {
@@ -132,7 +131,7 @@ class _TradesViewBodyState extends State<TradesViewBody> {
                 s.category.toLowerCase().contains(state.searchQuery.toLowerCase());
           }
 
-          return matchesStatus && matchesSearch;
+          return matchesSearch;
         }).toList();
 
         return Scaffold(
@@ -222,10 +221,15 @@ class _TradesViewBodyState extends State<TradesViewBody> {
                         ),
                       ),
                       // Metric Summary Cards (will scroll off-screen with Search Bar)
-                      const SliverToBoxAdapter(
+                      SliverToBoxAdapter(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: Dimens.space8),
-                          child: TradesSummaryCards(),
+                          padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
+                          child: TradesSummaryCards(
+                            activeCount: state.activeCount.toString(),
+                            pendingCount: state.pendingCount.toString(),
+                            closedCount: state.closedCount.toString(),
+                            lossesCount: state.lossesCount.toString(),
+                          ),
                         ),
                       ),
                       // Sticky Filter bar section
@@ -272,12 +276,27 @@ class _TradesViewBodyState extends State<TradesViewBody> {
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                     (BuildContext context, int index) {
+                                      if (index == filteredSignals.length) {
+                                        return const Padding(
+                                          padding: EdgeInsets.symmetric(vertical: Dimens.space16),
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 24,
+                                              height: 24,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2.5,
+                                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryPurple),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
                                       return Padding(
                                         padding: const EdgeInsets.only(bottom: Dimens.space12),
                                         child: TradingSignalCard(signal: filteredSignals[index]),
                                       );
                                     },
-                                    childCount: filteredSignals.length,
+                                    childCount: filteredSignals.length + (state.status == BaseStateStatus.loading && state.offset > 0 ? 1 : 0),
                                   ),
                                 ),
                               ),

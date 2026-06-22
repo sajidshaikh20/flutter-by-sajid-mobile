@@ -22,6 +22,8 @@ class HomeHeaderAppBar extends StatelessWidget {
       listenable: UserProfileService.instance(),
       builder: (BuildContext context, Widget? child) {
         final UserProfileService profile = UserProfileService.instance();
+        final String imageUrl = profile.profilePictureUrl;
+        final bool hasImageUrl = imageUrl.isNotEmpty;
 
         final String name = profile.customerName.isNotEmpty
             ? profile.customerName
@@ -49,15 +51,61 @@ class HomeHeaderAppBar extends StatelessWidget {
                           height: Dimens.size40,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: AppColors.primaryButtonGradient,
+                            gradient: LinearGradient(
+                              colors: AppColors.primaryGradient,
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                           ),
-                          alignment: Alignment.center,
-                          child: CustomTextLabelWidget(
-                            label: initial,
-                            style: const TextStyle(
-                              color: AppColors.whiteColor,
-                              fontWeight: FontWeight.w800,
-                              fontSize: Dimens.fontSize16,
+                          padding: const EdgeInsets.all(1.5),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+                            ),
+                            padding: const EdgeInsets.all(1.5),
+                            child: ClipOval(
+                              child: hasImageUrl
+                                  ? FastCachedImage(
+                                      url: imageUrl,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 1,
+                                          color: AppColors.primaryPurple,
+                                        ),
+                                      ),
+                                      errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: AppColors.primaryButtonGradient,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: CustomTextLabelWidget(
+                                          label: initial,
+                                          style: const TextStyle(
+                                            color: AppColors.whiteColor,
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: Dimens.fontSize16,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: AppColors.primaryButtonGradient,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: CustomTextLabelWidget(
+                                        label: initial,
+                                        style: const TextStyle(
+                                          color: AppColors.whiteColor,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: Dimens.fontSize16,
+                                        ),
+                                      ),
+                                    ),
                             ),
                           ),
                         ),

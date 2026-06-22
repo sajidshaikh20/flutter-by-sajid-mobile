@@ -1,3 +1,5 @@
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../utils/exports.dart';
 @RoutePage()
 /// Page for editing user profile details.
@@ -76,6 +78,17 @@ class _EditProfileFormState extends State<EditProfileForm> {
           });
         }
 
+        if (profile.profilePictureUrl != null && profile.profilePictureUrl!.isNotEmpty) {
+          try {
+            await FastCachedImageConfig.deleteCachedImage(imageUrl: profile.profilePictureUrl!);
+            await FastCachedImageProvider(profile.profilePictureUrl!).evict();
+            PaintingBinding.instance.imageCache.clear();
+            PaintingBinding.instance.imageCache.clearLiveImages();
+          } on Exception catch (e) {
+            DebugLog.instance.e('Error deleting cached image: $e');
+          }
+        }
+
         await UserProfileService.instance().updateUserProfile(
           customerName: profile.name,
           customerEmail: profile.email,
@@ -83,6 +96,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
           username: profile.username,
           customerId: profile.publicId,
           prefix: profile.countryCode,
+          profilePictureUrl: profile.profilePictureUrl,
         );
       }
     }
@@ -100,6 +114,105 @@ class _EditProfileFormState extends State<EditProfileForm> {
     _emailFocusNode.dispose();
     _phoneFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final PermissionManager permManager = PermissionManager();
+    bool hasPermission = false;
+    
+    if (source == ImageSource.camera) {
+      hasPermission = await permManager.requestCameraPermission();
+    } else {
+      hasPermission = await permManager.requestPhotosPermission();
+    }
+
+    if (!hasPermission) {
+      if (mounted) {
+        context.scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Permission denied. Please grant permission in settings.'),
+            backgroundColor: AppColors.errorColor,
+          ),
+        );
+      }
+      return;
+    }
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? file = await picker.pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+
+      if (file != null) {
+        final ResponseHandler<BaseResponse<ClientProfileResponse>> response =
+            await _profileRepository.uploadProfilePicture(File(file.path));
+
+        if (response.isSuccess()) {
+          final ClientProfileResponse? updated = response.getSuccessInstance()?.response.data;
+          if (updated != null) {
+            final String oldUrl = UserProfileService.instance().profilePictureUrl;
+            if (oldUrl.isNotEmpty) {
+              try {
+                await FastCachedImageConfig.deleteCachedImage(imageUrl: oldUrl);
+                await FastCachedImageProvider(oldUrl).evict();
+              } on Exception catch (e) {
+                DebugLog.instance.e('Error deleting cached image: $e');
+              }
+            }
+            if (updated.profilePictureUrl != null && updated.profilePictureUrl!.isNotEmpty) {
+              try {
+                await FastCachedImageConfig.deleteCachedImage(imageUrl: updated.profilePictureUrl!);
+                await FastCachedImageProvider(updated.profilePictureUrl!).evict();
+              } on Exception catch (e) {
+                DebugLog.instance.e('Error deleting cached image: $e');
+              }
+            }
+            try {
+              PaintingBinding.instance.imageCache.clear();
+              PaintingBinding.instance.imageCache.clearLiveImages();
+            } on Exception catch (e) {
+              DebugLog.instance.e('Error clearing image cache: $e');
+            }
+
+            await UserProfileService.instance().updateUserProfile(
+              profilePictureUrl: updated.profilePictureUrl,
+            );
+            if (mounted) {
+              context.scaffoldMessenger.showSnackBar(
+                const SnackBar(
+                  content: Text('Profile photo uploaded and updated successfully!'),
+                  backgroundColor: AppColors.successColor,
+                ),
+              );
+            }
+          }
+        } else {
+          final OnFailureResponse<BaseResponse<ClientProfileResponse>>? failure = response.getFailureInstance();
+          if (mounted) {
+            context.scaffoldMessenger.showSnackBar(
+              SnackBar(
+                content: Text(failure?.error?.errorMessage ?? 'Failed to upload profile photo.'),
+                backgroundColor: AppColors.errorColor,
+              ),
+            );
+          }
+        }
+      }
+    } on Object catch (e) {
+      DebugLog.instance.e('Error picking image: $e');
+      if (mounted) {
+        context.scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick image: $e'),
+            backgroundColor: AppColors.errorColor,
+          ),
+        );
+      }
+    }
   }
 
   void _onTapCamera() {
@@ -134,7 +247,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                 title: const Text('Choose from Gallery'),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _showMockPhotoSuccess();
+                  unawaited(_pickImage(ImageSource.gallery));
                 },
               ),
               ListTile(
@@ -142,7 +255,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                 title: const Text('Take a Photo'),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  _showMockPhotoSuccess();
+                  unawaited(_pickImage(ImageSource.camera));
                 },
               ),
             ],
@@ -152,23 +265,12 @@ class _EditProfileFormState extends State<EditProfileForm> {
     ));
   }
 
-
-  void _showMockPhotoSuccess() {
-    context.scaffoldMessenger.showSnackBar(
-      const SnackBar(
-        content: Text('Profile photo updated successfully! (Mocked)'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
   Future<void> _updateProfile() async {
     if (_formKey.currentState?.validate() ?? false) {
       final String name = _nameController.text.trim();
       final String username = _usernameController.text.trim();
       final String email = _emailController.text.trim();
       final String phone = _phoneController.text.trim();
-      final String countryCode = UserProfileService.instance().prefix?.toString() ?? '+1';
 
       unawaited(EasyLoading.show(status: 'Updating...'));
 
@@ -176,8 +278,8 @@ class _EditProfileFormState extends State<EditProfileForm> {
         final ResponseHandler<BaseResponse<ClientProfileResponse>> response = await _profileRepository.updateProfile(
           UpdateClientProfileRequest(
             name: name,
+            username: username,
             phone: phone,
-            countryCode: countryCode,
           ),
         );
 
@@ -190,7 +292,8 @@ class _EditProfileFormState extends State<EditProfileForm> {
             username: updated?.username ?? username,
             customerEmail: updated?.email ?? email,
             phoneNumber: updated?.phone ?? phone,
-            prefix: updated?.countryCode ?? countryCode,
+            prefix: updated?.countryCode ?? UserProfileService.instance().prefix,
+            profilePictureUrl: updated?.profilePictureUrl,
           );
 
           if (mounted) {
@@ -294,57 +397,108 @@ class _EditProfileFormState extends State<EditProfileForm> {
 
 
                       // Avatar with Neon Gradient ring
-                      Stack(
-                        children: <Widget>[
-                          Container(
-                            width: Dimens.size110,
-                            height: Dimens.size110,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: AppColors.primaryGradient,
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                            padding: const EdgeInsets.all(3),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: backgroundColor,
-                              ),
-                              padding: const EdgeInsets.all(2),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  Assets.png.icUserImage.path,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 2,
-                            right: 2,
-                            child: GestureDetector(
-                              onTap: _onTapCamera,
-                              child: Container(
-                                width: Dimens.size32,
-                                height: Dimens.size32,
+                      ListenableBuilder(
+                        listenable: UserProfileService.instance(),
+                        builder: (BuildContext context, Widget? child) {
+                          final UserProfileService profile = UserProfileService.instance();
+                          final String imageUrl = profile.profilePictureUrl;
+                          final bool hasImageUrl = imageUrl.isNotEmpty;
+
+                          final String name = profile.customerName.isNotEmpty
+                              ? profile.customerName
+                              : (profile.username.isNotEmpty ? profile.username : 'Sajid');
+                          final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'S';
+
+                          return Stack(
+                            children: <Widget>[
+                              Container(
+                                width: Dimens.size110,
+                                height: Dimens.size110,
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(
-                                    colors: AppColors.secondaryGradient,
+                                    colors: AppColors.primaryGradient,
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
                                 ),
-                                child: const Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: Colors.white,
-                                  size: Dimens.size16,
+                                padding: const EdgeInsets.all(3),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: backgroundColor,
+                                  ),
+                                  padding: const EdgeInsets.all(2),
+                                  child: ClipOval(
+                                    child: hasImageUrl
+                                        ? FastCachedImage(
+                                            url: imageUrl,
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: AppColors.primaryPurple,
+                                              ),
+                                            ),
+                                            errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                gradient: AppColors.primaryButtonGradient,
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: CustomTextLabelWidget(
+                                                label: initial,
+                                                style: const TextStyle(
+                                                  color: AppColors.whiteColor,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: Dimens.fontSize40,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              gradient: AppColors.primaryButtonGradient,
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: CustomTextLabelWidget(
+                                              label: initial,
+                                              style: const TextStyle(
+                                                color: AppColors.whiteColor,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: Dimens.fontSize40,
+                                              ),
+                                            ),
+                                          ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
+                              Positioned(
+                                bottom: 2,
+                                right: 2,
+                                child: GestureDetector(
+                                  onTap: _onTapCamera,
+                                  child: Container(
+                                    width: Dimens.size32,
+                                    height: Dimens.size32,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: AppColors.secondaryGradient,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt_outlined,
+                                      color: Colors.white,
+                                      size: Dimens.size16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: Dimens.space12),
                       CustomTextLabelWidget(

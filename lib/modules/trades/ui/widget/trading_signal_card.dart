@@ -531,40 +531,52 @@ class TradingSignalCard extends StatelessWidget {
                 children: <Widget>[
                   if (showTakeTrade && (signal.isActive || signal.isPending)) ...<Widget>[
                     GestureDetector(
-                      onTap: () {
-                        if (signal.publicId.isNotEmpty) {
-                          unawaited(context.read<TradesCubit>().takeTrade(signal.publicId));
-                        } else {
-                          context.scaffoldMessenger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Cannot take trade: invalid ID'),
-                            ),
-                          );
-                        }
-                      },
+                      onTap: signal.isTaken
+                          ? null
+                          : () {
+                              if (signal.publicId.isNotEmpty) {
+                                unawaited(context.read<TradesCubit>().takeTrade(signal.publicId));
+                              } else {
+                                context.scaffoldMessenger.showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Cannot take trade: invalid ID'),
+                                  ),
+                                );
+                              }
+                            },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
                         decoration: BoxDecoration(
-                          gradient: AppColors.primaryButtonGradient,
+                          gradient: signal.isTaken ? null : AppColors.primaryButtonGradient,
+                          color: signal.isTaken ? (isDark ? AppColors.borderDark : AppColors.borderLight) : null,
                           borderRadius: BorderRadius.circular(Dimens.radius8),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             CustomTextLabelWidget(
-                              label: 'Take Trade',
+                              label: signal.isTaken ? 'Taken' : 'Take Trade',
                               style: TextStyle(
-                                color: AppColors.whiteColor,
+                                color: signal.isTaken ? subtextColor : AppColors.whiteColor,
                                 fontWeight: FontWeight.w800,
                                 fontSize: Dimens.fontSize10,
                               ),
                             ),
-                            SizedBox(width: Dimens.space4),
-                            Icon(
-                              Icons.trending_up_rounded,
-                              color: AppColors.whiteColor,
-                              size: Dimens.size12,
-                            ),
+                            if (!signal.isTaken) ...<Widget>[
+                              const SizedBox(width: Dimens.space4),
+                              const Icon(
+                                Icons.trending_up_rounded,
+                                color: AppColors.whiteColor,
+                                size: Dimens.size12,
+                              ),
+                            ] else ...<Widget>[
+                              const SizedBox(width: Dimens.space4),
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: themeGreen,
+                                size: Dimens.size12,
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -572,7 +584,16 @@ class TradingSignalCard extends StatelessWidget {
                     const SizedBox(width: Dimens.space8),
                   ],
                   GestureDetector(
-                    onTap: () => context.router.push(TradingOverviewRoute(signal: signal)),
+                    onTap: () async {
+                      await context.router.push(TradingOverviewRoute(signal: signal));
+                      if (context.mounted) {
+                        if (showTakeTrade) {
+                          unawaited(context.read<TradesCubit>().loadTrades());
+                        } else {
+                          unawaited(context.read<MyTradesCubit>().loadMyTrades(isRefresh: true));
+                        }
+                      }
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
                       decoration: BoxDecoration(
@@ -589,7 +610,7 @@ class TradingSignalCard extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                               fontSize: Dimens.fontSize10,
                             ),
-                      ),
+                          ),
                           SizedBox(width: Dimens.space4),
                           Icon(
                             Icons.arrow_forward_ios_rounded,

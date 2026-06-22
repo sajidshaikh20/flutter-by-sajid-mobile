@@ -100,7 +100,13 @@ class _SettingsViewState extends State<SettingsView> {
                   listenable: UserProfileService.instance(),
                   builder: (BuildContext context, Widget? child) {
                     final UserProfileService profile = UserProfileService.instance();
+                    final String imageUrl = profile.profilePictureUrl;
+                    final bool hasImageUrl = imageUrl.isNotEmpty;
 
+                    final String name = profile.customerName.isNotEmpty
+                        ? profile.customerName
+                        : (profile.username.isNotEmpty ? profile.username : 'Sajid');
+                    final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'S';
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,6 +139,8 @@ class _SettingsViewState extends State<SettingsView> {
                                       shape: BoxShape.circle,
                                       gradient: LinearGradient(
                                         colors: AppColors.primaryGradient,
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ),
                                     ),
                                     padding: const EdgeInsets.all(2),
@@ -143,10 +151,47 @@ class _SettingsViewState extends State<SettingsView> {
                                       ),
                                       padding: const EdgeInsets.all(2),
                                       child: ClipOval(
-                                        child: Image.asset(
-                                          Assets.png.icUserImage.path,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        child: hasImageUrl
+                                            ? FastCachedImage(
+                                                url: imageUrl,
+                                                fit: BoxFit.cover,
+                                                loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: AppColors.primaryPurple,
+                                                  ),
+                                                ),
+                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                                  decoration: const BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    gradient: AppColors.primaryButtonGradient,
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: CustomTextLabelWidget(
+                                                    label: initial,
+                                                    style: const TextStyle(
+                                                      color: AppColors.whiteColor,
+                                                      fontWeight: FontWeight.w800,
+                                                      fontSize: Dimens.fontSize24,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                decoration: const BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  gradient: AppColors.primaryButtonGradient,
+                                                ),
+                                                alignment: Alignment.center,
+                                                child: CustomTextLabelWidget(
+                                                  label: initial,
+                                                  style: const TextStyle(
+                                                    color: AppColors.whiteColor,
+                                                    fontWeight: FontWeight.w800,
+                                                    fontSize: Dimens.fontSize24,
+                                                  ),
+                                                ),
+                                              ),
                                       ),
                                     ),
                                   ),

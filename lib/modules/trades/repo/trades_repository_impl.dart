@@ -2,12 +2,28 @@ import '../../../utils/exports.dart';
 
 class TradesRepositoryImpl extends TradesRepository {
   @override
-  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getTrades() async {
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getTrades({
+    String? status,
+    int? limit,
+    int? offset,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{};
+    if (status != null) {
+      params['status'] = status;
+    }
+    if (limit != null) {
+      params['limit'] = limit;
+    }
+    if (offset != null) {
+      params['offset'] = offset;
+    }
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.getAllTrades,
-          showLoader: true,
+          endUrl: Apis.getTradesByPlan,
+          params: params,
+          showLoader: offset == 0 || offset == null,
         );
 
     return getParsedResponseHandler(
@@ -27,12 +43,27 @@ class TradesRepositoryImpl extends TradesRepository {
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getMyTrades() async {
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getMyTrades({
+    String? status,
+    int? limit,
+    int? offset,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{};
+    if (status != null) {
+      params['status'] = status;
+    }
+    if (limit != null) {
+      params['limit'] = limit;
+    }
+    if (offset != null) {
+      params['offset'] = offset;
+    }
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
           endUrl: Apis.myTrades,
-          showLoader: true,
+          params: params,
         );
 
     return getParsedResponseHandler(
@@ -59,7 +90,6 @@ class TradesRepositoryImpl extends TradesRepository {
           endUrl: '${Apis.takeTrade}/$tradePublicId/take',
           apiType: ApiType.post,
           showLoader: true,
-          data: <String, dynamic>{},
         );
 
     return getParsedResponseHandler(
