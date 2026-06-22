@@ -2,7 +2,7 @@ import '../../../utils/exports.dart';
 
 class TradesRepositoryImpl extends TradesRepository {
   @override
-  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getTrades({
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getTradesByPlan({
     String? status,
     int? limit,
     int? offset,
@@ -23,7 +23,6 @@ class TradesRepositoryImpl extends TradesRepository {
         .handleApiCall<Map<String, dynamic>>(
           endUrl: Apis.getTradesByPlan,
           params: params,
-          showLoader: offset == 0 || offset == null,
         );
 
     return getParsedResponseHandler(
@@ -43,15 +42,11 @@ class TradesRepositoryImpl extends TradesRepository {
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getMyTrades({
-    String? status,
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getClientMyTrades({
     int? limit,
     int? offset,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{};
-    if (status != null) {
-      params['status'] = status;
-    }
     if (limit != null) {
       params['limit'] = limit;
     }
@@ -62,7 +57,7 @@ class TradesRepositoryImpl extends TradesRepository {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.myTrades,
+          endUrl: Apis.clientMyTrades,
           params: params,
         );
 

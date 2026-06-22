@@ -10,6 +10,7 @@ class TradesState extends BaseState {
     this.signals = const <TradingSignalModel>[],
     this.offset = 0,
     this.hasReachedMax = false,
+    this.isLoadingMore = false,
     this.totalCount = 0,
     this.activeCount = 0,
     this.pendingCount = 0,
@@ -25,6 +26,7 @@ class TradesState extends BaseState {
   final List<TradingSignalModel> signals;
   final int offset;
   final bool hasReachedMax;
+  final bool isLoadingMore;
   final int totalCount;
   final int activeCount;
   final int pendingCount;
@@ -32,6 +34,33 @@ class TradesState extends BaseState {
   final int lossesCount;
 
   factory TradesState.initial() => const TradesState();
+
+  bool get isInitialLoading =>
+      status == BaseStateStatus.loading && signals.isEmpty && !isLoadingMore;
+
+  /// Trades visible for the current status filter and search query.
+  List<TradingSignalModel> get filteredSignals => signals.where((TradingSignalModel signal) {
+        if (!_matchesStatusFilter(signal)) return false;
+        if (searchQuery.isEmpty) return true;
+        final String query = searchQuery.toLowerCase();
+        return signal.pair.toLowerCase().contains(query) ||
+            signal.category.toLowerCase().contains(query);
+      }).toList();
+
+  bool _matchesStatusFilter(TradingSignalModel signal) {
+    switch (selectedFilter) {
+      case SignalFilter.all:
+        return true;
+      case SignalFilter.active:
+        return signal.isActive;
+      case SignalFilter.pending:
+        return signal.isPending;
+      case SignalFilter.closed:
+        return signal.isClosed;
+      case SignalFilter.cancelled:
+        return signal.isCancelled;
+    }
+  }
 
   TradesState copyWith({
     BaseStateStatus? status,
@@ -42,6 +71,7 @@ class TradesState extends BaseState {
     List<TradingSignalModel>? signals,
     int? offset,
     bool? hasReachedMax,
+    bool? isLoadingMore,
     int? totalCount,
     int? activeCount,
     int? pendingCount,
@@ -57,6 +87,7 @@ class TradesState extends BaseState {
         signals: signals ?? this.signals,
         offset: offset ?? this.offset,
         hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
         totalCount: totalCount ?? this.totalCount,
         activeCount: activeCount ?? this.activeCount,
         pendingCount: pendingCount ?? this.pendingCount,
@@ -74,6 +105,7 @@ class TradesState extends BaseState {
         signals,
         offset,
         hasReachedMax,
+        isLoadingMore,
         totalCount,
         activeCount,
         pendingCount,

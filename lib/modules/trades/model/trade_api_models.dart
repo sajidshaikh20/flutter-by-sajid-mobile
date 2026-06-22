@@ -68,26 +68,54 @@ class TradeResponse {
   });
 
   factory TradeResponse.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> levelsList = json['levels'] as List<dynamic>? ?? <dynamic>[];
+    final Map<String, dynamic> source = _mergeTradeJson(json);
+    final List<dynamic> levelsList = source['levels'] as List<dynamic>? ??
+        source['tradeLevels'] as List<dynamic>? ??
+        <dynamic>[];
+
     return TradeResponse(
-      publicId: json['tradePublicId'] ?? json['publicId'] ?? '',
-      market: json['market'] ?? '',
-      marketType: json['marketType'] ?? '',
-      status: json['status'] ?? 'ACTIVE',
-      riskRewardRatio: json['riskRewardRatio'] ?? '1:2',
-      note: json['note'] ?? '',
-      tradingViewUrl: json['tradingViewUrl'] ?? '',
-      levels: levelsList.map((dynamic l) => TradeLevelResponse.fromJson(l as Map<String, dynamic>)).toList(),
-      exitPrice: json['exitPrice'] != null ? double.tryParse(json['exitPrice'].toString()) : null,
-      livePrice: json['livePrice'] != null ? double.tryParse(json['livePrice'].toString()) : null,
-      createdAt: json['createdAt']?.toString(),
-      outcome: json['outcome']?.toString(),
-      currencyPair: json['currencyPair'] is Map<String, dynamic>
-          ? json['currencyPair'] as Map<String, dynamic>
-          : (json['currencyPairSymbol'] != null
-              ? <String, dynamic>{'symbol': json['currencyPairSymbol']}
+      publicId: source['tradePublicId'] ?? source['publicId'] ?? '',
+      market: source['market']?.toString() ?? '',
+      marketType: source['marketType']?.toString() ?? '',
+      status: _normalizeTradeStatus(source['tradeStatus'] ?? source['status']),
+      riskRewardRatio: source['riskRewardRatio']?.toString() ?? '1:2',
+      note: source['note']?.toString() ?? '',
+      tradingViewUrl: source['tradingViewUrl']?.toString() ?? '',
+      levels: levelsList
+          .map((dynamic l) => TradeLevelResponse.fromJson(l as Map<String, dynamic>))
+          .toList(),
+      exitPrice: source['exitPrice'] != null
+          ? double.tryParse(source['exitPrice'].toString())
+          : null,
+      livePrice: source['livePrice'] != null
+          ? double.tryParse(source['livePrice'].toString())
+          : null,
+      createdAt: source['createdAt']?.toString(),
+      outcome: source['outcome']?.toString(),
+      currencyPair: source['currencyPair'] is Map<String, dynamic>
+          ? source['currencyPair'] as Map<String, dynamic>
+          : (source['currencyPairSymbol'] != null
+              ? <String, dynamic>{'symbol': source['currencyPairSymbol']}
               : null),
     );
+  }
+
+  static Map<String, dynamic> _mergeTradeJson(Map<String, dynamic> json) {
+    if (json['trade'] is Map<String, dynamic>) {
+      return <String, dynamic>{
+        ...json['trade'] as Map<String, dynamic>,
+        ...json,
+      };
+    }
+    return json;
+  }
+
+  static String _normalizeTradeStatus(Object? rawStatus) {
+    final String status = rawStatus?.toString().toUpperCase() ?? 'ACTIVE';
+    if (status == 'CANCEL' || status == 'CANCELLED') {
+      return 'CANCELLED';
+    }
+    return status;
   }
 
   Map<String, dynamic> toJson() {
@@ -131,8 +159,7 @@ class TradeResponse {
 
     final String pair =
         currencyPair?['symbol'] as String? ?? currencyPair?['name'] as String? ?? 'EURUSD';
-    final String normalizedStatus =
-        status.toUpperCase() == 'CANCEL' ? 'CANCELLED' : status.toUpperCase();
+    final String normalizedStatus = _normalizeTradeStatus(status);
 
     final List<double> sparklineData = <double>[
       entryPrice * 0.998,

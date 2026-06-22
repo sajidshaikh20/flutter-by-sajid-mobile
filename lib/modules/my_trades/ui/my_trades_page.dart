@@ -17,7 +17,7 @@ class MyTradesPage extends BaseResponsiveView {
   Widget _build(BuildContext context) {
     return BlocProvider<MyTradesCubit>(
       create: (BuildContext context) => MyTradesCubit(
-        repository: TradesRepositoryImpl(),
+        repository: MyTradesRepositoryImpl(),
       ),
       child: const MyTradesViewBody(),
     );
@@ -74,12 +74,6 @@ class MyTradesViewBody extends StatelessWidget {
 
         return BlocConsumer<MyTradesCubit, MyTradesState>(
           listener: (BuildContext context, MyTradesState state) {
-            if (state.isInitialLoading) {
-              unawaited(EasyLoading.show(status: 'Loading...'));
-            } else {
-              unawaited(EasyLoading.dismiss());
-            }
-
             if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
               context.scaffoldMessenger.showSnackBar(
                 SnackBar(
@@ -91,15 +85,12 @@ class MyTradesViewBody extends StatelessWidget {
             }
           },
           builder: (BuildContext context, MyTradesState state) {
-            final List<TradingSignalModel> filteredSignals = state.signals.where((TradingSignalModel s) {
-              if (state.searchQuery.isEmpty) return true;
-              final String query = state.searchQuery.toLowerCase();
-              return s.pair.toLowerCase().contains(query) ||
-                  s.category.toLowerCase().contains(query);
-            }).toList();
+            final List<TradingSignalModel> filteredSignals = state.filteredSignals;
 
             final bool showInitialLoader = state.isInitialLoading;
             final bool showLoadMoreIndicator = state.isLoadingMore && state.signals.isNotEmpty;
+            final bool showEmptyState =
+                !showInitialLoader && filteredSignals.isEmpty && state.status != BaseStateStatus.loading;
 
             return Scaffold(
               backgroundColor: pageBg,
@@ -116,7 +107,11 @@ class MyTradesViewBody extends StatelessWidget {
                         onNotification: (ScrollNotification notification) =>
                             _onScrollNotification(context, notification),
                         child: CustomScrollView(
-                          slivers: <Widget>[
+                          slivers: showInitialLoader
+                              ? const <Widget>[
+                                  SliverToBoxAdapter(child: TradesPageShimmerWidget()),
+                                ]
+                              : <Widget>[
                             SliverToBoxAdapter(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -210,80 +205,49 @@ class MyTradesViewBody extends StatelessWidget {
                                   },
                                 ),
                               ),
-                              sliver: showInitialLoader
+                              sliver: showEmptyState
                                   ? SliverToBoxAdapter(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: Dimens.space40),
-                                        child: Center(
-                                          child: SizedBox(
-                                            width: 32,
-                                            height: 32,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2.5,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                MainConfig.appColors.mainColor,
-                                              ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(top: Dimens.space40),
+                                          child: CustomTextLabelWidget(
+                                            label: 'No signals available for this filter',
+                                            style: TextStyle(
+                                              color: subtextColor,
+                                              fontSize: Dimens.fontSize13,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
                                       ),
                                     )
-                                  : filteredSignals.isEmpty
-                                      ? SliverToBoxAdapter(
-                                          child: Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(top: Dimens.space40),
-                                              child: CustomTextLabelWidget(
-                                                label: 'No signals available for this filter',
-                                                style: TextStyle(
-                                                  color: subtextColor,
-                                                  fontSize: Dimens.fontSize13,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                  : SliverPadding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: Dimens.space16,
+                                        vertical: Dimens.space12,
+                                      ),
+                                      sliver: SliverList(
+                                        delegate: SliverChildBuilderDelegate(
+                                          (BuildContext context, int index) {
+                                            if (index == filteredSignals.length) {
+                                              return const Padding(
+                                                padding: EdgeInsets.only(bottom: Dimens.space12),
+                                                child: TradingSignalCardShimmerWidget(),
+                                              );
+                                            }
+                                            return Padding(
+                                              padding: const EdgeInsets.only(bottom: Dimens.space12),
+                                              child: TradingSignalCard(
+                                                signal: filteredSignals[index],
+                                                showTakeTrade: false,
                                               ),
-                                            ),
-                                          ),
-                                        )
-                                      : SliverPadding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: Dimens.space16,
-                                            vertical: Dimens.space12,
-                                          ),
-                                          sliver: SliverList(
-                                            delegate: SliverChildBuilderDelegate(
-                                              (BuildContext context, int index) {
-                                                if (index == filteredSignals.length) {
-                                                  return const Padding(
-                                                    padding: EdgeInsets.symmetric(
-                                                      vertical: Dimens.space16,
-                                                    ),
-                                                    child: Center(
-                                                      child: SizedBox(
-                                                        width: 24,
-                                                        height: 24,
-                                                        child: CircularProgressIndicator(
-                                                          strokeWidth: 2.5,
-                                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                                            AppColors.primaryPurple,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }
-                                                return Padding(
-                                                  padding: const EdgeInsets.only(bottom: Dimens.space12),
-                                                  child: TradingSignalCard(
-                                                    signal: filteredSignals[index],
-                                                    showTakeTrade: false,
-                                                  ),
-                                                );
-                                              },
-                                              childCount: filteredSignals.length +
-                                                  (showLoadMoreIndicator ? 1 : 0),
-                                            ),
-                                          ),
+                                            );
+                                          },
+                                          childCount: filteredSignals.length +
+                                              (showLoadMoreIndicator ? 1 : 0),
                                         ),
+                                      ),
+                                    ),
                             ),
                           ],
                         ),

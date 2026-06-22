@@ -528,11 +528,18 @@ class AppColors {
   /// Represents the base color for shimmer effects, a light shade of gray.
   static final Color shimmerBaseColor = Colors.grey.shade300;
 
-    /// Represents the base color for dark shimmer effects, a slightly darker shade of gray.
-  static final Color shimmerBaseDarkColor = Colors.grey.shade400;
+  /// Represents the base color for dark shimmer effects.
+  static const Color shimmerBaseDarkColor = Color(0xFF1B162E);
 
-    /// Represents the highlight color for shimmer effects, a very light shade of gray.
+  /// Represents the highlight color for shimmer effects, a very light shade of gray.
   static final Color shimmerHighlightColor = Colors.grey.shade100;
+
+  /// Represents the highlight color for dark shimmer effects.
+  static const Color shimmerHighlightDarkColor = Color(0xFF2E274C);
+
+  /// Shimmer placeholder fill shown inside the animated overlay.
+  static Color shimmerPlaceholderColor({required bool isDark}) =>
+      isDark ? const Color(0xFF2A2345) : Colors.white;
 
     /// Represents a standard yellow color.
   Color yellowColor = const Color(0xFFFFBB00);

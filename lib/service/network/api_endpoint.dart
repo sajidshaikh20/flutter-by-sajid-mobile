@@ -145,7 +145,7 @@ abstract class Apis {
   /// Endpoint to get all trades
   static const String getAllTrades = '$subBaseUrl/common/trades/getAll';
 
-  /// Endpoint to get client's trades by plan
+  /// Trades tab — signals available for the user's subscription plan.
   static const String getTradesByPlan = '$subBaseUrl/trade/my-trades-by-plan';
 
   /// Endpoint to get client profile
@@ -160,6 +160,6 @@ abstract class Apis {
   /// Endpoint prefix to take a trade
   static const String takeTrade = '$subBaseUrl/client/trades';
 
-  /// Endpoint to get client's taken trades
-  static const String myTrades = '$subBaseUrl/trade/my-trades-by-plan';
+  /// My Trades tab — client's taken / personal trades.
+  static const String clientMyTrades = '$subBaseUrl/client/my-trades';
 }

@@ -1,52 +1,70 @@
 import '../../../utils/exports.dart';
 
-/// Cubit managing Trades page state including search queries and category/status filtering.
+/// Cubit managing Trades (Trading Signals) tab — uses `/trade/my-trades-by-plan` API.
 class TradesCubit extends BaseCubit<TradesState> {
-  final TradesRepository repository;
-
   TradesCubit({required this.repository}) : super(TradesState.initial()) {
-    unawaited(loadTrades());
+    unawaited(loadTrades(isRefresh: true));
   }
 
+  final TradesRepository repository;
+
+  int _loadGeneration = 0;
+
+  static const int _pageLimit = 10;
+
   Future<void> loadTrades({bool isRefresh = false}) async {
-    //if (state.status == BaseStateStatus.loading) return;
+    if (isRefresh) {
+      _loadGeneration++;
+    } else if (state.isInitialLoading || state.isLoadingMore || state.hasReachedMax) {
+      return;
+    }
+    await _fetchTrades(isRefresh: isRefresh || state.signals.isEmpty, isLoadMore: false);
+  }
 
-    int currentOffset = isRefresh ? 0 : state.offset;
-    if (!isRefresh && state.hasReachedMax) return;
+  Future<void> loadMore() async {
+    if (state.isLoadingMore ||
+        state.hasReachedMax ||
+        state.isInitialLoading ||
+        state.status == BaseStateStatus.loading) {
+      return;
+    }
+    await _fetchTrades(isRefresh: false, isLoadMore: true);
+  }
 
-    emit(state.copyWith(status: BaseStateStatus.loading));
+  Future<void> _fetchTrades({required bool isRefresh, required bool isLoadMore}) async {
+    final int generation = _loadGeneration;
+    final int currentOffset = isRefresh ? 0 : state.offset;
 
-    String? statusParam;
-    switch (state.selectedFilter) {
-      case SignalFilter.all:
-        statusParam = null;
-      case SignalFilter.active:
-        statusParam = 'ACTIVE';
-      case SignalFilter.pending:
-        statusParam = 'PENDING';
-      case SignalFilter.closed:
-        statusParam = 'CLOSED';
-      case SignalFilter.cancelled:
-        statusParam = 'CANCEL';
+    if (isLoadMore) {
+      emit(state.copyWith(isLoadingMore: true));
+    } else {
+      emit(state.copyWith(
+        status: BaseStateStatus.loading,
+        isLoadingMore: false,
+        msg: '',
+      ));
     }
 
-    const int limit = 10;
-
     final List<Future<dynamic>> futures = <Future<dynamic>>[
-      repository.getTrades(status: statusParam, limit: limit, offset: currentOffset),
-      repository.getMyTrades(),
+      repository.getTradesByPlan(
+        limit: _pageLimit,
+        offset: currentOffset,
+      ),
+      repository.getClientMyTrades(),
     ];
 
     final bool needCounts = currentOffset == 0;
     if (needCounts) {
-      futures.add(repository.getTrades());
+      futures.add(repository.getTradesByPlan());
     }
 
     final List<dynamic> responses = await Future.wait<dynamic>(futures);
 
+    if (generation != _loadGeneration) return;
+
     final ResponseHandler<BaseResponse<List<TradeResponse>>> response =
         responses[0] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
-    final ResponseHandler<BaseResponse<List<TradeResponse>>> myResponse =
+    final ResponseHandler<BaseResponse<List<TradeResponse>>> clientTradesResponse =
         responses[1] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
 
     int activeCount = state.activeCount;
@@ -60,28 +78,35 @@ class TradesCubit extends BaseCubit<TradesState> {
       if (allTradesResponse.isSuccess()) {
         final List<TradeResponse> allApiTrades =
             allTradesResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[];
-        activeCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'ACTIVE').length;
-        pendingCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'PENDING').length;
-        closedCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'CLOSED').length;
-        lossesCount = allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'CLOSED' && t.outcome?.toUpperCase() == 'LOSS').length;
+        activeCount =
+            allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'ACTIVE').length;
+        pendingCount =
+            allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'PENDING').length;
+        closedCount =
+            allApiTrades.where((TradeResponse t) => t.status.toUpperCase() == 'CLOSED').length;
+        lossesCount = allApiTrades
+            .where((TradeResponse t) =>
+                t.status.toUpperCase() == 'CLOSED' && t.outcome?.toUpperCase() == 'LOSS')
+            .length;
       }
     }
 
     if (response.isSuccess()) {
-      final BaseResponse<List<TradeResponse>>? baseResponse = response.getSuccessInstance()?.response;
+      final BaseResponse<List<TradeResponse>>? baseResponse =
+          response.getSuccessInstance()?.response;
       final List<TradeResponse> apiTrades = baseResponse?.data ?? <TradeResponse>[];
-      final int totalCount = baseResponse?.totalCount ?? 0;
+      final int totalCount = baseResponse?.totalCount ?? apiTrades.length;
 
-      final List<TradeResponse> myTrades = myResponse.isSuccess()
-          ? (myResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[])
+      final List<TradeResponse> clientTrades = clientTradesResponse.isSuccess()
+          ? (clientTradesResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[])
           : <TradeResponse>[];
 
-      final Set<String> takenIds = myTrades.map((TradeResponse t) => t.publicId).toSet();
+      final Set<String> takenIds = clientTrades.map((TradeResponse t) => t.publicId).toSet();
 
-      final List<TradingSignalModel> newMappedSignals = apiTrades.map((TradeResponse t) {
-        final TradingSignalModel signal = _mapTradeResponseToSignal(t);
-        return signal.copyWith(isTaken: takenIds.contains(t.publicId));
-      }).toList();
+      final List<TradingSignalModel> newMappedSignals = apiTrades
+          .map((TradeResponse t) =>
+              t.toTradingSignalModel(isTaken: takenIds.contains(t.publicId)))
+          .toList();
 
       final List<TradingSignalModel> updatedSignals = isRefresh || currentOffset == 0
           ? newMappedSignals
@@ -90,8 +115,9 @@ class TradesCubit extends BaseCubit<TradesState> {
       emit(state.copyWith(
         signals: updatedSignals,
         status: BaseStateStatus.success,
+        isLoadingMore: false,
         offset: currentOffset + apiTrades.length,
-        hasReachedMax: updatedSignals.length >= totalCount || apiTrades.length < limit,
+        hasReachedMax: updatedSignals.length >= totalCount || apiTrades.length < _pageLimit,
         totalCount: totalCount,
         activeCount: activeCount,
         pendingCount: pendingCount,
@@ -99,9 +125,11 @@ class TradesCubit extends BaseCubit<TradesState> {
         lossesCount: lossesCount,
       ));
     } else {
-      final OnFailureResponse<BaseResponse<List<TradeResponse>>>? failure = response.getFailureInstance();
+      final OnFailureResponse<BaseResponse<List<TradeResponse>>>? failure =
+          response.getFailureInstance();
       emit(state.copyWith(
         status: BaseStateStatus.failure,
+        isLoadingMore: false,
         msg: failure?.error?.errorMessage ?? 'Failed to load trade signals.',
       ));
     }
@@ -125,103 +153,15 @@ class TradesCubit extends BaseCubit<TradesState> {
     }
   }
 
-  TradingSignalModel _mapTradeResponseToSignal(TradeResponse t) {
-    double entryPrice = 0.0;
-    double stopLoss = 0.0;
-    double takeProfit = 0.0;
-
-    for (final TradeLevelResponse lvl in t.levels) {
-      if (lvl.levelType.toUpperCase() == 'ENTRY') {
-        entryPrice = double.tryParse(lvl.entryPoint) ?? 0.0;
-        stopLoss = double.tryParse(lvl.stopLoss) ?? 0.0;
-      } else if (lvl.levelType.toUpperCase() == 'TAKE_PROFIT') {
-        takeProfit = double.tryParse(lvl.takeProfit) ?? 0.0;
-      }
-    }
-
-    if (entryPrice == 0.0 && t.levels.isNotEmpty) {
-      entryPrice = double.tryParse(t.levels.first.entryPoint) ?? 0.0;
-      stopLoss = double.tryParse(t.levels.first.stopLoss) ?? 0.0;
-      takeProfit = double.tryParse(t.levels.first.takeProfit) ?? 0.0;
-    }
-
-    final String pair = t.currencyPair?['symbol'] as String? ?? t.currencyPair?['name'] as String? ?? 'EURUSD';
-    final String category = t.market.toUpperCase();
-    final String type = t.marketType.toUpperCase();
-    final String status = t.status.toUpperCase() == 'CANCEL' ? 'CANCELLED' : t.status.toUpperCase();
-
-    final List<double> sparklineData = <double>[
-      entryPrice * 0.998,
-      entryPrice * 0.999,
-      entryPrice * 1.001,
-      entryPrice * 1.002,
-      t.livePrice ?? entryPrice,
-    ];
-
-    double progress = 0.5;
-    if (takeProfit != entryPrice) {
-      final double current = t.livePrice ?? entryPrice;
-      progress = ((current - entryPrice) / (takeProfit - entryPrice)).clamp(0.0, 1.0);
-    }
-
-    final double pipsVal = (t.livePrice != null) ? (t.livePrice! - entryPrice) * 10000 : 0.0;
-    final String pipsStr = '${pipsVal >= 0 ? "+" : ""}${pipsVal.toStringAsFixed(2)} PIPS';
-
-    return TradingSignalModel(
-      publicId: t.publicId,
-      pair: pair,
-      category: category,
-      type: type,
-      status: status,
-      entryPrice: entryPrice,
-      stopLoss: stopLoss,
-      takeProfit: takeProfit,
-      livePrice: t.livePrice ?? entryPrice,
-      livePriceChange: t.livePrice != null ? '+${((t.livePrice! - entryPrice) / entryPrice * 100).toStringAsFixed(2)}%' : '0.00%',
-      isLivePriceUp: (t.livePrice ?? entryPrice) >= entryPrice,
-      pips: pipsStr,
-      rr: t.riskRewardRatio,
-      progress: progress,
-      outcome: t.outcome,
-      timeLabel: t.createdAt != null ? _formatTimeLabel(t.createdAt!) : 'Just now',
-      sparklineData: sparklineData,
-      tradingViewUrl: t.tradingViewUrl,
-    );
-  }
-
-  String _formatTimeLabel(String dateStr) {
-    try {
-      final DateTime dateTime = DateTime.parse(dateStr);
-      final Duration diff = DateTime.now().difference(dateTime);
-      if (diff.inMinutes < 60) {
-        return '${diff.inMinutes}m ago';
-      } else if (diff.inHours < 24) {
-        return '${diff.inHours}h ago';
-      } else {
-        return '${diff.inDays}d ago';
-      }
-    } on Object catch (_) {
-      return 'Just now';
-    }
-  }
-
-  /// Updates the currently selected filter.
   void selectFilter(SignalFilter filter) {
-    emit(state.copyWith(
-      selectedFilter: filter,
-      offset: 0,
-      hasReachedMax: false,
-      signals: const <TradingSignalModel>[],
-    ));
-    unawaited(loadTrades(isRefresh: true));
+    if (state.selectedFilter == filter) return;
+    emit(state.copyWith(selectedFilter: filter));
   }
 
-  /// Updates the search query text.
   void updateSearchQuery(String query) {
     emit(state.copyWith(searchQuery: query));
   }
 
-  /// Clears the current search query.
   void clearSearch() {
     emit(state.copyWith(searchQuery: ''));
   }

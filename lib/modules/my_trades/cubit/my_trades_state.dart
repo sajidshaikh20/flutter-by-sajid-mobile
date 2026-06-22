@@ -36,6 +36,30 @@ class MyTradesState extends BaseState {
   bool get isInitialLoading =>
       status == BaseStateStatus.loading && signals.isEmpty && !isLoadingMore;
 
+  /// Trades visible for the current status filter and search query.
+  List<TradingSignalModel> get filteredSignals => signals.where((TradingSignalModel signal) {
+        if (!_matchesStatusFilter(signal)) return false;
+        if (searchQuery.isEmpty) return true;
+        final String query = searchQuery.toLowerCase();
+        return signal.pair.toLowerCase().contains(query) ||
+            signal.category.toLowerCase().contains(query);
+      }).toList();
+
+  bool _matchesStatusFilter(TradingSignalModel signal) {
+    switch (selectedFilter) {
+      case SignalFilter.all:
+        return true;
+      case SignalFilter.active:
+        return signal.isActive;
+      case SignalFilter.pending:
+        return signal.isPending;
+      case SignalFilter.closed:
+        return signal.isClosed;
+      case SignalFilter.cancelled:
+        return signal.isCancelled;
+    }
+  }
+
   MyTradesState copyWith({
     BaseStateStatus? status,
     String? msg,

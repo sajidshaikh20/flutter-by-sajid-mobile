@@ -1,19 +1,17 @@
 import '../../../utils/exports.dart';
 
-/// Cubit managing My Trades page state including search queries and category/status filtering.
+/// Cubit managing My Trades page — uses `/client/my-trades` API only.
 class MyTradesCubit extends BaseCubit<MyTradesState> {
   MyTradesCubit({required this.repository}) : super(MyTradesState.initial()) {
     unawaited(loadMyTrades(isRefresh: true));
   }
 
-  final TradesRepository repository;
+  final MyTradesRepository repository;
 
-  /// Cancels in-flight requests when filter changes or refresh is triggered.
   int _loadGeneration = 0;
 
   static const int _pageLimit = 10;
 
-  /// Loads the first page (initial load or filter change).
   Future<void> loadMyTrades({bool isRefresh = false}) async {
     if (isRefresh) {
       _loadGeneration++;
@@ -23,7 +21,6 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
     await _fetchTrades(isRefresh: isRefresh || state.signals.isEmpty, isLoadMore: false);
   }
 
-  /// Loads the next page when the user scrolls near the bottom.
   Future<void> loadMore() async {
     if (state.isLoadingMore ||
         state.hasReachedMax ||
@@ -37,7 +34,6 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
   Future<void> _fetchTrades({required bool isRefresh, required bool isLoadMore}) async {
     final int generation = _loadGeneration;
     final int currentOffset = isRefresh ? 0 : state.offset;
-    final SignalFilter filter = state.selectedFilter;
 
     if (isLoadMore) {
       emit(state.copyWith(isLoadingMore: true));
@@ -49,11 +45,8 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
       ));
     }
 
-    final String? statusParam = _statusParamForFilter(filter);
-
     final List<Future<dynamic>> futures = <Future<dynamic>>[
       repository.getMyTrades(
-        status: statusParam,
         limit: _pageLimit,
         offset: currentOffset,
       ),
@@ -99,7 +92,7 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
       final BaseResponse<List<TradeResponse>>? baseResponse =
           response.getSuccessInstance()?.response;
       final List<TradeResponse> apiTrades = baseResponse?.data ?? <TradeResponse>[];
-      final int totalCount = baseResponse?.totalCount ?? 0;
+      final int totalCount = baseResponse?.totalCount ?? apiTrades.length;
 
       final List<TradingSignalModel> newMappedSignals = apiTrades
           .map((TradeResponse t) => t.toTradingSignalModel(isTaken: true))
@@ -132,44 +125,15 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
     }
   }
 
-  String? _statusParamForFilter(SignalFilter filter) {
-    switch (filter) {
-      case SignalFilter.all:
-        return null;
-      case SignalFilter.active:
-        return 'ACTIVE';
-      case SignalFilter.pending:
-        return 'PENDING';
-      case SignalFilter.closed:
-        return 'CLOSED';
-      case SignalFilter.cancelled:
-        return 'CANCEL';
-    }
-  }
-
-  /// Updates the currently selected filter and reloads from the first page.
   void selectFilter(SignalFilter filter) {
     if (state.selectedFilter == filter) return;
-
-    _loadGeneration++;
-    emit(state.copyWith(
-      selectedFilter: filter,
-      offset: 0,
-      hasReachedMax: false,
-      isLoadingMore: false,
-      signals: const <TradingSignalModel>[],
-      status: BaseStateStatus.loading,
-      msg: '',
-    ));
-    unawaited(_fetchTrades(isRefresh: true, isLoadMore: false));
+    emit(state.copyWith(selectedFilter: filter));
   }
 
-  /// Updates the search query text.
   void updateSearchQuery(String query) {
     emit(state.copyWith(searchQuery: query));
   }
 
-  /// Clears the current search query.
   void clearSearch() {
     emit(state.copyWith(searchQuery: ''));
   }

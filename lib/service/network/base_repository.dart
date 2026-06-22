@@ -25,7 +25,7 @@ abstract class BaseRepository {
           error: responseHandler.getFailureInstance()?.error,
         );
       }
-    } on Exception catch (error,printStack) {
+    } on Object catch (error, printStack) {
       DebugLog.instance.d(printStack.toString());
       return OnFailureResponse<T>(
         statusCode: responseHandler.getFailureInstance()?.statusCode,

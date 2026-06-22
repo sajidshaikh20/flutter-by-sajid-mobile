@@ -2,52 +2,39 @@ import '../../../../utils/exports.dart';
 
 /// A reusable widget that applies a shimmer animation to its child.
 ///
-/// This widget uses the [Shimmer] package to create a loading placeholder
-/// effect. You can customize the base and highlight colors.
-///
-/// Example:
-/// ```dart
-/// ShimmerEffectWidget(
-///   baseColor: Colors.grey[300],
-///   highlightColor: Colors.grey[100],
-///   child: Container(
-///     width: 100,
-///     height: 20,
-///     color: Colors.white,
-///   ),
-/// )
-/// ```
+/// Automatically adapts base/highlight colors for light and dark themes.
 class ShimmerEffectWidget extends StatelessWidget {
-  /// The color used for the base of the shimmer effect.
-  ///
-  /// Defaults to [AppColors.shimmerBaseColor] if null.
+  /// Optional override for the base shimmer color.
   final Color? baseColor;
 
-  /// The color used for the highlight portion of the shimmer effect.
-  ///
-  /// Defaults to [AppColors.shimmerHighlightColor] if null.
+  /// Optional override for the highlight shimmer color.
   final Color? highlightColor;
+
+  /// When set, picks light or dark shimmer palette. Defaults to theme brightness.
+  final bool? isDark;
 
   /// The widget to which the shimmer effect will be applied.
   final Widget child;
 
-  /// Creates a [ShimmerEffectWidget].
-  ///
-  /// The [child] parameter is required and must not be null.
-  /// You can optionally provide [baseColor] and [highlightColor] to customize
-  /// the shimmer appearance.
   const ShimmerEffectWidget({
     super.key,
     this.baseColor,
     this.highlightColor,
+    this.isDark,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool dark = isDark ?? context.isDark;
+    final Color resolvedBase =
+        baseColor ?? (dark ? AppColors.shimmerBaseDarkColor : AppColors.shimmerBaseColor);
+    final Color resolvedHighlight = highlightColor ??
+        (dark ? AppColors.shimmerHighlightDarkColor : AppColors.shimmerHighlightColor);
+
     return Shimmer.fromColors(
-      baseColor: baseColor ?? AppColors.shimmerBaseColor,
-      highlightColor: highlightColor ?? AppColors.shimmerHighlightColor,
+      baseColor: resolvedBase,
+      highlightColor: resolvedHighlight,
       child: child,
     );
   }
