@@ -1,0 +1,75 @@
+import '../../../../utils/exports.dart';
+
+/// Main subscribed content for Trading Signals — state comes from [TradesCubit].
+class TradesContentWidget extends StatelessWidget {
+  const TradesContentWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color pageBg =
+        context.isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+
+    return BlocConsumer<TradesCubit, TradesState>(
+      listener: TradesContentWidget._onStateChanged,
+      builder: (BuildContext context, TradesState state) {
+        final TradesCubit cubit = context.read<TradesCubit>();
+
+        return Scaffold(
+          backgroundColor: pageBg,
+          body: SafeArea(
+            child: Column(
+              children: <Widget>[
+                const HomeHeaderAppBar(
+                  showProfileImage: false,
+                  showNotification: false,
+                  title: 'Trading Signals',
+                  subtitle: 'Explore high-quality trades from professional traders',
+                ),
+                Expanded(
+                  child: TradesTabScrollContentWidget(
+                    isInitialLoading: state.isInitialLoading,
+                    showEmptyState: state.showEmptyState,
+                    showLoadMore: state.showLoadMoreIndicator,
+                    filteredSignals: state.filteredSignals,
+                    searchQuery: state.searchQuery,
+                    activeCount: state.activeCount.toString(),
+                    pendingCount: state.pendingCount.toString(),
+                    closedCount: state.closedCount.toString(),
+                    lossesCount: state.lossesCount.toString(),
+                    selectedFilter: state.selectedFilter,
+                    onSearchChanged: cubit.updateSearchQuery,
+                    onSearchClear: cubit.clearSearch,
+                    onFilterSelected: cubit.selectFilter,
+                    onLoadMore: () => unawaited(cubit.loadMore()),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static void _onStateChanged(BuildContext context, TradesState state) {
+    if (state.msg == null || state.msg!.isEmpty) return;
+
+    if (state.status == BaseStateStatus.success) {
+      context.scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(state.msg!),
+          backgroundColor: AppColors.successColor,
+        ),
+      );
+    } else if (state.status == BaseStateStatus.failure) {
+      context.scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(state.msg!),
+          backgroundColor: AppColors.errorColor,
+        ),
+      );
+    }
+
+    context.read<TradesCubit>().resetError();
+  }
+}

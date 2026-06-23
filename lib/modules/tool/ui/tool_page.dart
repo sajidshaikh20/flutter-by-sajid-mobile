@@ -102,7 +102,7 @@ class ToolPage extends BaseResponsiveView {
                 // Styled title
                 RichText(
                   text: TextSpan(
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: Dimens.fontSize22,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppConstant.interFontFamily,

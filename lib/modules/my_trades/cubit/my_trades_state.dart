@@ -36,6 +36,11 @@ class MyTradesState extends BaseState {
   bool get isInitialLoading =>
       status == BaseStateStatus.loading && signals.isEmpty && !isLoadingMore;
 
+  bool get showLoadMoreIndicator => isLoadingMore && signals.isNotEmpty;
+
+  bool get showEmptyState =>
+      !isInitialLoading && filteredSignals.isEmpty && status != BaseStateStatus.loading;
+
   /// Trades visible for the current status filter and search query.
   List<TradingSignalModel> get filteredSignals => signals.where((TradingSignalModel signal) {
         if (!_matchesStatusFilter(signal)) return false;

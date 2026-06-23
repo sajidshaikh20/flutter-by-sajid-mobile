@@ -42,11 +42,13 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
         status: BaseStateStatus.loading,
         isLoadingMore: false,
         msg: '',
+        signals: isRefresh ? <TradingSignalModel>[] : null,
       ));
     }
 
     final List<Future<dynamic>> futures = <Future<dynamic>>[
       repository.getMyTrades(
+        status: _mapFilterToStatus(state.selectedFilter),
         limit: _pageLimit,
         offset: currentOffset,
       ),
@@ -128,6 +130,22 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
   void selectFilter(SignalFilter filter) {
     if (state.selectedFilter == filter) return;
     emit(state.copyWith(selectedFilter: filter));
+    unawaited(loadMyTrades(isRefresh: true));
+  }
+
+  String? _mapFilterToStatus(SignalFilter filter) {
+    switch (filter) {
+      case SignalFilter.active:
+        return 'ACTIVE';
+      case SignalFilter.pending:
+        return 'PENDING';
+      case SignalFilter.closed:
+        return 'CLOSED';
+      case SignalFilter.cancelled:
+        return 'CANCEL';
+      case SignalFilter.all:
+        return null;
+    }
   }
 
   void updateSearchQuery(String query) {
