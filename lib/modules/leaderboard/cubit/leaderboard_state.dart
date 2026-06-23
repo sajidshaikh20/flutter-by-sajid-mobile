@@ -8,7 +8,10 @@ class LeaderboardState extends BaseState {
     this.sortBy = 'Win Rate', // 'Win Rate', 'Trades', 'PnL'
     this.leaderboardItems = const <LeaderboardItemModel>[],
     this.shimmerLoading = false,
-    this.isMockData = false,
+    this.offset = 0,
+    this.hasReachedMax = false,
+    this.isLoadingMore = false,
+    this.totalCount = 0,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -20,7 +23,12 @@ class LeaderboardState extends BaseState {
   final String sortBy;
   final List<LeaderboardItemModel> leaderboardItems;
   final bool shimmerLoading;
-  final bool isMockData;
+  final int offset;
+  final bool hasReachedMax;
+  final bool isLoadingMore;
+  final int totalCount;
+
+  bool get showLoadMoreIndicator => isLoadingMore && !hasReachedMax && !shimmerLoading;
 
   factory LeaderboardState.initial() => const LeaderboardState();
 
@@ -57,7 +65,10 @@ class LeaderboardState extends BaseState {
     String? sortBy,
     List<LeaderboardItemModel>? leaderboardItems,
     bool? shimmerLoading,
-    bool? isMockData,
+    int? offset,
+    bool? hasReachedMax,
+    bool? isLoadingMore,
+    int? totalCount,
   }) =>
       LeaderboardState(
         status: status ?? this.status,
@@ -69,7 +80,10 @@ class LeaderboardState extends BaseState {
         sortBy: sortBy ?? this.sortBy,
         leaderboardItems: leaderboardItems ?? this.leaderboardItems,
         shimmerLoading: shimmerLoading ?? this.shimmerLoading,
-        isMockData: isMockData ?? this.isMockData,
+        offset: offset ?? this.offset,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+        totalCount: totalCount ?? this.totalCount,
       );
 
   @override
@@ -83,6 +97,9 @@ class LeaderboardState extends BaseState {
         sortBy,
         leaderboardItems,
         shimmerLoading,
-        isMockData,
+        offset,
+        hasReachedMax,
+        isLoadingMore,
+        totalCount,
       ];
 }

@@ -60,7 +60,7 @@ abstract class Apis {
 
   /// Endpoint to reset password using email.
   static const String forgotPasswordWithEmail =
-      '$apiVersion/forgot_password_with_email';
+      '$subBaseUrl/auth/forgot-password';
 
   /// Endpoint to fetch the list of saved addresses.
   static const String addressListing = '$apiVersion/address_listing';

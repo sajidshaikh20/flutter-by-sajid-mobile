@@ -44,60 +44,89 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
         return Scaffold(
           backgroundColor: pageBg,
           body: SafeArea(
-            child: RefreshIndicator(
-              color: AppColors.primaryPurple,
-              onRefresh: () => context.read<LeaderboardCubit>().refreshLeaderboard(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // 1. Header (Leaderboard, Refresh, Notifications)
-                  _buildHeader(context, isDark, textColor, subtextColor, cardBorder),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // 1. Header (Leaderboard, Refresh, Notifications)
+                _buildHeader(context, isDark, textColor, subtextColor, cardBorder),
 
-                  // Scrollable Area
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            const SizedBox(height: Dimens.space16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const SizedBox(height: Dimens.space16),
 
-                            // 2. Podium (Top 3)
-                            if (!state.shimmerLoading) ...<Widget>[
-                              _buildPodiumSection(context, isDark, state),
-                              const SizedBox(height: Dimens.space24),
-                            ],
+                      // 2. Podium (Top 3)
+                      if (!state.shimmerLoading && state.filteredItems.isNotEmpty) ...<Widget>[
+                        _buildPodiumSection(context, isDark, state),
+                        const SizedBox(height: Dimens.space24),
+                      ],
 
-                            // 3. Rankings Table Header
-                            _buildTableHeader(isDark, subtextColor),
-                            const SizedBox(height: Dimens.space8),
-
-                            // 4. List Items / Rankings List
-                            if (state.shimmerLoading)
-                              _buildShimmerList(isDark)
-                            else if (state.filteredItems.isEmpty)
-                              _buildEmptyState(textColor, subtextColor)
-                            else
-                              _buildRankingsList(isDark, textColor, subtextColor, cardBorder, state),
-
-                            const SizedBox(height: Dimens.space24),
-
-                            // 5. Footer Notice
-                            _buildFooterNotice(isDark, subtextColor),
-                            const SizedBox(height: Dimens.space32),
-                          ],
-                        ),
-                      ),
-                    ),
+                      // 3. Rankings Table Header
+                      _buildTableHeader(isDark, subtextColor),
+                      const SizedBox(height: Dimens.space8),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                // 4. List Items / Rankings List (Scrollable Area)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
+                    child: _buildRankingsContent(context, isDark, textColor, subtextColor, cardBorder, state),
+                  ),
+                ),
+
+                const SizedBox(height: Dimens.space8),
+                // 5. Footer Notice
+                _buildFooterNotice(isDark, subtextColor),
+                const SizedBox(height: Dimens.space16),
+              ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildRankingsContent(
+    BuildContext context,
+    bool isDark,
+    Color textColor,
+    Color subtextColor,
+    Color borderCol,
+    LeaderboardState state,
+  ) {
+    if (state.shimmerLoading) {
+      return _buildShimmerList(isDark);
+    }
+
+    return RefreshIndicator(
+      color: AppColors.primaryPurple,
+      onRefresh: () => context.read<LeaderboardCubit>().refreshLeaderboard(),
+      child: state.filteredItems.isEmpty
+          ? CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: <Widget>[
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildEmptyState(textColor, subtextColor),
+                ),
+              ],
+            )
+          : NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification notification) {
+                if (notification is ScrollEndNotification || notification is ScrollUpdateNotification) {
+                  final ScrollMetrics metrics = notification.metrics;
+                  if (metrics.pixels >= metrics.maxScrollExtent * 0.9) {
+                    unawaited(context.read<LeaderboardCubit>().loadMore());
+                  }
+                }
+                return false;
+              },
+              child: _buildRankingsList(isDark, textColor, subtextColor, borderCol, state),
+            ),
     );
   }
 
@@ -487,17 +516,33 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     LeaderboardState state,
   ) {
     final List<LeaderboardItemModel> items = state.filteredItems;
+    final int itemCount = state.isLoadingMore ? items.length + 1 : items.length;
 
     return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: items.length,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: itemCount,
       separatorBuilder: (BuildContext ctx, int index) => Divider(
         height: 1,
         thickness: 0.5,
         color: isDark ? AppColors.borderDark.withValues(alpha: 0.5) : AppColors.borderLight.withValues(alpha: 0.5),
       ),
       itemBuilder: (BuildContext ctx, int index) {
+        if (index >= items.length) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: Dimens.space16),
+            child: Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryPurple),
+                ),
+              ),
+            ),
+          );
+        }
+
         final LeaderboardItemModel item = items[index];
         final bool isActive = item.status == 'ACTIVE';
 

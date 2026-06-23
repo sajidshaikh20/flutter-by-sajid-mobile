@@ -41,6 +41,7 @@ class ForgotPasswordForm extends StatelessWidget {
                 : context.appString.resetLinkSentSuccessKey,
             context,
           );
+          goBack(context);
           return;
         }
 
@@ -254,7 +255,7 @@ class ForgotPasswordForm extends StatelessWidget {
                                           .handleValidationErrorMessageForEmail(
                                             '',
                                           );
-                                      // await cubit.sendResetLink(email: email);
+                                      await cubit.sendResetLink(email: email);
                                     },
                                   );
                                 },

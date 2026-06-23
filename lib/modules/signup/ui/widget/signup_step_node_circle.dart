@@ -103,10 +103,10 @@ class SignUpStepNodeCircle extends StatelessWidget {
                       )
                     : Text(
                         '$stepNumber',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: Dimens.fontSize14,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.blackColor,
+                          color: !isDark?  AppColors.blackColor: AppColors.whiteColor,
                           height: 1,
                         ),
                       ),

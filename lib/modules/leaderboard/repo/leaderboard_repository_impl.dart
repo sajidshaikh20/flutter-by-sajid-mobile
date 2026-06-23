@@ -2,12 +2,23 @@ import '../../../utils/exports.dart';
 
 class LeaderboardRepositoryImpl extends LeaderboardRepository {
   @override
-  Future<ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>>> getLeaderboard() async {
+  Future<ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>>> getLeaderboard({
+    int? limit,
+    int? offset,
+  }) async {
+    final Map<String, dynamic> params = <String, dynamic>{};
+    if (limit != null) {
+      params['limit'] = limit;
+    }
+    if (offset != null) {
+      params['offset'] = offset;
+    }
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
           endUrl: Apis.getLeaderboard,
-
+          params: params,
         );
 
     return getParsedResponseHandler(
