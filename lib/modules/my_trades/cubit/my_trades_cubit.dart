@@ -1,12 +1,14 @@
 import '../../../utils/exports.dart';
 
-/// Cubit managing My Trades page — uses `/client/my-trades` API only.
+/// Cubit managing My Trades page — uses `/client/my-trades` API and `/trade/search` during search query.
 class MyTradesCubit extends BaseCubit<MyTradesState> {
   MyTradesCubit({required this.repository}) : super(MyTradesState.initial()) {
     unawaited(loadMyTrades(isRefresh: true));
   }
 
   final MyTradesRepository repository;
+
+  Timer? _searchDebounce;
 
   int _loadGeneration = 0;
 
@@ -46,22 +48,61 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
       ));
     }
 
-    final List<Future<dynamic>> futures = <Future<dynamic>>[
-      repository.getMyTrades(
+    final bool isSearch = state.searchQuery.trim().isNotEmpty;
+    final List<Future<dynamic>> futures = <Future<dynamic>>[];
+
+    if (isSearch) {
+      futures.add(repository.searchTrades(keyword: state.searchQuery.trim()));
+    } else {
+      futures.add(repository.getMyTrades(
         status: _mapFiltersToStatus(state.selectedFilters),
         limit: _pageLimit,
         offset: currentOffset,
-      ),
-    ];
+      ));
 
-    final bool needCounts = currentOffset == 0;
-    if (needCounts) {
-      futures.add(repository.getMyTrades());
+      final bool needCounts = currentOffset == 0;
+      if (needCounts) {
+        futures.add(repository.getMyTrades());
+      }
     }
 
     final List<dynamic> responses = await Future.wait<dynamic>(futures);
 
     if (generation != _loadGeneration) return;
+
+    if (isSearch) {
+      final ResponseHandler<BaseResponse<List<TradeResponse>>> response =
+          responses[0] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
+
+      if (response.isSuccess()) {
+        final BaseResponse<List<TradeResponse>>? baseResponse =
+            response.getSuccessInstance()?.response;
+        final List<TradeResponse> apiTrades = baseResponse?.data ?? <TradeResponse>[];
+        final int totalCount = baseResponse?.totalCount ?? apiTrades.length;
+
+        final List<TradingSignalModel> newMappedSignals = apiTrades
+            .map((TradeResponse t) => t.toTradingSignalModel(isTaken: true))
+            .toList();
+
+        emit(state.copyWith(
+          signals: newMappedSignals,
+          status: BaseStateStatus.success,
+          isLoadingMore: false,
+          offset: apiTrades.length,
+          hasReachedMax: true,
+          totalCount: totalCount,
+        ));
+      } else {
+        final OnFailureResponse<BaseResponse<List<TradeResponse>>>? failure =
+            response.getFailureInstance();
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          isLoadingMore: false,
+          msg: failure?.error?.errorMessage ?? 'Failed to load trade signals.',
+        ));
+      }
+      return;
+    }
 
     final ResponseHandler<BaseResponse<List<TradeResponse>>> response =
         responses[0] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
@@ -71,6 +112,7 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
     int closedCount = state.closedCount;
     int lossesCount = state.lossesCount;
 
+    final bool needCounts = currentOffset == 0;
     if (needCounts && responses.length > 1) {
       final ResponseHandler<BaseResponse<List<TradeResponse>>> allTradesResponse =
           responses[1] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
@@ -169,11 +211,63 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
   }
 
   void updateSearchQuery(String query) {
-    emit(state.copyWith(searchQuery: query));
+    final String trimmed = query.trim();
+    final String oldQuery = state.searchQuery.trim();
+
+    if (trimmed.isEmpty) {
+      _searchDebounce?.cancel();
+      if (state.cachedSignals.isNotEmpty) {
+        emit(state.copyWith(
+          searchQuery: '',
+          signals: state.cachedSignals,
+          offset: state.cachedOffset,
+          hasReachedMax: state.cachedHasReachedMax,
+          cachedSignals: const <TradingSignalModel>[],
+        ));
+      } else {
+        emit(state.copyWith(searchQuery: ''));
+        unawaited(loadMyTrades(isRefresh: true));
+      }
+      return;
+    }
+
+    if (oldQuery.isEmpty) {
+      emit(state.copyWith(
+        searchQuery: query,
+        cachedSignals: state.signals,
+        cachedOffset: state.offset,
+        cachedHasReachedMax: state.hasReachedMax,
+      ));
+    } else {
+      emit(state.copyWith(searchQuery: query));
+    }
+
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      unawaited(loadMyTrades(isRefresh: true));
+    });
   }
 
   void clearSearch() {
-    emit(state.copyWith(searchQuery: ''));
+    _searchDebounce?.cancel();
+    if (state.cachedSignals.isNotEmpty) {
+      emit(state.copyWith(
+        searchQuery: '',
+        signals: state.cachedSignals,
+        offset: state.cachedOffset,
+        hasReachedMax: state.cachedHasReachedMax,
+        cachedSignals: const <TradingSignalModel>[],
+      ));
+    } else {
+      emit(state.copyWith(searchQuery: ''));
+      unawaited(loadMyTrades(isRefresh: true));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _searchDebounce?.cancel();
+    return super.close();
   }
 
   @override

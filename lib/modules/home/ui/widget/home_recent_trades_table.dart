@@ -27,7 +27,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                     label: 'Recent Trades',
                     style: TextStyle(
                       color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       fontSize: Dimens.fontSize16,
                     ),
                   ),
@@ -39,7 +39,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                       label: 'View All',
                       style: TextStyle(
                         color: AppColors.primaryPurple,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         fontSize: Dimens.fontSize12,
                       ),
                     ),
@@ -72,7 +72,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                       const CustomTextLabelWidget(
                         label: 'Subscription Required',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           fontSize: Dimens.fontSize14,
                         ),
                       ),
@@ -92,7 +92,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                           label: 'Get Premium Access',
                           style: TextStyle(
                             color: AppColors.primaryPurple,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: Dimens.fontSize12,
                             decoration: TextDecoration.underline,
                           ),
@@ -173,7 +173,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                                   label: trade.pair,
                                   style: TextStyle(
                                     color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: Dimens.fontSize13,
                                   ),
                                   textAlign: TextAlign.start,
@@ -185,7 +185,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                                   label: trade.type,
                                   style: TextStyle(
                                     color: trade.isBuy ? (isDark ? AppColors.successColor : AppColors.greenTextColor) : AppColors.errorColor,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: Dimens.fontSize12,
                                   ),
                                   textAlign: TextAlign.start,
@@ -207,7 +207,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                                       label: 'CLOSED',
                                       style: TextStyle(
                                         color: isDark ? AppColors.successColor : AppColors.greenTextColor,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w600,
                                         fontSize: Dimens.fontSize10,
                                       ),
                                     ),
@@ -220,7 +220,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                                   label: (trade.isPositivePnL ? '+' : '') + trade.pnl.toString(),
                                   style: TextStyle(
                                     color: trade.isPositivePnL ? (isDark ? AppColors.successColor : AppColors.greenTextColor) : AppColors.errorColor,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: Dimens.fontSize13,
                                   ),
                                   textAlign: TextAlign.end,
@@ -243,7 +243,7 @@ class HomeRecentTradesTable extends StatelessWidget {
   TextStyle _headerStyle(bool isDark) {
     return TextStyle(
       color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w400,
       fontSize: Dimens.fontSize11,
     );
   }

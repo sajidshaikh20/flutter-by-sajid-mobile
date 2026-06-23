@@ -1,7 +1,7 @@
 import '../../../../utils/exports.dart';
 
 /// Search bar used on Trades and My Trades tabs.
-class TradesSearchBarWidget extends StatelessWidget {
+class TradesSearchBarWidget extends StatefulWidget {
   const TradesSearchBarWidget({
     super.key,
     required this.searchQuery,
@@ -12,6 +12,33 @@ class TradesSearchBarWidget extends StatelessWidget {
   final String searchQuery;
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
+
+  @override
+  State<TradesSearchBarWidget> createState() => _TradesSearchBarWidgetState();
+}
+
+class _TradesSearchBarWidgetState extends State<TradesSearchBarWidget> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.searchQuery);
+  }
+
+  @override
+  void didUpdateWidget(covariant TradesSearchBarWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.searchQuery != oldWidget.searchQuery && widget.searchQuery != _controller.text) {
+      _controller.text = widget.searchQuery;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +69,7 @@ class TradesSearchBarWidget extends StatelessWidget {
             const SizedBox(width: Dimens.space10),
             Expanded(
               child: TextField(
+                controller: _controller,
                 style: TextStyle(
                   color: textColor,
                   fontSize: Dimens.fontSize13,
@@ -62,13 +90,16 @@ class TradesSearchBarWidget extends StatelessWidget {
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
                 ),
-                onChanged: onChanged,
+                onChanged: widget.onChanged,
               ),
             ),
-            if (searchQuery.isNotEmpty) ...<Widget>[
+            if (widget.searchQuery.isNotEmpty) ...<Widget>[
               const SizedBox(width: Dimens.space10),
               GestureDetector(
-                onTap: onClear,
+                onTap: () {
+                  _controller.clear();
+                  widget.onClear();
+                },
                 child: Icon(Icons.clear_rounded, color: subtextColor, size: Dimens.size18),
               ),
             ],

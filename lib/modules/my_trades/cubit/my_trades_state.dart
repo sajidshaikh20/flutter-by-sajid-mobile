@@ -14,6 +14,9 @@ class MyTradesState extends BaseState {
     this.pendingCount = 0,
     this.closedCount = 0,
     this.lossesCount = 0,
+    this.cachedSignals = const <TradingSignalModel>[],
+    this.cachedOffset = 0,
+    this.cachedHasReachedMax = false,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -31,6 +34,11 @@ class MyTradesState extends BaseState {
   final int closedCount;
   final int lossesCount;
 
+  // Cached standard state properties to restore instantly when clearSearch is clicked
+  final List<TradingSignalModel> cachedSignals;
+  final int cachedOffset;
+  final bool cachedHasReachedMax;
+
   factory MyTradesState.initial() => const MyTradesState();
 
   bool get isInitialLoading =>
@@ -44,10 +52,7 @@ class MyTradesState extends BaseState {
   /// Trades visible for the current status filter and search query.
   List<TradingSignalModel> get filteredSignals => signals.where((TradingSignalModel signal) {
         if (!_matchesStatusFilter(signal)) return false;
-        if (searchQuery.isEmpty) return true;
-        final String query = searchQuery.toLowerCase();
-        return signal.pair.toLowerCase().contains(query) ||
-            signal.category.toLowerCase().contains(query);
+        return true;
       }).toList();
 
   bool _matchesStatusFilter(TradingSignalModel signal) {
@@ -76,6 +81,9 @@ class MyTradesState extends BaseState {
     int? pendingCount,
     int? closedCount,
     int? lossesCount,
+    List<TradingSignalModel>? cachedSignals,
+    int? cachedOffset,
+    bool? cachedHasReachedMax,
   }) =>
       MyTradesState(
         status: status ?? this.status,
@@ -92,6 +100,9 @@ class MyTradesState extends BaseState {
         pendingCount: pendingCount ?? this.pendingCount,
         closedCount: closedCount ?? this.closedCount,
         lossesCount: lossesCount ?? this.lossesCount,
+        cachedSignals: cachedSignals ?? this.cachedSignals,
+        cachedOffset: cachedOffset ?? this.cachedOffset,
+        cachedHasReachedMax: cachedHasReachedMax ?? this.cachedHasReachedMax,
       );
 
   @override
@@ -110,5 +121,8 @@ class MyTradesState extends BaseState {
         pendingCount,
         closedCount,
         lossesCount,
+        cachedSignals,
+        cachedOffset,
+        cachedHasReachedMax,
       ];
 }

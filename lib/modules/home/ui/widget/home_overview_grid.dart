@@ -122,7 +122,7 @@ class _StatCard extends StatelessWidget {
                 label: value,
                 style: TextStyle(
                   color: valColor,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w600,
                   fontSize: Dimens.fontSize14,
                   height: 1.1,
                 ),
@@ -136,7 +136,7 @@ class _StatCard extends StatelessWidget {
                 style: TextStyle(
                   color: titleColor,
                   fontSize: Dimens.fontSize9,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   height: 1.1,
                 ),
                 textAlign: TextAlign.start,

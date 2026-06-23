@@ -16,4 +16,9 @@ abstract class TradesRepository extends BaseRepository {
   });
 
   Future<ResponseHandler<BaseResponse<dynamic>>> takeTrade(String tradePublicId);
+
+  /// Search trade signals by keyword
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> searchTrades({
+    required String keyword,
+  });
 }

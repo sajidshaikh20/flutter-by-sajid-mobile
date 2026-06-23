@@ -85,7 +85,7 @@ class HomeHeaderAppBar extends StatelessWidget {
                                           label: initial,
                                           style: const TextStyle(
                                             color: AppColors.whiteColor,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w600,
                                             fontSize: Dimens.fontSize16,
                                           ),
                                         ),
@@ -101,7 +101,7 @@ class HomeHeaderAppBar extends StatelessWidget {
                                         label: initial,
                                         style: const TextStyle(
                                           color: AppColors.whiteColor,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: Dimens.fontSize16,
                                         ),
                                       ),
@@ -125,7 +125,7 @@ class HomeHeaderAppBar extends StatelessWidget {
                               color: isDark
                                   ? AppColors.textPrimaryDark
                                   : AppColors.textPrimaryLight,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w600,
                               fontSize: Dimens.fontSize16,
                             ),
                             textAlign: TextAlign.start,
@@ -173,7 +173,7 @@ class HomeHeaderAppBar extends StatelessWidget {
                                     color: isDark
                                         ? AppColors.textPrimaryDark
                                         : AppColors.textPrimaryLight,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: Dimens.fontSize18,
                                   ),
                                   textAlign: TextAlign.start,

@@ -27,7 +27,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                     label: 'Live Trades',
                     style: TextStyle(
                       color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       fontSize: Dimens.fontSize16,
                     ),
                   ),
@@ -40,7 +40,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                       label: 'View All',
                       style: TextStyle(
                         color: AppColors.primaryPurple,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         fontSize: Dimens.fontSize12,
                       ),
                     ),
@@ -73,7 +73,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                       const CustomTextLabelWidget(
                         label: 'Subscription Required',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           fontSize: Dimens.fontSize14,
                         ),
                       ),
@@ -93,7 +93,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                           label: 'Get Premium Access',
                           style: TextStyle(
                             color: AppColors.primaryPurple,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: Dimens.fontSize12,
                             decoration: TextDecoration.underline,
                           ),
@@ -153,7 +153,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                                           label: trade.pair,
                                           style: TextStyle(
                                             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w600,
                                             fontSize: Dimens.fontSize14,
                                           ),
                                         ),
@@ -171,7 +171,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                                             label: trade.status,
                                             style: TextStyle(
                                               color: isDark ? AppColors.successColor : AppColors.greenTextColor,
-                                              fontWeight: FontWeight.w800,
+                                              fontWeight: FontWeight.w600,
                                               fontSize: Dimens.fontSize9,
                                             ),
                                           ),
@@ -182,7 +182,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                                           style: TextStyle(
                                             color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                                             fontSize: Dimens.fontSize10,
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w400,
                                           ),
                                         ),
                                       ],
@@ -194,7 +194,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                                         label: trade.type,
                                         style: TextStyle(
                                           color: trade.isBuy ? (isDark ? AppColors.successColor : AppColors.greenTextColor) : AppColors.errorColor,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w500,
                                           fontSize: Dimens.fontSize11,
                                         ),
                                         textAlign: TextAlign.start,
@@ -224,7 +224,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                                         style: TextStyle(
                                           color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                                           fontSize: Dimens.fontSize10,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       ),
                                     ],
@@ -234,7 +234,7 @@ class HomeLiveTradesCard extends StatelessWidget {
                                     label: trade.livePrice.toStringAsFixed(2),
                                     style: TextStyle(
                                       color: isDark ? AppColors.successColor : AppColors.greenTextColor,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w600,
                                       fontSize: Dimens.fontSize18,
                                     ),
                                   ),
@@ -321,7 +321,7 @@ class HomeLiveTradesCard extends StatelessWidget {
     return TextStyle(
       color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
       fontSize: Dimens.fontSize10,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w400,
     );
   }
 
@@ -329,7 +329,7 @@ class HomeLiveTradesCard extends StatelessWidget {
     return TextStyle(
       color: customColor ?? (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
       fontSize: Dimens.fontSize13,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w500,
     );
   }
 }

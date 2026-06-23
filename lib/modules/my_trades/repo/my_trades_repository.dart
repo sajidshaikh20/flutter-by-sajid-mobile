@@ -7,4 +7,9 @@ abstract class MyTradesRepository extends BaseRepository {
     int? limit,
     int? offset,
   });
+
+  /// Search trade signals by keyword
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> searchTrades({
+    required String keyword,
+  });
 }

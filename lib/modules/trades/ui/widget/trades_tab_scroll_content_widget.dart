@@ -45,47 +45,56 @@ class TradesTabScrollContentWidget extends StatelessWidget {
     return TradesPaginationScrollWidget(
       onLoadMore: onLoadMore,
       child: CustomScrollView(
-        slivers: isInitialLoading
-            ? const <Widget>[
-                SliverToBoxAdapter(child: TradesPageShimmerWidget()),
-              ]
-            : <Widget>[
-                SliverToBoxAdapter(
-                  child: TradesSearchBarWidget(
-                    searchQuery: searchQuery,
-                    onChanged: onSearchChanged,
-                    onClear: onSearchClear,
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
-                    child: TradesSummaryCards(
-                      activeCount: activeCount,
-                      pendingCount: pendingCount,
-                      closedCount: closedCount,
-                      lossesCount: lossesCount,
-                    ),
-                  ),
-                ),
-                SliverStickyHeader(
-                  header: Container(
-                    color: pageBg,
-                    padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
-                    child: TradesFilterBar(
-                      selectedFilters: selectedFilters,
-                      onFilterChanged: onFilterSelected,
-                    ),
-                  ),
-                  sliver: showEmptyState
-                      ? const SliverToBoxAdapter(child: TradesEmptyFilterWidget())
-                      : TradesSignalsListSliverWidget(
-                          signals: filteredSignals,
-                          showLoadMore: showLoadMore,
-                          showTakeTrade: showTakeTrade,
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: TradesSearchBarWidget(
+              searchQuery: searchQuery,
+              onChanged: onSearchChanged,
+              onClear: onSearchClear,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
+              child: TradesSummaryCards(
+                activeCount: activeCount,
+                pendingCount: pendingCount,
+                closedCount: closedCount,
+                lossesCount: lossesCount,
+              ),
+            ),
+          ),
+          SliverStickyHeader(
+            header: Container(
+              color: pageBg,
+              padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
+              child: TradesFilterBar(
+                selectedFilters: selectedFilters,
+                onFilterChanged: onFilterSelected,
+              ),
+            ),
+            sliver: isInitialLoading
+                ? SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space12),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) => const Padding(
+                          padding: EdgeInsets.only(bottom: Dimens.space12),
+                          child: TradingSignalCardShimmerWidget(),
                         ),
-                ),
-              ],
+                        childCount: 4,
+                      ),
+                    ),
+                  )
+                : showEmptyState
+                    ? const SliverToBoxAdapter(child: TradesEmptyFilterWidget())
+                    : TradesSignalsListSliverWidget(
+                        signals: filteredSignals,
+                        showLoadMore: showLoadMore,
+                        showTakeTrade: showTakeTrade,
+                      ),
+          ),
+        ],
       ),
     );
   }

@@ -162,4 +162,7 @@ abstract class Apis {
 
   /// My Trades tab — client's taken / personal trades.
   static const String clientMyTrades = '$subBaseUrl/client/my-trades';
+
+  /// Endpoint to search trades
+  static const String searchTrades = '$subBaseUrl/trade/search';
 }

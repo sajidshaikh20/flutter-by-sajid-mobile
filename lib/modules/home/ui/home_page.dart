@@ -115,7 +115,7 @@ class HomeNavigationDrawer extends StatelessWidget {
                         label: initial,
                         style: const TextStyle(
                           color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           fontSize: Dimens.fontSize18,
                         ),
                       ),
@@ -130,7 +130,7 @@ class HomeNavigationDrawer extends StatelessWidget {
                             style: TextStyle(
                               color: textColor,
                               fontSize: Dimens.fontSize15,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                             ),
                             textAlign: TextAlign.start,
                             maxLines: 1,
@@ -155,7 +155,7 @@ class HomeNavigationDrawer extends StatelessWidget {
                               style: TextStyle(
                                 color: AppColors.primaryPurple,
                                 fontSize: Dimens.fontSize10,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -356,7 +356,7 @@ class HomeNavigationDrawer extends StatelessWidget {
         style: TextStyle(
           color: textColor,
           fontSize: Dimens.fontSize14,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
         textAlign: TextAlign.start,
       ),

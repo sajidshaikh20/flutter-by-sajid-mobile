@@ -49,7 +49,7 @@ class HomePromoBanner extends StatelessWidget {
                         label: 'WEKO PRO',
                         style: TextStyle(
                           color: AppColors.primaryPurple,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                           fontSize: Dimens.fontSize11,
                         ),
                       ),
@@ -60,7 +60,7 @@ class HomePromoBanner extends StatelessWidget {
                     label: 'Unlock Advanced Tools',
                     style: TextStyle(
                       color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       fontSize: Dimens.fontSize16,
                       height: 1.2,
                     ),
@@ -72,7 +72,7 @@ class HomePromoBanner extends StatelessWidget {
                     style: TextStyle(
                       color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                       fontSize: Dimens.fontSize10,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                     ),
                     textAlign: TextAlign.start,
                   ),
@@ -98,7 +98,7 @@ class HomePromoBanner extends StatelessWidget {
                               label: 'Explore Pro',
                               style: TextStyle(
                                 color: AppColors.whiteColor,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
                                 fontSize: Dimens.fontSize11,
                               ),
                             ),

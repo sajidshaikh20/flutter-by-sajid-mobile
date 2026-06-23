@@ -743,35 +743,16 @@ class HttpHandleInterceptor extends Interceptor {
       DebugLog.instance.e('Request data: ${err.requestOptions.data}');
       DebugLog.instance.e('Response: ${err.response?.data}');
 
-      // Check if this is a critical API that should trigger logout
-      bool isCriticalApi = _isCriticalApi(err.requestOptions.path);
-
-      if (isCriticalApi) {
-        DebugLog.instance.e('Critical API 401 - Clearing user data and redirecting to login');
-        await SharedPref.instance.clearData();
-        MainConfig.context.router.popUntilRoot();
-      } else {
-        DebugLog.instance.w('Non-critical API 401 - Not clearing user data, just logging error');
-      }
+      DebugLog.instance.e('Token expired (API 401) - Clearing user data and redirecting to social login');
+      await SharedPref.instance.clearUserDataOnly();
+      await UserProfileService.instance().loadUserData();
+      unawaited(MainConfig.context.router.replaceAll(<PageRouteInfo>[const SocialLoginRoute()]));
 
       is401InProgress = false;
     }
 
     await EasyLoading.dismiss();
     handler.next(err);
-  }
-
-  /// Check if the API endpoint is critical and should trigger logout on 401
-  bool _isCriticalApi(String path) {
-    // Define critical APIs that should trigger logout on 401
-    final List<String> criticalApis = <String>[
-      Apis.getAccountInfo,
-      Apis.editProfile,
-      Apis.logout,
-      Apis.deleteAccount,
-    ];
-
-    return criticalApis.any((String api) => path.contains(api));
   }
 
   @override
