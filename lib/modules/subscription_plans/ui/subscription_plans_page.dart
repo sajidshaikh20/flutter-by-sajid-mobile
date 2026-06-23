@@ -270,7 +270,6 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
         vertical: Dimens.space12,
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           GestureDetector(
             onTap: () => context.router.back(),
@@ -299,15 +298,6 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
                     fontSize: Dimens.fontSize14,
                     fontWeight: FontWeight.w900,
                     color: textColor,
-                    height: 1.1,
-                  ),
-                ),
-                const CustomTextLabelWidget(
-                  label: 'that fits you',
-                  style: TextStyle(
-                    fontSize: Dimens.fontSize12,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.primaryPurple,
                     height: 1.1,
                   ),
                 ),

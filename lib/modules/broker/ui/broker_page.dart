@@ -268,8 +268,7 @@ class _BrokerViewBodyState extends State<BrokerViewBody> {
                           padding: const EdgeInsets.all(6),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              broker.logoUrl,
+                            child: broker.logoAsset.image(
                               fit: BoxFit.contain,
                               errorBuilder: (BuildContext ctx, Object err, StackTrace? stack) {
                                 return Container(
