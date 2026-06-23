@@ -48,7 +48,7 @@ class TradesCubit extends BaseCubit<TradesState> {
 
     final List<Future<dynamic>> futures = <Future<dynamic>>[
       repository.getTradesByPlan(
-        status: _mapFilterToStatus(state.selectedFilter),
+        status: _mapFiltersToStatus(state.selectedFilters),
         limit: _pageLimit,
         offset: currentOffset,
       ),
@@ -156,24 +156,44 @@ class TradesCubit extends BaseCubit<TradesState> {
   }
 
   void selectFilter(SignalFilter filter) {
-    if (state.selectedFilter == filter) return;
-    emit(state.copyWith(selectedFilter: filter));
+    final Set<SignalFilter> current = Set<SignalFilter>.from(state.selectedFilters);
+    if (filter == SignalFilter.all) {
+      current
+        ..clear()
+        ..add(SignalFilter.all);
+    } else {
+      current.remove(SignalFilter.all);
+      if (current.contains(filter)) {
+        current.remove(filter);
+      } else {
+        current.add(filter);
+      }
+      if (current.isEmpty) {
+        current.add(SignalFilter.all);
+      }
+    }
+    emit(state.copyWith(selectedFilters: current));
     unawaited(loadTrades(isRefresh: true));
   }
 
-  String? _mapFilterToStatus(SignalFilter filter) {
-    switch (filter) {
-      case SignalFilter.active:
-        return 'ACTIVE';
-      case SignalFilter.pending:
-        return 'PENDING';
-      case SignalFilter.closed:
-        return 'CLOSED';
-      case SignalFilter.cancelled:
-        return 'CANCEL';
-      case SignalFilter.all:
-        return null;
+  String? _mapFiltersToStatus(Set<SignalFilter> filters) {
+    if (filters.contains(SignalFilter.all)) return null;
+    final List<String> mapped = <String>[];
+    for (final SignalFilter filter in filters) {
+      switch (filter) {
+        case SignalFilter.active:
+          mapped.add('ACTIVE');
+        case SignalFilter.pending:
+          mapped.add('PENDING');
+        case SignalFilter.closed:
+          mapped.add('CLOSED');
+        case SignalFilter.cancelled:
+          mapped.add('CANCEL');
+        default:
+          break;
+      }
     }
+    return mapped.isEmpty ? null : mapped.join(',');
   }
 
   void updateSearchQuery(String query) {

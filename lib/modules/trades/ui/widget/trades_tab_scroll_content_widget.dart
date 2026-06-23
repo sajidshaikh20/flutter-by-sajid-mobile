@@ -13,7 +13,7 @@ class TradesTabScrollContentWidget extends StatelessWidget {
     required this.pendingCount,
     required this.closedCount,
     required this.lossesCount,
-    required this.selectedFilter,
+    required this.selectedFilters,
     required this.onSearchChanged,
     required this.onSearchClear,
     required this.onFilterSelected,
@@ -30,7 +30,7 @@ class TradesTabScrollContentWidget extends StatelessWidget {
   final String pendingCount;
   final String closedCount;
   final String lossesCount;
-  final SignalFilter selectedFilter;
+  final Set<SignalFilter> selectedFilters;
   final ValueChanged<String> onSearchChanged;
   final VoidCallback onSearchClear;
   final ValueChanged<SignalFilter> onFilterSelected;
@@ -73,7 +73,7 @@ class TradesTabScrollContentWidget extends StatelessWidget {
                     color: pageBg,
                     padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
                     child: TradesFilterBar(
-                      selectedFilter: selectedFilter,
+                      selectedFilters: selectedFilters,
                       onFilterChanged: onFilterSelected,
                     ),
                   ),

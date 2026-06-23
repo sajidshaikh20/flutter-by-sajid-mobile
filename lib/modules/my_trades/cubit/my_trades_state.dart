@@ -3,7 +3,7 @@ import '../../../utils/exports.dart';
 /// State class for My Trades tab managing filter, search, signals list and standard BaseState properties.
 class MyTradesState extends BaseState {
   const MyTradesState({
-    this.selectedFilter = SignalFilter.all,
+    this.selectedFilters = const <SignalFilter>{SignalFilter.all},
     this.searchQuery = '',
     this.signals = const <TradingSignalModel>[],
     this.offset = 0,
@@ -19,7 +19,7 @@ class MyTradesState extends BaseState {
     super.redirectRoute,
   });
 
-  final SignalFilter selectedFilter;
+  final Set<SignalFilter> selectedFilters;
   final String searchQuery;
   final List<TradingSignalModel> signals;
   final int offset;
@@ -51,25 +51,21 @@ class MyTradesState extends BaseState {
       }).toList();
 
   bool _matchesStatusFilter(TradingSignalModel signal) {
-    switch (selectedFilter) {
-      case SignalFilter.all:
-        return true;
-      case SignalFilter.active:
-        return signal.isActive;
-      case SignalFilter.pending:
-        return signal.isPending;
-      case SignalFilter.closed:
-        return signal.isClosed;
-      case SignalFilter.cancelled:
-        return signal.isCancelled;
+    if (selectedFilters.contains(SignalFilter.all)) return true;
+    for (final SignalFilter filter in selectedFilters) {
+      if (filter == SignalFilter.active && signal.isActive) return true;
+      if (filter == SignalFilter.pending && signal.isPending) return true;
+      if (filter == SignalFilter.closed && signal.isClosed) return true;
+      if (filter == SignalFilter.cancelled && signal.isCancelled) return true;
     }
+    return false;
   }
 
   MyTradesState copyWith({
     BaseStateStatus? status,
     String? msg,
     PageRouteInfo? redirectRoute,
-    SignalFilter? selectedFilter,
+    Set<SignalFilter>? selectedFilters,
     String? searchQuery,
     List<TradingSignalModel>? signals,
     int? offset,
@@ -85,7 +81,7 @@ class MyTradesState extends BaseState {
         status: status ?? this.status,
         msg: msg ?? this.msg,
         redirectRoute: redirectRoute ?? this.redirectRoute,
-        selectedFilter: selectedFilter ?? this.selectedFilter,
+        selectedFilters: selectedFilters ?? this.selectedFilters,
         searchQuery: searchQuery ?? this.searchQuery,
         signals: signals ?? this.signals,
         offset: offset ?? this.offset,
@@ -103,7 +99,7 @@ class MyTradesState extends BaseState {
         status,
         msg,
         redirectRoute,
-        selectedFilter,
+        selectedFilters,
         searchQuery,
         signals,
         offset,

@@ -3,11 +3,11 @@ import '../../../../utils/exports.dart';
 class TradesFilterBar extends StatelessWidget {
   const TradesFilterBar({
     super.key,
-    required this.selectedFilter,
+    required this.selectedFilters,
     required this.onFilterChanged,
   });
 
-  final SignalFilter selectedFilter;
+  final Set<SignalFilter> selectedFilters;
   final ValueChanged<SignalFilter> onFilterChanged;
 
   @override
@@ -23,7 +23,7 @@ class TradesFilterBar extends StatelessWidget {
           _FilterPill(
             label: 'All',
             filter: SignalFilter.all,
-            isSelected: selectedFilter == SignalFilter.all,
+            isSelected: selectedFilters.contains(SignalFilter.all),
             onTap: () => onFilterChanged(SignalFilter.all),
             isDark: isDark,
           ),
@@ -31,7 +31,7 @@ class TradesFilterBar extends StatelessWidget {
           _FilterPill(
             label: 'Active',
             filter: SignalFilter.active,
-            isSelected: selectedFilter == SignalFilter.active,
+            isSelected: selectedFilters.contains(SignalFilter.active),
             dotColor: isDark ? AppColors.successColor : AppColors.greenTextColor,
             onTap: () => onFilterChanged(SignalFilter.active),
             isDark: isDark,
@@ -40,7 +40,7 @@ class TradesFilterBar extends StatelessWidget {
           _FilterPill(
             label: 'Pending',
             filter: SignalFilter.pending,
-            isSelected: selectedFilter == SignalFilter.pending,
+            isSelected: selectedFilters.contains(SignalFilter.pending),
             dotColor: AppColors.warningColor,
             onTap: () => onFilterChanged(SignalFilter.pending),
             isDark: isDark,
@@ -49,7 +49,7 @@ class TradesFilterBar extends StatelessWidget {
           _FilterPill(
             label: 'Closed',
             filter: SignalFilter.closed,
-            isSelected: selectedFilter == SignalFilter.closed,
+            isSelected: selectedFilters.contains(SignalFilter.closed),
             dotColor: AppColors.neutralColor,
             onTap: () => onFilterChanged(SignalFilter.closed),
             isDark: isDark,
@@ -58,7 +58,7 @@ class TradesFilterBar extends StatelessWidget {
           _FilterPill(
             label: 'Cancelled',
             filter: SignalFilter.cancelled,
-            isSelected: selectedFilter == SignalFilter.cancelled,
+            isSelected: selectedFilters.contains(SignalFilter.cancelled),
             dotColor: AppColors.errorColor,
             onTap: () => onFilterChanged(SignalFilter.cancelled),
             isDark: isDark,

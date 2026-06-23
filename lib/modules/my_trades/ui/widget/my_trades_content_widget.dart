@@ -35,7 +35,7 @@ class MyTradesContentWidget extends StatelessWidget {
                     pendingCount: state.pendingCount.toString(),
                     closedCount: state.closedCount.toString(),
                     lossesCount: state.lossesCount.toString(),
-                    selectedFilter: state.selectedFilter,
+                    selectedFilters: state.selectedFilters,
                     showTakeTrade: false,
                     onSearchChanged: cubit.updateSearchQuery,
                     onSearchClear: cubit.clearSearch,
