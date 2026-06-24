@@ -1,7 +1,6 @@
 import '../../../utils/exports.dart';
 
 @RoutePage()
-/// Settings page displaying account preferences, support info, and logout.
 class SettingsPage extends BaseResponsiveView {
   const SettingsPage({super.key});
 
@@ -340,11 +339,12 @@ class _SettingsViewState extends State<SettingsView> {
                                     size: Dimens.size18,
                                   ),
                                   onTap: () {
-                                    if (context.isEnglishLanguage) {
+                                    _showComingSoon('This feature is coming soon.');
+                                       /* if (context.isEnglishLanguage) {
                                       unawaited(LocaleCubit.instance.changeLanguage(AppConstant.ar, AppConstant.rtlLanguageAlignment));
                                     } else {
                                       unawaited(LocaleCubit.instance.changeLanguage(AppConstant.en, AppConstant.defaultLanguageAlignment));
-                                    }
+                                    }*/
                                   },
                                 ),
                                // _Divider(isDark: isDark),

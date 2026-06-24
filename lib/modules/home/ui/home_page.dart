@@ -88,6 +88,8 @@ class HomeNavigationDrawer extends StatelessWidget {
                   ? profile.customerEmail
                   : 'guest@example.com';
               final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'G';
+              final String imageUrl = profile.profilePictureUrl;
+              final bool hasImageUrl = imageUrl.isNotEmpty;
 
               return Container(
                 padding: const EdgeInsets.only(
@@ -108,15 +110,62 @@ class HomeNavigationDrawer extends StatelessWidget {
                       height: Dimens.size50,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: AppColors.primaryButtonGradient,
+                        gradient: LinearGradient(
+                          colors: AppColors.primaryGradient,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                       ),
-                      alignment: Alignment.center,
-                      child: CustomTextLabelWidget(
-                        label: initial,
-                        style: const TextStyle(
-                          color: AppColors.whiteColor,
-                          fontWeight: FontWeight.w700,
-                          fontSize: Dimens.fontSize18,
+                      padding: const EdgeInsets.all(1.5),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+                        ),
+                        padding: const EdgeInsets.all(1.5),
+                        child: ClipOval(
+                          child: hasImageUrl
+                              ? FastCachedImage(
+                                  key: ValueKey<String>(imageUrl),
+                                  url: imageUrl,
+                                  fit: BoxFit.cover,
+                                  loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 1.5,
+                                      color: AppColors.primaryPurple,
+                                    ),
+                                  ),
+                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: AppColors.primaryButtonGradient,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: CustomTextLabelWidget(
+                                      label: initial,
+                                      style: const TextStyle(
+                                        color: AppColors.whiteColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: Dimens.fontSize18,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: AppColors.primaryButtonGradient,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: CustomTextLabelWidget(
+                                    label: initial,
+                                    style: const TextStyle(
+                                      color: AppColors.whiteColor,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: Dimens.fontSize18,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),

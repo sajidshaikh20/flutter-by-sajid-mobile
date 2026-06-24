@@ -554,7 +554,7 @@ class TradingOverviewViewBody extends StatelessWidget {
 
     final String chartLink = (signal.tradingViewUrl != null && signal.tradingViewUrl!.isNotEmpty)
         ? signal.tradingViewUrl!
-        : 'https://www.tradingview.com/x/9EDN1OPq/';
+        : '';
 
     final String imageUrl = _getChartImageUrl(chartLink);
 
