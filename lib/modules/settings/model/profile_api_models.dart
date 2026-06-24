@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class ClientProfileResponse {
   final String publicId;
   final String name;
@@ -44,20 +46,22 @@ class ClientProfileResponse {
 
 class UpdateClientProfileRequest {
   final String name;
-  final String username;
   final String phone;
+  final String countryCode;
+  final File? profilePicture;
 
   UpdateClientProfileRequest({
     required this.name,
-    required this.username,
     required this.phone,
+    required this.countryCode,
+    this.profilePicture,
   });
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'name': name,
-      'username': username,
       'phone': phone,
+      'countryCode': countryCode,
     };
   }
 }

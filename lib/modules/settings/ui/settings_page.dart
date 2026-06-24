@@ -125,7 +125,10 @@ class _SettingsViewState extends State<SettingsView> {
                             ),
                           ),
                           child: InkWell(
-                            onTap: () => context.router.push(const EditProfileRoute()),
+                            onTap: () async {
+                              await context.router.push(const EditProfileRoute());
+                              await UserProfileService.instance().loadUserData();
+                            },
                             borderRadius: BorderRadius.circular(Dimens.radius16),
                             child: Padding(
                               padding: const EdgeInsets.all(Dimens.space16),
@@ -153,6 +156,7 @@ class _SettingsViewState extends State<SettingsView> {
                                       child: ClipOval(
                                         child: hasImageUrl
                                             ? FastCachedImage(
+                                                key: ValueKey<String>(imageUrl),
                                                 url: imageUrl,
                                                 fit: BoxFit.cover,
                                                 loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(

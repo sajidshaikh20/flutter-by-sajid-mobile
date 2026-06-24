@@ -136,15 +136,7 @@ class CustomButtonWidget extends StatelessWidget {
     Color? resolvedBorderColor;
     List<BoxShadow>? resolvedBoxShadow;
 
-    if (!isButtonEnabled) {
-      // Disabled state
-      resolvedBgColor = isDark
-          ? const Color(0xFF1C1B2A)
-          : const Color(0xFFF7F7FC);
-      resolvedTextColor = isDark
-          ? const Color(0xFF4E4B66)
-          : const Color(0xFFD6D6E7);
-    } else if (isPrimaryButton) {
+    if (isPrimaryButton) {
       // Primary button styles
       if (isOutline || hasBorder) {
         resolvedBgColor = Colors.transparent;
@@ -183,17 +175,18 @@ class CustomButtonWidget extends StatelessWidget {
       maxLines: Dimens.maxLines01,
       label: title,
       overflow: TextOverflow.ellipsis,
-      style:
-          titleTextStyle ??
-          context.textTheme.headlineMedium?.copyWith(
-            fontSize: textFontSize,
-            fontWeight: FontWeight.w600,
+      style: (titleTextStyle ??
+              context.textTheme.headlineMedium?.copyWith(
+                fontSize: textFontSize,
+                fontWeight: FontWeight.w600,
+              ))?.copyWith(
             color: resolvedTextColor ?? Colors.white,
           ),
     );
 
-    // Apply linear gradient to text if it's Primary Outline (and enabled)
-    if (isButtonEnabled && isPrimaryButton && (isOutline || hasBorder)) {
+
+    // Apply linear gradient to text if it's Primary Outline
+    if (isPrimaryButton && (isOutline || hasBorder)) {
       labelWidget = ShaderMask(
         shaderCallback: (Rect bounds) {
           return AppColors.primaryButtonGradient.createShader(
@@ -261,7 +254,7 @@ class CustomButtonWidget extends StatelessWidget {
     );
 
     // Handle primary outline button gradient border drawing
-    if (isButtonEnabled && isPrimaryButton &&
+    if (isPrimaryButton &&
         (isOutline || hasBorder) &&
         borderGradient != null) {
       container = CustomPaint(
@@ -282,7 +275,7 @@ class CustomButtonWidget extends StatelessWidget {
       );
     }
 
-    return TextButton(
+    final Widget buttonWidget = TextButton(
       style: TextButton.styleFrom(
         splashFactory: NoSplash.splashFactory,
         minimumSize: Size.zero,
@@ -292,11 +285,19 @@ class CustomButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
         ),
       ),
-      onPressed: () {
-        hideKeyboard();
-        if (isButtonEnabled) onTap.call();
-      },
+      onPressed: isButtonEnabled
+          ? () {
+              hideKeyboard();
+              onTap.call();
+            }
+          : null,
       child: container,
+    );
+
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 200),
+      opacity: isButtonEnabled ? 1.0 : 0.45,
+      child: buttonWidget,
     );
   }
 }

@@ -67,6 +67,7 @@ class HomeHeaderAppBar extends StatelessWidget {
                             child: ClipOval(
                               child: hasImageUrl
                                   ? FastCachedImage(
+                                      key: ValueKey<String>(imageUrl),
                                       url: imageUrl,
                                       fit: BoxFit.cover,
                                       loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(

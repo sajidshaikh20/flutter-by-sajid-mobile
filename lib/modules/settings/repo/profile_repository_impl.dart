@@ -20,18 +20,34 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
     );
   }
-
   @override
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> updateProfile(
     UpdateClientProfileRequest request,
   ) async {
+    final Map<String, dynamic> data = <String, dynamic>{
+      'name': request.name,
+      'phone': request.phone,
+      'countryCode': request.countryCode,
+    };
+
+    if (request.profilePicture != null) {
+      final String fileName = request.profilePicture!.path.split('/').last;
+      data['profilePicture'] = await MultipartFile.fromFile(
+        request.profilePicture!.path,
+        filename: fileName,
+      );
+    }
+
+    final FormData formData = FormData.fromMap(data);
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.getClientProfile,
-          apiType: ApiType.patch,
+          endUrl: Apis.updateClientProfile,
+          apiType: ApiType.put,
+          formData: formData,
+          isMultipartFormData: true,
           showLoader: true,
-          data: request.toJson(),
         );
 
     return getParsedResponseHandler(
@@ -51,14 +67,14 @@ class ProfileRepositoryImpl extends ProfileRepository {
   ) async {
     final String fileName = file.path.split('/').last;
     final FormData formData = FormData.fromMap(<String, dynamic>{
-      'file': await MultipartFile.fromFile(file.path, filename: fileName),
+      'profilePicture': await MultipartFile.fromFile(file.path, filename: fileName),
     });
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.getClientProfile,
-          apiType: ApiType.patch,
+          endUrl: Apis.updateClientProfile,
+          apiType: ApiType.put,
           formData: formData,
           isMultipartFormData: true,
           showLoader: true,
