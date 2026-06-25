@@ -239,7 +239,7 @@ class TradingSignalCard extends StatelessWidget {
             // Active price details
             Row(
               children: <Widget>[
-                // Live price block
+                // Posted by block
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,15 +249,13 @@ class TradingSignalCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Icon(
-                            (signal.isLivePriceUp ?? true)
-                                ? Icons.arrow_upward_rounded
-                                : Icons.arrow_downward_rounded,
-                            color: (signal.isLivePriceUp ?? true) ? themeGreen : AppColors.errorColor,
-                            size: Dimens.size12,
+                            Icons.person_outline_rounded,
+                            color: subtextColor,
+                            size: Dimens.size14,
                           ),
                           const SizedBox(width: Dimens.space4),
                           CustomTextLabelWidget(
-                            label: 'Live Price',
+                            label: 'Posted by',
                             style: TextStyle(
                               color: subtextColor,
                               fontSize: Dimens.fontSize10,
@@ -266,27 +264,19 @@ class TradingSignalCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          CustomTextLabelWidget(
-                            label: signal.livePrice?.toString() ?? '',
-                            style: TextStyle(
-                              color: (signal.isLivePriceUp ?? true) ? themeGreen : AppColors.errorColor,
-                              fontWeight: FontWeight.w800,
-                              fontSize: Dimens.fontSize14,
-                            ),
-                          ),
-                          CustomTextLabelWidget(
-                            label: signal.livePriceChange ?? '',
-                            style: TextStyle(
-                              color: (signal.isLivePriceUp ?? true) ? themeGreen : AppColors.errorColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: Dimens.fontSize9,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: Dimens.space4),
+                      CustomTextLabelWidget(
+                        label: signal.traderName.isNotNullOrEmpty
+                            ? signal.traderName!
+                            : '--',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: Dimens.fontSize14,
+                        ),
                       ),
                     ],
                   ),
@@ -337,78 +327,55 @@ class TradingSignalCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: Dimens.space12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                _buildLevelPill(
-                  label: 'SL',
-                  value: signal.stopLoss.toString(),
-                  color: AppColors.errorColor,
-                  isDark: isDark,
-                ),
-                _buildLevelPill(
-                  label: 'ENTRY',
-                  value: signal.entryPrice.toString(),
-                  color: AppColors.warningColor,
-                  isDark: isDark,
-                ),
-                _buildLevelPill(
-                  label: 'TP',
-                  value: signal.takeProfit.toString(),
-                  color: themeGreen,
-                  isDark: isDark,
-                ),
-              ],
-            ),
-            const SizedBox(height: Dimens.space12),
-            Stack(
-              alignment: Alignment.centerLeft,
-              children: <Widget>[
-                Container(
-                  height: 6,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
-                    gradient: LinearGradient(
-                      colors: <Color>[
-                        AppColors.errorColor.withValues(alpha: 0.7),
-                        AppColors.warningColor.withValues(alpha: 0.7),
-                        themeGreen.withValues(alpha: 0.7),
-                      ],
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(2 * (signal.progress ?? 0.0) - 1, 0),
-                  child: Container(
-                    width: 14,
-                    height: 14,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey.shade400, width: 1.5),
-                      boxShadow: const <BoxShadow>[
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 3,
-                          offset: Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: Dimens.space12),
           ] else ...<Widget>[
             // Closed/Cancelled Details Row
             Row(
               children: <Widget>[
-                // PIPS
+                // Posted by block
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.person_outline_rounded,
+                            color: subtextColor,
+                            size: Dimens.size14,
+                          ),
+                          const SizedBox(width: Dimens.space4),
+                          CustomTextLabelWidget(
+                            label: 'Posted by',
+                            style: TextStyle(
+                              color: subtextColor,
+                              fontSize: Dimens.fontSize10,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: Dimens.space4),
+                      CustomTextLabelWidget(
+                        label: signal.traderName.isNotNullOrEmpty
+                            ? signal.traderName!
+                            : '--',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: Dimens.fontSize14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // PIPS
+                Expanded(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       CustomTextLabelWidget(
@@ -436,6 +403,7 @@ class TradingSignalCard extends StatelessWidget {
                 // RR
                 Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       CustomTextLabelWidget(
@@ -445,41 +413,13 @@ class TradingSignalCard extends StatelessWidget {
                           fontSize: Dimens.fontSize10,
                           fontWeight: FontWeight.w500,
                         ),
+                        textAlign: TextAlign.end,
                       ),
                       const SizedBox(height: Dimens.space4),
                       CustomTextLabelWidget(
                         label: signal.rr,
                         style: TextStyle(
                           color: textColor,
-                          fontWeight: FontWeight.w800,
-                          fontSize: Dimens.fontSize14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Outcome
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      CustomTextLabelWidget(
-                        label: 'Outcome',
-                        style: TextStyle(
-                          color: subtextColor,
-                          fontSize: Dimens.fontSize10,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.end,
-                      ),
-                      const SizedBox(height: Dimens.space4),
-                      CustomTextLabelWidget(
-                        label: signal.outcome ?? (signal.isCancelled ? 'CANCELLED' : 'PENDING'),
-                        style: TextStyle(
-                          color: signal.outcome == 'WIN'
-                              ? themeGreen
-                              : (signal.outcome == 'LOSS' ? AppColors.errorColor : subtextColor),
                           fontWeight: FontWeight.w800,
                           fontSize: Dimens.fontSize14,
                         ),
@@ -684,46 +624,6 @@ class TradingSignalCard extends StatelessWidget {
     }
   }
 
-  Widget _buildLevelPill({
-    required String label,
-    required String value,
-    required Color color,
-    required bool isDark,
-  }) {
-    final Color bg = color.withValues(alpha: isDark ? 0.15 : 0.08);
-    final Color border = color.withValues(alpha: isDark ? 0.3 : 0.2);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(Dimens.radius6),
-        border: Border.all(color: border),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          CustomTextLabelWidget(
-            label: label,
-            style: TextStyle(
-              color: color,
-              fontSize: Dimens.fontSize9,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 2),
-          CustomTextLabelWidget(
-            label: value,
-            style: TextStyle(
-              color: color,
-              fontSize: Dimens.fontSize11,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _ValueColumn extends StatelessWidget {

@@ -23,6 +23,7 @@ class TradingSignalModel {
   final List<double> sparklineData;
   final String? tradingViewUrl;
   final bool isTaken;
+  final String? traderName;
 
   const TradingSignalModel({
     this.publicId = '',
@@ -49,6 +50,7 @@ class TradingSignalModel {
     required this.sparklineData,
     this.tradingViewUrl,
     this.isTaken = false,
+    this.traderName,
   });
 
   TradingSignalModel copyWith({
@@ -76,6 +78,7 @@ class TradingSignalModel {
     List<double>? sparklineData,
     String? tradingViewUrl,
     bool? isTaken,
+    String? traderName,
   }) {
     return TradingSignalModel(
       publicId: publicId ?? this.publicId,
@@ -102,6 +105,7 @@ class TradingSignalModel {
       sparklineData: sparklineData ?? this.sparklineData,
       tradingViewUrl: tradingViewUrl ?? this.tradingViewUrl,
       isTaken: isTaken ?? this.isTaken,
+      traderName: traderName ?? this.traderName,
     );
   }
 

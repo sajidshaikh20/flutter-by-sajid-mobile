@@ -50,6 +50,7 @@ class TradeResponse {
   final String? createdAt;
   final String? outcome;
   final Map<String, dynamic>? currencyPair;
+  final String? traderName;
 
   TradeResponse({
     required this.publicId,
@@ -65,6 +66,7 @@ class TradeResponse {
     this.createdAt,
     this.outcome,
     this.currencyPair,
+    this.traderName,
   });
 
   factory TradeResponse.fromJson(Map<String, dynamic> json) {
@@ -97,6 +99,7 @@ class TradeResponse {
           : (source['currencyPairSymbol'] != null
               ? <String, dynamic>{'symbol': source['currencyPairSymbol']}
               : null),
+      traderName: source['traderName']?.toString(),
     );
   }
 
@@ -133,6 +136,7 @@ class TradeResponse {
       'createdAt': createdAt,
       'outcome': outcome,
       'currencyPair': currencyPair,
+      'traderName': traderName,
     };
   }
 
@@ -232,6 +236,7 @@ class TradeResponse {
       sparklineData: sparklineData,
       tradingViewUrl: tradingViewUrl,
       isTaken: isTaken,
+      traderName: traderName,
     );
   }
 }
