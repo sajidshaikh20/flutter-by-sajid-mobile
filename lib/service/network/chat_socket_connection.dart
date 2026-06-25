@@ -5,6 +5,8 @@ import '../../../utils/exports.dart';
 class ChatSocketConnection {
   StompClient? _client;
   bool _isConnected = false;
+  final Set<String> _registeredSymbols = <String>{};
+  void Function({Map<String, String>? unsubscribeHeaders})? _pricesSubscription;
 
   // Broadcast stream controllers to distribute updates to multiple listeners
   final StreamController<Map<String, dynamic>> _priceStreamController =
@@ -85,6 +87,7 @@ class ChatSocketConnection {
   void _onDisconnect(StompFrame frame) {
     _isConnected = false;
     connectionStatus = "Disconnected";
+    _pricesSubscription = null;
     DebugLog.instance.w('WebSocket: STOMP connection disconnected.');
   }
 
@@ -99,14 +102,16 @@ class ChatSocketConnection {
   void _onWebSocketDone() {
     _isConnected = false;
     connectionStatus = "Disconnected";
+    _pricesSubscription = null;
     DebugLog.instance.w('WebSocket: WebSocket Closed.');
   }
 
-  void _subscribeTopics() {
+  void _subscribePricesTopic() {
     if (_client == null || !_client!.connected) return;
+    if (_pricesSubscription != null) return; // Already subscribed
 
-    // 1. Subscribe to Live Market Price Updates
-    _client!.subscribe(
+    DebugLog.instance.i('WebSocket: Subscribing to /topic/prices topic');
+    _pricesSubscription = _client!.subscribe(
       destination: '/topic/prices',
       callback: (StompFrame frame) {
         if (frame.body != null) {
@@ -121,6 +126,27 @@ class ChatSocketConnection {
         }
       },
     );
+  }
+
+  void _unsubscribePricesTopic() {
+    if (_pricesSubscription != null) {
+      DebugLog.instance.i('WebSocket: Unsubscribing from /topic/prices topic');
+      try {
+        _pricesSubscription!();
+      } on Exception catch (e) {
+        DebugLog.instance.e('WebSocket: Error unsubscribing from /topic/prices: $e');
+      }
+      _pricesSubscription = null;
+    }
+  }
+
+  void _subscribeTopics() {
+    if (_client == null || !_client!.connected) return;
+
+    // 1. Subscribe to Live Market Price Updates if there are registered symbols
+    if (_registeredSymbols.isNotEmpty) {
+      _subscribePricesTopic();
+    }
 
     // 2. Subscribe to Trade Status Updates
     _client!.subscribe(
@@ -159,6 +185,7 @@ class ChatSocketConnection {
 
   /// Disconnects the socket client and clears listeners.
   void disconnectSocket({bool shouldClearTheSocket = false}) {
+    _unsubscribePricesTopic();
     if (_client != null) {
       _client!.deactivate();
       if (shouldClearTheSocket) {
@@ -173,6 +200,14 @@ class ChatSocketConnection {
   /// Registers a symbol with the backend so it begins streaming live prices.
   Future<void> registerSymbol(String symbol) async {
     final String normalized = _normalizeSymbol(symbol);
+    final bool added = _registeredSymbols.add(normalized);
+    _subscribePricesTopic();
+
+    if (!added) {
+      DebugLog.instance.d('WebSocket: Symbol $normalized is already registered.');
+      return;
+    }
+
     final bool isCrypto = normalized.endsWith('USDT');
     final String endUrl = isCrypto ? Apis.cryptoLivePrice : Apis.marketLivePrice;
 
@@ -196,6 +231,16 @@ class ChatSocketConnection {
   /// Unregisters a symbol from backend streaming.
   Future<void> unregisterSymbol(String symbol) async {
     final String normalized = _normalizeSymbol(symbol);
+    final bool removed = _registeredSymbols.remove(normalized);
+    if (_registeredSymbols.isEmpty) {
+      _unsubscribePricesTopic();
+    }
+
+    if (!removed) {
+      DebugLog.instance.d('WebSocket: Symbol $normalized was not registered.');
+      return;
+    }
+
     final bool isCrypto = normalized.endsWith('USDT');
     final String endUrl = isCrypto ? Apis.cryptoLivePrice : Apis.marketLivePrice;
 

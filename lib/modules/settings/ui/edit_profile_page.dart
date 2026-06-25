@@ -691,13 +691,19 @@ class _EditProfileFormState extends State<EditProfileForm> {
                         controller: _usernameController,
                         focusNode: _usernameFocusNode,
                         title: context.appString.editProfileUsernameLabelKey,
+                        readOnly: true,
                         fillColor: inputFieldBg,
                         borderColor: borderCol,
-                        style: TextStyle(color: textColor),
+                        style: TextStyle(color: textColor.withOpacity(0.6)),
                         titleStyle: TextStyle(
                           color: subtitleColor,
                           fontSize: Dimens.fontSize14,
                           fontWeight: FontWeight.w600,
+                        ),
+                        suffixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          size: Dimens.size16,
+                          color: subtitleColor.withOpacity(0.5),
                         ),
                         validator: (dynamic value) {
                           final String val = (value as String?) ?? '';
@@ -718,13 +724,19 @@ class _EditProfileFormState extends State<EditProfileForm> {
                         controller: _emailController,
                         focusNode: _emailFocusNode,
                         title: context.appString.editProfileEmailLabelKey,
+                        readOnly: true,
                         fillColor: inputFieldBg,
                         borderColor: borderCol,
-                        style: TextStyle(color: textColor),
+                        style: TextStyle(color: textColor.withOpacity(0.6)),
                         titleStyle: TextStyle(
                           color: subtitleColor,
                           fontSize: Dimens.fontSize14,
                           fontWeight: FontWeight.w600,
+                        ),
+                        suffixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          size: Dimens.size16,
+                          color: subtitleColor.withOpacity(0.5),
                         ),
                         validator: (dynamic value) {
                           final String val = (value as String?) ?? '';

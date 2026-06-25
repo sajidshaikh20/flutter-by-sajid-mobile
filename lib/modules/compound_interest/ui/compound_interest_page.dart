@@ -634,16 +634,16 @@ class ChartPainter extends CustomPainter {
 
       final String label = frac == 0.0 ? '0' : '${yearVal.toStringAsFixed(1)} Y';
 
-      textPainter.text = TextSpan(
+      textPainter..text = TextSpan(
         text: label,
         style: TextStyle(
           color: isDark ? Colors.white60 : Colors.black54,
           fontSize: 10,
           fontFamily: 'inter',
         ),
-      );
-      textPainter.layout();
-      textPainter.paint(
+      )
+      ..layout()
+      ..paint(
         canvas,
         Offset(xPos - textPainter.width / 2, size.height - bottomPadding + 6.0),
       );
@@ -660,13 +660,13 @@ class ChartPainter extends CustomPainter {
 
     // Draw Fill Under Line
     if (points.isNotEmpty) {
-      final Path fillPath = Path();
-      fillPath.moveTo(points.first.dx, topPadding + chartHeight);
+      final Path fillPath = Path()
+      ..moveTo(points.first.dx, topPadding + chartHeight);
       for (int i = 0; i < points.length; i++) {
         fillPath.lineTo(points[i].dx, points[i].dy);
       }
-      fillPath.lineTo(points.last.dx, topPadding + chartHeight);
-      fillPath.close();
+      fillPath..lineTo(points.last.dx, topPadding + chartHeight)
+      ..close();
 
       final Paint fillPaint = Paint()
         ..shader = LinearGradient(
@@ -708,8 +708,8 @@ class ChartPainter extends CustomPainter {
     for (int i = 0; i < points.length; i++) {
       final double fraction = i / (points.length - 1);
       if (fraction == 0.0 || fraction == 0.25 || fraction == 0.50 || fraction == 0.75 || fraction == 1.0) {
-        canvas.drawCircle(points[i], 5.0, dotBorderPaint);
-        canvas.drawCircle(points[i], 3.0, dotPaint);
+        canvas..drawCircle(points[i], 5.0, dotBorderPaint)
+        ..drawCircle(points[i], 3.0, dotPaint);
       }
     }
 
@@ -731,8 +731,8 @@ class ChartPainter extends CustomPainter {
         ),
         textDirection: TextDirection.ltr,
         textAlign: TextAlign.center,
-      );
-      tooltipPainter.layout();
+      )
+      ..layout();
 
       final double rectW = tooltipPainter.width + 16.0;
       final double rectH = tooltipPainter.height + 12.0;
@@ -753,8 +753,8 @@ class ChartPainter extends CustomPainter {
         ..strokeWidth = 1.0
         ..style = PaintingStyle.stroke;
 
-      canvas.drawRRect(tooltipRRect, tooltipBgPaint);
-      canvas.drawRRect(tooltipRRect, tooltipBorderPaint);
+      canvas..drawRRect(tooltipRRect, tooltipBgPaint)
+      ..drawRRect(tooltipRRect, tooltipBorderPaint);
 
       tooltipPainter.paint(
         canvas,
@@ -830,8 +830,8 @@ class _SliderInputRowWidgetState extends State<SliderInputRowWidget> {
 
   @override
   void dispose() {
-    _focusNode.removeListener(_onFocusChange);
-    _focusNode.dispose();
+    _focusNode..removeListener(_onFocusChange)
+    ..dispose();
     _controller.dispose();
     super.dispose();
   }

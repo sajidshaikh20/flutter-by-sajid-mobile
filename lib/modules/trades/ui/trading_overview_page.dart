@@ -363,6 +363,7 @@ class TradingOverviewViewBody extends StatelessWidget {
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5);
     final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
     final Color themeGreen = isDark ? AppColors.successColor : AppColors.greenTextColor;
+    final TradingSignalModel currentSignal = state.signal;
 
     return Container(
       width: double.infinity,
@@ -400,7 +401,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         CustomTextLabelWidget(
-                          label: 'LIVE PRICE',
+                          label: currentSignal.isClosed ? 'EXIT PRICE' : 'LIVE PRICE',
                           style: TextStyle(
                             color: isDark ? Colors.white70 : AppColors.textSecondaryLight,
                             fontSize: 7,
@@ -427,7 +428,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     CustomTextLabelWidget(
-                      label: signal.pair.contains('BTC') ? state.livePrice.toStringAsFixed(2) : state.livePrice.toStringAsFixed(5),
+                      label: currentSignal.pair.contains('BTC') ? state.livePrice.toStringAsFixed(2) : state.livePrice.toStringAsFixed(5),
                       style: TextStyle(
                         color: isDark ? Colors.white : AppColors.textPrimaryLight,
                         fontSize: Dimens.fontSize14,
@@ -445,19 +446,19 @@ class TradingOverviewViewBody extends StatelessWidget {
             children: <Widget>[
               _buildLevelPill(
                 label: 'SL',
-                value: signal.stopLoss.toString(),
+                value: currentSignal.stopLoss.toString(),
                 color: AppColors.errorColor,
                 isDark: isDark,
               ),
               _buildLevelPill(
                 label: 'ENTRY',
-                value: signal.entryPrice.toString(),
+                value: currentSignal.entryPrice.toString(),
                 color: AppColors.warningColor,
                 isDark: isDark,
               ),
               _buildLevelPill(
                 label: 'TP',
-                value: signal.takeProfit.toString(),
+                value: currentSignal.takeProfit.toString(),
                 color: themeGreen,
                 isDark: isDark,
               ),

@@ -218,7 +218,7 @@ class TradeResponse {
       takeProfitOne: takeProfitOne,
       takeProfitTwo: takeProfitTwo,
       takeProfitThree: takeProfitThree,
-      livePrice: livePrice ?? entryPrice,
+      livePrice: (normalizedStatus == 'CLOSED' ? (exitPrice ?? livePrice) : livePrice) ?? entryPrice,
       livePriceChange: livePrice != null
           ? '+${((livePrice! - entryPrice) / entryPrice * 100).toStringAsFixed(2)}%'
           : '0.00%',

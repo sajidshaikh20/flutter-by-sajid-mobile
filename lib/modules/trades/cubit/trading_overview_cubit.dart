@@ -71,8 +71,12 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
   }
 
   void _subscribeToSocketUpdates() {
-    // Register the symbol to receive price updates
-    unawaited(MainConfig.chatSocketConnection.registerSymbol(signal.pair));
+    // Register the symbol to receive price updates only if trade is ACTIVE or PENDING
+    final String initialStatus = state.signal.status.toUpperCase();
+    final bool isLive = initialStatus == 'ACTIVE' || initialStatus == 'PENDING';
+    if (isLive) {
+      unawaited(MainConfig.chatSocketConnection.registerSymbol(signal.pair));
+    }
 
     // Listen for live price updates
     _priceSubscription = MainConfig.chatSocketConnection.priceStream.listen((Map<String, dynamic> data) {
@@ -96,6 +100,11 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
           emit(state.copyWith(
             signal: updatedSignal,
           ));
+
+          // If the trade is no longer active or pending, unregister the symbol immediately
+          if (finalStatus != 'ACTIVE' && finalStatus != 'PENDING') {
+            unawaited(MainConfig.chatSocketConnection.unregisterSymbol(signal.pair));
+          }
         }
       }
 
@@ -132,6 +141,14 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
         emit(state.copyWith(
           signal: updatedSignal,
         ));
+
+        _updatePriceAndProgress(exitPrice ?? state.livePrice);
+
+        // If the trade is no longer active or pending, unregister the symbol immediately
+        final String finalStatus = (status ?? state.signal.status).toUpperCase();
+        if (finalStatus != 'ACTIVE' && finalStatus != 'PENDING') {
+          unawaited(MainConfig.chatSocketConnection.unregisterSymbol(signal.pair));
+        }
       }
     });
   }
