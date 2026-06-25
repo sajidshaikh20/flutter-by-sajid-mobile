@@ -77,6 +77,7 @@ class SocialLoginCubit extends Cubit<SocialLoginState> {
             );
 
             await AccountVerificationHelper.setPending();
+            unawaited(SocketManager.instance.connectSocket());
 
             emit(
               state.copyWith(

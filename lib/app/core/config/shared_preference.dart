@@ -383,6 +383,9 @@ class SharedPref {
       await remove(key);
     }
 
+    // Disconnect the websocket connection
+    SocketManager.instance.disconnectSocket(shouldClearTheSocket: true);
+
     DebugLog.instance.i("SharedPref: Cleared only user-related data successfully");
   }
 

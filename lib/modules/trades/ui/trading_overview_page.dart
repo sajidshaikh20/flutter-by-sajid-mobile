@@ -60,6 +60,16 @@ class TradingOverviewViewBody extends StatelessWidget {
     }
   }
 
+  String _formatCreatedDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '—';
+    try {
+      final DateTime parsed = DateTime.parse(dateStr);
+      return DateFormat('dd MMM yyyy, hh:mm a').format(parsed.toLocal());
+    } on Object catch (_) {
+      return dateStr;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
@@ -67,21 +77,6 @@ class TradingOverviewViewBody extends StatelessWidget {
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
     final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
     final Color themeGreen = isDark ? AppColors.successColor : AppColors.greenTextColor;
-
-    // Status colors mapping
-    Color statusBgColor = AppColors.infoColor;
-    String statusText = signal.status.toUpperCase();
-
-    if (signal.isActive) {
-      statusBgColor = const Color(0xFF0F3A80);
-    } else if (signal.isPending) {
-      statusBgColor = AppColors.warningColor;
-    } else if (signal.isClosed) {
-      statusBgColor = signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor;
-      statusText = signal.outcome ?? 'CLOSED';
-    } else if (signal.isCancelled) {
-      statusBgColor = AppColors.neutralColor;
-    }
 
     return BlocConsumer<TradingOverviewCubit, TradingOverviewState>(
       listener: (BuildContext context, TradingOverviewState state) {
@@ -112,9 +107,26 @@ class TradingOverviewViewBody extends StatelessWidget {
         }
       },
       builder: (BuildContext context, TradingOverviewState state) {
+        final TradingSignalModel currentSignal = state.signal;
+
+        // Status colors mapping
+        Color statusBgColor = AppColors.infoColor;
+        String statusText = currentSignal.status.toUpperCase();
+
+        if (currentSignal.isActive) {
+          statusBgColor = const Color(0xFF0F3A80);
+        } else if (currentSignal.isPending) {
+          statusBgColor = AppColors.warningColor;
+        } else if (currentSignal.isClosed) {
+          statusBgColor = currentSignal.outcome == 'WIN' ? themeGreen : AppColors.errorColor;
+          statusText = currentSignal.outcome ?? 'CLOSED';
+        } else if (currentSignal.isCancelled) {
+          statusBgColor = AppColors.neutralColor;
+        }
+
         return Scaffold(
           backgroundColor: pageBg,
-          bottomNavigationBar: (signal.isActive || signal.isPending)
+          bottomNavigationBar: (currentSignal.isActive || currentSignal.isPending)
               ? SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
@@ -122,8 +134,8 @@ class TradingOverviewViewBody extends StatelessWidget {
                       title: state.isTaken ? 'Trade Taken' : 'Take Trade',
                       isButtonEnabled: !state.isTaken,
                       onTap: () {
-                        if (signal.publicId.isNotEmpty) {
-                          unawaited(context.read<TradingOverviewCubit>().takeTrade(signal.publicId));
+                        if (currentSignal.publicId.isNotEmpty) {
+                          unawaited(context.read<TradingOverviewCubit>().takeTrade(currentSignal.publicId));
                         } else {
                           context.scaffoldMessenger.showSnackBar(
                             const SnackBar(
@@ -199,7 +211,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       CustomTextLabelWidget(
-                        label: signal.pair,
+                        label: currentSignal.pair,
                         style: TextStyle(
                           color: textColor,
                           fontSize: Dimens.fontSize28,
@@ -208,7 +220,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                       ),
                       const SizedBox(height: Dimens.space4),
                       CustomTextLabelWidget(
-                        label: _getPairName(signal.pair),
+                        label: _getPairName(currentSignal.pair),
                         style: TextStyle(
                           color: subtextColor,
                           fontSize: Dimens.fontSize14,
@@ -233,19 +245,19 @@ class TradingOverviewViewBody extends StatelessWidget {
                           children: <Widget>[
                             _buildCardRow(
                               label: 'Type',
-                              value: signal.type,
+                              value: currentSignal.type,
                               isDark: isDark,
                             ),
                             const SizedBox(height: Dimens.space12),
                             _buildCardRow(
                               label: 'Market',
-                              value: signal.category,
+                              value: currentSignal.category,
                               isDark: isDark,
                             ),
                             const SizedBox(height: Dimens.space12),
                             _buildCardRow(
                               label: 'Created',
-                              value: '08 Jun 2026, 12:52 PM',
+                              value: _formatCreatedDate(currentSignal.createdAt),
                               isDark: isDark,
                             ),
                             const SizedBox(height: Dimens.space12),
@@ -265,19 +277,19 @@ class TradingOverviewViewBody extends StatelessWidget {
                           children: <Widget>[
                             _buildCardRow(
                               label: 'Entry 1',
-                              value: signal.entryPrice.toString(),
+                              value: currentSignal.entryPrice.toString(),
                               isDark: isDark,
                             ),
                             const SizedBox(height: Dimens.space12),
                             _buildCardRow(
                               label: 'Entry 2',
-                              value: '—',
+                              value: currentSignal.entryPriceTwo?.toString() ?? '—',
                               isDark: isDark,
                             ),
                             const SizedBox(height: Dimens.space12),
                             _buildCardRow(
                               label: 'Stop Loss',
-                              value: signal.stopLoss.toString(),
+                              value: currentSignal.stopLoss.toString(),
                               valueColor: AppColors.errorColor,
                               isDark: isDark,
                             ),
@@ -286,24 +298,24 @@ class TradingOverviewViewBody extends StatelessWidget {
                               children: <Widget>[
                                 _buildTPBox(
                                   label: 'TP1',
-                                  value: signal.takeProfit.toString(),
-                                  hasValue: true,
+                                  value: currentSignal.takeProfitOne?.toString() ?? '—',
+                                  hasValue: currentSignal.takeProfitOne != null,
                                   isDark: isDark,
                                   themeGreen: themeGreen,
                                 ),
                                 const SizedBox(width: Dimens.space10),
                                 _buildTPBox(
                                   label: 'TP2',
-                                  value: '—',
-                                  hasValue: false,
+                                  value: currentSignal.takeProfitTwo?.toString() ?? '—',
+                                  hasValue: currentSignal.takeProfitTwo != null,
                                   isDark: isDark,
                                   themeGreen: themeGreen,
                                 ),
                                 const SizedBox(width: Dimens.space10),
                                 _buildTPBox(
                                   label: 'TP3',
-                                  value: '—',
-                                  hasValue: false,
+                                  value: currentSignal.takeProfitThree?.toString() ?? '—',
+                                  hasValue: currentSignal.takeProfitThree != null,
                                   isDark: isDark,
                                   themeGreen: themeGreen,
                                 ),
@@ -320,7 +332,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                           children: <Widget>[
                             _buildCardRow(
                               label: 'Risk Reward',
-                              value: signal.rr,
+                              value: currentSignal.rr,
                               isDark: isDark,
                             ),
                           ],
@@ -332,7 +344,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                         const SizedBox(height: Dimens.space16),
 
                         // Card 5: Trade Analysis
-                        _buildTradeAnalysisCard(context, isDark),
+                        _buildTradeAnalysisCard(context, state, isDark),
                         const SizedBox(height: Dimens.space24),
                       ],
                     ),
@@ -547,13 +559,13 @@ class TradingOverviewViewBody extends StatelessWidget {
     return url;
   }
 
-  Widget _buildTradeAnalysisCard(BuildContext context, bool isDark) {
+  Widget _buildTradeAnalysisCard(BuildContext context, TradingOverviewState state, bool isDark) {
     final Color cardBg = isDark ? AppColors.cardDark : AppColors.cardLight;
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5);
     final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
 
-    final String chartLink = (signal.tradingViewUrl != null && signal.tradingViewUrl!.isNotEmpty)
-        ? signal.tradingViewUrl!
+    final String chartLink = (state.signal.tradingViewUrl != null && state.signal.tradingViewUrl!.isNotEmpty)
+        ? state.signal.tradingViewUrl!
         : '';
 
     final String imageUrl = _getChartImageUrl(chartLink);

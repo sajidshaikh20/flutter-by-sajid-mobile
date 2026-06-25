@@ -16,6 +16,7 @@ FutureOr<void> setupLocator() {
 
   // Networking & storage — initialize only if accessed
     ..registerSingleton<ApiClient>(ApiClient())
+    ..registerSingleton<ChatSocketConnection>(ChatSocketConnection())
     ..registerSingleton<SharedPref>(SharedPref())
     ..registerSingleton<DebugLog>(DebugLog())
     ..registerSingleton<JsonDataManagerService>(JsonDataManagerService())

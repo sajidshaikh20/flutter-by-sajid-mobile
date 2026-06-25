@@ -139,16 +139,43 @@ class TradeResponse {
   /// Maps API trade response to UI [TradingSignalModel].
   TradingSignalModel toTradingSignalModel({bool isTaken = false}) {
     double entryPrice = 0.0;
+    double? entryPriceTwo;
     double stopLoss = 0.0;
     double takeProfit = 0.0;
+    double? takeProfitOne;
+    double? takeProfitTwo;
+    double? takeProfitThree;
 
-    for (final TradeLevelResponse lvl in levels) {
-      if (lvl.levelType.toUpperCase() == 'ENTRY') {
-        entryPrice = double.tryParse(lvl.entryPoint) ?? 0.0;
-        stopLoss = double.tryParse(lvl.stopLoss) ?? 0.0;
-      } else if (lvl.levelType.toUpperCase() == 'TAKE_PROFIT') {
-        takeProfit = double.tryParse(lvl.takeProfit) ?? 0.0;
+    final List<TradeLevelResponse> entryLevels = levels
+        .where((TradeLevelResponse lvl) => lvl.levelType.toUpperCase() == 'ENTRY')
+        .toList();
+
+    if (entryLevels.isNotEmpty) {
+      entryPrice = double.tryParse(entryLevels[0].entryPoint) ?? 0.0;
+      stopLoss = double.tryParse(entryLevels[0].stopLoss) ?? 0.0;
+      if (entryLevels.length > 1) {
+        entryPriceTwo = double.tryParse(entryLevels[1].entryPoint);
       }
+    }
+
+    final List<TradeLevelResponse> tpLevels = levels
+        .where((TradeLevelResponse lvl) => lvl.levelType.toUpperCase() == 'TAKE_PROFIT')
+        .toList();
+
+    for (final TradeLevelResponse lvl in tpLevels) {
+      if (lvl.level == 1) {
+        takeProfitOne = double.tryParse(lvl.takeProfit);
+      } else if (lvl.level == 2) {
+        takeProfitTwo = double.tryParse(lvl.takeProfit);
+      } else if (lvl.level == 3) {
+        takeProfitThree = double.tryParse(lvl.takeProfit);
+      }
+    }
+
+    if (tpLevels.isNotEmpty) {
+      final List<TradeLevelResponse> sortedTps = List<TradeLevelResponse>.from(tpLevels)
+        ..sort((TradeLevelResponse a, TradeLevelResponse b) => a.level.compareTo(b.level));
+      takeProfit = double.tryParse(sortedTps.last.takeProfit) ?? 0.0;
     }
 
     if (entryPrice == 0.0 && levels.isNotEmpty) {
@@ -185,8 +212,12 @@ class TradeResponse {
       type: marketType.toUpperCase(),
       status: normalizedStatus,
       entryPrice: entryPrice,
+      entryPriceTwo: entryPriceTwo,
       stopLoss: stopLoss,
       takeProfit: takeProfit,
+      takeProfitOne: takeProfitOne,
+      takeProfitTwo: takeProfitTwo,
+      takeProfitThree: takeProfitThree,
       livePrice: livePrice ?? entryPrice,
       livePriceChange: livePrice != null
           ? '+${((livePrice! - entryPrice) / entryPrice * 100).toStringAsFixed(2)}%'
@@ -196,6 +227,7 @@ class TradeResponse {
       rr: riskRewardRatio,
       progress: progress,
       outcome: outcome,
+      createdAt: createdAt,
       timeLabel: createdAt != null ? _formatTradeTimeLabel(createdAt!) : 'Just now',
       sparklineData: sparklineData,
       tradingViewUrl: tradingViewUrl,

@@ -54,13 +54,11 @@ class TradesCubit extends BaseCubit<TradesState> {
     if (isSearch) {
       futures.add(repository.searchTrades(keyword: state.searchQuery.trim()));
     } else {
-      futures
-        ..add(repository.getTradesByPlan(
-          status: _mapFiltersToStatus(state.selectedFilters),
-          limit: _pageLimit,
-          offset: currentOffset,
-        ))
-        ..add(repository.getClientMyTrades());
+      futures.add(repository.getTradesByPlan(
+        status: _mapFiltersToStatus(state.selectedFilters),
+        limit: _pageLimit,
+        offset: currentOffset,
+      ));
 
       final bool needCounts = currentOffset == 0;
       if (needCounts) {
@@ -108,8 +106,6 @@ class TradesCubit extends BaseCubit<TradesState> {
 
     final ResponseHandler<BaseResponse<List<TradeResponse>>> response =
         responses[0] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
-    final ResponseHandler<BaseResponse<List<TradeResponse>>> clientTradesResponse =
-        responses[1] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
 
     int activeCount = state.activeCount;
     int pendingCount = state.pendingCount;
@@ -117,9 +113,9 @@ class TradesCubit extends BaseCubit<TradesState> {
     int lossesCount = state.lossesCount;
 
     final bool needCounts = currentOffset == 0;
-    if (needCounts && responses.length > 2) {
+    if (needCounts && responses.length > 1) {
       final ResponseHandler<BaseResponse<List<TradeResponse>>> allTradesResponse =
-          responses[2] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
+          responses[1] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
       if (allTradesResponse.isSuccess()) {
         final List<TradeResponse> allApiTrades =
             allTradesResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[];
@@ -142,15 +138,8 @@ class TradesCubit extends BaseCubit<TradesState> {
       final List<TradeResponse> apiTrades = baseResponse?.data ?? <TradeResponse>[];
       final int totalCount = baseResponse?.totalCount ?? apiTrades.length;
 
-      final List<TradeResponse> clientTrades = clientTradesResponse.isSuccess()
-          ? (clientTradesResponse.getSuccessInstance()?.response.data ?? <TradeResponse>[])
-          : <TradeResponse>[];
-
-      final Set<String> takenIds = clientTrades.map((TradeResponse t) => t.publicId).toSet();
-
       final List<TradingSignalModel> newMappedSignals = apiTrades
-          .map((TradeResponse t) =>
-              t.toTradingSignalModel(isTaken: takenIds.contains(t.publicId)))
+          .map((TradeResponse t) => t.toTradingSignalModel())
           .toList();
 
       final List<TradingSignalModel> updatedSignals = isRefresh || currentOffset == 0

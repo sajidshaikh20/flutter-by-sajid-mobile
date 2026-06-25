@@ -96,6 +96,7 @@ class LoginCubit extends Cubit<LoginState> {
             );
 
             await AccountVerificationHelper.setPending();
+            unawaited(SocketManager.instance.connectSocket());
 
             emit(
               state.copyWith(

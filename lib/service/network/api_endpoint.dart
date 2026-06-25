@@ -145,6 +145,9 @@ abstract class Apis {
   /// Endpoint to get all trades
   static const String getAllTrades = '$subBaseUrl/common/trades/getAll';
 
+  /// Endpoint to get trade details
+  static const String getTradeDetails = '$subBaseUrl/common/trades';
+
   /// Trades tab — signals available for the user's subscription plan.
   static const String getTradesByPlan = '$subBaseUrl/trade/my-trades-by-plan';
 
@@ -165,4 +168,10 @@ abstract class Apis {
 
   /// Endpoint to search trades
   static const String searchTrades = '$subBaseUrl/trade/search';
+
+  /// Endpoint to register/unregister crypto live prices
+  static const String cryptoLivePrice = '$subBaseUrl/crypto-market/live-price';
+
+  /// Endpoint to register/unregister market live prices
+  static const String marketLivePrice = '$subBaseUrl/market/live-price';
 }

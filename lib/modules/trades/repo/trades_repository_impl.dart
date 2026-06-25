@@ -128,4 +128,25 @@ class TradesRepositoryImpl extends TradesRepository {
       },
     );
   }
+
+  @override
+  Future<ResponseHandler<BaseResponse<TradeResponse>>> getTradeDetails(String tradePublicId) async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: '${Apis.getTradeDetails}/$tradePublicId',
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<TradeResponse>.fromJson(
+          value,
+          (Object? json) {
+            return TradeResponse.fromJson(json as Map<String, dynamic>);
+          },
+        );
+      },
+    );
+  }
 }

@@ -21,4 +21,7 @@ abstract class TradesRepository extends BaseRepository {
   Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> searchTrades({
     required String keyword,
   });
+
+  /// Get details of a single trade by public ID
+  Future<ResponseHandler<BaseResponse<TradeResponse>>> getTradeDetails(String tradePublicId);
 }

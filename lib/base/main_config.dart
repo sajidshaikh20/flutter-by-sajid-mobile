@@ -50,4 +50,8 @@ class MainConfig {
 
   /// appTheme
   static MyAppTheme get appTheme => getIt<MyAppTheme>();
+
+  /// chatSocketConnection
+  static ChatSocketConnection get chatSocketConnection =>
+      getIt<ChatSocketConnection>();
 }

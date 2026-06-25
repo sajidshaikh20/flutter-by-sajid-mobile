@@ -3,6 +3,7 @@ import '../../../utils/exports.dart';
 /// State for the Trading Overview page managing live price updates.
 class TradingOverviewState extends BaseState {
   const TradingOverviewState({
+    required this.signal,
     required this.livePrice,
     required this.progress,
     this.isTaken = false,
@@ -11,20 +12,23 @@ class TradingOverviewState extends BaseState {
     super.redirectRoute,
   });
 
+  final TradingSignalModel signal;
   final double livePrice;
   final double progress;
   final bool isTaken;
 
-  factory TradingOverviewState.initial(double initialPrice, {bool isTaken = false}) => TradingOverviewState(
-        livePrice: initialPrice,
+  factory TradingOverviewState.initial(TradingSignalModel signal) => TradingOverviewState(
+        signal: signal,
+        livePrice: signal.livePrice ?? signal.entryPrice,
         progress: 0.5,
-        isTaken: isTaken,
+        isTaken: signal.isTaken,
       );
 
   TradingOverviewState copyWith({
     BaseStateStatus? status,
     String? msg,
     PageRouteInfo? redirectRoute,
+    TradingSignalModel? signal,
     double? livePrice,
     double? progress,
     bool? isTaken,
@@ -33,6 +37,7 @@ class TradingOverviewState extends BaseState {
         status: status ?? this.status,
         msg: msg ?? this.msg,
         redirectRoute: redirectRoute ?? this.redirectRoute,
+        signal: signal ?? this.signal,
         livePrice: livePrice ?? this.livePrice,
         progress: progress ?? this.progress,
         isTaken: isTaken ?? this.isTaken,
@@ -43,6 +48,7 @@ class TradingOverviewState extends BaseState {
         status,
         msg,
         redirectRoute,
+        signal,
         livePrice,
         progress,
         isTaken,

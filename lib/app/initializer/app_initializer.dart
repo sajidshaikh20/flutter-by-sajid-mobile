@@ -74,6 +74,7 @@ class AppInitializer {
       );
       unawaited(getIt<LanguageService>().loadLanguageData());
       unawaited(NotificationManager.instance.init());
+      SocketManager.instance.initialize();
     } on Exception catch (err, stackTrace) {
       DebugLog.instance.i('Deferred init failed: $err');
       DebugLog.instance.i('Stack trace: $stackTrace');

@@ -5,8 +5,12 @@ class TradingSignalModel {
   final String type; // BUY MARKET, BUY LIMIT, etc.
   final String status; // ACTIVE, PENDING, CLOSED, CANCELLED
   final double entryPrice;
+  final double? entryPriceTwo;
   final double stopLoss;
   final double takeProfit;
+  final double? takeProfitOne;
+  final double? takeProfitTwo;
+  final double? takeProfitThree;
   final double? livePrice;
   final String? livePriceChange; // e.g., "+1.36 (+0.21%)"
   final bool? isLivePriceUp; // true if positive green, false if negative red
@@ -14,6 +18,7 @@ class TradingSignalModel {
   final String rr; // e.g. "1:2"
   final double? progress; // 0.0 to 1.0 (relative position of live price between entry and take profit)
   final String? outcome; // WIN, LOSS
+  final String? createdAt;
   final String timeLabel; // e.g. "Just now", "2h ago"
   final List<double> sparklineData;
   final String? tradingViewUrl;
@@ -26,8 +31,12 @@ class TradingSignalModel {
     required this.type,
     required this.status,
     required this.entryPrice,
+    this.entryPriceTwo,
     required this.stopLoss,
     required this.takeProfit,
+    this.takeProfitOne,
+    this.takeProfitTwo,
+    this.takeProfitThree,
     this.livePrice,
     this.livePriceChange,
     this.isLivePriceUp,
@@ -35,6 +44,7 @@ class TradingSignalModel {
     required this.rr,
     this.progress,
     this.outcome,
+    this.createdAt,
     required this.timeLabel,
     required this.sparklineData,
     this.tradingViewUrl,
@@ -48,8 +58,12 @@ class TradingSignalModel {
     String? type,
     String? status,
     double? entryPrice,
+    double? entryPriceTwo,
     double? stopLoss,
     double? takeProfit,
+    double? takeProfitOne,
+    double? takeProfitTwo,
+    double? takeProfitThree,
     double? livePrice,
     String? livePriceChange,
     bool? isLivePriceUp,
@@ -57,6 +71,7 @@ class TradingSignalModel {
     String? rr,
     double? progress,
     String? outcome,
+    String? createdAt,
     String? timeLabel,
     List<double>? sparklineData,
     String? tradingViewUrl,
@@ -69,8 +84,12 @@ class TradingSignalModel {
       type: type ?? this.type,
       status: status ?? this.status,
       entryPrice: entryPrice ?? this.entryPrice,
+      entryPriceTwo: entryPriceTwo ?? this.entryPriceTwo,
       stopLoss: stopLoss ?? this.stopLoss,
       takeProfit: takeProfit ?? this.takeProfit,
+      takeProfitOne: takeProfitOne ?? this.takeProfitOne,
+      takeProfitTwo: takeProfitTwo ?? this.takeProfitTwo,
+      takeProfitThree: takeProfitThree ?? this.takeProfitThree,
       livePrice: livePrice ?? this.livePrice,
       livePriceChange: livePriceChange ?? this.livePriceChange,
       isLivePriceUp: isLivePriceUp ?? this.isLivePriceUp,
@@ -78,6 +97,7 @@ class TradingSignalModel {
       rr: rr ?? this.rr,
       progress: progress ?? this.progress,
       outcome: outcome ?? this.outcome,
+      createdAt: createdAt ?? this.createdAt,
       timeLabel: timeLabel ?? this.timeLabel,
       sparklineData: sparklineData ?? this.sparklineData,
       tradingViewUrl: tradingViewUrl ?? this.tradingViewUrl,
