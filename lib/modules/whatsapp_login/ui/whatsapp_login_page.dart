@@ -45,12 +45,6 @@ class WhatsAppLoginPage extends StatelessWidget {
             context.read<WhatsAppLoginCubit>().clearMsg();
           }
 
-          if (state.status == BaseStateStatus.loading) {
-            unawaited(EasyLoading.show(status: 'Loading...'));
-          } else {
-            unawaited(EasyLoading.dismiss());
-          }
-
           if (state.status == BaseStateStatus.success && state.redirectRoute != null) {
             await context.router.replaceAll(<PageRouteInfo>[
               state.redirectRoute!,

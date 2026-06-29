@@ -218,7 +218,9 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
 
                 // Premium Gradient Continue Button
                 GestureDetector(
-                  onTap: () => _handleChoosePlan(context, selectedPlan.name),
+                  onTap: () {
+
+                  },
                   child: Container(
                     height: 52,
                     decoration: BoxDecoration(

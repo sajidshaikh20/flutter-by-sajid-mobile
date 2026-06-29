@@ -12,13 +12,8 @@ class ApiClient {
   ApiClient._internal() {
     _dio = initApiHandlerDio(configBaseUrl);
     _dio?.interceptors.add(
-
-
-      NetworkCacheInterceptor(
-        noCacheStatusCodes: <int>[401, 403],
-      ),
+      NetworkCacheInterceptor(noCacheStatusCodes: <int>[401, 403]),
     );
-
   }
 
   /// The Dio instance used to make API calls.
@@ -77,7 +72,7 @@ class ApiClient {
     mDio.interceptors.add(HttpHandleInterceptor());
 
     // Add Chucker interceptor for in-app HTTP inspection in debug mode
-   /* if (kDebugMode) {
+    /* if (kDebugMode) {
       mDio.interceptors.add(ChuckerDioInterceptor());
     }*/
     // Add a logging interceptor for debugging in development mode
@@ -104,9 +99,10 @@ class ApiClient {
     // If no cancelToken is provided, use the default _cancelToken.
     cancelToken == null
         ? _cancelToken?.cancel(
-        'Cancelled') // Cancel the request with the default cancel token.
+            'Cancelled',
+          ) // Cancel the request with the default cancel token.
         : cancelToken
-        .cancel(); // Cancel the request with the provided cancel token.
+              .cancel(); // Cancel the request with the provided cancel token.
   }
 
   /// Handles API calls (GET, POST, DELETE) with options for caching,
@@ -177,8 +173,7 @@ class ApiClient {
           needToCache: needToCache,
           cacheDurationMnt: cacheDurationMnt,
         );
-      }
-      else if (apiType == ApiType.delete) {
+      } else if (apiType == ApiType.delete) {
         handler = await delete<T>(
           endUrl,
           data: data,
@@ -197,17 +192,28 @@ class ApiClient {
     } on DioException catch (e) {
       // For DioException, we can't use _responseHandler<T> since the data type is unknown
       // Instead, create a failure response directly
-      String errorMessage = _extractErrorMessage(e.response?.data, e.response?.statusMessage ?? e.message ?? '');
+      String defaultMsg =
+          e.response?.statusMessage ?? e.message ?? 'Connection error';
+      if (defaultMsg.isEmpty) {
+        defaultMsg = 'Connection error';
+      }
+      String errorMessage = _extractErrorMessage(e.response?.data, defaultMsg);
 
       handler = OnFailureResponse<T?>(
-        error: ErrorResult(
-          errorMessage: errorMessage,
-          type: e.type,
-        ),
+        error: ErrorResult(errorMessage: errorMessage, type: e.type),
         statusCode: e.response?.statusCode,
       );
+    } on Object catch (e) {
+      // Catch all other unexpected errors/exceptions (like TypeError, etc.)
+      handler = OnFailureResponse<T?>(
+        error: ErrorResult(
+          errorMessage: e.toString(),
+          type: DioExceptionType.unknown,
+        ),
+      );
+    } finally {
+      await _dismissLoading(dismissLoader);
     }
-    await _dismissLoading(dismissLoader);
     return handler;
   }
 
@@ -223,31 +229,30 @@ class ApiClient {
   /// [cacheDurationMnt]: Duration in minutes to cache the response
   ///  (only used if `needToCache` is `true`).
   FutureOr<ResponseHandler<T?>> get<T>(
-      String endUrl, {
-        Map<String, dynamic>? params,
-        Map<String, dynamic>? data,
-        Options? options,
-        CancelToken? cancelToken,
-        bool needToCache = false,
-        int? cacheDurationMnt,
-      }) async =>
-      _responseHandler<T>(
-        // Performing the GET request using Dio.
-        await _dio?.get<T>(
-          endUrl, // Endpoint URL
-          data: data,
-          queryParameters: params,
-          // Query parameters for the request
-          cancelToken: cancelToken ?? _cancelToken,
-          // Use provided cancelToken or default one
-          options: _handleCacheOption(
-            // Handling cache option (if required)
-            options,
-            needToCache: needToCache,
-            cacheDuration: cacheDurationMnt,
-          ),
-        ),
-      );
+    String endUrl, {
+    Map<String, dynamic>? params,
+    Map<String, dynamic>? data,
+    Options? options,
+    CancelToken? cancelToken,
+    bool needToCache = false,
+    int? cacheDurationMnt,
+  }) async => _responseHandler<T>(
+    // Performing the GET request using Dio.
+    await _dio?.get<T>(
+      endUrl, // Endpoint URL
+      data: data,
+      queryParameters: params,
+      // Query parameters for the request
+      cancelToken: cancelToken ?? _cancelToken,
+      // Use provided cancelToken or default one
+      options: _handleCacheOption(
+        // Handling cache option (if required)
+        options,
+        needToCache: needToCache,
+        cacheDuration: cacheDurationMnt,
+      ),
+    ),
+  );
 
   /// Performs a POST request and returns a response handler.
   ///
@@ -263,96 +268,93 @@ class ApiClient {
   /// [needToCache]: Whether the response should be cached (default is `false`).
   /// [cacheDurationMnt]: Duration in minutes to cache the response.
   FutureOr<ResponseHandler<T?>> post<T>(
-      String endUrl, {
-        Map<String, dynamic>? data,
-        Map<String, dynamic>? params,
-        Options? options,
-        FormData? formData,
-        CancelToken? cancelToken,
-        bool isMultipartFormData = false,
-        bool needToCache = false,
-        int? cacheDurationMnt,
-      }) async =>
-      _responseHandler<T>(
-        // Performing the POST request using Dio.
-        await _dio?.post<T>(
-          endUrl, // Endpoint URL
-          data: isMultipartFormData ? formData : data,
-          // Use formData if multipart, else use data
-          queryParameters: params,
-          // Query parameters for the request
-          cancelToken: cancelToken ?? _cancelToken,
-          // Use provided cancelToken or default one
-          options: _handleCacheOption(
-            // Handling cache option (if required)
-            options,
-            needToCache: needToCache,
-            cacheDuration: cacheDurationMnt,
-          ),
-        ),
-      );
+    String endUrl, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? params,
+    Options? options,
+    FormData? formData,
+    CancelToken? cancelToken,
+    bool isMultipartFormData = false,
+    bool needToCache = false,
+    int? cacheDurationMnt,
+  }) async => _responseHandler<T>(
+    // Performing the POST request using Dio.
+    await _dio?.post<T>(
+      endUrl, // Endpoint URL
+      data: isMultipartFormData ? formData : data,
+      // Use formData if multipart, else use data
+      queryParameters: params,
+      // Query parameters for the request
+      cancelToken: cancelToken ?? _cancelToken,
+      // Use provided cancelToken or default one
+      options: _handleCacheOption(
+        // Handling cache option (if required)
+        options,
+        needToCache: needToCache,
+        cacheDuration: cacheDurationMnt,
+      ),
+    ),
+  );
 
   /// patch api call
   FutureOr<ResponseHandler<T?>> patch<T>(
-      String endUrl, {
-        Map<String, dynamic>? data,
-        Map<String, dynamic>? params,
-        Options? options,
-        FormData? formData,
-        CancelToken? cancelToken,
-        bool isMultipartFormData = false,
-        bool needToCache = false,
-        int? cacheDurationMnt,
-      }) async =>
-      _responseHandler<T>(
-        // Performing the POST request using Dio.
-        await _dio?.patch<T>(
-          endUrl, // Endpoint URL
-          data: isMultipartFormData ? formData : data,
-          // Use formData if multipart, else use data
-          queryParameters: params,
-          // Query parameters for the request
-          cancelToken: cancelToken ?? _cancelToken,
-          // Use provided cancelToken or default one
-          options: _handleCacheOption(
-            // Handling cache option (if required)
-            options,
-            needToCache: needToCache,
-            cacheDuration: cacheDurationMnt,
-          ),
-        ),
-      );
+    String endUrl, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? params,
+    Options? options,
+    FormData? formData,
+    CancelToken? cancelToken,
+    bool isMultipartFormData = false,
+    bool needToCache = false,
+    int? cacheDurationMnt,
+  }) async => _responseHandler<T>(
+    // Performing the POST request using Dio.
+    await _dio?.patch<T>(
+      endUrl, // Endpoint URL
+      data: isMultipartFormData ? formData : data,
+      // Use formData if multipart, else use data
+      queryParameters: params,
+      // Query parameters for the request
+      cancelToken: cancelToken ?? _cancelToken,
+      // Use provided cancelToken or default one
+      options: _handleCacheOption(
+        // Handling cache option (if required)
+        options,
+        needToCache: needToCache,
+        cacheDuration: cacheDurationMnt,
+      ),
+    ),
+  );
 
   /// put api call
   FutureOr<ResponseHandler<T?>> put<T>(
-      String endUrl, {
-        Map<String, dynamic>? data,
-        Map<String, dynamic>? params,
-        Options? options,
-        FormData? formData,
-        CancelToken? cancelToken,
-        bool isMultipartFormData = false,
-        bool needToCache = false,
-        int? cacheDurationMnt,
-      }) async =>
-      _responseHandler<T>(
-        // Performing the PUT request using Dio.
-        await _dio?.put<T>(
-          endUrl, // Endpoint URL
-          data: isMultipartFormData ? formData : data,
-          // Use formData if multipart, else use data
-          queryParameters: params,
-          // Query parameters for the request
-          cancelToken: cancelToken ?? _cancelToken,
-          // Use provided cancelToken or default one
-          options: _handleCacheOption(
-            // Handling cache option (if required)
-            options,
-            needToCache: needToCache,
-            cacheDuration: cacheDurationMnt,
-          ),
-        ),
-      );
+    String endUrl, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? params,
+    Options? options,
+    FormData? formData,
+    CancelToken? cancelToken,
+    bool isMultipartFormData = false,
+    bool needToCache = false,
+    int? cacheDurationMnt,
+  }) async => _responseHandler<T>(
+    // Performing the PUT request using Dio.
+    await _dio?.put<T>(
+      endUrl, // Endpoint URL
+      data: isMultipartFormData ? formData : data,
+      // Use formData if multipart, else use data
+      queryParameters: params,
+      // Query parameters for the request
+      cancelToken: cancelToken ?? _cancelToken,
+      // Use provided cancelToken or default one
+      options: _handleCacheOption(
+        // Handling cache option (if required)
+        options,
+        needToCache: needToCache,
+        cacheDuration: cacheDurationMnt,
+      ),
+    ),
+  );
 
   /// Performs a DELETE request and returns a response handler.
   ///
@@ -364,25 +366,24 @@ class ApiClient {
   /// [options]: Optional additional request options.
   /// [cancelToken]: Optional cancel token to cancel the request.
   FutureOr<ResponseHandler<T?>> delete<T>(
-      String endUrl, {
-        Map<String, dynamic>? data,
-        Map<String, dynamic>? params,
-        Options? options,
-        CancelToken? cancelToken,
-      }) async =>
-      _responseHandler<T>(
-        // Performing the DELETE request using Dio.
-        await _dio?.delete<T>(
-          endUrl, // Endpoint URL
-          data: data,
-          // Optional body data (may be used depending on API)
-          queryParameters: params,
-          // Query parameters for the request
-          cancelToken: cancelToken ?? _cancelToken,
-          // Use provided cancelToken or default one
-          options: options, // Additional request options (headers, etc.)
-        ),
-      );
+    String endUrl, {
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? params,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async => _responseHandler<T>(
+    // Performing the DELETE request using Dio.
+    await _dio?.delete<T>(
+      endUrl, // Endpoint URL
+      data: data,
+      // Optional body data (may be used depending on API)
+      queryParameters: params,
+      // Query parameters for the request
+      cancelToken: cancelToken ?? _cancelToken,
+      // Use provided cancelToken or default one
+      options: options, // Additional request options (headers, etc.)
+    ),
+  );
 
   // Modifies the given [options] to enable caching if [needToCache] is true.
   /// Adds 'cache' and 'validate_time' to the extra field to
@@ -390,10 +391,10 @@ class ApiClient {
   /// Returns updated [options] or the original [options]
   /// if caching is not needed.
   Options? _handleCacheOption(
-      Options? options, {
-        bool needToCache = false,
-        int? cacheDuration,
-      }) {
+    Options? options, {
+    bool needToCache = false,
+    int? cacheDuration,
+  }) {
     if (needToCache) {
       options = options ?? Options();
       return options.copyWith(
@@ -427,11 +428,7 @@ class ApiClient {
       Dio downloadDio = Dio();
 
       // Download the file and save it to the specified path
-      await downloadDio.download(
-        url,
-        filePath,
-        onReceiveProgress: onProgress,
-      );
+      await downloadDio.download(url, filePath, onReceiveProgress: onProgress);
 
       return fileName;
     } on Exception catch (e, printstack) {
@@ -448,16 +445,18 @@ class ApiClient {
     try {
       if (responseData != null) {
         if (responseData is Map) {
-          final Map<String, dynamic> data = responseData as Map<String, dynamic>;
+          final Map<String, dynamic> data =
+              responseData as Map<String, dynamic>;
           if (data.containsKey('message') && data['message'] != null) {
             return data['message'].toString();
           }
-        } else if (responseData is String && responseData.toString().isNotEmpty) {
+        } else if (responseData is String &&
+            responseData.toString().isNotEmpty) {
           return responseData.toString();
         }
       }
     } on Exception catch (e) {
-    DebugLog.instance.d(e.toString());
+      DebugLog.instance.d(e.toString());
     }
     return defaultMessage;
   }
@@ -467,7 +466,10 @@ class ApiClient {
     if (statusCode != null && statusCode >= 200 && statusCode < 300) {
       return OnSuccessResponse<T?>(response: response?.data);
     } else if (response?.statusCode == 400) {
-      final String message = _extractErrorMessage(response?.data, APIConstant.badRequestStateKey);
+      final String message = _extractErrorMessage(
+        response?.data,
+        APIConstant.badRequestStateKey,
+      );
       return OnFailureResponse<T?>(
         error: ErrorResult(
           errorMessage: message,
@@ -476,7 +478,10 @@ class ApiClient {
         statusCode: 400,
       );
     } else if (response?.statusCode == 401) {
-      final String message = _extractErrorMessage(response?.data, APIConstant.unauthorizedKey);
+      final String message = _extractErrorMessage(
+        response?.data,
+        APIConstant.unauthorizedKey,
+      );
       return OnFailureResponse<T?>(
         error: ErrorResult(
           errorMessage: message,
@@ -494,7 +499,10 @@ class ApiClient {
         statusCode: 404,
       );
     } else if (response?.statusCode == 500) {
-      final String message = _extractErrorMessage(response?.data, APIConstant.serverNotRespondKey);
+      final String message = _extractErrorMessage(
+        response?.data,
+        APIConstant.serverNotRespondKey,
+      );
       return OnFailureResponse<T?>(
         error: ErrorResult(
           errorMessage: message,
@@ -511,7 +519,6 @@ class ApiClient {
       );
     }
   }
-
 
   //use in future for error handling
   /* ResponseHandler<T?> _errorHandler<T>(DioException error) {
@@ -536,12 +543,12 @@ class ApiClient {
   /// Sends a request to refresh the token.
   /// Returns the raw [Response] from the API.
   Future<Response<dynamic>?>? handleRefreshToken(
-      String endUrl, {
-        Map<String, dynamic>? params,
-        Map<String, dynamic>? data,
-        Options? options,
-        CancelToken? cancelToken,
-      }) async {
+    String endUrl, {
+    Map<String, dynamic>? params,
+    Map<String, dynamic>? data,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
     Response<dynamic>? response = await _dio?.request(
       endUrl,
       data: data,
@@ -562,14 +569,17 @@ class HttpHandleInterceptor extends Interceptor {
   static bool is401InProgress = false;
 
   FutureOr<bool> _checkInternet() async {
-    List<ConnectivityResult> connectivityResult =
-    await Connectivity().checkConnectivity();
-    if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      return true;
-    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
-      return true;
+    try {
+      final List<ConnectivityResult> connectivityResult = await Connectivity()
+          .checkConnectivity()
+          .timeout(const Duration(seconds: 2));
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        return false;
+      }
+      return connectivityResult.isNotEmpty;
+    } on Object catch (_) {
+      return true; // Fallback to true in case of failure/timeout so that request can proceed and fail naturally if needed
     }
-    return false;
   }
 
   ///this method is used to check internet connection
@@ -577,9 +587,9 @@ class HttpHandleInterceptor extends Interceptor {
   ///to retry or cancel the api call
   ///if dialog is visible then it will reject the current api call
   Future<void> _checkInternetConnection(
-      RequestOptions options,
-      RequestInterceptorHandler handler,
-      ) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     bool isConnected = await _checkInternet();
 
     if (isConnected) {
@@ -589,10 +599,7 @@ class HttpHandleInterceptor extends Interceptor {
       await _dismissLoading();
       // Ensure the request completes with an error instead of hanging
       handler.reject(
-        DioException(
-          requestOptions: options,
-          error: 'No Internet Connection',
-        ),
+        DioException(requestOptions: options, error: 'No Internet Connection'),
       );
     }
 
@@ -636,27 +643,23 @@ class HttpHandleInterceptor extends Interceptor {
   /// [handler] - The [RequestInterceptorHandler] to resolve
   /// or reject the response.
   Future<void> retryApiCall(
-      RequestOptions options,
-      RequestInterceptorHandler handler,
-      ) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     try {
       // Retry the API call with the same options
       Response<dynamic> response = await Dio().fetch(options);
       handler.resolve(response);
     } on Exception catch (error) {
-      handler.reject(
-        DioException(
-          requestOptions: options,
-          error: error,
-        ),
-      );
+      handler.reject(DioException(requestOptions: options, error: error));
     }
   }
 
   static String _tokenFromProfileJson(String jsonStr) {
     if (jsonStr.isEmpty) return '';
     try {
-      final Map<String, dynamic> map = jsonDecode(jsonStr) as Map<String, dynamic>;
+      final Map<String, dynamic> map =
+          jsonDecode(jsonStr) as Map<String, dynamic>;
       return map['customerToken'] as String? ?? '';
     } on Object catch (_) {
       return '';
@@ -666,7 +669,8 @@ class HttpHandleInterceptor extends Interceptor {
   static String _accessTokenFromProfileJson(String jsonStr) {
     if (jsonStr.isEmpty) return '';
     try {
-      final Map<String, dynamic> map = jsonDecode(jsonStr) as Map<String, dynamic>;
+      final Map<String, dynamic> map =
+          jsonDecode(jsonStr) as Map<String, dynamic>;
       return map['accessToken'] as String? ?? '';
     } on Object catch (_) {
       return '';
@@ -692,12 +696,16 @@ class HttpHandleInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final String savedCookies = SharedPref.instance.getString(PrefsKey.apiCookiesKey, '');
+    final String savedCookies = SharedPref.instance.getString(
+      PrefsKey.apiCookiesKey,
+      '',
+    );
     if (savedCookies.isNotEmpty && !options.headers.containsKey('Cookie')) {
       options.headers['Cookie'] = savedCookies;
     }
 
-    if (savedCookies.isNotEmpty && !options.headers.containsKey('Authorization')) {
+    if (savedCookies.isNotEmpty &&
+        !options.headers.containsKey('Authorization')) {
       final String? token = _extractTokenFromCookies(savedCookies);
       if (token != null && token.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
@@ -706,7 +714,10 @@ class HttpHandleInterceptor extends Interceptor {
 
     // Use stored access token if no Authorization header was set yet
     if (!options.headers.containsKey('Authorization')) {
-      final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+      final String profileJson = SharedPref.instance.getString(
+        PrefsKey.userProfileKey,
+        '',
+      );
       final String savedAccessToken = _accessTokenFromProfileJson(profileJson);
       if (savedAccessToken.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $savedAccessToken';
@@ -714,14 +725,20 @@ class HttpHandleInterceptor extends Interceptor {
     }
 
     if (options.path == Apis.reviewAndPayment) {
-      final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+      final String profileJson = SharedPref.instance.getString(
+        PrefsKey.userProfileKey,
+        '',
+      );
       final String authToken = _tokenFromProfileJson(profileJson);
-      options.headers.addAll(<String,dynamic>{'Authorization': authToken});
+      options.headers.addAll(<String, dynamic>{'Authorization': authToken});
     } else if (options.path == Apis.placeOrder) {
-      final String profileJson = SharedPref.instance.getString(PrefsKey.userProfileKey, '');
+      final String profileJson = SharedPref.instance.getString(
+        PrefsKey.userProfileKey,
+        '',
+      );
       final String authToken = _tokenFromProfileJson(profileJson);
       options.headers.clear();
-      options.headers.addAll(<String,dynamic>{
+      options.headers.addAll(<String, dynamic>{
         'Content-Type': APIConstant.contentType,
         'Authorization': authToken,
         'Cookie': APIConstant.cookie,
@@ -732,9 +749,9 @@ class HttpHandleInterceptor extends Interceptor {
 
   @override
   Future<void> onError(
-      DioException err,
-      ErrorInterceptorHandler handler,
-      ) async {
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     if (err.response?.statusCode == 401 && !is401InProgress) {
       is401InProgress = true;
 
@@ -743,10 +760,16 @@ class HttpHandleInterceptor extends Interceptor {
       DebugLog.instance.e('Request data: ${err.requestOptions.data}');
       DebugLog.instance.e('Response: ${err.response?.data}');
 
-      DebugLog.instance.e('Token expired (API 401) - Clearing user data and redirecting to social login');
+      DebugLog.instance.e(
+        'Token expired (API 401) - Clearing user data and redirecting to social login',
+      );
       await SharedPref.instance.clearUserDataOnly();
       await UserProfileService.instance().loadUserData();
-      unawaited(MainConfig.context.router.replaceAll(<PageRouteInfo>[const SocialLoginRoute()]));
+      unawaited(
+        MainConfig.context.router.replaceAll(<PageRouteInfo>[
+          const SocialLoginRoute(),
+        ]),
+      );
 
       is401InProgress = false;
     }
@@ -756,7 +779,10 @@ class HttpHandleInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     final List<String>? setCookies = response.headers['set-cookie'];
     if (setCookies != null && setCookies.isNotEmpty) {
       DebugLog.instance.e(setCookies.toString());
@@ -766,7 +792,10 @@ class HttpHandleInterceptor extends Interceptor {
   }
 
   void _saveCookies(List<String> setCookies) {
-    final String existingCookiesStr = SharedPref.instance.getString(PrefsKey.apiCookiesKey, '');
+    final String existingCookiesStr = SharedPref.instance.getString(
+      PrefsKey.apiCookiesKey,
+      '',
+    );
     final Map<String, String> cookiesMap = <String, String>{};
 
     // Parse existing cookies
@@ -799,11 +828,17 @@ class HttpHandleInterceptor extends Interceptor {
     // Reconstruct the cookie string
     if (cookiesMap.isNotEmpty) {
       final String newCookiesStr = cookiesMap.entries
-          .map((MapEntry<String, String> entry) => '${entry.key}=${entry.value}')
+          .map(
+            (MapEntry<String, String> entry) => '${entry.key}=${entry.value}',
+          )
           .join('; ');
 
-      unawaited(SharedPref.instance.setValue(PrefsKey.apiCookiesKey, newCookiesStr));
-      DebugLog.instance.d('HttpHandleInterceptor: Saved cookies: $newCookiesStr');
+      unawaited(
+        SharedPref.instance.setValue(PrefsKey.apiCookiesKey, newCookiesStr),
+      );
+      DebugLog.instance.d(
+        'HttpHandleInterceptor: Saved cookies: $newCookiesStr',
+      );
     }
   }
 

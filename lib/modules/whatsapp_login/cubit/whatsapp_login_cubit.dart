@@ -1,7 +1,4 @@
 import '../../../utils/exports.dart';
-import '../model/whatsapp_login_models.dart';
-import '../repo/whatsapp_login_repository.dart';
-import 'whatsapp_login_state.dart';
 
 class WhatsAppLoginCubit extends Cubit<WhatsAppLoginState> {
   WhatsAppLoginCubit({
@@ -62,20 +59,28 @@ class WhatsAppLoginCubit extends Cubit<WhatsAppLoginState> {
             msg: 'OTP sent successfully to your WhatsApp',
           ));
         } else {
+          final String? errorMsg = baseResponse?.message;
+          final String message = (errorMsg != null && errorMsg.isNotEmpty)
+              ? errorMsg
+              : 'Failed to send OTP. Please try again.';
           emit(state.copyWith(
             status: BaseStateStatus.failure,
-            msg: baseResponse?.message ?? 'Failed to send OTP. Please try again.',
+            msg: message,
           ));
         }
       } else {
         final OnFailureResponse<BaseResponse<Map<String, dynamic>>>? failure =
             response.getFailureInstance();
+        final String? errorMsg = failure?.error?.errorMessage;
+        final String message = (errorMsg != null && errorMsg.isNotEmpty)
+            ? errorMsg
+            : 'Failed to send OTP. Please try again.';
         emit(state.copyWith(
           status: BaseStateStatus.failure,
-          msg: failure?.error?.errorMessage ?? 'Failed to send OTP. Please try again.',
+          msg: message,
         ));
       }
-    } on Exception {
+    } on Object catch (_) {
       emit(state.copyWith(
         status: BaseStateStatus.failure,
         msg: 'An unexpected error occurred. Please try again.',
@@ -167,20 +172,28 @@ class WhatsAppLoginCubit extends Cubit<WhatsAppLoginState> {
             ));
           }
         } else {
+          final String? errorMsg = baseResponse?.message;
+          final String message = (errorMsg != null && errorMsg.isNotEmpty)
+              ? errorMsg
+              : 'Failed to verify OTP. Please try again.';
           emit(state.copyWith(
             status: BaseStateStatus.failure,
-            msg: baseResponse?.message ?? 'Failed to verify OTP. Please try again.',
+            msg: message,
           ));
         }
       } else {
         final OnFailureResponse<BaseResponse<LoginUserResponse>>? failure =
             response.getFailureInstance();
+        final String? errorMsg = failure?.error?.errorMessage;
+        final String message = (errorMsg != null && errorMsg.isNotEmpty)
+            ? errorMsg
+            : 'Failed to verify OTP. Please try again.';
         emit(state.copyWith(
           status: BaseStateStatus.failure,
-          msg: failure?.error?.errorMessage ?? 'Failed to verify OTP. Please try again.',
+          msg: message,
         ));
       }
-    } on Exception {
+    } on Object catch (_) {
       emit(state.copyWith(
         status: BaseStateStatus.failure,
         msg: 'An unexpected error occurred. Please try again.',
