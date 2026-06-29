@@ -10,7 +10,10 @@ class HomePage extends BaseResponsiveView {
     final bool isDark = context.isDark;
 
     return BlocProvider<HomeCubit>(
-      create: (BuildContext c) => HomeCubit(),
+      create: (BuildContext c) => HomeCubit(
+        repository: HomeRepositoryImpl(),
+        tradesRepository: TradesRepositoryImpl(),
+      )..initData(),
       child: Scaffold(
         backgroundColor: isDark
             ? AppColors.backgroundDark

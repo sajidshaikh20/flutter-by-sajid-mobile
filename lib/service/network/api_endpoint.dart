@@ -183,4 +183,7 @@ abstract class Apis {
 
   /// Endpoint to get trade results
   static const String getTradeResults = '$subBaseUrl/trade/results';
+
+  /// Endpoint to get client dashboard data
+  static const String clientDashboard = '$subBaseUrl/client/dashboard';
 }

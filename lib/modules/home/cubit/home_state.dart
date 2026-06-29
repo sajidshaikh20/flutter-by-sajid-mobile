@@ -1,11 +1,17 @@
 import '../../../utils/exports.dart';
 
-/// Home state for UI-only home screen.
+/// Home state for client dashboard home screen.
 class HomeState extends BaseState {
   const HomeState({
     this.isBalanceVisible = true,
     this.isPostpaidVisible = false,
     this.selectedServiceTab = ServiceCategoryTab.bankingServices,
+    this.totalTrades = 0,
+    this.winningTrades = 0,
+    this.winRate = 0.0,
+    this.profitability = 0.0,
+    this.recentTrades = const <TradingSignalModel>[],
+    this.liveTrades = const <TradingSignalModel>[],
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -22,6 +28,13 @@ class HomeState extends BaseState {
   /// Currently selected All Services tab.
   final ServiceCategoryTab selectedServiceTab;
 
+  final int totalTrades;
+  final int winningTrades;
+  final double winRate;
+  final double profitability;
+  final List<TradingSignalModel> recentTrades;
+  final List<TradingSignalModel> liveTrades;
+
   HomeState copyWith({
     BaseStateStatus? status,
     String? msg,
@@ -29,6 +42,12 @@ class HomeState extends BaseState {
     bool? isBalanceVisible,
     bool? isPostpaidVisible,
     ServiceCategoryTab? selectedServiceTab,
+    int? totalTrades,
+    int? winningTrades,
+    double? winRate,
+    double? profitability,
+    List<TradingSignalModel>? recentTrades,
+    List<TradingSignalModel>? liveTrades,
   }) =>
       HomeState(
         status: status ?? this.status,
@@ -37,6 +56,12 @@ class HomeState extends BaseState {
         isBalanceVisible: isBalanceVisible ?? this.isBalanceVisible,
         isPostpaidVisible: isPostpaidVisible ?? this.isPostpaidVisible,
         selectedServiceTab: selectedServiceTab ?? this.selectedServiceTab,
+        totalTrades: totalTrades ?? this.totalTrades,
+        winningTrades: winningTrades ?? this.winningTrades,
+        winRate: winRate ?? this.winRate,
+        profitability: profitability ?? this.profitability,
+        recentTrades: recentTrades ?? this.recentTrades,
+        liveTrades: liveTrades ?? this.liveTrades,
       );
 
   @override
@@ -47,5 +72,11 @@ class HomeState extends BaseState {
         isBalanceVisible,
         isPostpaidVisible,
         selectedServiceTab,
+        totalTrades,
+        winningTrades,
+        winRate,
+        profitability,
+        recentTrades,
+        liveTrades,
       ];
 }

@@ -174,7 +174,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (BuildContext context) => ThemeCubit.instance,
         ),
         BlocProvider<HomeCubit>(
-          create: (BuildContext context) => HomeCubit(),
+          create: (BuildContext context) => HomeCubit(
+            repository: HomeRepositoryImpl(),
+            tradesRepository: TradesRepositoryImpl(),
+          ),
         ),
       ],
       child: BlocBuilder<LocaleCubit, ChangeLocaleState>(

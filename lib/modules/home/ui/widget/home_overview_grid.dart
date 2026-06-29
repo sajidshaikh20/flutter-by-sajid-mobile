@@ -7,57 +7,65 @@ class HomeOverviewGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
     final Color cardBg = isDark ? AppColors.cardDark : AppColors.cardLight;
+    final Color themeGreen = isDark ? AppColors.successColor : AppColors.greenTextColor;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: _StatCard(
-              title: 'Total Trades',
-              value: '15',
-              icon: Icons.analytics_outlined,
-              iconColor: AppColors.primaryPurple,
-              backgroundColor: cardBg,
-              isDark: isDark,
-            ),
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (BuildContext context, HomeState state) {
+        final bool isProfitabilityPositive = state.profitability >= 0;
+        final Color profitabilityColor = isProfitabilityPositive ? themeGreen : AppColors.errorColor;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: _StatCard(
+                  title: 'Total Trades',
+                  value: state.totalTrades.toString(),
+                  icon: Icons.analytics_outlined,
+                  iconColor: AppColors.primaryPurple,
+                  backgroundColor: cardBg,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: Dimens.space8),
+              Expanded(
+                child: _StatCard(
+                  title: 'Winning Trades',
+                  value: state.winningTrades.toString(),
+                  icon: Icons.emoji_events_outlined,
+                  iconColor: AppColors.infoColor,
+                  backgroundColor: cardBg,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: Dimens.space8),
+              Expanded(
+                child: _StatCard(
+                  title: 'Profitability',
+                  value: '${isProfitabilityPositive ? '+' : ''}${state.profitability.toStringAsFixed(0)}%',
+                  valueColor: profitabilityColor,
+                  icon: Icons.account_balance_wallet_outlined,
+                  iconColor: profitabilityColor,
+                  backgroundColor: cardBg,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: Dimens.space8),
+              Expanded(
+                child: _StatCard(
+                  title: 'Win Rate',
+                  value: '${state.winRate.toStringAsFixed(0)}%',
+                  icon: Icons.percent_rounded,
+                  iconColor: AppColors.accentPink,
+                  backgroundColor: cardBg,
+                  isDark: isDark,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: Dimens.space8),
-          Expanded(
-            child: _StatCard(
-              title: 'Active Trades',
-              value: '0',
-              icon: Icons.track_changes_outlined,
-              iconColor: AppColors.infoColor,
-              backgroundColor: cardBg,
-              isDark: isDark,
-            ),
-          ),
-          const SizedBox(width: Dimens.space8),
-          Expanded(
-            child: _StatCard(
-              title: 'Total PnL',
-              value: '₹511',
-              valueColor: isDark ? AppColors.successColor : AppColors.greenTextColor,
-              icon: Icons.account_balance_wallet_outlined,
-              iconColor: isDark ? AppColors.successColor : AppColors.greenTextColor,
-              backgroundColor: cardBg,
-              isDark: isDark,
-            ),
-          ),
-          const SizedBox(width: Dimens.space8),
-          Expanded(
-            child: _StatCard(
-              title: 'Win Rate',
-              value: '40%',
-              icon: Icons.percent_rounded,
-              iconColor: AppColors.accentPink,
-              backgroundColor: cardBg,
-              isDark: isDark,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
