@@ -124,7 +124,12 @@ class UserProfileService extends ChangeNotifier {
   String get endDate => _dataModel?.endDate ?? '';
 
   /// Whether subscription is active.
-  bool get isSubscriptionActive => _dataModel?.isActive ?? false;
+  bool get isSubscriptionActive {
+    if (_dataModel == null) return false;
+    final bool active = _dataModel?.isActive ?? false;
+    final String subId = _dataModel?.subscriptionPublicId ?? '';
+    return active || subId.isNotEmpty;
+  }
 
   /// Subscription duration in days.
   int get durationDays => _dataModel?.durationDays ?? 0;

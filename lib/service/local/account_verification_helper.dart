@@ -49,17 +49,11 @@ class AccountVerificationHelper {
 
   /// Route to show after a successful login.
   static PageRouteInfo resolvePostLoginRoute() {
-    if (isPending()) {
-      return const VerificationPendingRoute();
-    }
     return const DashboardRoute();
   }
 
   /// Path for splash when user is already logged in.
   static String resolveLoggedInPath() {
-    if (isPending()) {
-      return AppPaths.verificationPending;
-    }
     return AppPaths.dashboard;
   }
 }

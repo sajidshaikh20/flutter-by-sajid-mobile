@@ -180,4 +180,7 @@ abstract class Apis {
 
   /// Endpoint to register/unregister market live prices
   static const String marketLivePrice = '$subBaseUrl/market/live-price';
+
+  /// Endpoint to get trade results
+  static const String getTradeResults = '$subBaseUrl/trade/results';
 }

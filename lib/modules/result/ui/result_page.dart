@@ -15,7 +15,9 @@ class ResultPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<ResultCubit>(
-      create: (BuildContext context) => ResultCubit(),
+      create: (BuildContext context) => ResultCubit(
+        repository: ResultRepositoryImpl(),
+      ),
       child: const ResultViewBody(),
     );
   }
@@ -212,45 +214,44 @@ class _ResultViewBodyState extends State<ResultViewBody> {
               ),
 
               // Image Thumbnail (clickable)
-              GestureDetector(
-                onTap: () => _openFullscreenImage(context, item),
-                child: Container(
-                  height: 180,
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: Dimens.space12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Dimens.radius12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(Dimens.radius12),
-                    child: Stack(
-                      children: <Widget>[
-                        CommonImageWidget(
-                          imagePath: item.imageUrl,
-                          width: double.infinity,
-                          height: 180,
-                        ),
-                        Positioned(
-                          right: Dimens.space10,
-                          bottom: Dimens.space10,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.fullscreen_rounded,
-                              color: Colors.white,
-                              size: Dimens.size20,
+              if (item.imageUrl.isNotEmpty)
+                GestureDetector(
+                  onTap: () => _openFullscreenImage(context, item),
+                  child: Container(
+                    height: 180,
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: Dimens.space12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimens.radius12),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(Dimens.radius12),
+                      child: Stack(
+                        children: <Widget>[
+                          CustomWebView(
+                            url: item.imageUrl,
+                          ),
+                          Positioned(
+                            right: Dimens.space10,
+                            bottom: Dimens.space10,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.6),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.fullscreen_rounded,
+                                color: Colors.white,
+                                size: Dimens.size20,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
               // Description area
               Padding(
@@ -295,16 +296,15 @@ class _ResultViewBodyState extends State<ResultViewBody> {
               Center(
                 child: Hero(
                   tag: item.id,
-                  child: InteractiveViewer(
-                    minScale: 0.5,
-                    maxScale: 4.0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(Dimens.radius16),
-                        child: CommonImageWidget(
-                          imagePath: item.imageUrl,
-                          fit: BoxFit.contain,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(Dimens.radius16),
+                      child: SizedBox(
+                        height: MediaQuery.of(ctx).size.height * 0.6,
+                        width: double.infinity,
+                        child: CustomWebView(
+                          url: item.imageUrl,
                         ),
                       ),
                     ),
