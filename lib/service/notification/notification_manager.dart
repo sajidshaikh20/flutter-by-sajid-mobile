@@ -18,6 +18,7 @@ class NotificationManager {
     // Firebase is already initialized in AppInitializer, so we skip it here
     // await firebaseInitialize();
     await AwesomeNotificationManager.instance.init();
+    unawaited(AwesomeNotificationManager.instance.requestNotificationPermission());
     _getBackgroundMessage();
     await _getToken();
     await _getInitialMessage();

@@ -12,7 +12,7 @@ const int signUpOtpResendCooldownSeconds = Dimens.timeDuration30;
 /// State for the sign up screen.
 class SignUpState extends BaseState {
   /// Creates [SignUpState].
-  SignUpState({
+  const SignUpState({
     required super.status,
     required this.formKey,
     required this.fullNameController,

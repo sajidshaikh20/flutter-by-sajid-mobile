@@ -195,6 +195,48 @@ class SocialLoginPage extends BaseResponsiveView {
                                   Dimens.size16.heightBox,
 
                                   CustomButtonWidget(
+                                    title: 'Continue with WhatsApp',
+                                    height: Dimens.size52,
+                                    borderRadius: Dimens.radius12,
+                                    backgroundColor: isDark
+                                        ? AppColors.surfaceDark
+                                        : AppColors.whiteColor,
+                                    borderColor: isDark
+                                        ? AppColors.borderDark
+                                        : AppColors.borderLight,
+                                    hasBorder: true,
+                                    childWidget: Stack(
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        Positioned(
+                                          left: Dimens.size10,
+                                          child: Assets.svgs.icWp.svg(),
+                                        ),
+                                        CustomTextLabelWidget(
+                                          label:
+                                          'Continue with WhatsApp',
+                                          style: context.textTheme.bodyLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: Dimens.fontSize12,
+                                                color: isDark
+                                                    ? AppColors.textPrimaryDark
+                                                    : AppColors
+                                                          .textPrimaryLight,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () async {
+                                      await context.router.push(
+                                        const WhatsAppLoginRoute(),
+                                      );
+                                    },
+                                  ),
+
+                                  Dimens.size16.heightBox,
+
+                                  CustomButtonWidget(
                                     title: context
                                         .appString
                                         .continueWithMobileEmailKey,
@@ -263,10 +305,12 @@ class SocialLoginPage extends BaseResponsiveView {
                                     unawaited(
                                       Navigator.of(context).push(
                                         MaterialPageRoute<void>(
-                                          builder: (BuildContext context) => const InAppWebViewPage(
-                                            title: 'Terms & Conditions',
-                                            url: 'https://weko.pro/terms-and-conditions',
-                                          ),
+                                          builder: (BuildContext context) =>
+                                              const InAppWebViewPage(
+                                                title: 'Terms & Conditions',
+                                                url:
+                                                    'https://weko.pro/terms-and-conditions',
+                                              ),
                                         ),
                                       ),
                                     );
@@ -285,10 +329,12 @@ class SocialLoginPage extends BaseResponsiveView {
                                     unawaited(
                                       Navigator.of(context).push(
                                         MaterialPageRoute<void>(
-                                          builder: (BuildContext context) => const InAppWebViewPage(
-                                            title: 'Privacy Policy',
-                                            url: 'https://weko.pro/privacy-policy',
-                                          ),
+                                          builder: (BuildContext context) =>
+                                              const InAppWebViewPage(
+                                                title: 'Privacy Policy',
+                                                url:
+                                                    'https://weko.pro/privacy-policy',
+                                              ),
                                         ),
                                       ),
                                     );

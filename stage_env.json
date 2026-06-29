@@ -1,5 +1,6 @@
 {
-  "base_url": "https://weko.pro/",
+  "base_url": "https://thevinaymalviya.org/",
+  "web_socket": "https://thevinaymalviya.org/ws",
   "envKey": "stage",
   "androidAppId": "1:81561226063:android:2a3d1ca8f93f1bde75933a",
   "iosAppId": "1:81561226063:ios:f46c17a2c56c203675933a",

@@ -39,6 +39,12 @@ abstract class Apis {
   /// Endpoint for Google login.
   static const String googleLogin = '$subBaseUrl/auth/google';
 
+  /// Endpoint to send login OTP for WhatsApp.
+  static const String sendLoginOtp = '$subBaseUrl/auth/send-login-otp';
+
+  /// Endpoint to login with WhatsApp OTP.
+  static const String loginWithOtp = '$subBaseUrl/auth/login-with-otp';
+
   /// Endpoint to start registration
   static const String startRegistration = '$subBaseUrl/auth/start-registration';
 

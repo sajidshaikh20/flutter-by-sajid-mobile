@@ -15,9 +15,10 @@ class LeaderboardPage extends BaseResponsiveView {
 
   Widget _build(BuildContext context) {
     return BlocProvider<LeaderboardCubit>(
-      create: (BuildContext context) => LeaderboardCubit(
-        repository: LeaderboardRepositoryImpl(),
-      ),
+      create: (BuildContext context) =>
+          LeaderboardCubit(
+            repository: LeaderboardRepositoryImpl(),
+          ),
       child: const LeaderboardViewBody(),
     );
   }
@@ -34,10 +35,14 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
-    final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
-    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final Color cardBorder = isDark ? AppColors.borderDark : AppColors.borderLight;
+    final Color pageBg = isDark ? AppColors.backgroundDark : AppColors
+        .backgroundLight;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors
+        .textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors
+        .textSecondaryLight;
+    final Color cardBorder = isDark ? AppColors.borderDark : AppColors
+        .borderLight;
 
     return BlocBuilder<LeaderboardCubit, LeaderboardState>(
       builder: (BuildContext context, LeaderboardState state) {
@@ -48,17 +53,20 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // 1. Header (Leaderboard, Refresh, Notifications)
-                _buildHeader(context, isDark, textColor, subtextColor, cardBorder),
+                _buildHeader(
+                    context, isDark, textColor, subtextColor, cardBorder),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: Dimens.space16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       const SizedBox(height: Dimens.space16),
 
                       // 2. Podium (Top 3)
-                      if (!state.shimmerLoading && state.filteredItems.isNotEmpty) ...<Widget>[
+                      if (!state.shimmerLoading &&
+                          state.filteredItems.isNotEmpty) ...<Widget>[
                         _buildPodiumSection(context, isDark, state),
                         const SizedBox(height: Dimens.space24),
                       ],
@@ -73,8 +81,11 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 // 4. List Items / Rankings List (Scrollable Area)
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
-                    child: _buildRankingsContent(context, isDark, textColor, subtextColor, cardBorder, state),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Dimens.space16),
+                    child: _buildRankingsContent(
+                        context, isDark, textColor, subtextColor, cardBorder,
+                        state),
                   ),
                 ),
 
@@ -90,14 +101,12 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     );
   }
 
-  Widget _buildRankingsContent(
-    BuildContext context,
-    bool isDark,
-    Color textColor,
-    Color subtextColor,
-    Color borderCol,
-    LeaderboardState state,
-  ) {
+  Widget _buildRankingsContent(BuildContext context,
+      bool isDark,
+      Color textColor,
+      Color subtextColor,
+      Color borderCol,
+      LeaderboardState state,) {
     if (state.shimmerLoading) {
       return _buildShimmerList(isDark);
     }
@@ -107,38 +116,38 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
       onRefresh: () => context.read<LeaderboardCubit>().refreshLeaderboard(),
       child: state.filteredItems.isEmpty
           ? CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: <Widget>[
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: _buildEmptyState(textColor, subtextColor),
-                ),
-              ],
-            )
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: <Widget>[
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: _buildEmptyState(textColor, subtextColor),
+          ),
+        ],
+      )
           : NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification notification) {
-                if (notification is ScrollEndNotification || notification is ScrollUpdateNotification) {
-                  final ScrollMetrics metrics = notification.metrics;
-                  if (metrics.pixels >= metrics.maxScrollExtent * 0.9) {
-                    unawaited(context.read<LeaderboardCubit>().loadMore());
-                  }
-                }
-                return false;
-              },
-              child: _buildRankingsList(isDark, textColor, subtextColor, borderCol, state),
-            ),
+        onNotification: (ScrollNotification notification) {
+          if (notification is ScrollEndNotification ||
+              notification is ScrollUpdateNotification) {
+            final ScrollMetrics metrics = notification.metrics;
+            if (metrics.pixels >= metrics.maxScrollExtent * 0.9) {
+              unawaited(context.read<LeaderboardCubit>().loadMore());
+            }
+          }
+          return false;
+        },
+        child: _buildRankingsList(
+            isDark, textColor, subtextColor, borderCol, state),
+      ),
     );
   }
 
   // --- Widget Builders ---
 
-  Widget _buildHeader(
-    BuildContext context,
-    bool isDark,
-    Color textColor,
-    Color subtextColor,
-    Color borderCol,
-  ) {
+  Widget _buildHeader(BuildContext context,
+      bool isDark,
+      Color textColor,
+      Color subtextColor,
+      Color borderCol,) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: Dimens.space16,
@@ -168,7 +177,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               children: <Widget>[
                 Icon(
                   Icons.emoji_events_outlined,
-                  color: isDark ? AppColors.successColor : AppColors.primaryPurple,
+                  color: isDark ? AppColors.successColor : AppColors
+                      .primaryPurple,
                   size: Dimens.size24,
                 ),
                 const SizedBox(width: Dimens.space8),
@@ -185,12 +195,14 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
           ),
           // Bell Icon
           IconButton(
-            icon: Icon(
-              Icons.notifications_none_rounded,
-              color: textColor,
-              size: Dimens.size22,
-            ),
-            onPressed: () => context.router.push(const NotificationRoute()),
+              icon: Icon(
+                Icons.notifications_none_rounded,
+                color: textColor,
+                size: Dimens.size22,
+              ),
+              onPressed: () async {
+               // await context.router.push(const NotificationRoute());
+                }
           ),
         ],
       ),
@@ -198,16 +210,19 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
   }
 
 
-
-  Widget _buildPodiumSection(BuildContext context, bool isDark, LeaderboardState state) {
+  Widget _buildPodiumSection(BuildContext context, bool isDark,
+      LeaderboardState state) {
     // We need at least the top 3 items to show podium
     final List<LeaderboardItemModel> filtered = state.filteredItems;
     if (filtered.length < 3) return const SizedBox.shrink();
 
     // Map top 3 by rank
-    final LeaderboardItemModel? first = filtered.firstWhereOrNull((LeaderboardItemModel x) => x.rank == 1);
-    final LeaderboardItemModel? second = filtered.firstWhereOrNull((LeaderboardItemModel x) => x.rank == 2);
-    final LeaderboardItemModel? third = filtered.firstWhereOrNull((LeaderboardItemModel x) => x.rank == 3);
+    final LeaderboardItemModel? first = filtered.firstWhereOrNull((
+        LeaderboardItemModel x) => x.rank == 1);
+    final LeaderboardItemModel? second = filtered.firstWhereOrNull((
+        LeaderboardItemModel x) => x.rank == 2);
+    final LeaderboardItemModel? third = filtered.firstWhereOrNull((
+        LeaderboardItemModel x) => x.rank == 3);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -222,7 +237,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               gradientColors: isDark
                   ? <Color>[const Color(0xFF141D35), const Color(0xFF0F1527)]
                   : <Color>[const Color(0xFFE8ECEF), const Color(0xFFF1F3F5)],
-              badgeColor: const Color(0xFF9E9E9E), // Silver
+              badgeColor: const Color(0xFF9E9E9E),
+              // Silver
               isDark: isDark,
             ),
           ),
@@ -238,7 +254,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               gradientColors: isDark
                   ? <Color>[const Color(0xFF2C2213), const Color(0xFF19140B)]
                   : <Color>[const Color(0xFFFFF9E6), const Color(0xFFFFF2CC)],
-              badgeColor: const Color(0xFFFFD700), // Gold
+              badgeColor: const Color(0xFFFFD700),
+              // Gold
               isHighlighted: true,
               isDark: isDark,
             ),
@@ -255,7 +272,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               gradientColors: isDark
                   ? <Color>[const Color(0xFF221714), const Color(0xFF160F0D)]
                   : <Color>[const Color(0xFFF5E6E3), const Color(0xFFF0DCD7)],
-              badgeColor: const Color(0xFFCD7F32), // Bronze
+              badgeColor: const Color(0xFFCD7F32),
+              // Bronze
               isDark: isDark,
             ),
           ),
@@ -273,25 +291,27 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     required bool isDark,
   }) {
     final Color textColor = isDark ? Colors.white : AppColors.textPrimaryLight;
-    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final Color winRateColor = isDark ? AppColors.successColor : AppColors.greenTextColor;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors
+        .textSecondaryLight;
+    final Color winRateColor = isDark ? AppColors.successColor : AppColors
+        .greenTextColor;
 
     // Glowing shadow for first place
     final List<BoxShadow> shadows = isHighlighted
         ? <BoxShadow>[
-            BoxShadow(
-              color: const Color(0xFFFFD700).withValues(alpha: isDark ? 0.35 : 0.2),
-              blurRadius: 20,
-              spreadRadius: 2,
-            ),
-          ]
+      BoxShadow(
+        color: const Color(0xFFFFD700).withValues(alpha: isDark ? 0.35 : 0.2),
+        blurRadius: 20,
+        spreadRadius: 2,
+      ),
+    ]
         : <BoxShadow>[
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ];
+      BoxShadow(
+        color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+        blurRadius: 10,
+        offset: const Offset(0, 4),
+      ),
+    ];
 
     return Container(
       height: height,
@@ -325,7 +345,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             ),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8.0, vertical: 12.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -354,25 +375,34 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                         child: item.avatarUrl != null
                             ? Image.network(item.avatarUrl!, fit: BoxFit.cover)
                             : Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: rank == 1
-                                        ? <Color>[const Color(0xFFFFE57F), const Color(0xFFFFC107)]
-                                        : rank == 2
-                                            ? <Color>[const Color(0xFFCFD8DC), const Color(0xFF90A4AE)]
-                                            : <Color>[const Color(0xFFFFCC80), const Color(0xFFFFB74D)],
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: CustomTextLabelWidget(
-                                  label: item.name.substring(0, 1).toUpperCase(),
-                                  style: const TextStyle(
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: Dimens.fontSize16,
-                                  ),
-                                ),
-                              ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: rank == 1
+                                  ? <Color>[
+                                const Color(0xFFFFE57F),
+                                const Color(0xFFFFC107)
+                              ]
+                                  : rank == 2
+                                  ? <Color>[
+                                const Color(0xFFCFD8DC),
+                                const Color(0xFF90A4AE)
+                              ]
+                                  : <Color>[
+                                const Color(0xFFFFCC80),
+                                const Color(0xFFFFB74D)
+                              ],
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: CustomTextLabelWidget(
+                            label: item.name.substring(0, 1).toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w900,
+                              fontSize: Dimens.fontSize16,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
 
@@ -384,7 +414,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                         decoration: BoxDecoration(
                           color: badgeColor,
                           shape: BoxShape.circle,
-                          border: Border.all(color: isDark ? AppColors.backgroundDark : Colors.white, width: 1.5),
+                          border: Border.all(color: isDark ? AppColors
+                              .backgroundDark : Colors.white, width: 1.5),
                         ),
                         child: CustomTextLabelWidget(
                           label: rank.toString(),
@@ -417,7 +448,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
 
                     // INACTIVE / ACTIVE status pill
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: item.status == 'ACTIVE'
                             ? AppColors.successColor.withValues(alpha: 0.15)
@@ -427,7 +459,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                       child: CustomTextLabelWidget(
                         label: item.status,
                         style: TextStyle(
-                          color: item.status == 'ACTIVE' ? AppColors.successColor : AppColors.errorColor,
+                          color: item.status == 'ACTIVE' ? AppColors
+                              .successColor : AppColors.errorColor,
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                         ),
@@ -469,21 +502,26 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
 
   Widget _buildTableHeader(bool isDark, Color subtextColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space4),
+      padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.space12, vertical: Dimens.space4),
       child: Row(
         children: <Widget>[
           SizedBox(
             width: Dimens.size40,
             child: CustomTextLabelWidget(
               label: 'Rank',
-              style: TextStyle(color: subtextColor, fontSize: Dimens.fontSize10, fontWeight: FontWeight.bold),
+              style: TextStyle(color: subtextColor,
+                  fontSize: Dimens.fontSize10,
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.start,
             ),
           ),
           Expanded(
             child: CustomTextLabelWidget(
               label: 'Trader',
-              style: TextStyle(color: subtextColor, fontSize: Dimens.fontSize10, fontWeight: FontWeight.bold),
+              style: TextStyle(color: subtextColor,
+                  fontSize: Dimens.fontSize10,
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.start,
             ),
           ),
@@ -491,7 +529,9 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             width: Dimens.size80,
             child: CustomTextLabelWidget(
               label: 'Win Rate',
-              style: TextStyle(color: subtextColor, fontSize: Dimens.fontSize10, fontWeight: FontWeight.bold),
+              style: TextStyle(color: subtextColor,
+                  fontSize: Dimens.fontSize10,
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.start,
             ),
           ),
@@ -499,7 +539,9 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             width: Dimens.size80,
             child: CustomTextLabelWidget(
               label: 'Status',
-              style: TextStyle(color: subtextColor, fontSize: Dimens.fontSize10, fontWeight: FontWeight.bold),
+              style: TextStyle(color: subtextColor,
+                  fontSize: Dimens.fontSize10,
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.end,
             ),
           ),
@@ -508,24 +550,25 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     );
   }
 
-  Widget _buildRankingsList(
-    bool isDark,
-    Color textColor,
-    Color subtextColor,
-    Color borderCol,
-    LeaderboardState state,
-  ) {
+  Widget _buildRankingsList(bool isDark,
+      Color textColor,
+      Color subtextColor,
+      Color borderCol,
+      LeaderboardState state,) {
     final List<LeaderboardItemModel> items = state.filteredItems;
     final int itemCount = state.isLoadingMore ? items.length + 1 : items.length;
 
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: itemCount,
-      separatorBuilder: (BuildContext ctx, int index) => Divider(
-        height: 1,
-        thickness: 0.5,
-        color: isDark ? AppColors.borderDark.withValues(alpha: 0.5) : AppColors.borderLight.withValues(alpha: 0.5),
-      ),
+      separatorBuilder: (BuildContext ctx, int index) =>
+          Divider(
+            height: 1,
+            thickness: 0.5,
+            color: isDark
+                ? AppColors.borderDark.withValues(alpha: 0.5)
+                : AppColors.borderLight.withValues(alpha: 0.5),
+          ),
       itemBuilder: (BuildContext ctx, int index) {
         if (index >= items.length) {
           return const Padding(
@@ -536,7 +579,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryPurple),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.primaryPurple),
                 ),
               ),
             ),
@@ -557,7 +601,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: Dimens.space12, horizontal: Dimens.space12),
+          padding: const EdgeInsets.symmetric(
+              vertical: Dimens.space12, horizontal: Dimens.space12),
           child: Row(
             children: <Widget>[
               // Rank
@@ -592,17 +637,17 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                         child: item.avatarUrl != null
                             ? Image.network(item.avatarUrl!, fit: BoxFit.cover)
                             : Container(
-                                color: isDark ? AppColors.surfaceDark : Colors.white,
-                                alignment: Alignment.center,
-                                child: CustomTextLabelWidget(
-                                  label: item.name.substring(0, 1).toUpperCase(),
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontSize: Dimens.fontSize12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                          color: isDark ? AppColors.surfaceDark : Colors.white,
+                          alignment: Alignment.center,
+                          child: CustomTextLabelWidget(
+                            label: item.name.substring(0, 1).toUpperCase(),
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: Dimens.fontSize12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: Dimens.space12),
@@ -629,7 +674,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 child: CustomTextLabelWidget(
                   label: '${item.winRate.toStringAsFixed(2)}%',
                   style: TextStyle(
-                    color: isDark ? AppColors.successColor : AppColors.greenTextColor,
+                    color: isDark ? AppColors.successColor : AppColors
+                        .greenTextColor,
                     fontSize: Dimens.fontSize13,
                     fontWeight: FontWeight.w900,
                   ),
@@ -643,7 +689,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: isActive
                           ? AppColors.successColor.withValues(alpha: 0.1)
@@ -659,7 +706,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                     child: CustomTextLabelWidget(
                       label: item.status,
                       style: TextStyle(
-                        color: isActive ? AppColors.successColor : AppColors.errorColor,
+                        color: isActive ? AppColors.successColor : AppColors
+                            .errorColor,
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                       ),
@@ -675,8 +723,10 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
   }
 
   Widget _buildShimmerList(bool isDark) {
-    final Color baseCol = isDark ? const Color(0xFF1B162E) : Colors.grey.shade300;
-    final Color highCol = isDark ? const Color(0xFF2E274C) : Colors.grey.shade100;
+    final Color baseCol = isDark ? const Color(0xFF1B162E) : Colors.grey
+        .shade300;
+    final Color highCol = isDark ? const Color(0xFF2E274C) : Colors.grey
+        .shade100;
 
     return Shimmer.fromColors(
       baseColor: baseCol,
@@ -684,7 +734,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
       child: Column(
         children: List<Widget>.generate(5, (int i) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: Dimens.space12, horizontal: Dimens.space12),
+            padding: const EdgeInsets.symmetric(
+                vertical: Dimens.space12, horizontal: Dimens.space12),
             child: Row(
               children: <Widget>[
                 // Rank
@@ -695,7 +746,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                     child: SizedBox(
                       width: 20,
                       height: 16,
-                      child: DecoratedBox(decoration: BoxDecoration(color: Colors.white)),
+                      child: DecoratedBox(decoration: BoxDecoration(
+                          color: Colors.white)),
                     ),
                   ),
                 ),
@@ -704,7 +756,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 Expanded(
                   child: Row(
                     children: <Widget>[
-                      const CircleAvatar(radius: Dimens.size16, backgroundColor: Colors.white),
+                      const CircleAvatar(
+                          radius: Dimens.size16, backgroundColor: Colors.white),
                       const SizedBox(width: Dimens.space12),
                       Expanded(
                         child: Container(
@@ -728,7 +781,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                     child: SizedBox(
                       width: 45,
                       height: 14,
-                      child: DecoratedBox(decoration: BoxDecoration(color: Colors.white)),
+                      child: DecoratedBox(decoration: BoxDecoration(
+                          color: Colors.white)),
                     ),
                   ),
                 ),
@@ -766,7 +820,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(Icons.search_off_rounded, color: subtextColor, size: Dimens.size48),
+          Icon(Icons.search_off_rounded, color: subtextColor,
+              size: Dimens.size48),
           const SizedBox(height: Dimens.space12),
           CustomTextLabelWidget(
             label: 'No Results Found',
@@ -836,8 +891,11 @@ class ConfettiSparkPainter extends CustomPainter {
     for (final Offset center in sparks) {
       canvas
         ..drawCircle(center, 2.5, paint)
-        ..drawLine(Offset(center.dx - 4, center.dy), Offset(center.dx + 4, center.dy), paint)
-        ..drawLine(Offset(center.dx, center.dy - 4), Offset(center.dx, center.dy + 4), paint);
+        ..drawLine(
+            Offset(center.dx - 4, center.dy), Offset(center.dx + 4, center.dy),
+            paint)..drawLine(
+          Offset(center.dx, center.dy - 4), Offset(center.dx, center.dy + 4),
+          paint);
     }
   }
 
@@ -864,9 +922,8 @@ class LaurelWreathPainter extends CustomPainter {
 
     // Draw left branch arc
     final Rect rect = Rect.fromCircle(center: Offset(cx, cy), radius: r);
-    canvas
-      ..drawArc(rect, 0.85 * pi, 0.8 * pi, false, paint)
-      ..drawArc(rect, -0.65 * pi, 0.8 * pi, false, paint);
+    canvas..drawArc(rect, 0.85 * pi, 0.8 * pi, false, paint)..drawArc(
+        rect, -0.65 * pi, 0.8 * pi, false, paint);
 
     // Draw small leaves on left
     final Paint leafPaint = Paint()
@@ -874,7 +931,12 @@ class LaurelWreathPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     // Angle markers for left leaves
-    final List<double> leftAngles = <double>[1.0 * pi, 1.2 * pi, 1.4 * pi, 1.6 * pi];
+    final List<double> leftAngles = <double>[
+      1.0 * pi,
+      1.2 * pi,
+      1.4 * pi,
+      1.6 * pi
+    ];
     for (final double angle in leftAngles) {
       final double leafX = cx + r * cos(angle);
       final double leafY = cy + r * sin(angle);
@@ -885,7 +947,12 @@ class LaurelWreathPainter extends CustomPainter {
     }
 
     // Angle markers for right leaves
-    final List<double> rightAngles = <double>[0.0 * pi, -0.2 * pi, -0.4 * pi, -0.6 * pi];
+    final List<double> rightAngles = <double>[
+      0.0 * pi,
+      -0.2 * pi,
+      -0.4 * pi,
+      -0.6 * pi
+    ];
     for (final double angle in rightAngles) {
       final double leafX = cx + r * cos(angle);
       final double leafY = cy + r * sin(angle);

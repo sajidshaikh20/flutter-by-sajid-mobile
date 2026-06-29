@@ -1,6 +1,6 @@
 import '../../../utils/exports.dart';
 
-class InAppWebViewPage extends StatefulWidget {
+class InAppWebViewPage extends StatelessWidget {
   const InAppWebViewPage({
     required this.title,
     required this.url,
@@ -9,22 +9,6 @@ class InAppWebViewPage extends StatefulWidget {
 
   final String title;
   final String url;
-
-  @override
-  State<InAppWebViewPage> createState() => _InAppWebViewPageState();
-}
-
-class _InAppWebViewPageState extends State<InAppWebViewPage> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController();
-    unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    unawaited(_controller.setBackgroundColor(Colors.transparent));
-    unawaited(_controller.loadRequest(Uri.parse(widget.url)));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +26,7 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
         backgroundColor: backgroundColor,
         elevation: 0,
         title: Text(
-          widget.title,
+          title,
           style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -55,7 +39,7 @@ class _InAppWebViewPageState extends State<InAppWebViewPage> {
         ),
       ),
       body: SafeArea(
-        child: CustomWebView(webViewController: _controller),
+        child: CustomWebView(url: url),
       ),
     );
   }

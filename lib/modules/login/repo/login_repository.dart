@@ -17,6 +17,4 @@ abstract class LoginRepository extends BaseRepository {
   /// Calls the Google login API.
   Future<ResponseHandler<BaseResponse<LoginUserResponse>>> callGoogleLoginApi(
       GoogleLoginRequest request);
-
-
 }

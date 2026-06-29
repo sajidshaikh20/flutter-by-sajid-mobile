@@ -36,16 +36,39 @@ class SocketManager {
         MainConfig.chatSocketConnection.tradeNotificationStream.listen((Map<String, dynamic> data) {
       final String? message = data['message'] as String?;
       final String? symbol = data['symbol'] as String?;
-      if (message != null && message.isNotEmpty) {
-        unawaited(
-          AwesomeNotificationManager.instance.showNotification(
-            payload: <String, String>{
-              'title': symbol != null ? '$symbol Trade Alert' : 'Trade Alert',
-              'body': message,
-            },
-          ),
-        );
+      final String? tradePublicId = data['tradePublicId'] as String?;
+      final String? action = data['action'] as String?;
+      final dynamic entry = data['entry'];
+
+      String title = 'New Trade Come!';
+      if (symbol != null && symbol.isNotEmpty) {
+        title = 'New Trade Come: $symbol';
       }
+
+      String body = '';
+      if (message != null && message.isNotEmpty) {
+        body = message;
+        if (tradePublicId != null && tradePublicId.isNotEmpty) {
+          body = '$message ($tradePublicId)';
+        }
+      } else if (symbol != null && symbol.isNotEmpty) {
+        final String actionStr = action != null && action.isNotEmpty ? '$action ' : '';
+        final String entryStr = entry != null ? ' at $entry' : '';
+        final String idStr = tradePublicId != null && tradePublicId.isNotEmpty ? ' ($tradePublicId)' : '';
+        body = 'A new ${actionStr}trade has been posted for $symbol$entryStr$idStr. View details to check levels.';
+      } else {
+        body = 'A new trading opportunity is available. Tap to view details!';
+      }
+
+      unawaited(
+        AwesomeNotificationManager.instance.showNotification(
+          payload: <String, dynamic>{
+            'title': title,
+            'body': body,
+            ...data,
+          },
+        ),
+      );
     });
 
     // Also trigger initial check

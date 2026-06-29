@@ -5,6 +5,111 @@
 Future<void> firebaseBackground(RemoteMessage message) async {
   DebugLog.instance
       .i("FCM Background Message : ${message.data} ${message.notification}");
+
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp();
+    }
+
+    final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
+    await awesomeNotifications.initialize(
+      null,
+      <NotificationChannel>[
+        NotificationChannel(
+          channelGroupKey: NotificationConst.channelGroupKey,
+          channelKey: NotificationConst.channelKey,
+          channelName: NotificationConst.channelName,
+          channelDescription: NotificationConst.channelDescription,
+          defaultColor: Colors.blue,
+          ledColor: Colors.white,
+        ),
+      ],
+      channelGroups: <NotificationChannelGroup>[
+        NotificationChannelGroup(
+          channelGroupKey: NotificationConst.channelGroupKey,
+          channelGroupName: NotificationConst.channelGroupName,
+        ),
+      ],
+      debug: true,
+    );
+
+    final Map<String, dynamic> data = Map<String, dynamic>.from(message.data);
+
+    final String? symbol = data['symbol']?.toString();
+    final String? tradePublicId = data['tradePublicId']?.toString();
+    final String? messageText = data['message']?.toString() ??
+        data['body']?.toString() ??
+        message.notification?.body;
+    final String? titleText =
+        data['title']?.toString() ?? message.notification?.title;
+
+    String title = 'New Trade Come!';
+    if (symbol != null && symbol.isNotEmpty) {
+      title = 'New Trade Come: $symbol';
+    } else if (titleText != null && titleText.isNotEmpty) {
+      title = titleText;
+    }
+
+    String body = '';
+    if (messageText != null && messageText.isNotEmpty) {
+      body = messageText;
+      if (tradePublicId != null && tradePublicId.isNotEmpty) {
+        body = '$messageText ($tradePublicId)';
+      }
+    } else if (symbol != null && symbol.isNotEmpty) {
+      final String action = data['action']?.toString() ?? '';
+      final String actionStr = action.isNotEmpty ? '$action ' : '';
+      final String entry = data['entry']?.toString() ?? '';
+      final String entryStr = entry.isNotEmpty ? ' at $entry' : '';
+      final String idStr = tradePublicId != null && tradePublicId.isNotEmpty ? ' ($tradePublicId)' : '';
+      body =
+          'A new ${actionStr}trade has been posted for $symbol$entryStr$idStr. Check entry, TP, and SL details now!';
+    } else {
+      body = 'A new trading opportunity is available. Tap to view details!';
+    }
+
+    final Map<String, String> stringPayload = <String, String>{};
+    data.forEach((String key, dynamic value) {
+      if (value != null) {
+        stringPayload[key] = value.toString();
+      }
+    });
+
+    try {
+      await awesomeNotifications.createNotification(
+        content: NotificationContent(
+          id: Random().nextInt(1000),
+          channelKey: NotificationConst.channelKey,
+          title: title,
+          backgroundColor: const Color(0xFF0466DC),
+          icon: 'resource://drawable/ic_weko',
+          body: body,
+          bigPicture: data['image']?.toString() ?? '',
+          payload: stringPayload,
+        ),
+      );
+    } on Object catch (e) {
+      DebugLog.instance.e('firebaseBackground: Custom icon not compiled yet ($e). Falling back to ic_notification_icon.');
+      try {
+        await awesomeNotifications.createNotification(
+          content: NotificationContent(
+            id: Random().nextInt(1000),
+            channelKey: NotificationConst.channelKey,
+            title: title,
+            backgroundColor: const Color(0xFF0466DC),
+            icon: 'resource://drawable/ic_notification_icon',
+            body: body,
+            bigPicture: data['image']?.toString() ?? '',
+            payload: stringPayload,
+          ),
+        );
+      } on Object catch (e2) {
+        DebugLog.instance.e('firebaseBackground: Fallback notification creation failed: $e2');
+      }
+    }
+  } on Object catch (e, st) {
+    DebugLog.instance.e('Error in firebaseBackground handler: $e\n$st');
+  }
 }
 
 Future<void> main() async {

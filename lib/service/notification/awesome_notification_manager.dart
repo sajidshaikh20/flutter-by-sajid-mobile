@@ -40,7 +40,7 @@ Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
 
   String type = payload['type']?.toString().toLowerCase() ?? '';
 
-
+  DebugLog.instance.e(type);
 }
 
 /// A singleton class to manage and initialize AwesomeNotifications
@@ -161,18 +161,53 @@ class AwesomeNotificationManager {
   /// Takes a payload map containing notification data.
   Future<void> showNotification({Map<String, dynamic>? payload}) async {
     if (payload?.isNotEmpty ?? false) {
-      await _awesomeNotification.createNotification(
-        content: NotificationContent(
-          id: Random().nextInt(1000),
-          channelKey: NotificationConst.channelKey,
-          title: payload!['title'] ?? '',
-          backgroundColor: MainConfig.appColors.backgroundBlueColor,
-          icon: 'resource://drawable/ic_notification_icon',
-          body: payload['body'] ?? '',
-          bigPicture: payload['image'] ?? '',
-          payload: Map<String, String>.from(payload),
-        ),
-      );
+      Color bgColor;
+      try {
+        bgColor = MainConfig.appColors.backgroundBlueColor;
+      } on Object catch (_) {
+        bgColor = const Color(0xFF0466DC); // Safe fallback
+      }
+
+      // Safe conversion of payload map to Map<String, String>
+      final Map<String, String> stringPayload = <String, String>{};
+      payload!.forEach((String key, dynamic value) {
+        if (value != null) {
+          stringPayload[key] = value.toString();
+        }
+      });
+
+      try {
+        await _awesomeNotification.createNotification(
+          content: NotificationContent(
+            id: Random().nextInt(1000),
+            channelKey: NotificationConst.channelKey,
+            title: stringPayload['title'] ?? '',
+            backgroundColor: bgColor,
+            icon: 'resource://drawable/ic_weko',
+            body: stringPayload['body'] ?? '',
+            bigPicture: stringPayload['image'] ?? '',
+            payload: stringPayload,
+          ),
+        );
+      } on Object catch (e) {
+        DebugLog.instance.e('AwesomeNotificationManager: Custom icon not compiled yet ($e). Falling back to ic_notification_icon.');
+        try {
+          await _awesomeNotification.createNotification(
+            content: NotificationContent(
+              id: Random().nextInt(1000),
+              channelKey: NotificationConst.channelKey,
+              title: stringPayload['title'] ?? '',
+              backgroundColor: bgColor,
+              icon: 'resource://drawable/ic_notification_icon',
+              body: stringPayload['body'] ?? '',
+              bigPicture: stringPayload['image'] ?? '',
+              payload: stringPayload,
+            ),
+          );
+        } on Object catch (e2) {
+          DebugLog.instance.e('AwesomeNotificationManager: Fallback notification creation failed: $e2');
+        }
+      }
     }
   }
 }

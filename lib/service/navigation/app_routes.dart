@@ -36,6 +36,13 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: fadePageTransition,
     ),
     CustomRoute<dynamic>(
+      page: WhatsAppLoginRoute.page,
+      path: AppPaths.whatsappLogin,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
       page: ForgotPasswordRoute.page,
       path: AppPaths.forgotPassword,
       durationInMilliseconds: Dimens.milliseconds400,

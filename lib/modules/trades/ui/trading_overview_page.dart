@@ -30,13 +30,19 @@ class TradingOverviewPage extends BaseResponsiveView {
   }
 }
 
-class TradingOverviewViewBody extends StatelessWidget {
+class TradingOverviewViewBody extends StatefulWidget {
   const TradingOverviewViewBody({
     super.key,
     required this.signal,
   });
 
   final TradingSignalModel signal;
+
+  @override
+  State<TradingOverviewViewBody> createState() => _TradingOverviewViewBodyState();
+}
+
+class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
 
   String _getPairName(String pair) {
     switch (pair.toUpperCase()) {
@@ -260,12 +266,7 @@ class TradingOverviewViewBody extends StatelessWidget {
                               value: _formatCreatedDate(currentSignal.createdAt),
                               isDark: isDark,
                             ),
-                            const SizedBox(height: Dimens.space12),
-                            _buildCardRow(
-                              label: 'Platform',
-                              value: '—',
-                              isDark: isDark,
-                            ),
+
                           ],
                         ),
                         const SizedBox(height: Dimens.space16),
@@ -569,10 +570,6 @@ class TradingOverviewViewBody extends StatelessWidget {
         ? state.signal.tradingViewUrl!
         : '';
 
-    final String imageUrl = _getChartImageUrl(chartLink);
-
-    DebugLog.instance.i("image image:-$imageUrl");
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(Dimens.space16),
@@ -593,45 +590,59 @@ class TradingOverviewViewBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: Dimens.space16),
-          GestureDetector(
-            onTap: () => _launchUrl(chartLink),
-            child: ClipRRect(
+          if (chartLink.isNotEmpty)
+            ClipRRect(
               borderRadius: BorderRadius.circular(Dimens.radius8),
-              child: CommonImageWidget(
-                imagePath: imageUrl,
-                height: 180,
+              child: SizedBox(
+                height: 250,
                 width: double.infinity,
-                radius: Dimens.radius8,
+                child: CustomWebView(url: chartLink),
+              ),
+            )
+          else
+            const SizedBox.shrink(),
+          if (chartLink.isNotEmpty) ...<Widget>[
+            const SizedBox(height: Dimens.space12),
+            GestureDetector(
+              onTap: () => _launchUrl(context, chartLink),
+              child: CustomTextLabelWidget(
+                label: chartLink,
+                style: const TextStyle(
+                  color: AppColors.primaryPurple,
+                  decoration: TextDecoration.underline,
+                  fontSize: Dimens.fontSize12,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.start,
               ),
             ),
-          ),
-          const SizedBox(height: Dimens.space12),
-          GestureDetector(
-            onTap: () => _launchUrl(chartLink),
-            child: CustomTextLabelWidget(
-              label: chartLink,
-              style: const TextStyle(
-                color: AppColors.primaryPurple,
-                decoration: TextDecoration.underline,
-                fontSize: Dimens.fontSize12,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.start,
-            ),
-          ),
+          ],
         ],
       ),
     );
   }
 
-  Future<void> _launchUrl(String urlString) async {
-    final Uri url = Uri.parse(urlString);
+  Future<void> _launchUrl(BuildContext context, String urlString) async {
+    if (urlString.isEmpty) return;
     try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      }
+      await Navigator.push(
+        context,
+        MaterialPageRoute<dynamic>(
+          builder: (BuildContext context) => InAppWebViewPage(
+            title: 'TradingView Chart',
+            url: urlString,
+          ),
+        ),
+      );
     } on Object catch (_) {
-      // Fail silently
+      final Uri url = Uri.parse(urlString);
+      try {
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        }
+      } on Object catch (_) {
+        // Fail silently
+      }
     }
   }
 

@@ -52,12 +52,13 @@ class ChatSocketConnection {
     // Clean up previous client before initiating a new connection
     disconnectSocket(shouldClearTheSocket: true);
 
-    DebugLog.instance.i('WebSocket: Connecting to wss://weko.pro/ws/websocket...');
+    final String socketUrl = configWebSocketUrl;
+    DebugLog.instance.i('WebSocket: Connecting to $socketUrl...');
     connectionStatus = "Connecting";
 
     _client = StompClient(
       config: StompConfig(
-        url: 'wss://weko.pro/ws/websocket',
+        url: socketUrl,
         onConnect: _onConnect,
         onDisconnect: _onDisconnect,
         onStompError: _onStompError,

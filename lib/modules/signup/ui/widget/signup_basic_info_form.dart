@@ -69,7 +69,6 @@ class SignUpBasicInfoForm extends StatelessWidget {
           ),
           Dimens.size32.heightBox,
           Align(
-            alignment: Alignment.center,
             child: GestureDetector(
               onTap: () async {
                 await context.router.push(LoginRoute());

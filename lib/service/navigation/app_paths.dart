@@ -56,6 +56,9 @@ abstract class AppPaths {
   /// Login screen route.
   static const String login = '/login';
 
+  /// WhatsApp Login screen route.
+  static const String whatsappLogin = '/whatsapp_login';
+
   /// Forgot password screen route.
   static const String forgotPassword = '/forgot_password';
 
