@@ -104,6 +104,9 @@ class PrefsKey {
 
   /// Key for local profile picture file path.
   static const String localProfilePicturePathKey = 'localProfilePicturePathKey';
+
+  /// Key indicating if the user has completed/seen the onboarding flow.
+  static const String onboardingSeenKey = 'onboardingSeenKey';
 }
 
 /// Minimal model for storing biometric login data in SharedPreferences.

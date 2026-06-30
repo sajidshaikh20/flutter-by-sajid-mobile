@@ -26,9 +26,15 @@ class JsonDataManagerService {
   /// Checks if a file exists at the specified path in
   /// the application's document directory.
   Future<bool> checkFileFromPath(String fileName) async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String filePath = '${directory.path}/$fileName';
-    File file = File(filePath);
+    if (!AppPathProvider.supportsLocalFileSystem) {
+      return false;
+    }
+    final String? directoryPath = await AppPathProvider.documentsPath();
+    if (directoryPath == null) {
+      return false;
+    }
+    final String filePath = '$directoryPath/$fileName';
+    final File file = File(filePath);
     return file.existsSync();
   }
 
@@ -42,11 +48,19 @@ class JsonDataManagerService {
       await loadDefaultEnglishLanguage();
       return true;
     } else {
+      if (!AppPathProvider.supportsLocalFileSystem) {
+        await loadDefaultEnglishLanguage();
+        return true;
+      }
       try {
-        Directory directory = await getApplicationDocumentsDirectory();
-        String filePath = '${directory.path}/$fileName';
+        final String? directoryPath = await AppPathProvider.documentsPath();
+        if (directoryPath == null) {
+          await loadDefaultEnglishLanguage();
+          return true;
+        }
+        final String filePath = '$directoryPath/$fileName';
 
-        File file = File(filePath);
+        final File file = File(filePath);
         if (file.existsSync()) {
           String fileContent = await file.readAsString();
           dynamic jsonData = jsonDecode(fileContent);

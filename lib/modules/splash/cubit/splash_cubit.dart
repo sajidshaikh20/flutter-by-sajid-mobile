@@ -57,6 +57,10 @@ class SplashCubit extends Cubit<SplashState> {
       const Duration(seconds: Dimens.seconds3),
       () {
         Locale locale = getLocale();
+        bool hasSeenOnboarding = SharedPref.instance.getBool(
+          PrefsKey.onboardingSeenKey,
+          defValue: false,
+        );
 
         emit(state.copyWith(
           languageAlignment: locale.languageCode == AppConstant.en
@@ -64,7 +68,7 @@ class SplashCubit extends Cubit<SplashState> {
               : AppConstant.rtlLanguageAlignment,
           languageCode: locale.languageCode,
           status: BaseStateStatus.success,
-          redirectPath: AppPaths.socialLogin,
+          redirectPath: hasSeenOnboarding ? AppPaths.socialLogin : AppPaths.onboarding,
         ));
       },
     );

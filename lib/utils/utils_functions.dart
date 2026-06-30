@@ -185,6 +185,9 @@ String getPlatformName() {
 /// - For iOS: The identifier for vendor from IosDeviceInfo
 /// - For other platforms: Empty string
 String getDeviceId() {
+  if (kIsWeb) {
+    return '';
+  }
   String deviceId = '';
   if (Platform.isAndroid) {
     deviceId = getIt<MainConfig>().androidInfo.id;

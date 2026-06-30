@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../utils/exports.dart';
@@ -40,7 +42,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
   late final FocusNode _emailFocusNode;
   late final FocusNode _phoneFocusNode;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  File? _selectedImage;
+  XFile? _selectedImage;
 
   String _originalName = '';
   String _originalUsername = '';
@@ -232,7 +234,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
 
       if (file != null) {
         setState(() {
-          _selectedImage = File(file.path);
+          _selectedImage = file;
         });
       }
     } on Object catch (e) {
@@ -574,11 +576,27 @@ class _EditProfileFormState extends State<EditProfileForm> {
                                   padding: const EdgeInsets.all(2),
                                   child: ClipOval(
                                     child: _selectedImage != null
-                                        ? Image.file(
-                                            _selectedImage!,
-                                            fit: BoxFit.cover,
-                                            width: Dimens.size110,
-                                            height: Dimens.size110,
+                                        ? FutureBuilder<List<int>>(
+                                            future: _selectedImage!.readAsBytes(),
+                                            builder: (
+                                              BuildContext context,
+                                              AsyncSnapshot<List<int>> snapshot,
+                                            ) {
+                                              if (snapshot.hasData) {
+                                                return Image.memory(
+                                                  Uint8List.fromList(snapshot.data!),
+                                                  fit: BoxFit.cover,
+                                                  width: Dimens.size110,
+                                                  height: Dimens.size110,
+                                                );
+                                              }
+                                              return const Center(
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                  color: AppColors.primaryPurple,
+                                                ),
+                                              );
+                                            },
                                           )
                                         : hasImageUrl
                                             ? FastCachedImage(

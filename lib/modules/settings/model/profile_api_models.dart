@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class ClientProfileResponse {
   final String publicId;
@@ -48,7 +48,7 @@ class UpdateClientProfileRequest {
   final String name;
   final String phone;
   final String countryCode;
-  final File? profilePicture;
+  final XFile? profilePicture;
 
   UpdateClientProfileRequest({
     required this.name,

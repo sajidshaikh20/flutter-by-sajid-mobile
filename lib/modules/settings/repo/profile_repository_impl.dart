@@ -1,3 +1,5 @@
+import 'package:image_picker/image_picker.dart';
+
 import '../../../utils/exports.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {
@@ -31,10 +33,11 @@ class ProfileRepositoryImpl extends ProfileRepository {
     };
 
     if (request.profilePicture != null) {
-      final String fileName = request.profilePicture!.path.split('/').last;
-      data['profilePicture'] = await MultipartFile.fromFile(
-        request.profilePicture!.path,
-        filename: fileName,
+      final XFile image = request.profilePicture!;
+      final List<int> bytes = await image.readAsBytes();
+      data['profilePicture'] = MultipartFile.fromBytes(
+        bytes,
+        filename: image.name,
       );
     }
 
@@ -63,11 +66,11 @@ class ProfileRepositoryImpl extends ProfileRepository {
 
   @override
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> uploadProfilePicture(
-    File file,
+    XFile file,
   ) async {
-    final String fileName = file.path.split('/').last;
+    final List<int> bytes = await file.readAsBytes();
     final FormData formData = FormData.fromMap(<String, dynamic>{
-      'profilePicture': await MultipartFile.fromFile(file.path, filename: fileName),
+      'profilePicture': MultipartFile.fromBytes(bytes, filename: file.name),
     });
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig

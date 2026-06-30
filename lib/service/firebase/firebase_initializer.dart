@@ -11,36 +11,44 @@ class FirebaseInitializer {
 
   /// Initialize Firebase early in the app lifecycle
   Future<void> initialize() async {
+    if (kIsWeb && configWebAppId.isEmpty) {
+      DebugLog.instance.w(
+        'Firebase web is not configured (webAppId missing). '
+        'Skipping Firebase initialization on web.',
+      );
+      return;
+    }
+
     try {
       if (Firebase.apps.isEmpty) {
-        // For iOS, let Firebase auto-initialize using the GoogleService-Info.plist file
         await Firebase.initializeApp(
           options: getCurrentPlatformFirebaseOptions(),
         );
-        // Try to enable Firebase services
         try {
-          await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-
-          DebugLog.instance.i("Firebase services enabled successfully");
+          if (!kIsWeb) {
+            await FirebaseCrashlytics.instance
+                .setCrashlyticsCollectionEnabled(true);
+          }
+          DebugLog.instance.i('Firebase services enabled successfully');
         } on Exception catch (serviceError) {
-          DebugLog.instance.e("Error enabling Firebase services: $serviceError");
-          // Don't rethrow service errors, app can continue without them
+          DebugLog.instance.e('Error enabling Firebase services: $serviceError');
         }
       } else {
-        DebugLog.instance.i("Firebase already initialized");
+        DebugLog.instance.i('Firebase already initialized');
       }
     } catch (e) {
-      String errorMessage = e.toString();
-      if (errorMessage.contains('duplicate-app') || errorMessage.contains('already exists')) {
-        DebugLog.instance.i("Firebase app already exists, continuing");
+      final String errorMessage = e.toString();
+      if (errorMessage.contains('duplicate-app') ||
+          errorMessage.contains('already exists')) {
+        DebugLog.instance.i('Firebase app already exists, continuing');
       } else {
-        DebugLog.instance.e("Error initializing Firebase: $e");
-        // For iOS, don't rethrow Firebase errors - app can work without Firebase
-        if (!Platform.isIOS) {
+        DebugLog.instance.e('Error initializing Firebase: $e');
+        if (!kIsWeb && !Platform.isIOS) {
           rethrow;
-        } else {
-          DebugLog.instance.w("Firebase initialization failed on iOS, app will continue without Firebase");
         }
+        DebugLog.instance.w(
+          'Firebase initialization failed, app will continue without Firebase',
+        );
       }
     }
   }

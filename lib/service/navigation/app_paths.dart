@@ -106,5 +106,8 @@ abstract class AppPaths {
 
   /// Subscription Plans screen route.
   static const String subscriptionPlans = '/subscription_plans';
+
+  /// Onboarding screen route.
+  static const String onboarding = '/onboarding';
 }
 

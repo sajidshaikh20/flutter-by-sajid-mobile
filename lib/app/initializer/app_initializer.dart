@@ -19,7 +19,9 @@ class AppInitializer {
       try {
         final WidgetsBinding widgetsBinding =
             WidgetsFlutterBinding.ensureInitialized();
-        FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+        if (!kIsWeb) {
+          FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+        }
 
         await _initCriticalServices();
 
@@ -33,7 +35,9 @@ class AppInitializer {
         };
 
         runApp();
-        FlutterNativeSplash.remove();
+        if (!kIsWeb) {
+          FlutterNativeSplash.remove();
+        }
 
         unawaited(_initDeferredServices());
       } on Exception catch (e) {
@@ -67,13 +71,17 @@ class AppInitializer {
   /// Heavy / optional work after the first frame.
   Future<void> _initDeferredServices() async {
     try {
-      unawaited(
-        FastCachedImageConfig.init(
-          clearCacheAfter: const Duration(days: Dimens.days15),
-        ),
-      );
+      if (!kIsWeb) {
+        unawaited(
+          FastCachedImageConfig.init(
+            clearCacheAfter: const Duration(days: Dimens.days15),
+          ),
+        );
+      }
       unawaited(getIt<LanguageService>().loadLanguageData());
-      unawaited(NotificationManager.instance.init());
+      if (!kIsWeb) {
+        unawaited(NotificationManager.instance.init());
+      }
       SocketManager.instance.initialize();
     } on Exception catch (err, stackTrace) {
       DebugLog.instance.i('Deferred init failed: $err');
@@ -90,6 +98,9 @@ class AppInitializer {
 
 
   Future<void> _initScreenPreference() async {
+    if (kIsWeb) {
+      return;
+    }
     await SystemChrome.setPreferredOrientations(
       <DeviceOrientation>[
         DeviceOrientation.portraitUp,
@@ -99,15 +110,20 @@ class AppInitializer {
   }
 
   void _setStatusBarTheme() {
+    if (kIsWeb) {
+      return;
+    }
     SystemChrome.setSystemUIOverlayStyle(MainConfig.appTheme.systemOverlay());
   }
 
   Future<void> _getPackageAndDeviceInfo() async {
-    if (Platform.isAndroid) {
-      getIt<MainConfig>().androidInfo =
-          await DeviceInfoPlugin().androidInfo;
+    final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+    if (kIsWeb) {
+      getIt<MainConfig>().webBrowserInfo = await deviceInfoPlugin.webBrowserInfo;
+    } else if (Platform.isAndroid) {
+      getIt<MainConfig>().androidInfo = await deviceInfoPlugin.androidInfo;
     } else if (Platform.isIOS) {
-      getIt<MainConfig>().iosDeviceInfo = await DeviceInfoPlugin().iosInfo;
+      getIt<MainConfig>().iosDeviceInfo = await deviceInfoPlugin.iosInfo;
     }
     getIt<MainConfig>().packageInfo = await PackageInfo.fromPlatform();
   }

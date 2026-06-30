@@ -1,3 +1,5 @@
+import 'package:image_picker/image_picker.dart';
+
 import '../../../utils/exports.dart';
 
 abstract class ProfileRepository extends BaseRepository {
@@ -6,6 +8,6 @@ abstract class ProfileRepository extends BaseRepository {
     UpdateClientProfileRequest request,
   );
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> uploadProfilePicture(
-    File file,
+    XFile file,
   );
 }

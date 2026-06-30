@@ -11,22 +11,39 @@ class DebugLog {
 
   ///generate file
   Future<File> _getDirectoryForLogRecord() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    File file = File('${directory.path}/logger.txt');
-    return file;
+    final String? directoryPath = await AppPathProvider.documentsPath();
+    if (directoryPath == null) {
+      throw UnsupportedError('File logging is not supported on web.');
+    }
+    return File('$directoryPath/logger.txt');
   }
 
   ///write log in file
   Future<List<LogOutput>> _writeLogInFile() async {
-    File file = await _getDirectoryForLogRecord();
-    FileOutput fileOutPut = FileOutput(file: file);
-    ConsoleOutput consoleOutput = ConsoleOutput();
+    final File file = await _getDirectoryForLogRecord();
+    final FileOutput fileOutPut = FileOutput(file: file);
+    final ConsoleOutput consoleOutput = ConsoleOutput();
     return <LogOutput>[fileOutPut, consoleOutput];
   }
 
   /// initialize logger
   Future<void> init() async {
-    _logger ??= Logger(
+    if (_logger != null) {
+      return;
+    }
+
+    if (kIsWeb) {
+      _logger = Logger(
+        filter: DevelopmentFilter(),
+        printer: PrettyPrinter(
+          printEmojis: false,
+        ),
+        output: ConsoleOutput(),
+      );
+      return;
+    }
+
+    _logger = Logger(
       filter: DevelopmentFilter(),
       printer: PrettyPrinter(
         printEmojis: false,

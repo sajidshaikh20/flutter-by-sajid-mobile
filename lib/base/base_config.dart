@@ -10,6 +10,11 @@ const String _sentryDSNKey = 'sentryDSN';
 const String _envKey = 'envKey';
 const String _googleApiKey = 'googleApiKey';
 const String _googleClientId = 'googleClientId';
+const String _webAppId = 'webAppId';
+const String _webApiKey = 'webApiKey';
+const String _authDomain = 'authDomain';
+const String _storageBucket = 'storageBucket';
+const String _measurementId = 'measurementId';
 
 ///configBaseUrl
 String get configBaseUrl {
@@ -82,4 +87,29 @@ String get configGoogleApiKey {
 ///configGoogleClientId
 String get configGoogleClientId {
   return const String.fromEnvironment(_googleClientId);
+}
+
+///configWebAppId
+String get configWebAppId {
+  return const String.fromEnvironment(_webAppId);
+}
+
+///configWebApiKey
+String get configWebApiKey {
+  return const String.fromEnvironment(_webApiKey);
+}
+
+///configAuthDomain
+String get configAuthDomain {
+  return const String.fromEnvironment(_authDomain);
+}
+
+///configStorageBucket
+String get configStorageBucket {
+  return const String.fromEnvironment(_storageBucket);
+}
+
+///configMeasurementId
+String get configMeasurementId {
+  return const String.fromEnvironment(_measurementId);
 }

@@ -15,6 +15,10 @@ class NotificationManager {
   /// Initializes the notification manager by setting up Firebase and Awesome
   /// notifications, retrieving the FCM token, and setting up messaging events.
   Future<void> init() async {
+    if (kIsWeb) {
+      DebugLog.instance.i('Notifications are not supported on web, skipping init');
+      return;
+    }
     // Firebase is already initialized in AppInitializer, so we skip it here
     // await firebaseInitialize();
     await AwesomeNotificationManager.instance.init();

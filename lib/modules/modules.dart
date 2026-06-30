@@ -14,6 +14,7 @@ export 'login/login.dart';
 export 'my_trades/my_trades.dart';
 export 'no_internet/no_internet.dart';
 export 'notifications/notifications.dart';
+export 'onboarding/onboarding.dart';
 export 'pip_calculator/pip_calculator.dart';
 export 'result/result.dart';
 export 'settings/settings.dart';

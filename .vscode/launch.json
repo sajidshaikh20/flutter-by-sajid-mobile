@@ -31,6 +31,26 @@
         "--flavor", "prod",
         "--dart-define-from-file=prod_env.json"
       ]
+    },
+    {
+      "name": "Flutter: Web (Stage)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "toolArgs": [
+        "--dart-define-from-file=stage_env.json"
+      ]
+    },
+    {
+      "name": "Flutter: iOS Simulator (Stage)",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--flavor", "stage",
+        "--dart-define-from-file=stage_env.json"
+      ]
     }
   ]
 }

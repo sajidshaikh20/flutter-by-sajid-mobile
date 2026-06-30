@@ -8,6 +8,11 @@
   "projectId": "weko-pro-b8382",
   "iosApiKey": "AIzaSyDjQfpXVc_Gl6RBgbsgY3uEb9b_oHd-Sq4",
   "androidApiKey": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs",
+  "webAppId": "1:81561226063:web:63a094b279186b7175933a",
+  "webApiKey": "AIzaSyDneu8NVqfgY26_Uvr8C5xSizxzC59P8b8",
+  "authDomain": "weko-pro-b8382.firebaseapp.com",
+  "storageBucket": "weko-pro-b8382.firebasestorage.app",
+  "measurementId": "G-ZL65S0QZKK",
   "sentryDSN": "",
   "googleApiKey": "",
   "googleClientId": "593611057195-qql63p73pv0po7br8uqtjfbvsasu2v5g.apps.googleusercontent.com"

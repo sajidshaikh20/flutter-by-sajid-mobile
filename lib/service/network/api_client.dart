@@ -420,10 +420,17 @@ class ApiClient {
     bool dismissLoader = true,
   }) async {
     try {
+      if (kIsWeb) {
+        DebugLog.instance.w('File download is not supported on web.');
+        return '';
+      }
+
       await _showLoading(showLoader);
-      // Get the directory to save the file
-      Directory directory = await getApplicationDocumentsDirectory();
-      String filePath = '${directory.path}/$fileName';
+      final String? directoryPath = await AppPathProvider.documentsPath();
+      if (directoryPath == null) {
+        return '';
+      }
+      final String filePath = '$directoryPath/$fileName';
 
       Dio downloadDio = Dio();
 
