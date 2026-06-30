@@ -150,6 +150,7 @@ class WhatsAppLoginCubit extends Cubit<WhatsAppLoginState> {
               endDate: user.activeSubscription?.endDate,
               isActive: user.activeSubscription?.isActive,
               durationDays: user.activeSubscription?.durationDays,
+              profilePictureUrl: user.profilePictureUrl,
             );
 
             await AccountVerificationHelper.setPending();

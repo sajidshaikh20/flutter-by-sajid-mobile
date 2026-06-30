@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 const String _baseUrlKey = 'base_url';
+const String _webBaseUrlKey = 'web_base_url';
 const String _webSocketKey = 'web_socket';
 const String _androidAppId = 'androidAppId';
 const String _iosAppId = 'iosAppId';
@@ -21,8 +24,42 @@ String get configBaseUrl {
   return const String.fromEnvironment(_baseUrlKey);
 }
 
+/// Relative or absolute API base URL used on web builds.
+String get configWebBaseUrl {
+  return const String.fromEnvironment(_webBaseUrlKey);
+}
+
+/// Platform-aware API base URL.
+/// On web, uses [configWebBaseUrl] when set (for dev proxy or same-origin API).
+String get configApiBaseUrl {
+  if (kIsWeb) {
+    final String webBaseUrl = configWebBaseUrl;
+    if (webBaseUrl.isNotEmpty) {
+      return webBaseUrl.endsWith('/') ? webBaseUrl : '$webBaseUrl/';
+    }
+  }
+  final String baseUrl = configBaseUrl;
+  return baseUrl.endsWith('/') ? baseUrl : '$baseUrl/';
+}
+
+String _webSocketUrlThroughDevProxy(String proxyPrefix) {
+  final Uri page = Uri.base;
+  final String wsScheme = page.scheme == 'https' ? 'wss' : 'ws';
+  final String normalizedPrefix = proxyPrefix.endsWith('/')
+      ? proxyPrefix.substring(0, proxyPrefix.length - 1)
+      : proxyPrefix;
+  return '$wsScheme://${page.authority}$normalizedPrefix/ws/websocket';
+}
+
 ///configWebSocketUrl
 String get configWebSocketUrl {
+  if (kIsWeb) {
+    final String webBaseUrl = configWebBaseUrl;
+    if (webBaseUrl.startsWith('/')) {
+      return _webSocketUrlThroughDevProxy(webBaseUrl);
+    }
+  }
+
   final String rawWs = const String.fromEnvironment(_webSocketKey);
   if (rawWs.isEmpty) {
     return 'wss://thevinaymalviya.org/ws/websocket';

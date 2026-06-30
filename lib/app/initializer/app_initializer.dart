@@ -55,7 +55,7 @@ class AppInitializer {
     await DebugLog.instance.init();
     if (kDebugMode) {
       DebugLog.instance.i(
-        'App config → env: $configEnv, baseUrl: $configBaseUrl',
+        'App config → env: $configEnv, baseUrl: $configApiBaseUrl',
       );
     }
     // SharedPref encryption key is derived from packageName — must run before storage.

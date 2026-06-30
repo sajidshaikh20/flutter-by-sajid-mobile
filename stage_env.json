@@ -1,5 +1,6 @@
 {
   "base_url": "https://thevinaymalviya.org/",
+  "web_base_url": "/api-proxy/",
   "web_socket": "https://thevinaymalviya.org/ws",
   "envKey": "stage",
   "androidAppId": "1:81561226063:android:2a3d1ca8f93f1bde75933a",

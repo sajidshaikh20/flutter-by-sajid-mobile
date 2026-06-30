@@ -1,0 +1,7 @@
+server:
+  port: 8081
+  proxy:
+  # Routes browser requests through the Flutter dev server to avoid CORS locally.
+  - target: "https://thevinaymalviya.org/"
+    prefix: "/api-proxy/"
+    replace: "/"

@@ -121,7 +121,7 @@ abstract class Apis {
   static const String loyaltyPoints = '$apiVersion/get_loyality_points';
 
   /// delete a user's account.
-  static const String deleteAccount = '$apiVersion/deleteUser';
+  static const String deleteAccount = '$subBaseUrl/auth/delete';
 
   /// logout API
   static const String logout = '$apiVersion/logOut';

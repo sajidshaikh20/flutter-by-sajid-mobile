@@ -80,6 +80,7 @@ _UserResponseData _$UserResponseDataFromJson(Map<String, dynamic> json) =>
           : UserSubscriptionData.fromJson(
               json['activeSubscription'] as Map<String, dynamic>,
             ),
+      profilePictureUrl: json['profilePictureUrl'] as String?,
     );
 
 Map<String, dynamic> _$UserResponseDataToJson(_UserResponseData instance) =>
@@ -92,6 +93,7 @@ Map<String, dynamic> _$UserResponseDataToJson(_UserResponseData instance) =>
       'phone': instance.phone,
       'role': instance.role,
       'activeSubscription': instance.activeSubscription,
+      'profilePictureUrl': instance.profilePictureUrl,
     };
 
 _UserRoleData _$UserRoleDataFromJson(Map<String, dynamic> json) =>

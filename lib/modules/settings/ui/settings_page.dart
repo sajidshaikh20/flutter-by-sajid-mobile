@@ -58,6 +58,50 @@ class _SettingsViewState extends State<SettingsView> {
     );
   }
 
+  void _showDeleteAccountConfirmation() {
+    showCustomDialog(
+      'Are you sure you want to permanently delete your account? This action is irreversible and all your data will be lost.',
+      title: 'Delete Account',
+      okBtnTitle: 'Delete',
+      cancelBtnTitle: 'Cancel',
+      isDialogHideOnClick: true,
+      okBtnTitleStyle: context.textTheme.titleLarge?.copyWith(
+        height: Dimens.lineHeight30.toLineHeight(Dimens.fontSize16),
+        color: AppColors.errorColor,
+        fontWeight: FontWeight.w600,
+        fontSize: Dimens.fontSize16,
+      ),
+      onOkClicked: () async {
+        final StackRouter router = context.router;
+        final ResponseHandler<BaseResponse<dynamic>> response =
+            await ProfileRepositoryImpl().deleteAccount();
+
+        if (response.isSuccess()) {
+          final BaseResponse<dynamic>? baseResponse =
+              response.getSuccessInstance()?.response;
+          if (baseResponse != null && baseResponse.success) {
+            if (mounted) {
+              displaySnackBar(baseResponse.message, context);
+            }
+            // Clear local user data session
+            await SharedPref.instance.clearUserDataOnly();
+            await UserProfileService.instance().loadUserData();
+            unawaited(router.replaceAll(<PageRouteInfo>[const SocialLoginRoute()]));
+          } else {
+            if (mounted) {
+              displaySnackBar(baseResponse?.message ?? 'Failed to delete account.', context);
+            }
+          }
+        } else {
+          final String errorMsg = response.getFailureInstance()?.error?.errorMessage ?? 'Failed to delete account.';
+          if (mounted) {
+            displaySnackBar(errorMsg, context);
+          }
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
@@ -520,9 +564,11 @@ class _SettingsViewState extends State<SettingsView> {
 
                         // Log Out Button
                         Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: Dimens.space16,
-                            vertical: Dimens.space28,
+                          margin: const EdgeInsets.only(
+                            left: Dimens.space16,
+                            right: Dimens.space16,
+                            top: Dimens.space24,
+                            bottom: Dimens.space8,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.errorColor.withValues(alpha: 0.08),
@@ -548,6 +594,49 @@ class _SettingsViewState extends State<SettingsView> {
                                   CustomTextLabelWidget(
                                     label: context.appString.settingsLogOutKey,
                                     style: const TextStyle(
+                                      color: AppColors.errorColor,
+                                      fontSize: Dimens.fontSize14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Delete Account Button
+                        Container(
+                          margin: const EdgeInsets.only(
+                            left: Dimens.space16,
+                            right: Dimens.space16,
+                            top: Dimens.space8,
+                            bottom: Dimens.space28,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.errorColor.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(Dimens.radius12),
+                            border: Border.all(
+                              color: AppColors.errorColor.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: _showDeleteAccountConfirmation,
+                            borderRadius: BorderRadius.circular(Dimens.radius12),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: Dimens.space16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  const Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: AppColors.errorColor,
+                                    size: Dimens.size20,
+                                  ),
+                                  const SizedBox(width: Dimens.space10),
+                                  const CustomTextLabelWidget(
+                                    label: 'Delete Account',
+                                    style: TextStyle(
                                       color: AppColors.errorColor,
                                       fontSize: Dimens.fontSize14,
                                       fontWeight: FontWeight.bold,

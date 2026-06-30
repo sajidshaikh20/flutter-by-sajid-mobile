@@ -1,6 +1,7 @@
 import 'package:network_cache_interceptor/network_cache_interceptor.dart';
 
 import '../../utils/exports.dart';
+import 'dio_http_client_adapter.dart';
 
 /// Service of [ApiClient] (DIO).
 ///
@@ -10,7 +11,7 @@ class ApiClient {
   factory ApiClient() => _instance;
 
   ApiClient._internal() {
-    _dio = initApiHandlerDio(configBaseUrl);
+    _dio = initApiHandlerDio(configApiBaseUrl);
     _dio?.interceptors.add(
       NetworkCacheInterceptor(noCacheStatusCodes: <int>[401, 403]),
     );
@@ -67,6 +68,7 @@ class ApiClient {
 
     // Create a Dio instance with the configured options
     Dio mDio = Dio(baseOption);
+    mDio.httpClientAdapter = createHttpClientAdapter();
 
     // Add interceptors for handling request and response behaviors
     mDio.interceptors.add(HttpHandleInterceptor());
@@ -759,6 +761,16 @@ class HttpHandleInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    if (kIsWeb &&
+        err.type == DioExceptionType.connectionError &&
+        err.error.toString().contains('XMLHttpRequest')) {
+      DebugLog.instance.e(
+        'Web CORS/network error for ${err.requestOptions.uri}. '
+        'Use web_base_url with web_dev_config.yaml proxy for local dev, '
+        'or enable CORS on the API server for production web.',
+      );
+    }
+
     if (err.response?.statusCode == 401 && !is401InProgress) {
       is401InProgress = true;
 

@@ -10,4 +10,5 @@ abstract class ProfileRepository extends BaseRepository {
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> uploadProfilePicture(
     XFile file,
   );
+  Future<ResponseHandler<BaseResponse<dynamic>>> deleteAccount();
 }

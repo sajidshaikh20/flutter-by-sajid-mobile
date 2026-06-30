@@ -4,7 +4,8 @@ import '../../../utils/exports.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {
   @override
-  Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> getProfile() async {
+  Future<ResponseHandler<BaseResponse<ClientProfileResponse>>>
+  getProfile() async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
@@ -17,11 +18,13 @@ class ProfileRepositoryImpl extends ProfileRepository {
       parser: (Map<String, dynamic> value) {
         return BaseResponse<ClientProfileResponse>.fromJson(
           value,
-          (Object? json) => ClientProfileResponse.fromJson(json as Map<String, dynamic>),
+          (Object? json) =>
+              ClientProfileResponse.fromJson(json as Map<String, dynamic>),
         );
       },
     );
   }
+
   @override
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> updateProfile(
     UpdateClientProfileRequest request,
@@ -58,16 +61,16 @@ class ProfileRepositoryImpl extends ProfileRepository {
       parser: (Map<String, dynamic> value) {
         return BaseResponse<ClientProfileResponse>.fromJson(
           value,
-          (Object? json) => ClientProfileResponse.fromJson(json as Map<String, dynamic>),
+          (Object? json) =>
+              ClientProfileResponse.fromJson(json as Map<String, dynamic>),
         );
       },
     );
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> uploadProfilePicture(
-    XFile file,
-  ) async {
+  Future<ResponseHandler<BaseResponse<ClientProfileResponse>>>
+  uploadProfilePicture(XFile file) async {
     final List<int> bytes = await file.readAsBytes();
     final FormData formData = FormData.fromMap(<String, dynamic>{
       'profilePicture': MultipartFile.fromBytes(bytes, filename: file.name),
@@ -88,8 +91,27 @@ class ProfileRepositoryImpl extends ProfileRepository {
       parser: (Map<String, dynamic> value) {
         return BaseResponse<ClientProfileResponse>.fromJson(
           value,
-          (Object? json) => ClientProfileResponse.fromJson(json as Map<String, dynamic>),
+          (Object? json) =>
+              ClientProfileResponse.fromJson(json as Map<String, dynamic>),
         );
+      },
+    );
+  }
+
+  @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> deleteAccount() async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.deleteAccount,
+          apiType: ApiType.delete,
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
       },
     );
   }

@@ -39,7 +39,8 @@
       "program": "lib/main.dart",
       "deviceId": "chrome",
       "toolArgs": [
-        "--dart-define-from-file=stage_env.json"
+        "--dart-define-from-file=stage_env.json",
+        "--web-port=8080"
       ]
     },
     {

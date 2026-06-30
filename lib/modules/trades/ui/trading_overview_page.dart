@@ -132,30 +132,6 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
 
         return Scaffold(
           backgroundColor: pageBg,
-          bottomNavigationBar: (currentSignal.isActive || currentSignal.isPending)
-              ? SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
-                    child: CustomGradientButtonWidget(
-                      title: state.isTaken ? 'Trade Taken' : 'Take Trade',
-                      isButtonEnabled: !state.isTaken,
-                      onTap: () {
-                        if (currentSignal.publicId.isNotEmpty) {
-                          unawaited(context.read<TradingOverviewCubit>().takeTrade(currentSignal.publicId));
-                        } else {
-                          context.scaffoldMessenger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Cannot take trade: invalid ID'),
-                            ),
-                          );
-                        }
-                      },
-                      borderRadius: Dimens.radius12,
-                      height: 50,
-                    ),
-                  ),
-                )
-              : null,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

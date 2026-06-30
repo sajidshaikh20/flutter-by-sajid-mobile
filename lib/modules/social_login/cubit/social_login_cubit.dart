@@ -74,6 +74,7 @@ class SocialLoginCubit extends Cubit<SocialLoginState> {
               endDate: user.activeSubscription?.endDate,
               isActive: user.activeSubscription?.isActive,
               durationDays: user.activeSubscription?.durationDays,
+              profilePictureUrl: user.profilePictureUrl,
             );
 
             await AccountVerificationHelper.setPending();
