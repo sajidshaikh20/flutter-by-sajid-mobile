@@ -1,5 +1,4 @@
 import '../../../utils/exports.dart';
-import 'widget/widget.dart';
 
 @RoutePage()
 /// Main page container for the onboarding flow.
