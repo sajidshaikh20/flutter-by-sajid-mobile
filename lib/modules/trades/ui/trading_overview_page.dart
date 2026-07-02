@@ -312,6 +312,40 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
                               value: currentSignal.rr,
                               isDark: isDark,
                             ),
+                            if (currentSignal.riskAmount != null) ...<Widget>[
+                              const SizedBox(height: Dimens.space12),
+                              _buildCardRow(
+                                label: 'Risk Amount',
+                                value: '\$${currentSignal.riskAmount!.toStringAsFixed(currentSignal.riskAmount! % 1 == 0 ? 0 : 2)}',
+                                isDark: isDark,
+                              ),
+                            ],
+                            if (currentSignal.lotSize != null) ...<Widget>[
+                              const SizedBox(height: Dimens.space12),
+                              _buildCardRow(
+                                label: 'Lot Size',
+                                value: currentSignal.lotSize!.toString(),
+                                isDark: isDark,
+                              ),
+                            ],
+                            if (currentSignal.isClosed) ...<Widget>[
+                              const SizedBox(height: Dimens.space12),
+                              _buildCardRow(
+                                label: 'Result',
+                                value: currentSignal.resultInPips != null
+                                    ? '${currentSignal.resultInPips!.toStringAsFixed(1)} PIPS'
+                                    : currentSignal.pips,
+                                valueColor: currentSignal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                                isDark: isDark,
+                              ),
+                              const SizedBox(height: Dimens.space12),
+                              _buildCardRow(
+                                label: 'Outcome',
+                                value: currentSignal.outcome ?? 'LOSS',
+                                valueColor: currentSignal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                                isDark: isDark,
+                              ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: Dimens.space16),

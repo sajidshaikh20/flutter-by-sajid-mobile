@@ -18,6 +18,7 @@ class TradesTabScrollContentWidget extends StatelessWidget {
     required this.onSearchClear,
     required this.onFilterSelected,
     required this.onLoadMore,
+    required this.onRefresh,
     this.showTakeTrade = true,
   });
 
@@ -35,6 +36,7 @@ class TradesTabScrollContentWidget extends StatelessWidget {
   final VoidCallback onSearchClear;
   final ValueChanged<SignalFilter> onFilterSelected;
   final VoidCallback onLoadMore;
+  final Future<void> Function() onRefresh;
   final bool showTakeTrade;
 
   @override
@@ -44,57 +46,63 @@ class TradesTabScrollContentWidget extends StatelessWidget {
 
     return TradesPaginationScrollWidget(
       onLoadMore: onLoadMore,
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: TradesSearchBarWidget(
-              searchQuery: searchQuery,
-              onChanged: onSearchChanged,
-              onClear: onSearchClear,
-            ),
+      child: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
-              child: TradesSummaryCards(
-                activeCount: activeCount,
-                pendingCount: pendingCount,
-                closedCount: closedCount,
-                lossesCount: lossesCount,
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: TradesSearchBarWidget(
+                searchQuery: searchQuery,
+                onChanged: onSearchChanged,
+                onClear: onSearchClear,
               ),
             ),
-          ),
-          SliverStickyHeader(
-            header: Container(
-              color: pageBg,
-              padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
-              child: TradesFilterBar(
-                selectedFilters: selectedFilters,
-                onFilterChanged: onFilterSelected,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
+                child: TradesSummaryCards(
+                  activeCount: activeCount,
+                  pendingCount: pendingCount,
+                  closedCount: closedCount,
+                  lossesCount: lossesCount,
+                ),
               ),
             ),
-            sliver: isInitialLoading
-                ? SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space12),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) => const Padding(
-                          padding: EdgeInsets.only(bottom: Dimens.space12),
-                          child: TradingSignalCardShimmerWidget(),
+            SliverStickyHeader(
+              header: Container(
+                color: pageBg,
+                padding: const EdgeInsets.symmetric(vertical: Dimens.space4),
+                child: TradesFilterBar(
+                  selectedFilters: selectedFilters,
+                  onFilterChanged: onFilterSelected,
+                ),
+              ),
+              sliver: isInitialLoading
+                  ? SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space12),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) => const Padding(
+                            padding: EdgeInsets.only(bottom: Dimens.space12),
+                            child: TradingSignalCardShimmerWidget(),
+                          ),
+                          childCount: 4,
                         ),
-                        childCount: 4,
                       ),
-                    ),
-                  )
-                : showEmptyState
-                    ? const SliverToBoxAdapter(child: TradesEmptyFilterWidget())
-                    : TradesSignalsListSliverWidget(
-                        signals: filteredSignals,
-                        showLoadMore: showLoadMore,
-                        showTakeTrade: showTakeTrade,
-                      ),
-          ),
-        ],
+                    )
+                  : showEmptyState
+                      ? const SliverToBoxAdapter(child: TradesEmptyFilterWidget())
+                      : TradesSignalsListSliverWidget(
+                          signals: filteredSignals,
+                          showLoadMore: showLoadMore,
+                          showTakeTrade: showTakeTrade,
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }

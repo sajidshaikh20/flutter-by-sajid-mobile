@@ -232,6 +232,37 @@ class TradingSignalCard extends StatelessWidget {
               ),
             ],
           ),
+          if (signal.riskAmount != null || signal.lotSize != null) ...<Widget>[
+            const SizedBox(height: Dimens.space12),
+            Row(
+              children: <Widget>[
+                if (signal.riskAmount != null)
+                  Expanded(
+                    child: _ValueColumn(
+                      label: 'Risk Amount',
+                      value: '\$${signal.riskAmount!.toStringAsFixed(signal.riskAmount! % 1 == 0 ? 0 : 2)}',
+                      valueColor: textColor,
+                      isDark: isDark,
+                    ),
+                  )
+                else
+                  const Expanded(child: SizedBox.shrink()),
+                if (signal.lotSize != null)
+                  Expanded(
+                    child: _ValueColumn(
+                      label: 'Lot Size',
+                      value: signal.lotSize!.toString(),
+                      valueColor: textColor,
+                      isDark: isDark,
+                      alignment: CrossAxisAlignment.center,
+                    ),
+                  )
+                else
+                  const Expanded(child: SizedBox.shrink()),
+                const Expanded(child: SizedBox.shrink()),
+              ],
+            ),
+          ],
           const SizedBox(height: Dimens.space16),
 
           // Mid Section 2 (Conditional)
@@ -323,6 +354,121 @@ class TradingSignalCard extends StatelessWidget {
                     valueColor: textColor,
                     isDark: isDark,
                     alignment: CrossAxisAlignment.end,
+                  ),
+                ),
+              ],
+            ),
+          ] else if (signal.isClosed) ...<Widget>[
+            // Closed Details Rows (Result, RR, Outcome)
+            Row(
+              children: <Widget>[
+                // Result
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      CustomTextLabelWidget(
+                        label: 'Result',
+                        style: TextStyle(
+                          color: subtextColor,
+                          fontSize: Dimens.fontSize10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: Dimens.space4),
+                      CustomTextLabelWidget(
+                        label: signal.resultInPips != null
+                            ? '${signal.resultInPips!.toStringAsFixed(1)} PIPS'
+                            : signal.pips,
+                        style: TextStyle(
+                          color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: Dimens.fontSize14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // RR
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      CustomTextLabelWidget(
+                        label: 'RR',
+                        style: TextStyle(
+                          color: subtextColor,
+                          fontSize: Dimens.fontSize10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: Dimens.space4),
+                      CustomTextLabelWidget(
+                        label: signal.rr,
+                        style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: Dimens.fontSize14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Outcome
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      CustomTextLabelWidget(
+                        label: 'Outcome',
+                        style: TextStyle(
+                          color: subtextColor,
+                          fontSize: Dimens.fontSize10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                      const SizedBox(height: Dimens.space4),
+                      CustomTextLabelWidget(
+                        label: signal.outcome ?? 'LOSS',
+                        style: TextStyle(
+                          color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: Dimens.fontSize14,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: Dimens.space12),
+            // Posted by row
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.person_outline_rounded,
+                  color: subtextColor,
+                  size: Dimens.size14,
+                ),
+                const SizedBox(width: Dimens.space4),
+                CustomTextLabelWidget(
+                  label: 'Posted by: ',
+                  style: TextStyle(
+                    color: subtextColor,
+                    fontSize: Dimens.fontSize10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                CustomTextLabelWidget(
+                  label: signal.traderName.isNotNullOrEmpty ? signal.traderName! : '--',
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: Dimens.fontSize10,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],

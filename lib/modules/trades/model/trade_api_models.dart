@@ -51,6 +51,9 @@ class TradeResponse {
   final String? outcome;
   final Map<String, dynamic>? currencyPair;
   final String? traderName;
+  final double? riskAmount;
+  final double? lotSize;
+  final double? resultInPips;
 
   TradeResponse({
     required this.publicId,
@@ -67,6 +70,9 @@ class TradeResponse {
     this.outcome,
     this.currencyPair,
     this.traderName,
+    this.riskAmount,
+    this.lotSize,
+    this.resultInPips,
   });
 
   factory TradeResponse.fromJson(Map<String, dynamic> json) {
@@ -100,6 +106,15 @@ class TradeResponse {
               ? <String, dynamic>{'symbol': source['currencyPairSymbol']}
               : null),
       traderName: source['traderName']?.toString(),
+      riskAmount: source['riskAmount'] != null
+          ? double.tryParse(source['riskAmount'].toString())
+          : null,
+      lotSize: source['lotSize'] != null
+          ? double.tryParse(source['lotSize'].toString())
+          : null,
+      resultInPips: source['resultInPips'] != null
+          ? double.tryParse(source['resultInPips'].toString())
+          : null,
     );
   }
 
@@ -137,6 +152,9 @@ class TradeResponse {
       'outcome': outcome,
       'currencyPair': currencyPair,
       'traderName': traderName,
+      'riskAmount': riskAmount,
+      'lotSize': lotSize,
+      'resultInPips': resultInPips,
     };
   }
 
@@ -157,6 +175,7 @@ class TradeResponse {
     if (entryLevels.isNotEmpty) {
       entryPrice = double.tryParse(entryLevels[0].entryPoint) ?? 0.0;
       stopLoss = double.tryParse(entryLevels[0].stopLoss) ?? 0.0;
+      takeProfitOne = double.tryParse(entryLevels[0].takeProfit);
       if (entryLevels.length > 1) {
         entryPriceTwo = double.tryParse(entryLevels[1].entryPoint);
       }
@@ -179,7 +198,9 @@ class TradeResponse {
     if (tpLevels.isNotEmpty) {
       final List<TradeLevelResponse> sortedTps = List<TradeLevelResponse>.from(tpLevels)
         ..sort((TradeLevelResponse a, TradeLevelResponse b) => a.level.compareTo(b.level));
-      takeProfit = double.tryParse(sortedTps.last.takeProfit) ?? 0.0;
+      takeProfit = double.tryParse(sortedTps.last.takeProfit) ?? takeProfitOne ?? 0.0;
+    } else {
+      takeProfit = takeProfitOne ?? 0.0;
     }
 
     if (entryPrice == 0.0 && levels.isNotEmpty) {
@@ -237,6 +258,9 @@ class TradeResponse {
       tradingViewUrl: tradingViewUrl,
       isTaken: isTaken,
       traderName: traderName,
+      riskAmount: riskAmount,
+      lotSize: lotSize,
+      resultInPips: resultInPips,
     );
   }
 }

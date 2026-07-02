@@ -24,6 +24,9 @@ class TradingSignalModel {
   final String? tradingViewUrl;
   final bool isTaken;
   final String? traderName;
+  final double? riskAmount;
+  final double? lotSize;
+  final double? resultInPips;
 
   const TradingSignalModel({
     this.publicId = '',
@@ -51,6 +54,9 @@ class TradingSignalModel {
     this.tradingViewUrl,
     this.isTaken = false,
     this.traderName,
+    this.riskAmount,
+    this.lotSize,
+    this.resultInPips,
   });
 
   TradingSignalModel copyWith({
@@ -79,6 +85,9 @@ class TradingSignalModel {
     String? tradingViewUrl,
     bool? isTaken,
     String? traderName,
+    double? riskAmount,
+    double? lotSize,
+    double? resultInPips,
   }) {
     return TradingSignalModel(
       publicId: publicId ?? this.publicId,
@@ -106,6 +115,9 @@ class TradingSignalModel {
       tradingViewUrl: tradingViewUrl ?? this.tradingViewUrl,
       isTaken: isTaken ?? this.isTaken,
       traderName: traderName ?? this.traderName,
+      riskAmount: riskAmount ?? this.riskAmount,
+      lotSize: lotSize ?? this.lotSize,
+      resultInPips: resultInPips ?? this.resultInPips,
     );
   }
 

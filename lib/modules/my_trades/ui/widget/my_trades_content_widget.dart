@@ -53,6 +53,7 @@ class MyTradesContentWidget extends StatelessWidget {
                       onSearchClear: cubit.clearSearch,
                       onFilterSelected: cubit.selectFilter,
                       onLoadMore: () => unawaited(cubit.loadMore()),
+                      onRefresh: () => cubit.loadMyTrades(isRefresh: true),
                       showTakeTrade: false,
                     ),
                   ),
