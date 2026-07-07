@@ -12,7 +12,7 @@ class HomePromoBanner extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF130E26) : const Color(0xFFF1EAFF),
+          gradient: isDark ? AppColors.darkPromoBannerGradient : AppColors.lightPromoBannerGradient,
           borderRadius: BorderRadius.circular(Dimens.radius16),
           border: Border.all(
             color: isDark ? AppColors.borderDark : AppColors.borderLight,
@@ -144,7 +144,7 @@ class HomePromoBanner extends StatelessWidget {
                       width: 75,
                       height: 55,
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1D143D) : const Color(0xFFE8DFFF),
+                        color: isDark ? const Color(0xFF1D143D) : AppColors.whiteColor,
                         borderRadius: BorderRadius.circular(Dimens.radius6),
                         border: Border.all(
                           color: AppColors.primaryPurple.withValues(alpha: 0.3),

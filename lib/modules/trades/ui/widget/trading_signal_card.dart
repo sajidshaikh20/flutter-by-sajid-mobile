@@ -223,8 +223,12 @@ class TradingSignalCard extends StatelessWidget {
               ),
               Expanded(
                 child: _ValueColumn(
-                  label: 'Take Profit',
-                  value: signal.takeProfit.toString(),
+                  label: (signal.takeProfitOne != null || signal.takeProfitTwo != null || signal.takeProfitThree != null)
+                      ? 'TP 1'
+                      : 'Take Profit',
+                  value: (signal.takeProfitOne != null)
+                      ? signal.takeProfitOne.toString()
+                      : signal.takeProfit.toString(),
                   valueColor: themeGreen,
                   isDark: isDark,
                   alignment: CrossAxisAlignment.end,
@@ -232,6 +236,38 @@ class TradingSignalCard extends StatelessWidget {
               ),
             ],
           ),
+          if (signal.takeProfitTwo != null || signal.takeProfitThree != null) ...<Widget>[
+            const SizedBox(height: Dimens.space12),
+            Row(
+              children: <Widget>[
+                const Expanded(child: SizedBox.shrink()),
+                if (signal.takeProfitTwo != null)
+                  Expanded(
+                    child: _ValueColumn(
+                      label: 'TP 2',
+                      value: signal.takeProfitTwo.toString(),
+                      valueColor: themeGreen,
+                      isDark: isDark,
+                      alignment: CrossAxisAlignment.center,
+                    ),
+                  )
+                else
+                  const Expanded(child: SizedBox.shrink()),
+                if (signal.takeProfitThree != null)
+                  Expanded(
+                    child: _ValueColumn(
+                      label: 'TP 3',
+                      value: signal.takeProfitThree.toString(),
+                      valueColor: themeGreen,
+                      isDark: isDark,
+                      alignment: CrossAxisAlignment.end,
+                    ),
+                  )
+                else
+                  const Expanded(child: SizedBox.shrink()),
+              ],
+            ),
+          ],
           if (signal.riskAmount != null || signal.lotSize != null) ...<Widget>[
             const SizedBox(height: Dimens.space12),
             Row(

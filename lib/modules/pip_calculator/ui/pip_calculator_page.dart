@@ -205,7 +205,6 @@ class _PipCalculatorViewBodyState extends State<PipCalculatorViewBody> {
     final Color pageBg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
     final Color cardBg = isDark ? AppColors.surfaceDark : Colors.white;
     final Color borderCol = isDark ? AppColors.borderDark : AppColors.borderLight;
-    final Color headerBannerBg = isDark ? const Color(0xFF130E26) : const Color(0xFFF1EAFF);
 
     return BlocListener<PipCalculatorCubit, PipCalculatorState>(
       listenWhen: (PipCalculatorState prev, PipCalculatorState curr) =>
@@ -288,7 +287,7 @@ class _PipCalculatorViewBodyState extends State<PipCalculatorViewBody> {
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: headerBannerBg,
+                              gradient: isDark ? AppColors.darkPromoBannerGradient : AppColors.lightPromoBannerGradient,
                               borderRadius: BorderRadius.circular(Dimens.radius16),
                               border: Border.all(color: borderCol),
                             ),

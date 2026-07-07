@@ -26,13 +26,13 @@ class AppColors {
   static const Color textSecondaryDark = Color(0xFFB7B3C8);
   static const Color borderDark = Color(0xFF2B2147);
   static const Color dividerDark = Color(0xFF211A33);
-  static const Color backgroundLight = Color(0xFFF8F7FC);
+  static const Color backgroundLight = Color(0xFFF8F9FD);
   static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color cardLight = Color(0xFFF3EEFF);
+  static const Color cardLight = Color(0xFFFFFFFF);
   static const Color textPrimaryLight = Color(0xFF1A102B);
   static const Color textSecondaryLight = Color(0xFF5F5873);
-  static const Color borderLight = Color(0xFFE2D9F5);
-  static const Color dividerLight = Color(0xFFEEE8F9);
+  static const Color borderLight = Color(0xFFE4E4E7);
+  static const Color dividerLight = Color(0xFFF4F4F5);
   static const Color successColor = Color(0xFF00E676);
   static const Color errorColor = Color(0xFFFF5252);
   static const Color warningColor = Color(0xFFFFC107);
@@ -51,6 +51,28 @@ class AppColors {
     Color(0xFF8A2BE2),
     Color(0xFF7A2FFF),
   ];
+
+  static const List<Color> lightPromoGradient = <Color>[
+    Color(0xFFF6F1FF),
+    Color(0xFFEDF5FF),
+  ];
+
+  static const List<Color> darkPromoGradient = <Color>[
+    Color(0xFF130E26),
+    Color(0xFF1A1435),
+  ];
+
+  static const LinearGradient lightPromoBannerGradient = LinearGradient(
+    colors: lightPromoGradient,
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient darkPromoBannerGradient = LinearGradient(
+    colors: darkPromoGradient,
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
   /// Represents a transparent color.
   Color transparent = Colors.transparent;

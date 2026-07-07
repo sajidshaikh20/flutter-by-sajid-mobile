@@ -76,7 +76,7 @@ class ToolPage extends BaseResponsiveView {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF130E26) : const Color(0xFFF1EAFF),
+        gradient: isDark ? AppColors.darkPromoBannerGradient : AppColors.lightPromoBannerGradient,
         borderRadius: BorderRadius.circular(Dimens.radius16),
         border: Border.all(
           color: isDark ? AppColors.borderDark : AppColors.borderLight,
@@ -249,7 +249,7 @@ class ToolPage extends BaseResponsiveView {
                     height: 36,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF1E1736) : const Color(0xFFF1EAFF),
+                      color: AppColors.primaryPurple.withValues(alpha: isDark ? 0.22 : 0.12),
                     ),
                     alignment: Alignment.center,
                     child: Icon(
@@ -396,7 +396,7 @@ class ToolPage extends BaseResponsiveView {
                     height: 36,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF1E1736) : const Color(0xFFF1EAFF),
+                      color: AppColors.primaryPurple.withValues(alpha: isDark ? 0.22 : 0.12),
                     ),
                     alignment: Alignment.center,
                     child: Icon(

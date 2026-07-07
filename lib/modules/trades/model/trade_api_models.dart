@@ -54,6 +54,7 @@ class TradeResponse {
   final double? riskAmount;
   final double? lotSize;
   final double? resultInPips;
+  final bool isAlreadyTaken;
 
   TradeResponse({
     required this.publicId,
@@ -73,6 +74,7 @@ class TradeResponse {
     this.riskAmount,
     this.lotSize,
     this.resultInPips,
+    this.isAlreadyTaken = false,
   });
 
   factory TradeResponse.fromJson(Map<String, dynamic> json) {
@@ -115,6 +117,7 @@ class TradeResponse {
       resultInPips: source['resultInPips'] != null
           ? double.tryParse(source['resultInPips'].toString())
           : null,
+      isAlreadyTaken: source['isAlreadyTaken'] as bool? ?? false,
     );
   }
 
@@ -155,6 +158,7 @@ class TradeResponse {
       'riskAmount': riskAmount,
       'lotSize': lotSize,
       'resultInPips': resultInPips,
+      'isAlreadyTaken': isAlreadyTaken,
     };
   }
 
@@ -256,7 +260,7 @@ class TradeResponse {
       timeLabel: createdAt != null ? _formatTradeTimeLabel(createdAt!) : 'Just now',
       sparklineData: sparklineData,
       tradingViewUrl: tradingViewUrl,
-      isTaken: isTaken,
+      isTaken: isAlreadyTaken || isTaken,
       traderName: traderName,
       riskAmount: riskAmount,
       lotSize: lotSize,
