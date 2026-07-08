@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/core/theme/app_colors.dart';
 import '../../../../app/core/theme/dimens.dart';
+import '../../../../app/core/widgets/text_label/custom_text_label_widget.dart';
 
 /// Gradient used for active / completed sign up step nodes and lines.
 const List<Color> signUpStepGradient = <Color>[
@@ -101,8 +102,8 @@ class SignUpStepNodeCircle extends StatelessWidget {
                         size: Dimens.size18,
                         color: AppColors.greenTextColor,
                       )
-                    : Text(
-                        '$stepNumber',
+                    : CustomTextLabelWidget(
+                        label: '$stepNumber',
                         style: TextStyle(
                           fontSize: Dimens.fontSize14,
                           fontWeight: FontWeight.w600,
@@ -127,13 +128,12 @@ class SignUpStepNodeCircle extends StatelessWidget {
           border: Border.all(color: inactiveBorder, width: _borderWidth),
         ),
         child: Center(
-          child: Text(
-            '$stepNumber',
+          child: CustomTextLabelWidget(
+            label: '$stepNumber',
             style: TextStyle(
               fontSize: Dimens.fontSize14,
               fontWeight: FontWeight.w500,
               color: inactiveText,
-              height: 1,
             ),
           ),
         ),

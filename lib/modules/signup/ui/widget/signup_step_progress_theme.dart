@@ -61,9 +61,8 @@ Widget? buildSignUpStepLabel(
       ? const Color(0xFF6B657F)
       : AppColors.textSecondaryLight;
 
-  return Text(
-    title,
-    textAlign: TextAlign.center,
+  return CustomTextLabelWidget(
+    label: title,
     maxLines: Dimens.maxLines02,
     overflow: TextOverflow.ellipsis,
     style: context.textTheme.bodySmall?.copyWith(

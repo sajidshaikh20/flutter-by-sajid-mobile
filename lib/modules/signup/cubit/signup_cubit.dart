@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import '../../../utils/exports.dart';
 
 /// Cubit for sign up multi-step flow.
@@ -393,6 +394,7 @@ class SignUpCubit extends Cubit<SignUpState> {
         StartRegistrationRequest(
           name: state.fullName,
           email: state.email,
+          role: state.accountType,
         ),
       );
 
@@ -623,8 +625,10 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   /// Completes user registration.
   Future<void> registerUser(BuildContext context) async {
-    if (!validateCompleteProfile(context)) {
-      return;
+    if (state.accountType == UserRole.trader) {
+      if (!validateTraderProfile(context)) {
+        return;
+      }
     }
     final String defaultMsg = context.appString.signUpRegistrationCompleteKey;
     try {
@@ -637,6 +641,8 @@ class SignUpCubit extends Cubit<SignUpState> {
           password: state.passwordController.text.trim(),
           name: state.fullName,
           phone: state.fullPhoneNumber,
+          role: state.accountType,
+          questionnaire: _buildQuestionnaireModel(),
         ),
       );
 
@@ -673,7 +679,6 @@ class SignUpCubit extends Cubit<SignUpState> {
     }
   }
 
-  /// Attempts to advance from the current step after validation.
   bool tryProceedFromCurrentStep(BuildContext context) {
     switch (state.currentStep) {
       case 0:
@@ -682,8 +687,295 @@ class SignUpCubit extends Cubit<SignUpState> {
         return validateVerificationStep(context);
       case 2:
         return validateCompleteProfile(context);
+      case 3:
+        return validateTraderProfile(context);
       default:
         return true;
     }
+  }
+
+  // Setters for Trader Questionnaire & Social fields
+  void setAccountType(UserRole type) {
+    emit(state.copyWith(
+      accountType: type,
+      totalSteps: type == UserRole.client ? signUpSocialTotalSteps : signUpTraderTotalSteps,
+      currentStep: state.currentStep,
+    ));
+  }
+
+  void setTradingExperience(String value) {
+    emit(state.copyWith(tradingExperience: value));
+  }
+
+  void setProfessionallyTraded(bool value) {
+    emit(state.copyWith(professionallyTraded: value));
+  }
+
+  void toggleMarketTraded(String market) {
+    final List<String> currentMarkets = List<String>.from(state.marketsTraded);
+    if (currentMarkets.contains(market)) {
+      currentMarkets.remove(market);
+    } else {
+      currentMarkets.add(market);
+    }
+    emit(state.copyWith(marketsTraded: currentMarkets));
+  }
+
+  void setTradingStyle(String value) {
+    emit(state.copyWith(tradingStyle: value));
+  }
+
+  void setFundedAccountExperience(bool value) {
+    emit(state.copyWith(fundedAccountExperience: value));
+  }
+
+  void setPassedFundedChallenge(bool value) {
+    emit(state.copyWith(passedFundedChallenge: value));
+  }
+
+  void setMaintainTradingJournal(bool value) {
+    emit(state.copyWith(maintainTradingJournal: value));
+  }
+
+  void setInternetBackup(bool value) {
+    emit(state.copyWith(internetBackup: value));
+  }
+
+  void setUseVps(bool value) {
+    emit(state.copyWith(useVps: value));
+  }
+
+  void setGovernmentIdSubmitted(bool value) {
+    emit(state.copyWith(governmentIdSubmitted: value));
+  }
+
+  void setTradingStatementSubmitted(bool value) {
+    emit(state.copyWith(tradingStatementSubmitted: value));
+  }
+
+  void setMyfxbookVerified(bool value) {
+    emit(state.copyWith(myfxbookVerified: value));
+  }
+
+  void setFxblueVerified(bool value) {
+    emit(state.copyWith(fxblueVerified: value));
+  }
+
+  void setBrokerStatementAttached(bool value) {
+    emit(state.copyWith(brokerStatementAttached: value));
+  }
+
+  void setDeclarationConfirmed(bool value) {
+    emit(state.copyWith(declarationConfirmed: value));
+  }
+
+  // Document file pickers
+  Future<void> pickGovernmentId() async {
+    try {
+      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        emit(state.copyWith(governmentIdPath: file.path, governmentIdSubmitted: true));
+      }
+    } on Exception catch (e) {
+      emit(state.copyWith(msg: 'Failed to pick image: $e'));
+    }
+  }
+
+  Future<void> pickBankStatement() async {
+    try {
+      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        emit(state.copyWith(bankStatementPath: file.path, brokerStatementAttached: true));
+      }
+    } on Exception catch (e) {
+      emit(state.copyWith(msg: 'Failed to pick image: $e'));
+    }
+  }
+
+  Future<void> pickTradingCertificate() async {
+    try {
+      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        emit(state.copyWith(tradingCertificatePath: file.path, tradingStatementSubmitted: true));
+      }
+    } on Exception catch (e) {
+      emit(state.copyWith(msg: 'Failed to pick image: $e'));
+    }
+  }
+
+  // Build the complete questionnaire model for submission
+  SignUpQuestionnaireModel _buildQuestionnaireModel() {
+    return SignUpQuestionnaireModel(
+      accountType: state.accountType.value,
+      tradingExperience: state.tradingExperience,
+      professionallyTraded: state.professionallyTraded,
+      previousFirm: state.previousFirmController.text.trim(),
+      marketsTraded: state.marketsTraded,
+      primaryInstruments: state.primaryInstrumentsController.text.trim(),
+      preferredCurrencyPairs: state.preferredCurrencyPairsController.text.trim(),
+      tradingStyle: state.tradingStyle,
+      averageTradesPerDay: state.averageTradesPerDayController.text.trim(),
+      preferredTimeframes: state.preferredTimeframesController.text.trim(),
+      preferredSessions: state.preferredSessionsController.text.trim(),
+      strategyDescription: state.strategyDescriptionController.text.trim(),
+      primaryEdge: state.primaryEdgeController.text.trim(),
+      indicatorsTools: state.indicatorsToolsController.text.trim(),
+      averageRiskPerTrade: state.averageRiskPerTradeController.text.trim(),
+      riskRewardRatio: state.riskRewardRatioController.text.trim(),
+      maxDailyDrawdown: state.maxDailyDrawdownController.text.trim(),
+      maxOverallDrawdown: state.maxOverallDrawdownController.text.trim(),
+      useStopLosses: state.useStopLossesController.text.trim(),
+      averageMonthlyReturn: state.averageMonthlyReturnController.text.trim(),
+      averageWinRate: state.averageWinRateController.text.trim(),
+      largestWinningMonth: state.largestWinningMonthController.text.trim(),
+      largestLosingMonth: state.largestLosingMonthController.text.trim(),
+      currentAccountSize: state.currentAccountSizeController.text.trim(),
+      largestAccountManaged: state.largestAccountManagedController.text.trim(),
+      fundedAccountExperience: state.fundedAccountExperience,
+      propFirmsWorked: state.propFirmsWorkedController.text.trim(),
+      passedFundedChallenge: state.passedFundedChallenge,
+      accountSizesPassed: state.accountSizesPassedController.text.trim(),
+      handlingLosingStreaks: state.handlingLosingStreaksController.text.trim(),
+      biggestWeakness: state.biggestWeaknessController.text.trim(),
+      biggestStrength: state.biggestStrengthController.text.trim(),
+      maintainTradingJournal: state.maintainTradingJournal,
+      tradingPlatform: state.tradingPlatformController.text.trim(),
+      brokersUsed: state.brokersUsedController.text.trim(),
+      internetBackup: state.internetBackup,
+      useVps: state.useVps,
+      governmentIdSubmitted: state.governmentIdPath != null,
+      tradingStatementSubmitted: state.tradingCertificatePath != null,
+      myfxbookVerified: state.myfxbookVerified,
+      fxblueVerified: state.fxblueVerified,
+      brokerStatementAttached: state.bankStatementPath != null,
+      performanceTrackingLinks: state.performanceTrackingLinksController.text.trim(),
+      additionalNotes: state.additionalNotesController.text.trim(),
+      instagramHandle: state.instagramHandleController.text.trim(),
+      twitterHandle: state.twitterHandleController.text.trim(),
+      governmentId: state.governmentIdPath,
+      bankStatement: state.bankStatementPath,
+      tradingCertificate: state.tradingCertificatePath,
+      traderSignature: state.traderSignatureController.text.trim(),
+      declarationConfirmed: state.declarationConfirmed,
+    );
+  }
+
+  // Validations for questionnaire steps
+  bool validateTraderProfile(BuildContext context) {
+    if (state.tradingExperience.isEmpty) {
+      emit(state.copyWith(msg: 'Please select trading experience.'));
+      return false;
+    }
+    if (state.previousFirmController.text.trim().isEmpty) {
+      emit(state.copyWith(msg: 'Please enter previous firm/company name.'));
+      return false;
+    }
+    if (state.marketsTraded.isEmpty) {
+      emit(state.copyWith(msg: 'Please select at least one market traded.'));
+      return false;
+    }
+    if (state.primaryInstrumentsController.text.trim().isEmpty) {
+      emit(state.copyWith(msg: 'Please enter primary instruments.'));
+      return false;
+    }
+    if (state.preferredCurrencyPairsController.text.trim().isEmpty) {
+      emit(state.copyWith(msg: 'Please enter preferred currency pairs.'));
+      return false;
+    }
+    if (state.tradingStyle.isEmpty) {
+      emit(state.copyWith(msg: 'Please select a trading style.'));
+      return false;
+    }
+
+    final String strategyDesc = state.strategyDescriptionController.text.trim();
+    if (strategyDesc.length < 20 || strategyDesc.length > 500) {
+      emit(state.copyWith(msg: 'Strategy description must be between 20 and 500 characters.'));
+      return false;
+    }
+    final Map<String, TextEditingController> fieldsToCheck = <String, TextEditingController>{
+      'averageTradesPerDay': state.averageTradesPerDayController,
+      'preferredTimeframes': state.preferredTimeframesController,
+      'preferredSessions': state.preferredSessionsController,
+      'primaryEdge': state.primaryEdgeController,
+      'indicatorsTools': state.indicatorsToolsController,
+      'tradingPlatform': state.tradingPlatformController,
+      'brokersUsed': state.brokersUsedController,
+      'averageRiskPerTrade': state.averageRiskPerTradeController,
+      'riskRewardRatio': state.riskRewardRatioController,
+      'maxDailyDrawdown': state.maxDailyDrawdownController,
+      'maxOverallDrawdown': state.maxOverallDrawdownController,
+      'useStopLosses': state.useStopLossesController,
+      'averageMonthlyReturn': state.averageMonthlyReturnController,
+      'averageWinRate': state.averageWinRateController,
+      'largestWinningMonth': state.largestWinningMonthController,
+      'largestLosingMonth': state.largestLosingMonthController,
+      'currentAccountSize': state.currentAccountSizeController,
+      'largestAccountManaged': state.largestAccountManagedController,
+      'propFirmsWorked': state.propFirmsWorkedController,
+      'accountSizesPassed': state.accountSizesPassedController,
+      'handlingLosingStreaks': state.handlingLosingStreaksController,
+      'biggestWeakness': state.biggestWeaknessController,
+      'biggestStrength': state.biggestStrengthController,
+    };
+    for (final MapEntry<String, TextEditingController> entry in fieldsToCheck.entries) {
+      if (entry.value.text.trim().isEmpty) {
+        emit(state.copyWith(msg: 'Please fill out all strategy and performance fields.'));
+        return false;
+      }
+    }
+
+    final String links = state.performanceTrackingLinksController.text.trim();
+    if (links.isEmpty || !RegExpressions.instance.performanceUrl.hasMatch(links)) {
+      emit(state.copyWith(msg: 'Please enter a valid performance tracking URL.'));
+      return false;
+    }
+    if (state.additionalNotesController.text.trim().length > 1000) {
+      emit(state.copyWith(msg: 'Additional notes cannot exceed 1000 characters.'));
+      return false;
+    }
+    if (state.governmentIdPath == null) {
+      emit(state.copyWith(msg: 'Please upload your Government ID.'));
+      return false;
+    }
+    if (state.traderSignatureController.text.trim().isEmpty) {
+      emit(state.copyWith(msg: 'Please enter your signature.'));
+      return false;
+    }
+    if (!state.declarationConfirmed) {
+      emit(state.copyWith(msg: 'You must confirm the declaration to proceed.'));
+      return false;
+    }
+    return true;
+  }
+
+  bool validateSocialProfile(BuildContext context) {
+    final String links = state.performanceTrackingLinksController.text.trim();
+    if (links.isEmpty || !RegExpressions.instance.performanceUrl.hasMatch(links)) {
+      emit(state.copyWith(msg: 'Please enter a valid performance tracking URL.'));
+      return false;
+    }
+    final String insta = state.instagramHandleController.text.trim();
+    if (insta.isNotEmpty && !RegExpressions.instance.instagramUrl.hasMatch(insta)) {
+      emit(state.copyWith(msg: 'Please enter a valid Instagram URL.'));
+      return false;
+    }
+    final String twitter = state.twitterHandleController.text.trim();
+    if (twitter.isNotEmpty && !RegExpressions.instance.twitterUrl.hasMatch(twitter)) {
+      emit(state.copyWith(msg: 'Please enter a valid Twitter/X URL.'));
+      return false;
+    }
+    if (state.governmentIdPath == null) {
+      emit(state.copyWith(msg: 'Please upload your Government ID.'));
+      return false;
+    }
+    if (state.traderSignatureController.text.trim().isEmpty) {
+      emit(state.copyWith(msg: 'Please enter your signature.'));
+      return false;
+    }
+    if (!state.declarationConfirmed) {
+      emit(state.copyWith(msg: 'You must confirm the declaration to proceed.'));
+      return false;
+    }
+    return true;
   }
 }

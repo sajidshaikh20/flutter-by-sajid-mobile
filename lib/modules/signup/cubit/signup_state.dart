@@ -1,7 +1,10 @@
 import '../../../utils/exports.dart';
 
-/// Total steps in the sign up flow.
-const int signUpTotalSteps = 3;
+/// Total steps in the sign up flow for social profile.
+const int signUpSocialTotalSteps = 3;
+
+/// Total steps in the sign up flow for trader profile.
+const int signUpTraderTotalSteps = 4;
 
 /// OTP length for sign up verification.
 const int signUpOtpLength = Dimens.otpLength;
@@ -27,8 +30,60 @@ class SignUpState extends BaseState {
     required this.usernameFocusNode,
     required this.passwordFocusNode,
     required this.confirmPasswordFocusNode,
+    // Trader & Social new fields
+    required this.previousFirmController,
+    required this.primaryInstrumentsController,
+    required this.preferredCurrencyPairsController,
+    required this.averageTradesPerDayController,
+    required this.preferredTimeframesController,
+    required this.preferredSessionsController,
+    required this.strategyDescriptionController,
+    required this.primaryEdgeController,
+    required this.indicatorsToolsController,
+    required this.averageRiskPerTradeController,
+    required this.riskRewardRatioController,
+    required this.maxDailyDrawdownController,
+    required this.maxOverallDrawdownController,
+    required this.useStopLossesController,
+    required this.averageMonthlyReturnController,
+    required this.averageWinRateController,
+    required this.largestWinningMonthController,
+    required this.largestLosingMonthController,
+    required this.currentAccountSizeController,
+    required this.largestAccountManagedController,
+    required this.propFirmsWorkedController,
+    required this.accountSizesPassedController,
+    required this.handlingLosingStreaksController,
+    required this.biggestWeaknessController,
+    required this.biggestStrengthController,
+    required this.tradingPlatformController,
+    required this.brokersUsedController,
+    required this.performanceTrackingLinksController,
+    required this.additionalNotesController,
+    required this.instagramHandleController,
+    required this.twitterHandleController,
+    required this.traderSignatureController,
+    this.accountType = UserRole.client, // client or trader
+    this.tradingExperience = '',
+    this.professionallyTraded = false,
+    this.marketsTraded = const <String>[],
+    this.tradingStyle = '',
+    this.fundedAccountExperience = false,
+    this.passedFundedChallenge = false,
+    this.maintainTradingJournal = false,
+    this.internetBackup = false,
+    this.useVps = false,
+    this.governmentIdSubmitted = false,
+    this.tradingStatementSubmitted = false,
+    this.myfxbookVerified = false,
+    this.fxblueVerified = false,
+    this.brokerStatementAttached = false,
+    this.governmentIdPath,
+    this.bankStatementPath,
+    this.tradingCertificatePath,
+    this.declarationConfirmed = false,
     this.currentStep = 0,
-    this.totalSteps = signUpTotalSteps,
+    this.totalSteps = signUpSocialTotalSteps,
     this.countryDialCode = '+91',
     this.countryIsoCode = 'IN',
     this.fullNameErrorMessage = '',
@@ -53,7 +108,7 @@ class SignUpState extends BaseState {
     super.redirectRoute,
   });
 
-  /// Active step index (0: basic info, 1: verification, 2: complete profile).
+  /// Active step index.
   final int currentStep;
 
   /// Total number of sign up steps.
@@ -124,6 +179,59 @@ class SignUpState extends BaseState {
   final int emailResendSecondsRemaining;
   final int phoneResendSecondsRemaining;
 
+  // New fields / controllers for Trader Questionnaire & Social
+  final UserRole accountType; // client or trader
+  final String tradingExperience;
+  final bool professionallyTraded;
+  final TextEditingController previousFirmController;
+  final List<String> marketsTraded;
+  final TextEditingController primaryInstrumentsController;
+  final TextEditingController preferredCurrencyPairsController;
+  final String tradingStyle;
+  final TextEditingController averageTradesPerDayController;
+  final TextEditingController preferredTimeframesController;
+  final TextEditingController preferredSessionsController;
+  final TextEditingController strategyDescriptionController;
+  final TextEditingController primaryEdgeController;
+  final TextEditingController indicatorsToolsController;
+  final TextEditingController averageRiskPerTradeController;
+  final TextEditingController riskRewardRatioController;
+  final TextEditingController maxDailyDrawdownController;
+  final TextEditingController maxOverallDrawdownController;
+  final TextEditingController useStopLossesController;
+  final TextEditingController averageMonthlyReturnController;
+  final TextEditingController averageWinRateController;
+  final TextEditingController largestWinningMonthController;
+  final TextEditingController largestLosingMonthController;
+  final TextEditingController currentAccountSizeController;
+  final TextEditingController largestAccountManagedController;
+  final bool fundedAccountExperience;
+  final TextEditingController propFirmsWorkedController;
+  final bool passedFundedChallenge;
+  final TextEditingController accountSizesPassedController;
+  final TextEditingController handlingLosingStreaksController;
+  final TextEditingController biggestWeaknessController;
+  final TextEditingController biggestStrengthController;
+  final bool maintainTradingJournal;
+  final TextEditingController tradingPlatformController;
+  final TextEditingController brokersUsedController;
+  final bool internetBackup;
+  final bool useVps;
+  final bool governmentIdSubmitted;
+  final bool tradingStatementSubmitted;
+  final bool myfxbookVerified;
+  final bool fxblueVerified;
+  final bool brokerStatementAttached;
+  final TextEditingController performanceTrackingLinksController;
+  final TextEditingController additionalNotesController;
+  final TextEditingController instagramHandleController;
+  final TextEditingController twitterHandleController;
+  final String? governmentIdPath;
+  final String? bankStatementPath;
+  final String? tradingCertificatePath;
+  final TextEditingController traderSignatureController;
+  final bool declarationConfirmed;
+
   /// Whether email OTP resend is available.
   bool get canResendEmailOtp => emailResendSecondsRemaining <= 0;
 
@@ -141,30 +249,49 @@ class SignUpState extends BaseState {
 
   @override
   List<Object?> get props => <Object?>[
-    currentStep,
-    totalSteps,
-    countryDialCode,
-    countryIsoCode,
-    fullNameErrorMessage,
-    emailErrorMessage,
-    phoneErrorMessage,
-    emailOtpErrorMessage,
-    phoneOtpErrorMessage,
-    usernameErrorMessage,
-    passwordErrorMessage,
-    confirmPasswordErrorMessage,
-    passwordObscureText,
-    confirmPasswordObscureText,
-    isEmailVerified,
-    isPhoneVerified,
-    showEmailOtpField,
-    showPhoneOtpField,
-    emailOtp,
-    phoneOtp,
-    emailResendSecondsRemaining,
-    phoneResendSecondsRemaining,
-    ...super.props,
-  ];
+        currentStep,
+        totalSteps,
+        countryDialCode,
+        countryIsoCode,
+        fullNameErrorMessage,
+        emailErrorMessage,
+        phoneErrorMessage,
+        emailOtpErrorMessage,
+        phoneOtpErrorMessage,
+        usernameErrorMessage,
+        passwordErrorMessage,
+        confirmPasswordErrorMessage,
+        passwordObscureText,
+        confirmPasswordObscureText,
+        isEmailVerified,
+        isPhoneVerified,
+        showEmailOtpField,
+        showPhoneOtpField,
+        emailOtp,
+        phoneOtp,
+        emailResendSecondsRemaining,
+        phoneResendSecondsRemaining,
+        accountType,
+        tradingExperience,
+        professionallyTraded,
+        marketsTraded,
+        tradingStyle,
+        fundedAccountExperience,
+        passedFundedChallenge,
+        maintainTradingJournal,
+        internetBackup,
+        useVps,
+        governmentIdSubmitted,
+        tradingStatementSubmitted,
+        myfxbookVerified,
+        fxblueVerified,
+        brokerStatementAttached,
+        governmentIdPath,
+        bankStatementPath,
+        tradingCertificatePath,
+        declarationConfirmed,
+        ...super.props,
+      ];
 
   /// Returns a copy with updated fields.
   SignUpState copyWith({
@@ -193,6 +320,25 @@ class SignUpState extends BaseState {
     String? phoneOtp,
     int? emailResendSecondsRemaining,
     int? phoneResendSecondsRemaining,
+    UserRole? accountType,
+    String? tradingExperience,
+    bool? professionallyTraded,
+    List<String>? marketsTraded,
+    String? tradingStyle,
+    bool? fundedAccountExperience,
+    bool? passedFundedChallenge,
+    bool? maintainTradingJournal,
+    bool? internetBackup,
+    bool? useVps,
+    bool? governmentIdSubmitted,
+    bool? tradingStatementSubmitted,
+    bool? myfxbookVerified,
+    bool? fxblueVerified,
+    bool? brokerStatementAttached,
+    String? governmentIdPath,
+    String? bankStatementPath,
+    String? tradingCertificatePath,
+    bool? declarationConfirmed,
   }) {
     return SignUpState(
       status: status ?? this.status,
@@ -209,6 +355,57 @@ class SignUpState extends BaseState {
       usernameFocusNode: usernameFocusNode,
       passwordFocusNode: passwordFocusNode,
       confirmPasswordFocusNode: confirmPasswordFocusNode,
+      previousFirmController: previousFirmController,
+      primaryInstrumentsController: primaryInstrumentsController,
+      preferredCurrencyPairsController: preferredCurrencyPairsController,
+      averageTradesPerDayController: averageTradesPerDayController,
+      preferredTimeframesController: preferredTimeframesController,
+      preferredSessionsController: preferredSessionsController,
+      strategyDescriptionController: strategyDescriptionController,
+      primaryEdgeController: primaryEdgeController,
+      indicatorsToolsController: indicatorsToolsController,
+      averageRiskPerTradeController: averageRiskPerTradeController,
+      riskRewardRatioController: riskRewardRatioController,
+      maxDailyDrawdownController: maxDailyDrawdownController,
+      maxOverallDrawdownController: maxOverallDrawdownController,
+      useStopLossesController: useStopLossesController,
+      averageMonthlyReturnController: averageMonthlyReturnController,
+      averageWinRateController: averageWinRateController,
+      largestWinningMonthController: largestWinningMonthController,
+      largestLosingMonthController: largestLosingMonthController,
+      currentAccountSizeController: currentAccountSizeController,
+      largestAccountManagedController: largestAccountManagedController,
+      propFirmsWorkedController: propFirmsWorkedController,
+      accountSizesPassedController: accountSizesPassedController,
+      handlingLosingStreaksController: handlingLosingStreaksController,
+      biggestWeaknessController: biggestWeaknessController,
+      biggestStrengthController: biggestStrengthController,
+      tradingPlatformController: tradingPlatformController,
+      brokersUsedController: brokersUsedController,
+      performanceTrackingLinksController: performanceTrackingLinksController,
+      additionalNotesController: additionalNotesController,
+      instagramHandleController: instagramHandleController,
+      twitterHandleController: twitterHandleController,
+      traderSignatureController: traderSignatureController,
+      accountType: accountType ?? this.accountType,
+      tradingExperience: tradingExperience ?? this.tradingExperience,
+      professionallyTraded: professionallyTraded ?? this.professionallyTraded,
+      marketsTraded: marketsTraded ?? this.marketsTraded,
+      tradingStyle: tradingStyle ?? this.tradingStyle,
+      fundedAccountExperience: fundedAccountExperience ?? this.fundedAccountExperience,
+      passedFundedChallenge: passedFundedChallenge ?? this.passedFundedChallenge,
+      maintainTradingJournal: maintainTradingJournal ?? this.maintainTradingJournal,
+      internetBackup: internetBackup ?? this.internetBackup,
+      useVps: useVps ?? this.useVps,
+      governmentIdSubmitted: governmentIdSubmitted ?? this.governmentIdSubmitted,
+      tradingStatementSubmitted: tradingStatementSubmitted ?? this.tradingStatementSubmitted,
+      myfxbookVerified: myfxbookVerified ?? this.myfxbookVerified,
+      fxblueVerified: fxblueVerified ?? this.fxblueVerified,
+      brokerStatementAttached: brokerStatementAttached ?? this.brokerStatementAttached,
+      governmentIdPath: governmentIdPath ?? this.governmentIdPath,
+      bankStatementPath: bankStatementPath ?? this.bankStatementPath,
+      tradingCertificatePath: tradingCertificatePath ?? this.tradingCertificatePath,
+      declarationConfirmed: declarationConfirmed ?? this.declarationConfirmed,
       currentStep: currentStep ?? this.currentStep,
       totalSteps: totalSteps ?? this.totalSteps,
       countryDialCode: countryDialCode ?? this.countryDialCode,

@@ -76,4 +76,22 @@ class RegExpressions {
 
   /// Validates that a string contains only numeric characters (0–9).
   final RegExp onlyNumbersPattern = RegExp(r'^[0-9]*$');
+
+  /// Validates a performance tracking URL (e.g., Myfxbook / Fxblue).
+  final RegExp performanceUrl = RegExp(
+    r'^(https?:\/\/)([\w.-]+)\.[a-z]{2,}(\/.*)?$',
+    caseSensitive: false,
+  );
+
+  /// Validates an Instagram URL.
+  final RegExp instagramUrl = RegExp(
+    r'^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9._]+\/?$',
+    caseSensitive: false,
+  );
+
+  /// Validates a Twitter/X URL.
+  final RegExp twitterUrl = RegExp(
+    r'^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[A-Za-z0-9_]+\/?$',
+    caseSensitive: false,
+  );
 }
