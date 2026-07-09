@@ -94,6 +94,9 @@ class LoginCubit extends Cubit<LoginState> {
               isActive: user.activeSubscription?.isActive,
               durationDays: user.activeSubscription?.durationDays,
               profilePictureUrl: user.profilePictureUrl,
+              firstTimeLogin: user.firstTimeLogin,
+              amountBalance: user.amountBalance,
+              riskPercentage: user.riskPercentage,
             );
 
             await AccountVerificationHelper.setPending();

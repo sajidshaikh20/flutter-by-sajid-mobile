@@ -12,6 +12,7 @@ class HomeState extends BaseState {
     this.profitability = 0.0,
     this.recentTrades = const <TradingSignalModel>[],
     this.liveTrades = const <TradingSignalModel>[],
+    this.firstTimeLogin,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -34,6 +35,7 @@ class HomeState extends BaseState {
   final double profitability;
   final List<TradingSignalModel> recentTrades;
   final List<TradingSignalModel> liveTrades;
+  final bool? firstTimeLogin;
 
   HomeState copyWith({
     BaseStateStatus? status,
@@ -48,6 +50,7 @@ class HomeState extends BaseState {
     double? profitability,
     List<TradingSignalModel>? recentTrades,
     List<TradingSignalModel>? liveTrades,
+    bool? firstTimeLogin,
   }) =>
       HomeState(
         status: status ?? this.status,
@@ -62,6 +65,7 @@ class HomeState extends BaseState {
         profitability: profitability ?? this.profitability,
         recentTrades: recentTrades ?? this.recentTrades,
         liveTrades: liveTrades ?? this.liveTrades,
+        firstTimeLogin: firstTimeLogin ?? this.firstTimeLogin,
       );
 
   @override
@@ -78,5 +82,6 @@ class HomeState extends BaseState {
         profitability,
         recentTrades,
         liveTrades,
+        firstTimeLogin,
       ];
 }

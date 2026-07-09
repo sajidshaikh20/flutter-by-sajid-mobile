@@ -75,6 +75,15 @@ class UserProfileModel {
   /// The profile picture URL from the live server.
   final String? profilePictureUrl;
 
+  /// The default/custom trading balance.
+  final double? amountBalance;
+
+  /// The default/custom trading risk percentage.
+  final double? riskPercentage;
+
+  /// Whether it's the user's first time logging in.
+  final bool? firstTimeLogin;
+
   /// Creates an instance of [UserProfileModel].
   UserProfileModel({
     required this.phoneNumber,
@@ -102,6 +111,9 @@ class UserProfileModel {
     this.isActive,
     this.durationDays,
     this.profilePictureUrl,
+    this.amountBalance,
+    this.riskPercentage,
+    this.firstTimeLogin,
   });
 
   /// Creates an instance of [UserProfileModel] from a JSON map.
@@ -132,6 +144,9 @@ class UserProfileModel {
       isActive: json['isActive'],
       durationDays: json['durationDays'],
       profilePictureUrl: json['profilePictureUrl'],
+      amountBalance: json['amountBalance'] != null ? double.tryParse(json['amountBalance'].toString()) : null,
+      riskPercentage: json['riskPercentage'] != null ? double.tryParse(json['riskPercentage'].toString()) : null,
+      firstTimeLogin: json['firstTimeLogin'] as bool?,
     );
   }
 
@@ -163,6 +178,9 @@ class UserProfileModel {
       'isActive': isActive,
       'durationDays': durationDays,
       'profilePictureUrl': profilePictureUrl,
+      'amountBalance': amountBalance,
+      'riskPercentage': riskPercentage,
+      'firstTimeLogin': firstTimeLogin,
     };
   }
 
@@ -193,6 +211,9 @@ class UserProfileModel {
     bool? isActive,
     int? durationDays,
     String? profilePictureUrl,
+    double? amountBalance,
+    double? riskPercentage,
+    bool? firstTimeLogin,
   }) {
     return UserProfileModel(
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -220,6 +241,9 @@ class UserProfileModel {
       isActive: isActive ?? this.isActive,
       durationDays: durationDays ?? this.durationDays,
       profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
+      amountBalance: amountBalance ?? this.amountBalance,
+      riskPercentage: riskPercentage ?? this.riskPercentage,
+      firstTimeLogin: firstTimeLogin ?? this.firstTimeLogin,
     );
   }
 }

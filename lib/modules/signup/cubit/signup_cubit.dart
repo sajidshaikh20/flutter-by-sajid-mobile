@@ -633,6 +633,16 @@ class SignUpCubit extends Cubit<SignUpState> {
     final String defaultMsg = context.appString.signUpRegistrationCompleteKey;
     try {
       emit(state.copyWith(status: BaseStateStatus.loading));
+
+      String cleanPhone = state.fullPhoneNumber;
+      final String dialCode = state.countryDialCode.replaceAll(RegExp(r'[^\d]'), '');
+      if (cleanPhone.startsWith('+')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+      if (dialCode.isNotEmpty && cleanPhone.startsWith(dialCode)) {
+        cleanPhone = cleanPhone.substring(dialCode.length);
+      }
+
       final ResponseHandler<BaseResponse<SignUpResponse>> response =
           await repository.completeRegistration(
         CompleteRegistrationRequest(
@@ -640,9 +650,11 @@ class SignUpCubit extends Cubit<SignUpState> {
           username: state.usernameController.text.trim(),
           password: state.passwordController.text.trim(),
           name: state.fullName,
-          phone: state.fullPhoneNumber,
+          phone: cleanPhone,
           role: state.accountType,
-          questionnaire: _buildQuestionnaireModel(),
+          questionnaire: state.accountType == UserRole.trader
+              ? _buildQuestionnaireModel()
+              : null,
         ),
       );
 
@@ -767,6 +779,59 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   void setDeclarationConfirmed(bool value) {
     emit(state.copyWith(declarationConfirmed: value));
+  }
+
+  void autofillTraderProfile() {
+    state.previousFirmController.text = 'Apex Trading Capital';
+    state.primaryInstrumentsController.text = 'EURUSD, GBPUSD, Gold';
+    state.preferredCurrencyPairsController.text = 'EURUSD, GBPUSD';
+    state.averageTradesPerDayController.text = '5';
+    state.preferredTimeframesController.text = '15m, 1h';
+    state.preferredSessionsController.text = 'London, New York';
+    state.strategyDescriptionController.text = 'Applying ICT concepts with liquidity sweeps and fair value gaps.';
+    state.primaryEdgeController.text = 'High discipline, execution, and risk management.';
+    state.indicatorsToolsController.text = 'Fibers, Pivot Points';
+    state.averageRiskPerTradeController.text = '1%';
+    state.riskRewardRatioController.text = '1:2';
+    state.maxDailyDrawdownController.text = '3%';
+    state.maxOverallDrawdownController.text = '6%';
+    state.useStopLossesController.text = 'Yes, always at swing highs/lows.';
+    state.averageMonthlyReturnController.text = '8%';
+    state.averageWinRateController.text = '55%';
+    state.largestWinningMonthController.text = '14%';
+    state.largestLosingMonthController.text = '-4%';
+    state.currentAccountSizeController.text = '10000';
+    state.largestAccountManagedController.text = '100000';
+    state.propFirmsWorkedController.text = 'FTMO, FundedNext';
+    state.accountSizesPassedController.text = '100k';
+    state.handlingLosingStreaksController.text = 'Lower lot size by 50% or take a break.';
+    state.biggestWeaknessController.text = 'FOMO on news days.';
+    state.biggestStrengthController.text = 'Cut losses quickly.';
+    state.tradingPlatformController.text = 'MT5';
+    state.brokersUsedController.text = 'IC Markets';
+    state.performanceTrackingLinksController.text = 'https://www.myfxbook.com/members/demo';
+    state.additionalNotesController.text = 'Looking forward to joining the elite pool.';
+    state.instagramHandleController.text = 'https://instagram.com/trader_demo';
+    state.twitterHandleController.text = 'https://x.com/trader_demo';
+    state.traderSignatureController.text = state.fullName.isNotEmpty ? state.fullName : 'Sajid Shaikh';
+
+    emit(state.copyWith(
+      tradingExperience: '3-5 Years',
+      professionallyTraded: true,
+      marketsTraded: <String>['Forex', 'Crypto'],
+      tradingStyle: 'Day Trading',
+      fundedAccountExperience: true,
+      passedFundedChallenge: true,
+      maintainTradingJournal: true,
+      internetBackup: true,
+      useVps: true,
+      myfxbookVerified: true,
+      fxblueVerified: false,
+      governmentIdPath: '/mock/government_id.png',
+      bankStatementPath: '/mock/bank_statement.png',
+      tradingCertificatePath: '/mock/trading_certificate.png',
+      declarationConfirmed: true,
+    ));
   }
 
   // Document file pickers

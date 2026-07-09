@@ -216,6 +216,7 @@ class TradingSignalCard extends StatelessWidget {
                 child: _ValueColumn(
                   label: 'Stop Loss',
                   value: signal.stopLoss.toString(),
+                  subValue: signal.slPips != null ? '${signal.slPips!.toStringAsFixed(2)} Pips' : null,
                   valueColor: AppColors.errorColor,
                   isDark: isDark,
                   alignment: CrossAxisAlignment.center,
@@ -229,6 +230,7 @@ class TradingSignalCard extends StatelessWidget {
                   value: (signal.takeProfitOne != null)
                       ? signal.takeProfitOne.toString()
                       : signal.takeProfit.toString(),
+                  subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
                   valueColor: themeGreen,
                   isDark: isDark,
                   alignment: CrossAxisAlignment.end,
@@ -415,7 +417,7 @@ class TradingSignalCard extends StatelessWidget {
                       const SizedBox(height: Dimens.space4),
                       CustomTextLabelWidget(
                         label: signal.resultInPips != null
-                            ? '${signal.resultInPips!.toStringAsFixed(1)} PIPS'
+                            ? '${signal.resultInPips! >= 0 ? '+' : ''}${signal.resultInPips!.toStringAsFixed(2)} PIPS'
                             : signal.pips,
                         style: TextStyle(
                           color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
@@ -639,7 +641,9 @@ class TradingSignalCard extends StatelessWidget {
                   ),
                   const SizedBox(width: Dimens.space6),
                   CustomTextLabelWidget(
-                    label: signal.timeLabel,
+                    label: ((signal.isClosed || signal.isCancelled) && signal.createdAt != null)
+                        ? 'Created: ${DateFormat('dd MMM yyyy').format(DateTime.parse(signal.createdAt!).toLocal())}'
+                        : signal.timeLabel,
                     style: TextStyle(
                       color: subtextColor,
                       fontWeight: FontWeight.w500,
@@ -812,6 +816,7 @@ class _ValueColumn extends StatelessWidget {
   const _ValueColumn({
     required this.label,
     required this.value,
+    this.subValue,
     required this.valueColor,
     required this.isDark,
     this.alignment = CrossAxisAlignment.start,
@@ -819,6 +824,7 @@ class _ValueColumn extends StatelessWidget {
 
   final String label;
   final String value;
+  final String? subValue;
   final Color valueColor;
   final bool isDark;
   final CrossAxisAlignment alignment;
@@ -848,6 +854,17 @@ class _ValueColumn extends StatelessWidget {
             fontSize: Dimens.fontSize13,
           ),
         ),
+        if (subValue != null && subValue!.isNotEmpty) ...<Widget>[
+          const SizedBox(height: Dimens.space2),
+          CustomTextLabelWidget(
+            label: subValue!,
+            style: TextStyle(
+              color: subtextColor,
+              fontWeight: FontWeight.w500,
+              fontSize: Dimens.fontSize9,
+            ),
+          ),
+        ],
       ],
     );
   }

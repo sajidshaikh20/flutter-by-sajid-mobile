@@ -805,8 +805,21 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
     final double entryPrice = signal.entryPrice;
     final double current = livePrice;
     final bool isBuy = signal.isBuy;
-    final double pipsDiff = signal.resultInPips ?? (current - entryPrice) * (isBuy ? 10000 : -10000);
-    final String pipsStr = '${pipsDiff >= 0 ? '+' : ''}${pipsDiff.toStringAsFixed(1)} PIPS';
+    final double pipsDiff;
+    if (signal.isClosed) {
+      if (signal.resultInPips != null) {
+        pipsDiff = signal.resultInPips!;
+      } else if (signal.outcome?.toUpperCase() == 'LOSS') {
+        pipsDiff = -(signal.slPips ?? 0.0);
+      } else if (signal.outcome?.toUpperCase() == 'WIN') {
+        pipsDiff = signal.tpPips ?? 0.0;
+      } else {
+        pipsDiff = (current - entryPrice) * (isBuy ? 10000 : -10000);
+      }
+    } else {
+      pipsDiff = signal.resultInPips ?? (current - entryPrice) * (isBuy ? 10000 : -10000);
+    }
+    final String pipsStr = '${pipsDiff >= 0 ? '+' : ''}${pipsDiff.toStringAsFixed(2)} PIPS';
     final Color returnColor = pipsDiff >= 0 ? themeGreen : AppColors.errorColor;
 
     final bool hasResultInPips = signal.resultInPips != null;
@@ -867,7 +880,7 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
             ),
           ],
         ),
-        if (hasResultInPips) ...<Widget>[
+        if (hasResultInPips || signal.isClosed) ...<Widget>[
           const SizedBox(height: Dimens.space12),
           Divider(
             height: 1,
@@ -916,7 +929,9 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
 
     final String entry1 = signal.entryPrice.toString();
     final String entry2 = signal.entryPriceTwo != null ? signal.entryPriceTwo.toString() : '—';
-    final String stopLoss = signal.stopLoss.toString();
+    final String stopLoss = signal.slPips != null
+        ? '${signal.stopLoss} (${signal.slPips!.toStringAsFixed(2)} Pips)'
+        : signal.stopLoss.toString();
 
     return _buildPlainCard(
       isDark: isDark,
@@ -960,6 +975,7 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
                 child: _buildTpBox(
                   label: 'TP1',
                   value: signal.takeProfitOne.toString(),
+                  subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
                   themeGreen: themeGreen,
                   isDark: isDark,
                 ),
@@ -991,6 +1007,7 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
                 child: _buildTpBox(
                   label: 'TP',
                   value: signal.takeProfit.toString(),
+                  subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
                   themeGreen: themeGreen,
                   isDark: isDark,
                 ),
@@ -1049,12 +1066,14 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
   Widget _buildTpBox({
     required String label,
     required String value,
+    String? subValue,
     required Color themeGreen,
     required bool isDark,
   }) {
     final Color boxBg = themeGreen.withValues(alpha: isDark ? 0.08 : 0.04);
     final Color borderCol = themeGreen.withValues(alpha: isDark ? 0.25 : 0.15);
     final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: Dimens.space12, horizontal: Dimens.space8),
@@ -1083,6 +1102,17 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (subValue != null && subValue.isNotEmpty) ...<Widget>[
+            const SizedBox(height: 4),
+            CustomTextLabelWidget(
+              label: subValue,
+              style: TextStyle(
+                color: subtextColor,
+                fontSize: Dimens.fontSize9,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ],
       ),
     );

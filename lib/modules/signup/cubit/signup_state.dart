@@ -245,7 +245,7 @@ class SignUpState extends BaseState {
   String get fullName => fullNameController.text.trim();
 
   /// Full phone with dial code.
-  String get fullPhoneNumber => '$countryDialCode${phoneController.text.trim()}';
+  String get fullPhoneNumber => phoneController.text.trim();
 
   @override
   List<Object?> get props => <Object?>[

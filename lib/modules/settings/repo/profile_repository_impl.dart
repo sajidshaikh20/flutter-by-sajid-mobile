@@ -115,4 +115,59 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
     );
   }
+
+  @override
+  Future<ResponseHandler<BaseResponse<TradingPreferencesResponse>>> getTradingPreferences() async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.getBalanceRisk,
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<TradingPreferencesResponse>.fromJson(
+          value,
+          (Object? json) =>
+              TradingPreferencesResponse.fromJson(json as Map<String, dynamic>),
+        );
+      },
+    );
+  }
+
+  @override
+  Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> updateBalanceAndRisk({
+    double? amountBalance,
+    double? riskPercentage,
+  }) async {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (amountBalance != null) {
+      data['amountBalance'] = amountBalance;
+    }
+    if (riskPercentage != null) {
+      data['riskPercentage'] = riskPercentage;
+    }
+
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.updateBalanceRisk,
+          apiType: ApiType.put,
+          data: data,
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<ClientProfileResponse>.fromJson(
+          value,
+          (Object? json) =>
+              ClientProfileResponse.fromJson(json as Map<String, dynamic>),
+        );
+      },
+    );
+  }
 }

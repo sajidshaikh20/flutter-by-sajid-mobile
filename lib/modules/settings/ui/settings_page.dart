@@ -431,7 +431,7 @@ class _SettingsViewState extends State<SettingsView> {
                                     color: subtitleColor,
                                     size: Dimens.size18,
                                   ),
-                                  onTap: () => _showComingSoon('Trading Preferences'),
+                                  onTap: () => context.router.push(const TradingPreferencesRoute()),
                                 ),
                                 _Divider(isDark: isDark),
 /*

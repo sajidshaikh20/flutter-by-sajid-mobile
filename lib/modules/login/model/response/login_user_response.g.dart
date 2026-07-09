@@ -81,6 +81,9 @@ _UserResponseData _$UserResponseDataFromJson(Map<String, dynamic> json) =>
               json['activeSubscription'] as Map<String, dynamic>,
             ),
       profilePictureUrl: json['profilePictureUrl'] as String?,
+      amountBalance: (json['amountBalance'] as num?)?.toDouble(),
+      riskPercentage: (json['riskPercentage'] as num?)?.toDouble(),
+      firstTimeLogin: json['firstTimeLogin'] as bool?,
     );
 
 Map<String, dynamic> _$UserResponseDataToJson(_UserResponseData instance) =>
@@ -94,6 +97,9 @@ Map<String, dynamic> _$UserResponseDataToJson(_UserResponseData instance) =>
       'role': instance.role,
       'activeSubscription': instance.activeSubscription,
       'profilePictureUrl': instance.profilePictureUrl,
+      'amountBalance': instance.amountBalance,
+      'riskPercentage': instance.riskPercentage,
+      'firstTimeLogin': instance.firstTimeLogin,
     };
 
 _UserRoleData _$UserRoleDataFromJson(Map<String, dynamic> json) =>

@@ -55,6 +55,8 @@ class TradeResponse {
   final double? lotSize;
   final double? resultInPips;
   final bool isAlreadyTaken;
+  final double? slPips;
+  final double? tpPips;
 
   TradeResponse({
     required this.publicId,
@@ -75,6 +77,8 @@ class TradeResponse {
     this.lotSize,
     this.resultInPips,
     this.isAlreadyTaken = false,
+    this.slPips,
+    this.tpPips,
   });
 
   factory TradeResponse.fromJson(Map<String, dynamic> json) {
@@ -118,6 +122,12 @@ class TradeResponse {
           ? double.tryParse(source['resultInPips'].toString())
           : null,
       isAlreadyTaken: source['isAlreadyTaken'] as bool? ?? false,
+      slPips: source['slPips'] != null
+          ? double.tryParse(source['slPips'].toString())
+          : null,
+      tpPips: source['tpPips'] != null
+          ? double.tryParse(source['tpPips'].toString())
+          : null,
     );
   }
 
@@ -159,6 +169,8 @@ class TradeResponse {
       'lotSize': lotSize,
       'resultInPips': resultInPips,
       'isAlreadyTaken': isAlreadyTaken,
+      'slPips': slPips,
+      'tpPips': tpPips,
     };
   }
 
@@ -232,7 +244,23 @@ class TradeResponse {
     }
 
     final double pipsVal = livePrice != null ? (livePrice! - entryPrice) * 10000 : 0.0;
-    final String pipsStr = '${pipsVal >= 0 ? '+' : ''}${pipsVal.toStringAsFixed(2)} PIPS';
+    
+    String pipsStr;
+    if (normalizedStatus == 'CLOSED') {
+      if (resultInPips != null) {
+        pipsStr = '${resultInPips! >= 0 ? '+' : ''}${resultInPips!.toStringAsFixed(2)} PIPS';
+      } else if (outcome?.toUpperCase() == 'LOSS') {
+        final double lossPips = slPips ?? 0.0;
+        pipsStr = '-${lossPips.toStringAsFixed(2)} PIPS';
+      } else if (outcome?.toUpperCase() == 'WIN') {
+        final double winPips = tpPips ?? 0.0;
+        pipsStr = '+${winPips.toStringAsFixed(2)} PIPS';
+      } else {
+        pipsStr = '${pipsVal >= 0 ? '+' : ''}${pipsVal.toStringAsFixed(2)} PIPS';
+      }
+    } else {
+      pipsStr = '${pipsVal >= 0 ? '+' : ''}${pipsVal.toStringAsFixed(2)} PIPS';
+    }
 
     return TradingSignalModel(
       publicId: publicId,
@@ -265,6 +293,8 @@ class TradeResponse {
       riskAmount: riskAmount,
       lotSize: lotSize,
       resultInPips: resultInPips,
+      slPips: slPips,
+      tpPips: tpPips,
     );
   }
 }

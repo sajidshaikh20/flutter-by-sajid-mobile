@@ -160,6 +160,12 @@ abstract class Apis {
   /// Endpoint to get client profile
   static const String getClientProfile = '$subBaseUrl/client/profile';
 
+  /// Endpoint to get client balance and risk preferences
+  static const String getBalanceRisk = '$subBaseUrl/client/get-balance-risk';
+
+  /// Endpoint to update client balance and risk preferences
+  static const String updateBalanceRisk = '$subBaseUrl/client/update-balance-risk';
+
   /// Endpoint to update client profile
   static const String updateClientProfile = '$subBaseUrl/client/update-profile';
 

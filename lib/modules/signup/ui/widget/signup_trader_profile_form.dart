@@ -17,7 +17,62 @@ class SignUpTraderProfileForm extends StatelessWidget {
             title: 'Trading Details & Verification',
             subtitle: 'Provide your trading style, performance metrics, and upload verify files',
           ),
-          Dimens.size24.heightBox,
+          Dimens.size16.heightBox,
+
+          // Developer Autofill Banner
+          Container(
+            padding: const EdgeInsets.all(Dimens.space12),
+            decoration: BoxDecoration(
+              color: AppColors.primaryPurple.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(Dimens.radius10),
+              border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              children: <Widget>[
+                const Icon(Icons.auto_awesome, color: AppColors.primaryPurple, size: Dimens.size20),
+                Dimens.size12.widthBox,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      CustomTextLabelWidget(
+                        label: 'Autofill Demo Data',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      CustomTextLabelWidget(
+                        label: 'Pre-populate all trader questionnaire fields for fast testing.',
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: isDark ? Colors.white70 : Colors.black54,
+                          fontSize: Dimens.fontSize11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Dimens.size8.widthBox,
+                TextButton(
+                  onPressed: () => cubit.autofillTraderProfile(),
+                  style: TextButton.styleFrom(
+                    backgroundColor: AppColors.primaryPurple,
+                    padding: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.radius6)),
+                  ),
+                  child: const CustomTextLabelWidget(
+                    label: 'Fill',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Dimens.size20.heightBox,
 
           // SECTION 1: Trading Background
           _sectionHeader(context, '1. Trading Background'),
@@ -638,25 +693,28 @@ class SignUpTraderProfileForm extends StatelessWidget {
 
           // Document upload labels & buttons
           const _FieldLabel(label: 'Upload Required Documents', isRequired: true),
-          Dimens.size8.heightBox,
+          Dimens.size12.heightBox,
 
           BlocBuilder<SignUpCubit, SignUpState>(
             builder: (BuildContext context, SignUpState state) {
               return Column(
                 children: <Widget>[
                   _buildUploadItem(
+                    context: context,
                     label: 'Government ID *',
                     fileName: state.governmentIdPath?.split('/').last,
                     onTap: () => cubit.pickGovernmentId(),
                   ),
                   Dimens.size12.heightBox,
                   _buildUploadItem(
+                    context: context,
                     label: 'Broker Statement (PDF/Image)',
                     fileName: state.bankStatementPath?.split('/').last,
                     onTap: () => cubit.pickBankStatement(),
                   ),
                   Dimens.size12.heightBox,
                   _buildUploadItem(
+                    context: context,
                     label: 'Trading Certificate (Image)',
                     fileName: state.tradingCertificatePath?.split('/').last,
                     onTap: () => cubit.pickTradingCertificate(),
@@ -739,34 +797,58 @@ class SignUpTraderProfileForm extends StatelessWidget {
     );
   }
 
-  // Helper builder for Checkbox
+  // Helper builder for Checkbox styled as a premium clickable card
   Widget _buildSimpleCheckbox({
     required bool isDark,
     required String label,
     required bool value,
     required ValueChanged<bool?> onChanged,
   }) {
-    return Row(
-      children: <Widget>[
-        Checkbox(
-          value: value,
-          onChanged: onChanged,
-          activeColor: AppColors.primaryPurple,
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.size12,
+          vertical: Dimens.size12,
         ),
-        Expanded(
-          child: CustomTextLabelWidget(
-            textAlign: TextAlign.start,
-            label: label,
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black87,
-              fontSize: Dimens.fontSize12,
-            ),
+        decoration: BoxDecoration(
+          color: value
+              ? AppColors.primaryPurple.withValues(alpha: 0.08)
+              : (isDark ? AppColors.surfaceDark : AppColors.whiteColor),
+          border: Border.all(
+            color: value
+                ? AppColors.primaryPurple
+                : (isDark ? AppColors.borderDark : AppColors.borderLight),
+            width: 1.5,
           ),
+          borderRadius: BorderRadius.circular(Dimens.radius8),
         ),
-      ],
+        child: Row(
+          children: <Widget>[
+            Icon(
+              value ? Icons.check_box : Icons.check_box_outline_blank,
+              color: value ? AppColors.primaryPurple : Colors.grey,
+              size: Dimens.size20,
+            ),
+            Dimens.size8.widthBox,
+            Expanded(
+              child: CustomTextLabelWidget(
+                textAlign: TextAlign.start,
+                label: label,
+                style: TextStyle(
+                  color: value
+                      ? AppColors.primaryPurple
+                      : (isDark ? Colors.white : Colors.black87),
+                  fontSize: Dimens.fontSize12,
+                  fontWeight: value ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
-
 
   // Helper builder for Yes/No selector cards
   Widget _buildYesNoRadio({
@@ -802,7 +884,7 @@ class SignUpTraderProfileForm extends StatelessWidget {
                     size: Dimens.size20,
                   ),
                   Dimens.size8.widthBox,
-                   CustomTextLabelWidget(
+                  CustomTextLabelWidget(
                     label: 'Yes',
                     style: TextStyle(
                       fontWeight: value ? FontWeight.bold : FontWeight.normal,
@@ -843,7 +925,7 @@ class SignUpTraderProfileForm extends StatelessWidget {
                     size: Dimens.size20,
                   ),
                   Dimens.size8.widthBox,
-                   CustomTextLabelWidget(
+                  CustomTextLabelWidget(
                     label: 'No',
                     style: TextStyle(
                       fontWeight: !value ? FontWeight.bold : FontWeight.normal,
@@ -882,16 +964,22 @@ class SignUpTraderProfileForm extends StatelessWidget {
 
   // Uploader tile builder
   Widget _buildUploadItem({
+    required BuildContext context,
     required String label,
     required String? fileName,
     required VoidCallback onTap,
   }) {
+    final bool isDark = context.isDark;
+    final Color cardBg = isDark ? AppColors.surfaceDark : Colors.grey.withValues(alpha: 0.05);
+    final Color borderCol = isDark ? AppColors.borderDark : Colors.grey.withValues(alpha: 0.2);
+    final Color titleColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+
     return Container(
-      padding: const EdgeInsets.all(Dimens.size12),
+      padding: const EdgeInsets.symmetric(horizontal: Dimens.size16, vertical: Dimens.size14),
       decoration: BoxDecoration(
-        color: Colors.grey.withValues(alpha: 0.05),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-        borderRadius: BorderRadius.circular(Dimens.radius8),
+        color: cardBg,
+        border: Border.all(color: borderCol, width: 1.5),
+        borderRadius: BorderRadius.circular(Dimens.radius12),
       ),
       child: Row(
         children: <Widget>[
@@ -901,13 +989,17 @@ class SignUpTraderProfileForm extends StatelessWidget {
               children: <Widget>[
                 CustomTextLabelWidget(
                   label: label,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: Dimens.fontSize12),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: Dimens.fontSize12,
+                    color: titleColor,
+                  ),
                 ),
                 if (fileName != null) ...<Widget>[
                   Dimens.size4.heightBox,
                   CustomTextLabelWidget(
                     label: fileName,
-                    style: const TextStyle(color: Colors.green, fontSize: Dimens.fontSize10),
+                    style: const TextStyle(color: Colors.green, fontSize: Dimens.fontSize10, fontWeight: FontWeight.w500),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -915,18 +1007,24 @@ class SignUpTraderProfileForm extends StatelessWidget {
               ],
             ),
           ),
+          Dimens.size12.widthBox,
           ElevatedButton.icon(
             onPressed: onTap,
-            icon: const Icon(Icons.upload_file, size: Dimens.size16),
+            icon: Icon(
+              fileName != null ? Icons.change_circle : Icons.upload_file,
+              size: Dimens.size16,
+              color: Colors.white,
+            ),
             label: CustomTextLabelWidget(
               label: fileName != null ? 'Change' : 'Upload',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: Dimens.fontSize12),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryPurple,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: Dimens.size12, vertical: Dimens.size8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.radius6)),
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: Dimens.size16, vertical: Dimens.size12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.radius8)),
             ),
           ),
         ],

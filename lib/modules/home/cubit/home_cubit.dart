@@ -11,6 +11,11 @@ class HomeCubit extends BaseCubit<HomeState> {
 
   void initData() {
     unawaited(fetchDashboardData());
+    if (UserProfileService.instance().firstTimeLogin ?? false) {
+      unawaited(Future<void>.microtask(() {
+        emit(state.copyWith(firstTimeLogin: true));
+      }));
+    }
   }
 
   void initializeSegmentIndex() {}
@@ -25,61 +30,91 @@ class HomeCubit extends BaseCubit<HomeState> {
     }
 
     try {
-      final List<dynamic> results = await Future.wait<dynamic>(<Future<dynamic>>[
-        repository.getClientDashboard(),
-        tradesRepository.getTradesByPlan(status: 'CLOSED', limit: 5),
-        tradesRepository.getTradesByPlan(status: 'ACTIVE', limit: 5),
-      ]);
+      ResponseHandler<BaseResponse<HomeDashboardResponse>>? dashboardResponse;
+      ResponseHandler<BaseResponse<List<TradeResponse>>>? closedResponse;
+      ResponseHandler<BaseResponse<List<TradeResponse>>>? activeResponse;
+      ResponseHandler<BaseResponse<ClientProfileResponse>>? profileResponse;
 
-      final ResponseHandler<BaseResponse<HomeDashboardResponse>> dashboardResponse =
-          results[0] as ResponseHandler<BaseResponse<HomeDashboardResponse>>;
-      final ResponseHandler<BaseResponse<List<TradeResponse>>> closedResponse =
-          results[1] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
-      final ResponseHandler<BaseResponse<List<TradeResponse>>> activeResponse =
-          results[2] as ResponseHandler<BaseResponse<List<TradeResponse>>>;
+      try {
+        dashboardResponse = await repository.getClientDashboard();
+      } on Object catch (e) {
+        debugPrint('Home statistics failed: $e');
+      }
+
+      try {
+        closedResponse = await tradesRepository.getTradesByPlan(status: 'CLOSED', limit: 5);
+      } on Object catch (e) {
+        debugPrint('Closed trades failed: $e');
+      }
+
+      try {
+        activeResponse = await tradesRepository.getTradesByPlan(status: 'ACTIVE', limit: 5);
+      } on Object catch (e) {
+        debugPrint('Active trades failed: $e');
+      }
+
+      try {
+        profileResponse = await ProfileRepositoryImpl().getProfile();
+      } on Object catch (e) {
+        debugPrint('Profile load failed: $e');
+      }
 
       HomeDashboardResponse? dashboardData;
       List<TradingSignalModel> recentTrades = <TradingSignalModel>[];
       List<TradingSignalModel> liveTrades = <TradingSignalModel>[];
 
-      if (dashboardResponse.isSuccess()) {
+      if (dashboardResponse != null && dashboardResponse.isSuccess()) {
         dashboardData = dashboardResponse.getSuccessInstance()?.response.data;
       }
 
-      if (closedResponse.isSuccess()) {
+      if (closedResponse != null && closedResponse.isSuccess()) {
         final List<TradeResponse>? trades = closedResponse.getSuccessInstance()?.response.data;
         if (trades != null) {
           recentTrades = trades.map((TradeResponse t) => t.toTradingSignalModel()).toList();
         }
       }
 
-      if (activeResponse.isSuccess()) {
+      if (activeResponse != null && activeResponse.isSuccess()) {
         final List<TradeResponse>? trades = activeResponse.getSuccessInstance()?.response.data;
         if (trades != null) {
           liveTrades = trades.map((TradeResponse t) => t.toTradingSignalModel()).toList();
         }
       }
 
-      if (dashboardData != null) {
-        emit(state.copyWith(
-          status: BaseStateStatus.success,
-          totalTrades: dashboardData.totalTrades,
-          winningTrades: dashboardData.winningTrades,
-          winRate: dashboardData.winRate,
-          profitability: dashboardData.profitability,
-          recentTrades: recentTrades,
-          liveTrades: liveTrades,
-        ));
-      } else {
-        emit(state.copyWith(
-          status: BaseStateStatus.failure,
-          msg: 'Failed to load dashboard statistics.',
-        ));
+      final ClientProfileResponse? profileData =
+          (profileResponse != null && profileResponse.isSuccess())
+              ? profileResponse.getSuccessInstance()?.response.data
+              : null;
+
+      if (profileData != null) {
+        await UserProfileService.instance().updateUserProfile(
+          customerName: profileData.name,
+          customerEmail: profileData.email,
+          phoneNumber: profileData.phone,
+          customerId: profileData.publicId,
+          username: profileData.username,
+          profilePictureUrl: profileData.profilePictureUrl,
+          amountBalance: profileData.amountBalance,
+          riskPercentage: profileData.riskPercentage,
+          firstTimeLogin: profileData.firstTimeLogin,
+        );
       }
+
+      emit(state.copyWith(
+        status: BaseStateStatus.success,
+        totalTrades: dashboardData?.totalTrades ?? 0,
+        winningTrades: dashboardData?.winningTrades ?? 0,
+        winRate: dashboardData?.winRate ?? 0,
+        profitability: dashboardData?.profitability ?? 0.0,
+        recentTrades: recentTrades,
+        liveTrades: liveTrades,
+        firstTimeLogin: profileData?.firstTimeLogin ?? UserProfileService.instance().firstTimeLogin,
+      ));
     } on Object catch (_) {
       emit(state.copyWith(
         status: BaseStateStatus.failure,
         msg: 'An unexpected error occurred. Please try again.',
+        firstTimeLogin: UserProfileService.instance().firstTimeLogin,
       ));
     }
   }
@@ -104,4 +139,9 @@ class HomeCubit extends BaseCubit<HomeState> {
 
   @override
   HomeState getResetRedirectionState() => state.copyWith();
+
+  void dismissFirstTimeLoginPrompt() {
+    unawaited(UserProfileService.instance().updateUserProfile(firstTimeLogin: false));
+    emit(state.copyWith(firstTimeLogin: false));
+  }
 }

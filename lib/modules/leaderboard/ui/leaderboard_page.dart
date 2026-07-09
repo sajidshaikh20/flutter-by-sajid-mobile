@@ -46,6 +46,11 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
 
     return BlocBuilder<LeaderboardCubit, LeaderboardState>(
       builder: (BuildContext context, LeaderboardState state) {
+        final bool showPodium = state.filteredItems.length >= 3;
+        final bool hasListItems = showPodium
+            ? state.filteredItems.any((LeaderboardItemModel x) => x.rank > 3)
+            : state.filteredItems.isNotEmpty;
+
         return Scaffold(
           backgroundColor: pageBg,
           body: SafeArea(
@@ -65,15 +70,16 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                       const SizedBox(height: Dimens.space16),
 
                       // 2. Podium (Top 3)
-                      if (!state.shimmerLoading &&
-                          state.filteredItems.isNotEmpty) ...<Widget>[
+                      if (!state.shimmerLoading && showPodium) ...<Widget>[
                         _buildPodiumSection(context, isDark, state),
                         const SizedBox(height: Dimens.space24),
                       ],
 
                       // 3. Rankings Table Header
-                      _buildTableHeader(isDark, subtextColor),
-                      const SizedBox(height: Dimens.space8),
+                      if (state.shimmerLoading || hasListItems) ...<Widget>[
+                        _buildTableHeader(isDark, subtextColor),
+                        const SizedBox(height: Dimens.space8),
+                      ],
                     ],
                   ),
                 ),
@@ -111,6 +117,10 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
       return _buildShimmerList(isDark);
     }
 
+    final List<LeaderboardItemModel> listItems = state.filteredItems.length >= 3
+        ? state.filteredItems.where((LeaderboardItemModel x) => x.rank > 3).toList()
+        : state.filteredItems;
+
     return RefreshIndicator(
       color: AppColors.primaryPurple,
       onRefresh: () => context.read<LeaderboardCubit>().refreshLeaderboard(),
@@ -135,8 +145,18 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
           }
           return false;
         },
-        child: _buildRankingsList(
-            isDark, textColor, subtextColor, borderCol, state),
+        child: listItems.isEmpty
+            ? CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: <Widget>[
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Container(),
+                  ),
+                ],
+              )
+            : _buildRankingsList(
+                isDark, textColor, subtextColor, borderCol, listItems, state.isLoadingMore),
       ),
     );
   }
@@ -193,28 +213,159 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               ],
             ),
           ),
-          // Bell Icon
+          // Info Icon
           IconButton(
               icon: Icon(
-                Icons.notifications_none_rounded,
+                Icons.info_outline_rounded,
                 color: textColor,
                 size: Dimens.size22,
               ),
-              onPressed: () async {
-               // await context.router.push(const NotificationRoute());
-                }
+              onPressed: () => _showFormulaBottomSheet(context, isDark, textColor, subtextColor),
           ),
         ],
       ),
     );
   }
 
+  void _showFormulaBottomSheet(BuildContext context, bool isDark, Color textColor, Color subtextColor) {
+    unawaited(showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(Dimens.radius24),
+              topRight: Radius.circular(Dimens.radius24),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.space20, vertical: Dimens.space24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: Dimens.space20),
+              Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: isDark ? AppColors.successColor : AppColors.primaryPurple,
+                    size: Dimens.size24,
+                  ),
+                  const SizedBox(width: Dimens.space8),
+                  CustomTextLabelWidget(
+                    label: 'Ranking Rules',
+                    style: TextStyle(
+                      fontSize: Dimens.fontSize18,
+                      fontWeight: FontWeight.w900,
+                      color: textColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: Dimens.space16),
+              CustomTextLabelWidget(
+                label: 'Rankings are calculated based on performance points where:',
+                style: TextStyle(
+                  fontSize: Dimens.fontSize13,
+                  fontWeight: FontWeight.w500,
+                  color: subtextColor,
+                ),
+              ),
+              const SizedBox(height: Dimens.space16),
+              
+              // Formula Card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(Dimens.space16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1B162E) : const Color(0xFFF7F5FC),
+                  borderRadius: BorderRadius.circular(Dimens.radius12),
+                  border: Border.all(
+                    color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildFormulaItem(
+                      title: 'LONG Trades',
+                      formula: 'Points = (Exit - Entry) / |Entry - SL|',
+                      isDark: isDark,
+                    ),
+                    const Divider(height: Dimens.space20, thickness: 0.5, color: Colors.white24),
+                    _buildFormulaItem(
+                      title: 'SHORT Trades',
+                      formula: 'Points = (Entry - Exit) / |Entry - SL|',
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: Dimens.space20),
+              Align(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: CustomTextLabelWidget(
+                    label: 'Close',
+                    style: TextStyle(
+                      color: isDark ? AppColors.successColor : AppColors.primaryPurple,
+                      fontWeight: FontWeight.bold,
+                      fontSize: Dimens.fontSize14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ));
+  }
+
+  Widget _buildFormulaItem({required String title, required String formula, required bool isDark}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        CustomTextLabelWidget(
+          label: title,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.successColor,
+          ),
+        ),
+        const SizedBox(height: 6),
+        CustomTextLabelWidget(
+          label: formula,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.white : Colors.black87,
+            fontFamily: 'monospace',
+          ),
+        ),
+      ],
+    );
+  }
+
 
   Widget _buildPodiumSection(BuildContext context, bool isDark,
       LeaderboardState state) {
-    // We need at least the top 3 items to show podium
     final List<LeaderboardItemModel> filtered = state.filteredItems;
-    if (filtered.length < 3) return const SizedBox.shrink();
+    if (filtered.isEmpty) return const SizedBox.shrink();
 
     // Map top 3 by rank
     final LeaderboardItemModel? first = filtered.firstWhereOrNull((
@@ -228,55 +379,58 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         // 2nd Place (Left)
-        if (second != null)
-          Expanded(
-            child: _buildPodiumCard(
-              item: second,
-              rank: 2,
-              height: 200,
-              gradientColors: isDark
-                  ? <Color>[const Color(0xFF141D35), const Color(0xFF0F1527)]
-                  : <Color>[const Color(0xFFE8ECEF), const Color(0xFFF1F3F5)],
-              badgeColor: const Color(0xFF9E9E9E),
-              // Silver
-              isDark: isDark,
-            ),
-          ),
+        Expanded(
+          child: second != null
+              ? _buildPodiumCard(
+                  item: second,
+                  rank: 2,
+                  height: 200,
+                  gradientColors: isDark
+                      ? <Color>[const Color(0xFF141D35), const Color(0xFF0F1527)]
+                      : <Color>[const Color(0xFFE8ECEF), const Color(0xFFF1F3F5)],
+                  badgeColor: const Color(0xFF9E9E9E),
+                  // Silver
+                  isDark: isDark,
+                )
+              : const SizedBox.shrink(),
+        ),
         const SizedBox(width: Dimens.space8),
 
         // 1st Place (Center - Golden Highlighted)
-        if (first != null)
-          Expanded(
-            child: _buildPodiumCard(
-              item: first,
-              rank: 1,
-              height: 230,
-              gradientColors: isDark
-                  ? <Color>[const Color(0xFF2C2213), const Color(0xFF19140B)]
-                  : <Color>[const Color(0xFFFFF9E6), const Color(0xFFFFF2CC)],
-              badgeColor: const Color(0xFFFFD700),
-              // Gold
-              isHighlighted: true,
-              isDark: isDark,
-            ),
-          ),
+        Expanded(
+          child: first != null
+              ? _buildPodiumCard(
+                  item: first,
+                  rank: 1,
+                  height: 230,
+                  gradientColors: isDark
+                      ? <Color>[const Color(0xFF2C2213), const Color(0xFF19140B)]
+                      : <Color>[const Color(0xFFFFF9E6), const Color(0xFFFFF2CC)],
+                  badgeColor: const Color(0xFFFFD700),
+                  // Gold
+                  isHighlighted: true,
+                  isDark: isDark,
+                )
+              : const SizedBox.shrink(),
+        ),
         const SizedBox(width: Dimens.space8),
 
         // 3rd Place (Right)
-        if (third != null)
-          Expanded(
-            child: _buildPodiumCard(
-              item: third,
-              rank: 3,
-              height: 200,
-              gradientColors: isDark
-                  ? <Color>[const Color(0xFF221714), const Color(0xFF160F0D)]
-                  : <Color>[const Color(0xFFF5E6E3), const Color(0xFFF0DCD7)],
-              badgeColor: const Color(0xFFCD7F32),
-              // Bronze
-              isDark: isDark,
-            ),
-          ),
+        Expanded(
+          child: third != null
+              ? _buildPodiumCard(
+                  item: third,
+                  rank: 3,
+                  height: 200,
+                  gradientColors: isDark
+                      ? <Color>[const Color(0xFF221714), const Color(0xFF160F0D)]
+                      : <Color>[const Color(0xFFF5E6E3), const Color(0xFFF0DCD7)],
+                  badgeColor: const Color(0xFFCD7F32),
+                  // Bronze
+                  isDark: isDark,
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }
@@ -293,8 +447,6 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     final Color textColor = isDark ? Colors.white : AppColors.textPrimaryLight;
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors
         .textSecondaryLight;
-    final Color winRateColor = isDark ? AppColors.successColor : AppColors
-        .greenTextColor;
 
     // Glowing shadow for first place
     final List<BoxShadow> shadows = isHighlighted
@@ -431,50 +583,23 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 ),
 
                 // Trader Details
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    CustomTextLabelWidget(
-                      label: item.name,
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: Dimens.fontSize13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: Dimens.space4),
-
-                    // INACTIVE / ACTIVE status pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: item.status == 'ACTIVE'
-                            ? AppColors.successColor.withValues(alpha: 0.15)
-                            : AppColors.errorColor.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: CustomTextLabelWidget(
-                        label: item.status,
-                        style: TextStyle(
-                          color: item.status == 'ACTIVE' ? AppColors
-                              .successColor : AppColors.errorColor,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                  ],
+                CustomTextLabelWidget(
+                  label: item.name,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: Dimens.fontSize13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
 
-                // Performance Win Rate
+                // Performance Points
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     CustomTextLabelWidget(
-                      label: 'Win Rate',
+                      label: 'Points',
                       style: TextStyle(
                         color: subtextColor,
                         fontSize: 9,
@@ -483,9 +608,11 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                     ),
                     const SizedBox(height: 2),
                     CustomTextLabelWidget(
-                      label: '${item.winRate.toStringAsFixed(0)}%',
+                      label: '${item.pnl >= 0 ? '+' : ''}${item.pnl.toStringAsFixed(2)} pts',
                       style: TextStyle(
-                        color: winRateColor,
+                        color: item.pnl >= 0 
+                            ? (isDark ? AppColors.successColor : AppColors.greenTextColor)
+                            : AppColors.errorColor,
                         fontSize: Dimens.fontSize16,
                         fontWeight: FontWeight.w900,
                       ),
@@ -507,7 +634,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
       child: Row(
         children: <Widget>[
           SizedBox(
-            width: Dimens.size40,
+            width: 50.0,
             child: CustomTextLabelWidget(
               label: 'Rank',
               style: TextStyle(color: subtextColor,
@@ -526,19 +653,9 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             ),
           ),
           SizedBox(
-            width: Dimens.size80,
+            width: 80.0,
             child: CustomTextLabelWidget(
-              label: 'Win Rate',
-              style: TextStyle(color: subtextColor,
-                  fontSize: Dimens.fontSize10,
-                  fontWeight: FontWeight.bold),
-              textAlign: TextAlign.start,
-            ),
-          ),
-          SizedBox(
-            width: Dimens.size80,
-            child: CustomTextLabelWidget(
-              label: 'Status',
+              label: 'Points',
               style: TextStyle(color: subtextColor,
                   fontSize: Dimens.fontSize10,
                   fontWeight: FontWeight.bold),
@@ -550,13 +667,14 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     );
   }
 
-  Widget _buildRankingsList(bool isDark,
+  Widget _buildRankingsList(
+      bool isDark,
       Color textColor,
       Color subtextColor,
       Color borderCol,
-      LeaderboardState state,) {
-    final List<LeaderboardItemModel> items = state.filteredItems;
-    final int itemCount = state.isLoadingMore ? items.length + 1 : items.length;
+      List<LeaderboardItemModel> items,
+      bool isLoadingMore,) {
+    final int itemCount = isLoadingMore ? items.length + 1 : items.length;
 
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -588,9 +706,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
         }
 
         final LeaderboardItemModel item = items[index];
-        final bool isActive = item.status == 'ACTIVE';
 
-        // Colored Rank text
+        // Colored Rank text (ranks 1-3 are in podium, but in case they appear, they are styled)
         Color rankColor = subtextColor;
         if (item.rank == 1) {
           rankColor = const Color(0xFFFFC107); // Gold
@@ -600,6 +717,10 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
           rankColor = const Color(0xFFFF8A65); // Bronze
         }
 
+        final Color pointsColor = item.pnl >= 0 
+            ? (isDark ? AppColors.successColor : AppColors.greenTextColor)
+            : AppColors.errorColor;
+
         return Padding(
           padding: const EdgeInsets.symmetric(
               vertical: Dimens.space12, horizontal: Dimens.space12),
@@ -607,7 +728,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             children: <Widget>[
               // Rank
               SizedBox(
-                width: Dimens.size40,
+                width: 50.0,
                 child: CustomTextLabelWidget(
                   label: item.rank.toString(),
                   style: TextStyle(
@@ -668,51 +789,17 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 ),
               ),
 
-              // Win Rate
+              // Points
               SizedBox(
-                width: Dimens.size80,
+                width: 80.0,
                 child: CustomTextLabelWidget(
-                  label: '${item.winRate.toStringAsFixed(2)}%',
+                  label: '${item.pnl >= 0 ? '+' : ''}${item.pnl.toStringAsFixed(2)} pts',
                   style: TextStyle(
-                    color: isDark ? AppColors.successColor : AppColors
-                        .greenTextColor,
+                    color: pointsColor,
                     fontSize: Dimens.fontSize13,
                     fontWeight: FontWeight.w900,
                   ),
-                  textAlign: TextAlign.start,
-                ),
-              ),
-
-              // Status Badge
-              SizedBox(
-                width: Dimens.size80,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? AppColors.successColor.withValues(alpha: 0.1)
-                          : AppColors.errorColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(Dimens.radius4),
-                      border: Border.all(
-                        color: isActive
-                            ? AppColors.successColor.withValues(alpha: 0.2)
-                            : AppColors.errorColor.withValues(alpha: 0.2),
-                        width: 0.5,
-                      ),
-                    ),
-                    child: CustomTextLabelWidget(
-                      label: item.status,
-                      style: TextStyle(
-                        color: isActive ? AppColors.successColor : AppColors
-                            .errorColor,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
+                  textAlign: TextAlign.end,
                 ),
               ),
             ],
@@ -845,24 +932,52 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
   }
 
   Widget _buildFooterNotice(bool isDark, Color subtextColor) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Icon(
-          Icons.info_outline_rounded,
-          color: subtextColor.withValues(alpha: 0.7),
-          size: Dimens.size14,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: Dimens.space16),
+      padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF141A2E) : const Color(0xFFF3F5F9),
+        borderRadius: BorderRadius.circular(Dimens.radius8),
+        border: Border.all(
+          color: isDark ? AppColors.borderDark : AppColors.borderLight,
+          width: 0.5,
         ),
-        const SizedBox(width: Dimens.space6),
-        CustomTextLabelWidget(
-          label: 'Rankings are updated every 10 minutes.',
-          style: TextStyle(
-            fontSize: Dimens.fontSize10,
-            fontWeight: FontWeight.w400,
-            color: subtextColor.withValues(alpha: 0.7),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                Icons.info_outline_rounded,
+                color: isDark ? AppColors.successColor : AppColors.primaryPurple,
+                size: Dimens.size14,
+              ),
+              const SizedBox(width: Dimens.space8),
+              Expanded(
+                child: CustomTextLabelWidget(
+                  label: 'Rankings are calculated based on performance points where: points = (exit - entry) / |entry - SL| for LONG and (entry - exit) / |entry - SL| for SHORT.',
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    color: subtextColor,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 6),
+          CustomTextLabelWidget(
+            label: 'Rankings are updated every 10 minutes.',
+            style: TextStyle(
+              fontSize: 8,
+              fontWeight: FontWeight.w400,
+              color: subtextColor.withValues(alpha: 0.6),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import '../../../../utils/exports.dart';
+import 'widget/first_login_dialog.dart';
 
 @RoutePage()
 class HomePage extends BaseResponsiveView {
@@ -14,34 +15,52 @@ class HomePage extends BaseResponsiveView {
         repository: HomeRepositoryImpl(),
         tradesRepository: TradesRepositoryImpl(),
       )..initData(),
-      child: Scaffold(
-        backgroundColor: isDark
-            ? AppColors.backgroundDark
-            : AppColors.backgroundLight,
-        drawer: const HomeNavigationDrawer(),
-        body: const SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              HomeHeaderAppBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      HomePromoBanner(),
-                      SizedBox(height: Dimens.space20),
-                      HomeOverviewGrid(),
-                      SizedBox(height: Dimens.space20),
-                      HomeRecentTradesTable(),
-                      SizedBox(height: Dimens.space20),
-                      HomeLiveTradesCard(),
-                      SizedBox(height: Dimens.space20),
-
-                    ],
+      child: BlocListener<HomeCubit, HomeState>(
+        listenWhen: (HomeState previous, HomeState current) =>
+            current.firstTimeLogin ?? false,
+        listener: (BuildContext context, HomeState state) {
+          if (state.firstTimeLogin ?? false) {
+            final String role = UserProfileService.instance().roleName;
+            if (role == 'CLIENT') {
+              context.read<HomeCubit>().dismissFirstTimeLoginPrompt();
+              unawaited(showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) => const FirstLoginDialog(),
+              ));
+            } else {
+              context.read<HomeCubit>().dismissFirstTimeLoginPrompt();
+            }
+          }
+        },
+        child: Scaffold(
+          backgroundColor: isDark
+              ? AppColors.backgroundDark
+              : AppColors.backgroundLight,
+          drawer: const HomeNavigationDrawer(),
+          body: const SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                HomeHeaderAppBar(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        HomePromoBanner(),
+                        SizedBox(height: Dimens.space20),
+                        HomeOverviewGrid(),
+                        SizedBox(height: Dimens.space20),
+                        HomeRecentTradesTable(),
+                        SizedBox(height: Dimens.space20),
+                        HomeLiveTradesCard(),
+                        SizedBox(height: Dimens.space20),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

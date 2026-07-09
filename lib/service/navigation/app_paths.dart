@@ -109,5 +109,8 @@ abstract class AppPaths {
 
   /// Onboarding screen route.
   static const String onboarding = '/onboarding';
+
+  /// Trading Preferences screen route.
+  static const String tradingPreferences = '/trading_preferences';
 }
 

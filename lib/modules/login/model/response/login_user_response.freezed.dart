@@ -419,7 +419,7 @@ $UserResponseDataCopyWith<$Res>? get user {
 /// @nodoc
 mixin _$UserResponseData {
 
- String? get publicId; String? get name; String? get email; String? get username; String? get countryCode; String? get phone; UserRoleData? get role; UserSubscriptionData? get activeSubscription; String? get profilePictureUrl;
+ String? get publicId; String? get name; String? get email; String? get username; String? get countryCode; String? get phone; UserRoleData? get role; UserSubscriptionData? get activeSubscription; String? get profilePictureUrl; double? get amountBalance; double? get riskPercentage; bool? get firstTimeLogin;
 /// Create a copy of UserResponseData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -432,16 +432,16 @@ $UserResponseDataCopyWith<UserResponseData> get copyWith => _$UserResponseDataCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserResponseData&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.role, role) || other.role == role)&&(identical(other.activeSubscription, activeSubscription) || other.activeSubscription == activeSubscription)&&(identical(other.profilePictureUrl, profilePictureUrl) || other.profilePictureUrl == profilePictureUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserResponseData&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.role, role) || other.role == role)&&(identical(other.activeSubscription, activeSubscription) || other.activeSubscription == activeSubscription)&&(identical(other.profilePictureUrl, profilePictureUrl) || other.profilePictureUrl == profilePictureUrl)&&(identical(other.amountBalance, amountBalance) || other.amountBalance == amountBalance)&&(identical(other.riskPercentage, riskPercentage) || other.riskPercentage == riskPercentage)&&(identical(other.firstTimeLogin, firstTimeLogin) || other.firstTimeLogin == firstTimeLogin));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,publicId,name,email,username,countryCode,phone,role,activeSubscription,profilePictureUrl);
+int get hashCode => Object.hash(runtimeType,publicId,name,email,username,countryCode,phone,role,activeSubscription,profilePictureUrl,amountBalance,riskPercentage,firstTimeLogin);
 
 @override
 String toString() {
-  return 'UserResponseData(publicId: $publicId, name: $name, email: $email, username: $username, countryCode: $countryCode, phone: $phone, role: $role, activeSubscription: $activeSubscription, profilePictureUrl: $profilePictureUrl)';
+  return 'UserResponseData(publicId: $publicId, name: $name, email: $email, username: $username, countryCode: $countryCode, phone: $phone, role: $role, activeSubscription: $activeSubscription, profilePictureUrl: $profilePictureUrl, amountBalance: $amountBalance, riskPercentage: $riskPercentage, firstTimeLogin: $firstTimeLogin)';
 }
 
 
@@ -452,7 +452,7 @@ abstract mixin class $UserResponseDataCopyWith<$Res>  {
   factory $UserResponseDataCopyWith(UserResponseData value, $Res Function(UserResponseData) _then) = _$UserResponseDataCopyWithImpl;
 @useResult
 $Res call({
- String? publicId, String? name, String? email, String? username, String? countryCode, String? phone, UserRoleData? role, UserSubscriptionData? activeSubscription, String? profilePictureUrl
+ String? publicId, String? name, String? email, String? username, String? countryCode, String? phone, UserRoleData? role, UserSubscriptionData? activeSubscription, String? profilePictureUrl, double? amountBalance, double? riskPercentage, bool? firstTimeLogin
 });
 
 
@@ -469,7 +469,7 @@ class _$UserResponseDataCopyWithImpl<$Res>
 
 /// Create a copy of UserResponseData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? publicId = freezed,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? countryCode = freezed,Object? phone = freezed,Object? role = freezed,Object? activeSubscription = freezed,Object? profilePictureUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? publicId = freezed,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? countryCode = freezed,Object? phone = freezed,Object? role = freezed,Object? activeSubscription = freezed,Object? profilePictureUrl = freezed,Object? amountBalance = freezed,Object? riskPercentage = freezed,Object? firstTimeLogin = freezed,}) {
   return _then(_self.copyWith(
 publicId: freezed == publicId ? _self.publicId : publicId // ignore: cast_nullable_to_non_nullable
 as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -480,7 +480,10 @@ as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullabl
 as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRoleData?,activeSubscription: freezed == activeSubscription ? _self.activeSubscription : activeSubscription // ignore: cast_nullable_to_non_nullable
 as UserSubscriptionData?,profilePictureUrl: freezed == profilePictureUrl ? _self.profilePictureUrl : profilePictureUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,amountBalance: freezed == amountBalance ? _self.amountBalance : amountBalance // ignore: cast_nullable_to_non_nullable
+as double?,riskPercentage: freezed == riskPercentage ? _self.riskPercentage : riskPercentage // ignore: cast_nullable_to_non_nullable
+as double?,firstTimeLogin: freezed == firstTimeLogin ? _self.firstTimeLogin : firstTimeLogin // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 /// Create a copy of UserResponseData
@@ -589,10 +592,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? publicId,  String? name,  String? email,  String? username,  String? countryCode,  String? phone,  UserRoleData? role,  UserSubscriptionData? activeSubscription,  String? profilePictureUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? publicId,  String? name,  String? email,  String? username,  String? countryCode,  String? phone,  UserRoleData? role,  UserSubscriptionData? activeSubscription,  String? profilePictureUrl,  double? amountBalance,  double? riskPercentage,  bool? firstTimeLogin)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserResponseData() when $default != null:
-return $default(_that.publicId,_that.name,_that.email,_that.username,_that.countryCode,_that.phone,_that.role,_that.activeSubscription,_that.profilePictureUrl);case _:
+return $default(_that.publicId,_that.name,_that.email,_that.username,_that.countryCode,_that.phone,_that.role,_that.activeSubscription,_that.profilePictureUrl,_that.amountBalance,_that.riskPercentage,_that.firstTimeLogin);case _:
   return orElse();
 
 }
@@ -610,10 +613,10 @@ return $default(_that.publicId,_that.name,_that.email,_that.username,_that.count
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? publicId,  String? name,  String? email,  String? username,  String? countryCode,  String? phone,  UserRoleData? role,  UserSubscriptionData? activeSubscription,  String? profilePictureUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? publicId,  String? name,  String? email,  String? username,  String? countryCode,  String? phone,  UserRoleData? role,  UserSubscriptionData? activeSubscription,  String? profilePictureUrl,  double? amountBalance,  double? riskPercentage,  bool? firstTimeLogin)  $default,) {final _that = this;
 switch (_that) {
 case _UserResponseData():
-return $default(_that.publicId,_that.name,_that.email,_that.username,_that.countryCode,_that.phone,_that.role,_that.activeSubscription,_that.profilePictureUrl);case _:
+return $default(_that.publicId,_that.name,_that.email,_that.username,_that.countryCode,_that.phone,_that.role,_that.activeSubscription,_that.profilePictureUrl,_that.amountBalance,_that.riskPercentage,_that.firstTimeLogin);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -630,10 +633,10 @@ return $default(_that.publicId,_that.name,_that.email,_that.username,_that.count
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? publicId,  String? name,  String? email,  String? username,  String? countryCode,  String? phone,  UserRoleData? role,  UserSubscriptionData? activeSubscription,  String? profilePictureUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? publicId,  String? name,  String? email,  String? username,  String? countryCode,  String? phone,  UserRoleData? role,  UserSubscriptionData? activeSubscription,  String? profilePictureUrl,  double? amountBalance,  double? riskPercentage,  bool? firstTimeLogin)?  $default,) {final _that = this;
 switch (_that) {
 case _UserResponseData() when $default != null:
-return $default(_that.publicId,_that.name,_that.email,_that.username,_that.countryCode,_that.phone,_that.role,_that.activeSubscription,_that.profilePictureUrl);case _:
+return $default(_that.publicId,_that.name,_that.email,_that.username,_that.countryCode,_that.phone,_that.role,_that.activeSubscription,_that.profilePictureUrl,_that.amountBalance,_that.riskPercentage,_that.firstTimeLogin);case _:
   return null;
 
 }
@@ -645,7 +648,7 @@ return $default(_that.publicId,_that.name,_that.email,_that.username,_that.count
 @JsonSerializable()
 
 class _UserResponseData implements UserResponseData {
-  const _UserResponseData({this.publicId, this.name, this.email, this.username, this.countryCode, this.phone, this.role, this.activeSubscription, this.profilePictureUrl});
+  const _UserResponseData({this.publicId, this.name, this.email, this.username, this.countryCode, this.phone, this.role, this.activeSubscription, this.profilePictureUrl, this.amountBalance, this.riskPercentage, this.firstTimeLogin});
   factory _UserResponseData.fromJson(Map<String, dynamic> json) => _$UserResponseDataFromJson(json);
 
 @override final  String? publicId;
@@ -657,6 +660,9 @@ class _UserResponseData implements UserResponseData {
 @override final  UserRoleData? role;
 @override final  UserSubscriptionData? activeSubscription;
 @override final  String? profilePictureUrl;
+@override final  double? amountBalance;
+@override final  double? riskPercentage;
+@override final  bool? firstTimeLogin;
 
 /// Create a copy of UserResponseData
 /// with the given fields replaced by the non-null parameter values.
@@ -671,16 +677,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserResponseData&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.role, role) || other.role == role)&&(identical(other.activeSubscription, activeSubscription) || other.activeSubscription == activeSubscription)&&(identical(other.profilePictureUrl, profilePictureUrl) || other.profilePictureUrl == profilePictureUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserResponseData&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.role, role) || other.role == role)&&(identical(other.activeSubscription, activeSubscription) || other.activeSubscription == activeSubscription)&&(identical(other.profilePictureUrl, profilePictureUrl) || other.profilePictureUrl == profilePictureUrl)&&(identical(other.amountBalance, amountBalance) || other.amountBalance == amountBalance)&&(identical(other.riskPercentage, riskPercentage) || other.riskPercentage == riskPercentage)&&(identical(other.firstTimeLogin, firstTimeLogin) || other.firstTimeLogin == firstTimeLogin));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,publicId,name,email,username,countryCode,phone,role,activeSubscription,profilePictureUrl);
+int get hashCode => Object.hash(runtimeType,publicId,name,email,username,countryCode,phone,role,activeSubscription,profilePictureUrl,amountBalance,riskPercentage,firstTimeLogin);
 
 @override
 String toString() {
-  return 'UserResponseData(publicId: $publicId, name: $name, email: $email, username: $username, countryCode: $countryCode, phone: $phone, role: $role, activeSubscription: $activeSubscription, profilePictureUrl: $profilePictureUrl)';
+  return 'UserResponseData(publicId: $publicId, name: $name, email: $email, username: $username, countryCode: $countryCode, phone: $phone, role: $role, activeSubscription: $activeSubscription, profilePictureUrl: $profilePictureUrl, amountBalance: $amountBalance, riskPercentage: $riskPercentage, firstTimeLogin: $firstTimeLogin)';
 }
 
 
@@ -691,7 +697,7 @@ abstract mixin class _$UserResponseDataCopyWith<$Res> implements $UserResponseDa
   factory _$UserResponseDataCopyWith(_UserResponseData value, $Res Function(_UserResponseData) _then) = __$UserResponseDataCopyWithImpl;
 @override @useResult
 $Res call({
- String? publicId, String? name, String? email, String? username, String? countryCode, String? phone, UserRoleData? role, UserSubscriptionData? activeSubscription, String? profilePictureUrl
+ String? publicId, String? name, String? email, String? username, String? countryCode, String? phone, UserRoleData? role, UserSubscriptionData? activeSubscription, String? profilePictureUrl, double? amountBalance, double? riskPercentage, bool? firstTimeLogin
 });
 
 
@@ -708,7 +714,7 @@ class __$UserResponseDataCopyWithImpl<$Res>
 
 /// Create a copy of UserResponseData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? publicId = freezed,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? countryCode = freezed,Object? phone = freezed,Object? role = freezed,Object? activeSubscription = freezed,Object? profilePictureUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? publicId = freezed,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? countryCode = freezed,Object? phone = freezed,Object? role = freezed,Object? activeSubscription = freezed,Object? profilePictureUrl = freezed,Object? amountBalance = freezed,Object? riskPercentage = freezed,Object? firstTimeLogin = freezed,}) {
   return _then(_UserResponseData(
 publicId: freezed == publicId ? _self.publicId : publicId // ignore: cast_nullable_to_non_nullable
 as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -719,7 +725,10 @@ as String?,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullabl
 as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRoleData?,activeSubscription: freezed == activeSubscription ? _self.activeSubscription : activeSubscription // ignore: cast_nullable_to_non_nullable
 as UserSubscriptionData?,profilePictureUrl: freezed == profilePictureUrl ? _self.profilePictureUrl : profilePictureUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,amountBalance: freezed == amountBalance ? _self.amountBalance : amountBalance // ignore: cast_nullable_to_non_nullable
+as double?,riskPercentage: freezed == riskPercentage ? _self.riskPercentage : riskPercentage // ignore: cast_nullable_to_non_nullable
+as double?,firstTimeLogin: freezed == firstTimeLogin ? _self.firstTimeLogin : firstTimeLogin // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 

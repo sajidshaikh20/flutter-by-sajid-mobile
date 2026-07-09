@@ -27,6 +27,8 @@ class TradingSignalModel {
   final double? riskAmount;
   final double? lotSize;
   final double? resultInPips;
+  final double? slPips;
+  final double? tpPips;
 
   const TradingSignalModel({
     this.publicId = '',
@@ -57,6 +59,8 @@ class TradingSignalModel {
     this.riskAmount,
     this.lotSize,
     this.resultInPips,
+    this.slPips,
+    this.tpPips,
   });
 
   TradingSignalModel copyWith({
@@ -88,6 +92,8 @@ class TradingSignalModel {
     double? riskAmount,
     double? lotSize,
     double? resultInPips,
+    double? slPips,
+    double? tpPips,
   }) {
     return TradingSignalModel(
       publicId: publicId ?? this.publicId,
@@ -118,6 +124,8 @@ class TradingSignalModel {
       riskAmount: riskAmount ?? this.riskAmount,
       lotSize: lotSize ?? this.lotSize,
       resultInPips: resultInPips ?? this.resultInPips,
+      slPips: slPips ?? this.slPips,
+      tpPips: tpPips ?? this.tpPips,
     );
   }
 

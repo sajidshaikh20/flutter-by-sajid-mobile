@@ -28,9 +28,9 @@ class LeaderboardItemResponse {
       winRate: json['winRate'] != null ? double.parse(json['winRate'].toString()) : 0.0,
       status: json['accountStatus'] ?? json['status'] ?? 'INACTIVE',
       type: json['type'] ?? inferredType,
-      pnl: json['pnl'] != null ? double.parse(json['pnl'].toString()) : 0.0,
-      tradesCount: json['tradesCount'] ?? 0,
-      avatarUrl: json['profilePictureUrl'] ?? json['avatarUrl']?.toString(),
+      pnl: json['netPoints'] != null ? double.parse(json['netPoints'].toString()) : (json['pnl'] != null ? double.parse(json['pnl'].toString()) : 0.0),
+      tradesCount: json['totalTrades'] ?? json['tradesCount'] ?? 0,
+      avatarUrl: json['profilePictureUrl']?.toString() ?? json['avatarUrl']?.toString(),
     );
   }
 

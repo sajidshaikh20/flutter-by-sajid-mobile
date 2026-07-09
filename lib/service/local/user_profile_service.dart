@@ -134,6 +134,15 @@ class UserProfileService extends ChangeNotifier {
   /// Subscription duration in days.
   int get durationDays => _dataModel?.durationDays ?? 0;
 
+  /// The default/custom trading balance.
+  double? get amountBalance => _dataModel?.amountBalance;
+
+  /// The default/custom trading risk percentage.
+  double? get riskPercentage => _dataModel?.riskPercentage;
+
+  /// Whether it's the user's first time logging in.
+  bool? get firstTimeLogin => _dataModel?.firstTimeLogin;
+
 
   /// The customer's authentication token.
   String get customerToken {
@@ -192,6 +201,9 @@ class UserProfileService extends ChangeNotifier {
     bool? isActive,
     int? durationDays,
     String? profilePictureUrl,
+    double? amountBalance,
+    double? riskPercentage,
+    bool? firstTimeLogin,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -232,6 +244,9 @@ class UserProfileService extends ChangeNotifier {
       isActive: isActive ?? _dataModel?.isActive,
       durationDays: durationDays ?? _dataModel?.durationDays,
       profilePictureUrl: profilePictureUrl ?? _dataModel?.profilePictureUrl,
+      amountBalance: amountBalance ?? _dataModel?.amountBalance,
+      riskPercentage: riskPercentage ?? _dataModel?.riskPercentage,
+      firstTimeLogin: firstTimeLogin ?? _dataModel?.firstTimeLogin,
     );
 
     // Save updated model back to shared preferences

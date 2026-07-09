@@ -11,4 +11,9 @@ abstract class ProfileRepository extends BaseRepository {
     XFile file,
   );
   Future<ResponseHandler<BaseResponse<dynamic>>> deleteAccount();
+  Future<ResponseHandler<BaseResponse<TradingPreferencesResponse>>> getTradingPreferences();
+  Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> updateBalanceAndRisk({
+    double? amountBalance,
+    double? riskPercentage,
+  });
 }

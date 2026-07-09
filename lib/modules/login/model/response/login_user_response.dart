@@ -114,6 +114,9 @@ abstract class UserResponseData with _$UserResponseData {
     UserRoleData? role,
     UserSubscriptionData? activeSubscription,
     String? profilePictureUrl,
+    double? amountBalance,
+    double? riskPercentage,
+    bool? firstTimeLogin,
   }) = _UserResponseData;
 
   /// Creates a [UserResponseData] instance from a JSON map.
