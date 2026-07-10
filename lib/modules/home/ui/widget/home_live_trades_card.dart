@@ -342,6 +342,53 @@ class HomeLiveTradesCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                              if (trade.riskAmount != null || trade.lotSize != null) ...<Widget>[
+                                const SizedBox(height: Dimens.space12),
+                                Row(
+                                  children: <Widget>[
+                                    if (trade.riskAmount != null)
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            CustomTextLabelWidget(
+                                              label: 'Risk Amount',
+                                              style: _labelStyle(isDark),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            const SizedBox(height: Dimens.space4),
+                                            CustomTextLabelWidget(
+                                              label: '\$${trade.riskAmount!.toStringAsFixed(trade.riskAmount! % 1 == 0 ? 0 : 2)}',
+                                              style: _valueStyle(isDark, null),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    else
+                                      const Expanded(child: SizedBox.shrink()),
+                                    if (trade.lotSize != null)
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            CustomTextLabelWidget(
+                                              label: 'Lot Size',
+                                              style: _labelStyle(isDark),
+                                            ),
+                                            const SizedBox(height: Dimens.space4),
+                                            CustomTextLabelWidget(
+                                              label: trade.lotSize!.toString(),
+                                              style: _valueStyle(isDark, null),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    else
+                                      const Expanded(child: SizedBox.shrink()),
+                                    const Expanded(child: SizedBox.shrink()),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         );

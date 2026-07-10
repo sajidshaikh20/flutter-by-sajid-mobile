@@ -181,6 +181,8 @@ abstract class Apis {
   /// Endpoint to search trades
   static const String searchTrades = '$subBaseUrl/trade/search';
 
+  static const String searchMyTrades = '$subBaseUrl/common/trades/search';
+
   /// Endpoint to register/unregister crypto live prices
   static const String cryptoLivePrice = '$subBaseUrl/crypto-market/live-price';
 

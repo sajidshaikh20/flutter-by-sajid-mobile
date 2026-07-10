@@ -52,7 +52,7 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.searchTrades,
+          endUrl: Apis.searchMyTrades,
           params: params,
         );
 

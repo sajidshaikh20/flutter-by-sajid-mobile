@@ -207,26 +207,58 @@ class HomeRecentTradesTable extends StatelessWidget {
                                 children: <Widget>[
                                   Expanded(
                                     flex: 3,
-                                    child: CustomTextLabelWidget(
-                                      label: trade.pair,
-                                      style: TextStyle(
-                                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: Dimens.fontSize13,
-                                      ),
-                                      textAlign: TextAlign.start,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        CustomTextLabelWidget(
+                                          label: trade.pair,
+                                          style: TextStyle(
+                                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: Dimens.fontSize13,
+                                          ),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        if (trade.lotSize != null) ...<Widget>[
+                                          const SizedBox(height: 2),
+                                          CustomTextLabelWidget(
+                                            label: 'Lot: ${trade.lotSize}',
+                                            style: TextStyle(
+                                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                              fontSize: Dimens.fontSize10,
+                                            ),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ],
                                     ),
                                   ),
                                   Expanded(
                                     flex: 4,
-                                    child: CustomTextLabelWidget(
-                                      label: trade.type,
-                                      style: TextStyle(
-                                        color: isBuy ? themeGreen : AppColors.errorColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: Dimens.fontSize12,
-                                      ),
-                                      textAlign: TextAlign.start,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        CustomTextLabelWidget(
+                                          label: trade.type,
+                                          style: TextStyle(
+                                            color: isBuy ? themeGreen : AppColors.errorColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: Dimens.fontSize12,
+                                          ),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        if (trade.riskAmount != null) ...<Widget>[
+                                          const SizedBox(height: 2),
+                                          CustomTextLabelWidget(
+                                            label: 'Risk: \$${trade.riskAmount!.toStringAsFixed(trade.riskAmount! % 1 == 0 ? 0 : 2)}',
+                                            style: TextStyle(
+                                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                              fontSize: Dimens.fontSize10,
+                                            ),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ],
                                     ),
                                   ),
                                   Expanded(

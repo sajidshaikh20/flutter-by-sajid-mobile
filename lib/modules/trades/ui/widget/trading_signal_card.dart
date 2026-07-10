@@ -201,60 +201,54 @@ class TradingSignalCard extends StatelessWidget {
           ),
           const SizedBox(height: Dimens.space16),
 
-          // Mid Section 1: Entry, SL, TP
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: _ValueColumn(
-                  label: 'Entry Price',
-                  value: signal.entryPrice.toString(),
-                  valueColor: textColor,
-                  isDark: isDark,
-                ),
-              ),
-              Expanded(
-                child: _ValueColumn(
-                  label: 'Stop Loss',
-                  value: signal.stopLoss.toString(),
-                  subValue: signal.slPips != null ? '${signal.slPips!.toStringAsFixed(2)} Pips' : null,
-                  valueColor: AppColors.errorColor,
-                  isDark: isDark,
-                  alignment: CrossAxisAlignment.center,
-                ),
-              ),
-              Expanded(
-                child: _ValueColumn(
-                  label: (signal.takeProfitOne != null || signal.takeProfitTwo != null || signal.takeProfitThree != null)
-                      ? 'TP 1'
-                      : 'Take Profit',
-                  value: (signal.takeProfitOne != null)
-                      ? signal.takeProfitOne.toString()
-                      : signal.takeProfit.toString(),
-                  subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
-                  valueColor: themeGreen,
-                  isDark: isDark,
-                  alignment: CrossAxisAlignment.end,
-                ),
-              ),
-            ],
-          ),
+          // Mid Section 1: Entry, SL, TP (or TP 1, TP 2, TP 3 on separate line if multiple)
           if (signal.takeProfitTwo != null || signal.takeProfitThree != null) ...<Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'Entry Price',
+                    value: signal.entryPrice.toString(),
+                    valueColor: textColor,
+                    isDark: isDark,
+                  ),
+                ),
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'Stop Loss',
+                    value: signal.stopLoss.toString(),
+                    subValue: signal.slPips != null ? '${signal.slPips!.toStringAsFixed(2)} Pips' : null,
+                    valueColor: AppColors.errorColor,
+                    isDark: isDark,
+                    alignment: CrossAxisAlignment.center,
+                  ),
+                ),
+                const Expanded(child: SizedBox.shrink()),
+              ],
+            ),
             const SizedBox(height: Dimens.space12),
             Row(
               children: <Widget>[
-                const Expanded(child: SizedBox.shrink()),
-                if (signal.takeProfitTwo != null)
-                  Expanded(
-                    child: _ValueColumn(
-                      label: 'TP 2',
-                      value: signal.takeProfitTwo.toString(),
-                      valueColor: themeGreen,
-                      isDark: isDark,
-                      alignment: CrossAxisAlignment.center,
-                    ),
-                  )
-                else
-                  const Expanded(child: SizedBox.shrink()),
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'TP 1',
+                    value: (signal.takeProfitOne != null)
+                        ? signal.takeProfitOne.toString()
+                        : signal.takeProfit.toString(),
+                    subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
+                    valueColor: themeGreen,
+                    isDark: isDark,
+                  ),
+                ),
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'TP 2',
+                    value: signal.takeProfitTwo.toString(),
+                    valueColor: themeGreen,
+                    isDark: isDark,
+                    alignment: CrossAxisAlignment.center,
+                  ),
+                ),
                 if (signal.takeProfitThree != null)
                   Expanded(
                     child: _ValueColumn(
@@ -267,6 +261,39 @@ class TradingSignalCard extends StatelessWidget {
                   )
                 else
                   const Expanded(child: SizedBox.shrink()),
+              ],
+            ),
+          ] else ...<Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'Entry Price',
+                    value: signal.entryPrice.toString(),
+                    valueColor: textColor,
+                    isDark: isDark,
+                  ),
+                ),
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'Stop Loss',
+                    value: signal.stopLoss.toString(),
+                    subValue: signal.slPips != null ? '${signal.slPips!.toStringAsFixed(2)} Pips' : null,
+                    valueColor: AppColors.errorColor,
+                    isDark: isDark,
+                    alignment: CrossAxisAlignment.center,
+                  ),
+                ),
+                Expanded(
+                  child: _ValueColumn(
+                    label: 'Take Profit',
+                    value: signal.takeProfit.toString(),
+                    subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
+                    valueColor: themeGreen,
+                    isDark: isDark,
+                    alignment: CrossAxisAlignment.end,
+                  ),
+                ),
               ],
             ),
           ],
