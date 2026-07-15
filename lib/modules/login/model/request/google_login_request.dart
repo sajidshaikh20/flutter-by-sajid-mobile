@@ -1,14 +1,7 @@
 class GoogleLoginRequest {
-  GoogleLoginRequest({
-    required this.token,
-    this.role = 'CLIENT',
-  });
+  GoogleLoginRequest({required this.token});
 
   final String token;
-  final String role;
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'token': token,
-        'role': role,
-      };
+  Map<String, dynamic> toJson() => <String, dynamic>{'token': token};
 }

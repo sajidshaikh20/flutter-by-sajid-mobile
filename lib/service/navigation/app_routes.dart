@@ -96,6 +96,13 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: fadePageTransition,
     ),
     CustomRoute<dynamic>(
+      page: PdfViewRoute.page,
+      path: AppPaths.pdfView,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
       page: NotificationRoute.page,
       path: AppPaths.notifications,
       durationInMilliseconds: Dimens.milliseconds400,

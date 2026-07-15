@@ -18,7 +18,7 @@ class CompoundInterestCubit extends BaseCubit<CompoundInterestState> {
     calculate();
   }
 
-  /// Updates annual interest rate.
+  /// Updates annual kinterest rate.
   void updateAnnualInterestRate(double value) {
     emit(state.copyWith(annualInterestRate: value));
     calculate();

@@ -1,4 +1,5 @@
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart' as fp;
 import '../../../utils/exports.dart';
 
 /// Cubit for sign up multi-step flow.
@@ -827,9 +828,9 @@ class SignUpCubit extends Cubit<SignUpState> {
       useVps: true,
       myfxbookVerified: true,
       fxblueVerified: false,
-      governmentIdPath: '/mock/government_id.png',
-      bankStatementPath: '/mock/bank_statement.png',
-      tradingCertificatePath: '/mock/trading_certificate.png',
+      governmentIdPath: '/mock/government_id.pdf',
+      bankStatementPath: '/mock/bank_statement.pdf',
+      tradingCertificatePath: '/mock/trading_certificate.pdf',
       declarationConfirmed: true,
     ));
   }
@@ -837,34 +838,61 @@ class SignUpCubit extends Cubit<SignUpState> {
   // Document file pickers
   Future<void> pickGovernmentId() async {
     try {
-      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (file != null) {
+      final fp.FilePickerResult? result = await fp.FilePicker.platform.pickFiles(
+        type: fp.FileType.custom,
+        allowedExtensions: <String>['pdf'],
+      );
+      if (result != null && result.files.single.path != null) {
+        final fp.PlatformFile file = result.files.single;
+        // 1 MB is 1024 * 1024 bytes
+        if (file.size > 1024 * 1024) {
+          emit(state.copyWith(msg: 'File size exceeds the 1MB limit. Please upload a smaller PDF.'));
+          return;
+        }
         emit(state.copyWith(governmentIdPath: file.path, governmentIdSubmitted: true));
       }
     } on Exception catch (e) {
-      emit(state.copyWith(msg: 'Failed to pick image: $e'));
+      emit(state.copyWith(msg: 'Failed to pick PDF file: $e'));
     }
   }
 
   Future<void> pickBankStatement() async {
     try {
-      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (file != null) {
+      final fp.FilePickerResult? result = await fp.FilePicker.platform.pickFiles(
+        type: fp.FileType.custom,
+        allowedExtensions: <String>['pdf'],
+      );
+      if (result != null && result.files.single.path != null) {
+        final fp.PlatformFile file = result.files.single;
+        // 1 MB is 1024 * 1024 bytes
+        if (file.size > 1024 * 1024) {
+          emit(state.copyWith(msg: 'File size exceeds the 1MB limit. Please upload a smaller PDF.'));
+          return;
+        }
         emit(state.copyWith(bankStatementPath: file.path, brokerStatementAttached: true));
       }
     } on Exception catch (e) {
-      emit(state.copyWith(msg: 'Failed to pick image: $e'));
+      emit(state.copyWith(msg: 'Failed to pick PDF file: $e'));
     }
   }
 
   Future<void> pickTradingCertificate() async {
     try {
-      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (file != null) {
+      final fp.FilePickerResult? result = await fp.FilePicker.platform.pickFiles(
+        type: fp.FileType.custom,
+        allowedExtensions: <String>['pdf'],
+      );
+      if (result != null && result.files.single.path != null) {
+        final fp.PlatformFile file = result.files.single;
+        // 1 MB is 1024 * 1024 bytes
+        if (file.size > 1024 * 1024) {
+          emit(state.copyWith(msg: 'File size exceeds the 1MB limit. Please upload a smaller PDF.'));
+          return;
+        }
         emit(state.copyWith(tradingCertificatePath: file.path, tradingStatementSubmitted: true));
       }
     } on Exception catch (e) {
-      emit(state.copyWith(msg: 'Failed to pick image: $e'));
+      emit(state.copyWith(msg: 'Failed to pick PDF file: $e'));
     }
   }
 

@@ -112,5 +112,8 @@ abstract class AppPaths {
 
   /// Trading Preferences screen route.
   static const String tradingPreferences = '/trading_preferences';
+
+  /// PDF View screen route.
+  static const String pdfView = '/pdf_view';
 }
 

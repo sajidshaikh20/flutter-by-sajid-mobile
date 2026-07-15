@@ -704,21 +704,52 @@ class SignUpTraderProfileForm extends StatelessWidget {
                     label: 'Government ID *',
                     fileName: state.governmentIdPath?.split('/').last,
                     onTap: () => cubit.pickGovernmentId(),
+                    onViewTap: state.governmentIdPath != null
+                        ? () async {
+                            await context.router.push(
+                              PdfViewRoute(
+                                pdfPath: state.governmentIdPath!,
+                                title: 'Government ID',
+                              ),
+                            );
+                          }
+                        : null,
                   ),
                   Dimens.size12.heightBox,
                   _buildUploadItem(
                     context: context,
-                    label: 'Broker Statement (PDF/Image)',
+                    label: 'Broker Statement (PDF)',
                     fileName: state.bankStatementPath?.split('/').last,
                     onTap: () => cubit.pickBankStatement(),
+                    onViewTap: state.bankStatementPath != null
+                        ? () async {
+                            await context.router.push(
+                              PdfViewRoute(
+                                pdfPath: state.bankStatementPath!,
+                                title: 'Broker Statement',
+                              ),
+                            );
+                          }
+                        : null,
                   ),
                   Dimens.size12.heightBox,
                   _buildUploadItem(
                     context: context,
-                    label: 'Trading Certificate (Image)',
+                    label: 'Trading Certificate (PDF)',
                     fileName: state.tradingCertificatePath?.split('/').last,
                     onTap: () => cubit.pickTradingCertificate(),
+                    onViewTap: state.tradingCertificatePath != null
+                        ? () async {
+                            await context.router.push(
+                              PdfViewRoute(
+                                pdfPath: state.tradingCertificatePath!,
+                                title: 'Trading Certificate',
+                              ),
+                            );
+                          }
+                        : null,
                   ),
+
                 ],
               );
             },
@@ -731,9 +762,13 @@ class SignUpTraderProfileForm extends StatelessWidget {
                 controller: state.additionalNotesController,
                 label: 'Additional Notes',
                 hint: 'Enter any additional details or background metrics...',
-                maxLines: 3,
+                maxLines: 50,
+                minLines: 2,
+                editTextHeight: 150,
+                alignLabelWithHint: true,
+                textInputType: TextInputType.multiline,
                 maxLength: 1000,
-                input: TextInputAction.next,
+                input: TextInputAction.newline,
               );
             },
           ),
@@ -968,6 +1003,7 @@ class SignUpTraderProfileForm extends StatelessWidget {
     required String label,
     required String? fileName,
     required VoidCallback onTap,
+    VoidCallback? onViewTap,
   }) {
     final bool isDark = context.isDark;
     final Color cardBg = isDark ? AppColors.surfaceDark : Colors.grey.withValues(alpha: 0.05);
@@ -1008,6 +1044,30 @@ class SignUpTraderProfileForm extends StatelessWidget {
             ),
           ),
           Dimens.size12.widthBox,
+          if (onViewTap != null && fileName != null) ...<Widget>[
+            OutlinedButton.icon(
+              onPressed: onViewTap,
+              icon: const Icon(
+                Icons.visibility,
+                size: Dimens.size16,
+                color: AppColors.primaryPurple,
+              ),
+              label: const CustomTextLabelWidget(
+                label: 'View',
+                style: TextStyle(
+                  color: AppColors.primaryPurple,
+                  fontWeight: FontWeight.bold,
+                  fontSize: Dimens.fontSize12,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primaryPurple),
+                padding: const EdgeInsets.symmetric(horizontal: Dimens.size12, vertical: Dimens.size12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.radius8)),
+              ),
+            ),
+            Dimens.size8.widthBox,
+          ],
           ElevatedButton.icon(
             onPressed: onTap,
             icon: Icon(
