@@ -115,5 +115,8 @@ abstract class AppPaths {
 
   /// PDF View screen route.
   static const String pdfView = '/pdf_view';
+
+  /// Payment Web View screen route.
+  static const String paymentWebView = '/payment_web_view';
 }
 

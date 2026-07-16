@@ -166,6 +166,13 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: fadePageTransition,
     ),
     CustomRoute<dynamic>(
+      page: PaymentWebViewRoute.page,
+      path: AppPaths.paymentWebView,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
+    CustomRoute<dynamic>(
       page: OnboardingRoute.page,
       path: AppPaths.onboarding,
       durationInMilliseconds: Dimens.milliseconds400,

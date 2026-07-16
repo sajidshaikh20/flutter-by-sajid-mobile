@@ -199,11 +199,18 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
     final ResponseHandler<BaseResponse<dynamic>> response = await repository.createSubscription(
       CreateSubscriptionRequest(
         userPublicId: userPublicId,
-        planPublicId: resolvedPlan.publicId,
+        planId: resolvedPlan.id,
       ),
     );
 
     if (response.isSuccess()) {
+      final BaseResponse<dynamic>? baseResponse = response.getSuccessInstance()?.response;
+      final dynamic data = baseResponse?.data;
+      String? checkoutUrl;
+      if (data is Map<String, dynamic>) {
+        checkoutUrl = data['checkoutUrl']?.toString();
+      }
+
       await UserProfileService.instance().updateUserProfile(
         subscriptionPublicId: 'PENDING',
         planName: resolvedPlan.planName,
@@ -219,7 +226,9 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
 
       emit(state.copyWith(
         status: BaseStateStatus.success,
-        msg: 'Subscription created successfully. Payment verification is pending.',
+        msg: checkoutUrl != null && checkoutUrl.isNotEmpty
+            ? 'PAYMENT_REDIRECT:$checkoutUrl'
+            : 'Subscription created successfully. Payment verification is pending.',
       ));
     } else {
       final OnFailureResponse<BaseResponse<dynamic>>? failure = response.getFailureInstance();

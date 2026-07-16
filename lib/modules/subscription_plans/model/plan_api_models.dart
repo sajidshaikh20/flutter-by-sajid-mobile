@@ -23,6 +23,7 @@ class PlanPriceResponse {
 }
 
 class PlanResponse {
+  final int id;
   final String publicId;
   final String planCode;
   final String planName;
@@ -34,6 +35,7 @@ class PlanResponse {
   final bool isActive;
 
   PlanResponse({
+    required this.id,
     required this.publicId,
     required this.planCode,
     required this.planName,
@@ -62,6 +64,7 @@ class PlanResponse {
     }
 
     return PlanResponse(
+      id: json['id'] != null ? int.parse(json['id'].toString()) : 0,
       publicId: json['publicId'] ?? '',
       planCode: json['planCode'] ?? '',
       planName: json['planName'] ?? '',
@@ -76,6 +79,7 @@ class PlanResponse {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      'id': id,
       'publicId': publicId,
       'planCode': planCode,
       'planName': planName,
@@ -91,17 +95,17 @@ class PlanResponse {
 
 class CreateSubscriptionRequest {
   final String userPublicId;
-  final String planPublicId;
+  final int planId;
 
   CreateSubscriptionRequest({
     required this.userPublicId,
-    required this.planPublicId,
+    required this.planId,
   });
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'userPublicId': userPublicId,
-      'planPublicId': planPublicId,
+      'planId': planId,
     };
   }
 }

@@ -143,7 +143,7 @@ abstract class Apis {
   static const String getAllPlans = '$subBaseUrl/plans/getAll';
 
   /// Endpoint to create subscription
-  static const String createSubscription = '$subBaseUrl/subscriptions/create';
+  static const String createSubscription = '$subBaseUrl/match2pay/subscribe';
 
   /// Endpoint to get leaderboard
   static const String getLeaderboard = '$subBaseUrl/common/leaderboard';

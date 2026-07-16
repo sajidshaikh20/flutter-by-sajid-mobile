@@ -43,22 +43,44 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
 
     return BlocConsumer<SubscriptionPlansCubit, SubscriptionPlansState>(
       listener: (BuildContext context, SubscriptionPlansState state) {
-        if (state.status == BaseStateStatus.loading) {
-          unawaited(EasyLoading.show(status: 'Loading...'));
-        } else {
-          unawaited(EasyLoading.dismiss());
-        }
 
         if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
-          showCustomDialog(
-            state.msg!,
-            title: 'Success',
-            okBtnTitle: 'Awesome',
-            isDialogHideOnClick: true,
-            onOkClicked: () {
-              context.router.back();
-            },
-          );
+          if (state.msg!.startsWith('PAYMENT_REDIRECT:')) {
+            final String url = state.msg!.substring('PAYMENT_REDIRECT:'.length);
+            final StackRouter router = context.router;
+            context.read<SubscriptionPlansCubit>().resetError();
+            unawaited(Future<void>(() async {
+              final dynamic result = await router.push(PaymentWebViewRoute(paymentUrl: url));
+              if (result != null && result != 'Goback') {
+                await UserProfileService.instance().updateUserProfile(
+                  paymentStatus: 'SUCCESS',
+                  subscriptionStatus: 'ACTIVE',
+                  isActive: true,
+                );
+                if (mounted) {
+                  showCustomDialog(
+                    'Your payment was completed successfully! Enjoy your premium access.',
+                    title: 'Success',
+                    okBtnTitle: 'Awesome',
+                    isDialogHideOnClick: true,
+                    onOkClicked: () {
+                      router.back();
+                    },
+                  );
+                }
+              }
+            }));
+          } else {
+            showCustomDialog(
+              state.msg!,
+              title: 'Success',
+              okBtnTitle: 'Awesome',
+              isDialogHideOnClick: true,
+              onOkClicked: () {
+                context.router.back();
+              },
+            );
+          }
         }
 
         if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
@@ -219,7 +241,7 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
                 // Premium Gradient Continue Button
                 GestureDetector(
                   onTap: () {
-
+                    _handleChoosePlan(context, selectedPlan.name);
                   },
                   child: Container(
                     height: 52,
