@@ -116,3 +116,7 @@ flutter:
           weight: 800
         - asset: fonts/Inter-Black.otf
           weight: 900
+
+image:
+tasks:
+  -
