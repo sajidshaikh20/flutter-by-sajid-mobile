@@ -89,7 +89,6 @@ Future<void> firebaseBackground(RemoteMessage message) async {
         ),
       );
     } on Object catch (e) {
-      DebugLog.instance.e('firebaseBackground: Custom icon not compiled yet ($e). Falling back to ic_notification_icon.');
       try {
         await awesomeNotifications.createNotification(
           content: NotificationContent(
