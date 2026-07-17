@@ -713,15 +713,7 @@ class HttpHandleInterceptor extends Interceptor {
       options.headers['Cookie'] = savedCookies;
     }
 
-    if (savedCookies.isNotEmpty &&
-        !options.headers.containsKey('Authorization')) {
-      final String? token = _extractTokenFromCookies(savedCookies);
-      if (token != null && token.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $token';
-      }
-    }
-
-    // Use stored access token if no Authorization header was set yet
+    // Always prioritize the actual JWT accessToken from user profile for Authorization
     if (!options.headers.containsKey('Authorization')) {
       final String profileJson = SharedPref.instance.getString(
         PrefsKey.userProfileKey,
@@ -729,7 +721,17 @@ class HttpHandleInterceptor extends Interceptor {
       );
       final String savedAccessToken = _accessTokenFromProfileJson(profileJson);
       if (savedAccessToken.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $savedAccessToken';
+        final String bearerToken = savedAccessToken.startsWith('Bearer ')
+            ? savedAccessToken
+            : 'Bearer $savedAccessToken';
+        options.headers['Authorization'] = bearerToken;
+      } else if (savedCookies.isNotEmpty) {
+        final String? token = _extractTokenFromCookies(savedCookies);
+        if (token != null && token.isNotEmpty) {
+          final String bearerToken =
+              token.startsWith('Bearer ') ? token : 'Bearer $token';
+          options.headers['Authorization'] = bearerToken;
+        }
       }
     }
 
