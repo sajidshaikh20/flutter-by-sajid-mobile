@@ -101,10 +101,10 @@ class ApiClient {
     // If no cancelToken is provided, use the default _cancelToken.
     cancelToken == null
         ? _cancelToken?.cancel(
-            'Cancelled',
-          ) // Cancel the request with the default cancel token.
+      'Cancelled',
+    ) // Cancel the request with the default cancel token.
         : cancelToken
-              .cancel(); // Cancel the request with the provided cancel token.
+        .cancel(); // Cancel the request with the provided cancel token.
   }
 
   /// Handles API calls (GET, POST, DELETE) with options for caching,
@@ -231,14 +231,14 @@ class ApiClient {
   /// [cacheDurationMnt]: Duration in minutes to cache the response
   ///  (only used if `needToCache` is `true`).
   FutureOr<ResponseHandler<T?>> get<T>(
-    String endUrl, {
-    Map<String, dynamic>? params,
-    Map<String, dynamic>? data,
-    Options? options,
-    CancelToken? cancelToken,
-    bool needToCache = false,
-    int? cacheDurationMnt,
-  }) async => _responseHandler<T>(
+      String endUrl, {
+        Map<String, dynamic>? params,
+        Map<String, dynamic>? data,
+        Options? options,
+        CancelToken? cancelToken,
+        bool needToCache = false,
+        int? cacheDurationMnt,
+      }) async => _responseHandler<T>(
     // Performing the GET request using Dio.
     await _dio?.get<T>(
       endUrl, // Endpoint URL
@@ -270,16 +270,16 @@ class ApiClient {
   /// [needToCache]: Whether the response should be cached (default is `false`).
   /// [cacheDurationMnt]: Duration in minutes to cache the response.
   FutureOr<ResponseHandler<T?>> post<T>(
-    String endUrl, {
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? params,
-    Options? options,
-    FormData? formData,
-    CancelToken? cancelToken,
-    bool isMultipartFormData = false,
-    bool needToCache = false,
-    int? cacheDurationMnt,
-  }) async => _responseHandler<T>(
+      String endUrl, {
+        Map<String, dynamic>? data,
+        Map<String, dynamic>? params,
+        Options? options,
+        FormData? formData,
+        CancelToken? cancelToken,
+        bool isMultipartFormData = false,
+        bool needToCache = false,
+        int? cacheDurationMnt,
+      }) async => _responseHandler<T>(
     // Performing the POST request using Dio.
     await _dio?.post<T>(
       endUrl, // Endpoint URL
@@ -300,16 +300,16 @@ class ApiClient {
 
   /// patch api call
   FutureOr<ResponseHandler<T?>> patch<T>(
-    String endUrl, {
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? params,
-    Options? options,
-    FormData? formData,
-    CancelToken? cancelToken,
-    bool isMultipartFormData = false,
-    bool needToCache = false,
-    int? cacheDurationMnt,
-  }) async => _responseHandler<T>(
+      String endUrl, {
+        Map<String, dynamic>? data,
+        Map<String, dynamic>? params,
+        Options? options,
+        FormData? formData,
+        CancelToken? cancelToken,
+        bool isMultipartFormData = false,
+        bool needToCache = false,
+        int? cacheDurationMnt,
+      }) async => _responseHandler<T>(
     // Performing the POST request using Dio.
     await _dio?.patch<T>(
       endUrl, // Endpoint URL
@@ -330,16 +330,16 @@ class ApiClient {
 
   /// put api call
   FutureOr<ResponseHandler<T?>> put<T>(
-    String endUrl, {
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? params,
-    Options? options,
-    FormData? formData,
-    CancelToken? cancelToken,
-    bool isMultipartFormData = false,
-    bool needToCache = false,
-    int? cacheDurationMnt,
-  }) async => _responseHandler<T>(
+      String endUrl, {
+        Map<String, dynamic>? data,
+        Map<String, dynamic>? params,
+        Options? options,
+        FormData? formData,
+        CancelToken? cancelToken,
+        bool isMultipartFormData = false,
+        bool needToCache = false,
+        int? cacheDurationMnt,
+      }) async => _responseHandler<T>(
     // Performing the PUT request using Dio.
     await _dio?.put<T>(
       endUrl, // Endpoint URL
@@ -368,12 +368,12 @@ class ApiClient {
   /// [options]: Optional additional request options.
   /// [cancelToken]: Optional cancel token to cancel the request.
   FutureOr<ResponseHandler<T?>> delete<T>(
-    String endUrl, {
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? params,
-    Options? options,
-    CancelToken? cancelToken,
-  }) async => _responseHandler<T>(
+      String endUrl, {
+        Map<String, dynamic>? data,
+        Map<String, dynamic>? params,
+        Options? options,
+        CancelToken? cancelToken,
+      }) async => _responseHandler<T>(
     // Performing the DELETE request using Dio.
     await _dio?.delete<T>(
       endUrl, // Endpoint URL
@@ -393,10 +393,10 @@ class ApiClient {
   /// Returns updated [options] or the original [options]
   /// if caching is not needed.
   Options? _handleCacheOption(
-    Options? options, {
-    bool needToCache = false,
-    int? cacheDuration,
-  }) {
+      Options? options, {
+        bool needToCache = false,
+        int? cacheDuration,
+      }) {
     if (needToCache) {
       options = options ?? Options();
       return options.copyWith(
@@ -455,7 +455,7 @@ class ApiClient {
       if (responseData != null) {
         if (responseData is Map) {
           final Map<String, dynamic> data =
-              responseData as Map<String, dynamic>;
+          responseData as Map<String, dynamic>;
           if (data.containsKey('message') && data['message'] != null) {
             return data['message'].toString();
           }
@@ -552,12 +552,12 @@ class ApiClient {
   /// Sends a request to refresh the token.
   /// Returns the raw [Response] from the API.
   Future<Response<dynamic>?>? handleRefreshToken(
-    String endUrl, {
-    Map<String, dynamic>? params,
-    Map<String, dynamic>? data,
-    Options? options,
-    CancelToken? cancelToken,
-  }) async {
+      String endUrl, {
+        Map<String, dynamic>? params,
+        Map<String, dynamic>? data,
+        Options? options,
+        CancelToken? cancelToken,
+      }) async {
     Response<dynamic>? response = await _dio?.request(
       endUrl,
       data: data,
@@ -596,9 +596,9 @@ class HttpHandleInterceptor extends Interceptor {
   ///to retry or cancel the api call
   ///if dialog is visible then it will reject the current api call
   Future<void> _checkInternetConnection(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+      RequestOptions options,
+      RequestInterceptorHandler handler,
+      ) async {
     bool isConnected = await _checkInternet();
 
     if (isConnected) {
@@ -652,9 +652,9 @@ class HttpHandleInterceptor extends Interceptor {
   /// [handler] - The [RequestInterceptorHandler] to resolve
   /// or reject the response.
   Future<void> retryApiCall(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+      RequestOptions options,
+      RequestInterceptorHandler handler,
+      ) async {
     try {
       // Retry the API call with the same options
       Response<dynamic> response = await Dio().fetch(options);
@@ -668,7 +668,7 @@ class HttpHandleInterceptor extends Interceptor {
     if (jsonStr.isEmpty) return '';
     try {
       final Map<String, dynamic> map =
-          jsonDecode(jsonStr) as Map<String, dynamic>;
+      jsonDecode(jsonStr) as Map<String, dynamic>;
       return map['customerToken'] as String? ?? '';
     } on Object catch (_) {
       return '';
@@ -679,7 +679,7 @@ class HttpHandleInterceptor extends Interceptor {
     if (jsonStr.isEmpty) return '';
     try {
       final Map<String, dynamic> map =
-          jsonDecode(jsonStr) as Map<String, dynamic>;
+      jsonDecode(jsonStr) as Map<String, dynamic>;
       return map['accessToken'] as String? ?? '';
     } on Object catch (_) {
       return '';
@@ -702,9 +702,9 @@ class HttpHandleInterceptor extends Interceptor {
 
   @override
   Future<void> onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+      RequestOptions options,
+      RequestInterceptorHandler handler,
+      ) async {
     final String savedCookies = SharedPref.instance.getString(
       PrefsKey.apiCookiesKey,
       '',
@@ -713,15 +713,7 @@ class HttpHandleInterceptor extends Interceptor {
       options.headers['Cookie'] = savedCookies;
     }
 
-    if (savedCookies.isNotEmpty &&
-        !options.headers.containsKey('Authorization')) {
-      final String? token = _extractTokenFromCookies(savedCookies);
-      if (token != null && token.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $token';
-      }
-    }
-
-    // Use stored access token if no Authorization header was set yet
+    // Always prioritize the actual JWT accessToken from user profile for Authorization
     if (!options.headers.containsKey('Authorization')) {
       final String profileJson = SharedPref.instance.getString(
         PrefsKey.userProfileKey,
@@ -729,7 +721,17 @@ class HttpHandleInterceptor extends Interceptor {
       );
       final String savedAccessToken = _accessTokenFromProfileJson(profileJson);
       if (savedAccessToken.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $savedAccessToken';
+        final String bearerToken = savedAccessToken.startsWith('Bearer ')
+            ? savedAccessToken
+            : 'Bearer $savedAccessToken';
+        options.headers['Authorization'] = bearerToken;
+      } else if (savedCookies.isNotEmpty) {
+        final String? token = _extractTokenFromCookies(savedCookies);
+        if (token != null && token.isNotEmpty) {
+          final String bearerToken =
+          token.startsWith('Bearer ') ? token : 'Bearer $token';
+          options.headers['Authorization'] = bearerToken;
+        }
       }
     }
 
@@ -758,16 +760,16 @@ class HttpHandleInterceptor extends Interceptor {
 
   @override
   Future<void> onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+      DioException err,
+      ErrorInterceptorHandler handler,
+      ) async {
     if (kIsWeb &&
         err.type == DioExceptionType.connectionError &&
         err.error.toString().contains('XMLHttpRequest')) {
       DebugLog.instance.e(
         'Web CORS/network error for ${err.requestOptions.uri}. '
-        'Use web_base_url with web_dev_config.yaml proxy for local dev, '
-        'or enable CORS on the API server for production web.',
+            'Use web_base_url with web_dev_config.yaml proxy for local dev, '
+            'or enable CORS on the API server for production web.',
       );
     }
 
@@ -799,9 +801,9 @@ class HttpHandleInterceptor extends Interceptor {
 
   @override
   void onResponse(
-    Response<dynamic> response,
-    ResponseInterceptorHandler handler,
-  ) {
+      Response<dynamic> response,
+      ResponseInterceptorHandler handler,
+      ) {
     final List<String>? setCookies = response.headers['set-cookie'];
     if (setCookies != null && setCookies.isNotEmpty) {
       DebugLog.instance.e(setCookies.toString());
@@ -849,7 +851,7 @@ class HttpHandleInterceptor extends Interceptor {
       final String newCookiesStr = cookiesMap.entries
           .map(
             (MapEntry<String, String> entry) => '${entry.key}=${entry.value}',
-          )
+      )
           .join('; ');
 
       unawaited(
