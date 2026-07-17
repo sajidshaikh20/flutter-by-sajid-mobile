@@ -18,14 +18,42 @@ class CurrencyPairResponse {
   });
 
   factory CurrencyPairResponse.fromJson(Map<String, dynamic> json) {
+    num? priceNum = json['currentPrice'] as num? ??
+        json['current_price'] as num? ??
+        json['price'] as num? ??
+        json['livePrice'] as num? ??
+        json['lastPrice'] as num? ??
+        json['bid'] as num? ??
+        json['rate'] as num?;
+
+    if (priceNum == null) {
+      final String? strPrice = json['currentPrice']?.toString() ??
+          json['current_price']?.toString() ??
+          json['price']?.toString() ??
+          json['livePrice']?.toString();
+      if (strPrice != null) {
+        priceNum = num.tryParse(strPrice);
+      }
+    }
+
     return CurrencyPairResponse(
       id: json['id'] as int? ?? 0,
-      symbol: json['symbol'] as String? ?? '',
-      baseCurrency: json['baseCurrency'] as String? ?? '',
-      quoteCurrency: json['quoteCurrency'] as String? ?? '',
+      symbol: json['symbol'] as String? ??
+          json['name'] as String? ??
+          json['pair'] as String? ??
+          json['currencyPairSymbol'] as String? ??
+          '',
+      baseCurrency: json['baseCurrency'] as String? ??
+          json['base_currency'] as String? ??
+          '',
+      quoteCurrency: json['quoteCurrency'] as String? ??
+          json['quote_currency'] as String? ??
+          '',
       market: json['market'] as String? ?? '',
-      currentPrice: (json['currentPrice'] as num? ?? 0.0).toDouble(),
-      pipValue: json['pipValue'] != null ? (json['pipValue'] as num).toDouble() : null,
+      currentPrice: (priceNum ?? 0.0).toDouble(),
+      pipValue: json['pipValue'] != null
+          ? (json['pipValue'] as num).toDouble()
+          : (json['pip_value'] != null ? (json['pip_value'] as num).toDouble() : null),
     );
   }
 

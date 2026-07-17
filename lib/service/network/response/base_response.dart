@@ -47,14 +47,19 @@ class BaseResponse<T> {
       Map<String, dynamic> json,
       T Function(Object? json) fromJsonT,
       ) {
+    final bool isSuccessStatus = json['success'] == true ||
+        json['success'] == 'true' ||
+        json['status'] == 'success' ||
+        json['status'] == 200 ||
+        json['status_code'] == 200 ||
+        json['statusCode'] == 200 ||
+        (json['data'] != null && json['success'] != false);
+
     return BaseResponse<T>(
-      statusCode: json['status_code'] ?? 0,
-      success: json['success'] == true &&
-          (json['status_code'] == null ||
-              json['status_code'] == 200 ||
-              json['status_code'] == 0),
+      statusCode: json['status_code'] ?? json['statusCode'] ?? 200,
+      success: isSuccessStatus,
       message: json['message']?.toString() ?? '',
-      data: json['data'] != null ? fromJsonT(json['data']) : null,
+      data: json['data'] != null ? fromJsonT(json['data']) : (json['result'] != null ? fromJsonT(json['result']) : fromJsonT(json)),
       cartCount: json.containsKey('cartCount') ? json['cartCount'] : null,
       error: json.containsKey('error') ? json['error'] : null,
       totalCount: json['total_count'] ?? json['totalCount'],
