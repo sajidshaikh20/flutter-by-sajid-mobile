@@ -13,15 +13,27 @@ class TradesContentWidget extends StatelessWidget {
       listener: TradesContentWidget._onStateChanged,
       builder: (BuildContext context, TradesState state) {
         final TradesCubit cubit = context.read<TradesCubit>();
+        final String role = UserProfileService.instance().roleName;
+        final bool canAddTrade = role == 'TRADER' || role == 'ADMIN';
 
         return Scaffold(
           backgroundColor: pageBg,
+          floatingActionButton: canAddTrade
+              ? FloatingActionButton(
+                  onPressed: () async {
+                    await context.router.push(const AddTradeRoute());
+                  },
+                  backgroundColor: AppColors.primaryPurple,
+                  child: const Icon(Icons.add, color: AppColors.whiteColor),
+                )
+              : null,
           body: SafeArea(
             child: Column(
               children: <Widget>[
                 const HomeHeaderAppBar(
                   showProfileImage: false,
                   showNotification: false,
+
                   title: 'Trading Signals',
                   subtitle: 'Explore high-quality trades from professional traders',
                 ),

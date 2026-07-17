@@ -24,4 +24,13 @@ abstract class TradesRepository extends BaseRepository {
 
   /// Get details of a single trade by public ID
   Future<ResponseHandler<BaseResponse<TradeResponse>>> getTradeDetails(String tradePublicId);
+
+  /// Get currency pairs by market type
+  Future<ResponseHandler<BaseResponse<List<CurrencyPairResponse>>>> getCurrencyPairs({
+    required String market,
+  });
+
+  /// Create a new trade
+  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(Map<String, dynamic> payload);
 }
+

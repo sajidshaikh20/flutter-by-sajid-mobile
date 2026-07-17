@@ -18,12 +18,18 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
       params['offset'] = offset;
     }
 
+    final String role = UserProfileService.instance().roleName;
+    final String endUrl = (role == 'TRADER' || role == 'ADMIN')
+        ? Apis.traderMyTrades
+        : Apis.clientMyTrades;
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.clientMyTrades,
+          endUrl: endUrl,
           params: params,
         );
+
 
     return getParsedResponseHandler(
       responseHandler: response,

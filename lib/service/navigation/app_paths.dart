@@ -115,5 +115,7 @@ abstract class AppPaths {
 
   /// PDF View screen route.
   static const String pdfView = '/pdf_view';
-}
 
+  /// Add Trade screen route.
+  static const String addTrade = 'add_trade';
+}

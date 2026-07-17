@@ -221,14 +221,15 @@ class HomeNavigationDrawer extends StatelessWidget {
                                 width: 0.5,
                               ),
                             ),
-                            child: const CustomTextLabelWidget(
-                              label: 'CLIENT',
-                              style: TextStyle(
+                            child: CustomTextLabelWidget(
+                              label: profile.roleName.isNotEmpty ? profile.roleName : 'CLIENT',
+                              style: const TextStyle(
                                 color: AppColors.primaryPurple,
                                 fontSize: Dimens.fontSize10,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
+
                           ),
                           const SizedBox(height: Dimens.space4),
                           CustomTextLabelWidget(

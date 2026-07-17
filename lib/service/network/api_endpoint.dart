@@ -160,6 +160,18 @@ abstract class Apis {
   /// Endpoint to get client profile
   static const String getClientProfile = '$subBaseUrl/client/profile';
 
+  /// Endpoint to get trader profile
+  static const String getTraderProfile = '$subBaseUrl/mentor/profile';
+
+  /// Endpoint to update trader profile
+  static const String updateTraderProfile = '$subBaseUrl/mentor/update-profile';
+
+  /// Endpoint to get admin profile
+  static const String getAdminProfile = '$subBaseUrl/admin/profile';
+
+  /// Endpoint to update admin profile
+  static const String updateAdminProfile = '$subBaseUrl/admin/update-profile';
+
   /// Endpoint to get client balance and risk preferences
   static const String getBalanceRisk = '$subBaseUrl/client/get-balance-risk';
 
@@ -171,6 +183,7 @@ abstract class Apis {
 
   /// Endpoint to upload client profile picture
   static const String uploadProfilePicture = '$subBaseUrl/client/upload-profile-picture';
+
 
   /// Endpoint prefix to take a trade
   static const String takeTrade = '$subBaseUrl/client/trades';
@@ -194,4 +207,15 @@ abstract class Apis {
 
   /// Endpoint to get client dashboard data
   static const String clientDashboard = '$subBaseUrl/client/dashboard';
+
+  /// Endpoint to get all currency pairs by market
+  static const String getCurrencyPairs = '$subBaseUrl/currency-pairs/all';
+
+  /// Endpoint to create a new trade
+  static const String createTrade = '$subBaseUrl/trade/create';
+
+  /// Endpoint to get trader's own trades (for TRADER role)
+  static const String traderMyTrades = '$subBaseUrl/mentor/trades/my-trades';
 }
+
+

@@ -42,6 +42,8 @@ class DashboardPage extends BaseResponsiveView {
     final AppString strings = context.appString;
     final double iconSize =
         device == ScreenType.tablet ? Dimens.size26 : Dimens.size24;
+    final String role = UserProfileService.instance().roleName;
+    final bool isTraderOrAdmin = role == 'TRADER' || role == 'ADMIN';
 
     return AutoTabsRouter(
       curve: Curves.easeInOutQuad,
@@ -59,7 +61,7 @@ class DashboardPage extends BaseResponsiveView {
       routes: <PageRouteInfo<dynamic>>[
         HomeRoute(),
         const MyTradesRoute(),
-        const TradesRoute(),
+        isTraderOrAdmin ? const AddTradeRoute() : const TradesRoute(),
         const ToolRoute(),
         const SettingsRoute(),
       ],
@@ -112,9 +114,10 @@ class DashboardPage extends BaseResponsiveView {
                 ),
                 CustomBottomNavBarItem(
                   isCenterElevated: true,
-                  routeName: AppPaths.trades,
-                  label: strings.navTradesKey,
+                  routeName: isTraderOrAdmin ? AppPaths.addTrade : AppPaths.trades,
+                  label: isTraderOrAdmin ? 'Add Trade' : strings.navTradesKey,
                 ),
+
                 CustomBottomNavBarItem(
                   iconBuilder: (Color color, double size) => Icon(
                     Icons.build_circle_outlined,

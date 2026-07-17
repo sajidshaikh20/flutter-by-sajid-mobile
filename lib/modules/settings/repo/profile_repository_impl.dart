@@ -6,10 +6,15 @@ class ProfileRepositoryImpl extends ProfileRepository {
   @override
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>>
   getProfile() async {
+    final String role = UserProfileService.instance().roleName;
+    final String endUrl = role == 'TRADER'
+        ? Apis.getTraderProfile
+        : (role == 'ADMIN' ? Apis.getAdminProfile : Apis.getClientProfile);
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.getClientProfile,
+          endUrl: endUrl,
           showLoader: true,
         );
 
@@ -29,11 +34,17 @@ class ProfileRepositoryImpl extends ProfileRepository {
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> updateProfile(
     UpdateClientProfileRequest request,
   ) async {
+    final String role = UserProfileService.instance().roleName;
+    final bool isTraderOrAdmin = role == 'TRADER' || role == 'ADMIN';
+
     final Map<String, dynamic> data = <String, dynamic>{
-      'name': request.name,
       'phone': request.phone,
       'countryCode': request.countryCode,
     };
+
+    if (!isTraderOrAdmin) {
+      data['name'] = request.name;
+    }
 
     if (request.profilePicture != null) {
       final XFile image = request.profilePicture!;
@@ -46,10 +57,14 @@ class ProfileRepositoryImpl extends ProfileRepository {
 
     final FormData formData = FormData.fromMap(data);
 
+    final String endUrl = role == 'TRADER'
+        ? Apis.updateTraderProfile
+        : (role == 'ADMIN' ? Apis.updateAdminProfile : Apis.updateClientProfile);
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.updateClientProfile,
+          endUrl: endUrl,
           apiType: ApiType.put,
           formData: formData,
           isMultipartFormData: true,
@@ -76,10 +91,15 @@ class ProfileRepositoryImpl extends ProfileRepository {
       'profilePicture': MultipartFile.fromBytes(bytes, filename: file.name),
     });
 
+    final String role = UserProfileService.instance().roleName;
+    final String endUrl = role == 'TRADER'
+        ? Apis.updateTraderProfile
+        : (role == 'ADMIN' ? Apis.updateAdminProfile : Apis.updateClientProfile);
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.updateClientProfile,
+          endUrl: endUrl,
           apiType: ApiType.put,
           formData: formData,
           isMultipartFormData: true,
@@ -97,6 +117,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
     );
   }
+
 
   @override
   Future<ResponseHandler<BaseResponse<dynamic>>> deleteAccount() async {

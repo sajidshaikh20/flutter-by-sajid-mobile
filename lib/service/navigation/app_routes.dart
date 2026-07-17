@@ -180,6 +180,8 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: fadePageTransition,
     ),
 
+
+
     /// Dashboard with 5 tabs
     CustomRoute<dynamic>(
       page: DashboardRoute.page,
@@ -208,6 +210,14 @@ class AppRouter extends RootStackRouter {
           page: TradesRoute.page,
           path: AppPaths.trades,
           initial: true,
+          maintainState: false,
+          durationInMilliseconds: Dimens.milliseconds400,
+          reverseDurationInMilliseconds: Dimens.milliseconds400,
+          transitionsBuilder: fadePageTransition,
+        ),
+        CustomRoute<dynamic>(
+          page: AddTradeRoute.page,
+          path: AppPaths.addTrade,
           maintainState: false,
           durationInMilliseconds: Dimens.milliseconds400,
           reverseDurationInMilliseconds: Dimens.milliseconds400,

@@ -85,6 +85,13 @@ class NavBarTradesCenterItemWidget extends StatelessWidget {
                       Color? color,
                       Widget? child,
                     ) {
+                      if (item.routeName == AppPaths.addTrade) {
+                        return Icon(
+                          Icons.add_rounded,
+                          color: color ?? targetIconColor,
+                          size: Dimens.size26,
+                        );
+                      }
                       return Assets.png.icWekoWhiteCrop.image(
                         color: color ?? targetIconColor,
                         height: Dimens.size22,

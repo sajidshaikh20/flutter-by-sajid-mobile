@@ -272,9 +272,9 @@ class _SettingsViewState extends State<SettingsView> {
                                               width: 0.5,
                                             ),
                                           ),
-                                          child: const CustomTextLabelWidget(
-                                            label: 'CLIENT',
-                                            style: TextStyle(
+                                          child: CustomTextLabelWidget(
+                                            label: profile.roleName.isNotEmpty ? profile.roleName : 'CLIENT',
+                                            style: const TextStyle(
                                               color: AppColors.primaryPurple,
                                               fontSize: Dimens.fontSize10,
                                               fontWeight: FontWeight.bold,

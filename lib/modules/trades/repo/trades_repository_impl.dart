@@ -149,4 +149,55 @@ class TradesRepositoryImpl extends TradesRepository {
       },
     );
   }
+
+  @override
+  Future<ResponseHandler<BaseResponse<List<CurrencyPairResponse>>>> getCurrencyPairs({
+    required String market,
+  }) async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.getCurrencyPairs,
+          params: <String, dynamic>{'market': market},
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<List<CurrencyPairResponse>>.fromJson(
+          value,
+          (Object? json) {
+            final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
+            return list
+                .map((dynamic t) => CurrencyPairResponse.fromJson(t as Map<String, dynamic>))
+                .toList();
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(Map<String, dynamic> payload) async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.createTrade,
+          apiType: ApiType.post,
+          data: payload,
+          showLoader: true,
+
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(
+          value,
+          (Object? json) => json,
+        );
+      },
+    );
+  }
 }
+
