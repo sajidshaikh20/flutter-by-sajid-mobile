@@ -106,14 +106,15 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
             ),
           );
         }
-        // Find currently selected plan
-        final SubscriptionPlanModel selectedPlan = state.plans.firstWhere(
+        // Find visible plans and currently selected plan
+        final List<SubscriptionPlanModel> displayPlans = state.visiblePlans;
+        final SubscriptionPlanModel selectedPlan = displayPlans.firstWhere(
           (SubscriptionPlanModel p) => p.id == state.selectedPlanId,
-          orElse: () => state.plans.first,
+          orElse: () => displayPlans.first,
         );
 
-        final int currentPrice = state.isYearly ? selectedPlan.yearlyPrice : selectedPlan.monthlyPrice;
-        final String currentPeriod = state.isYearly ? 'year' : 'month';
+        final int currentPrice = selectedPlan.price;
+        final String currentPeriod = selectedPlan.billingCycle.toUpperCase() == 'YEARLY' ? 'year' : 'month';
 
         return Scaffold(
           backgroundColor: pageBg,
@@ -163,11 +164,11 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
 
                           // 1. Compact Radio Plan Selection Cards (ek ke niche ek)
                           Column(
-                            children: state.plans.map((SubscriptionPlanModel plan) {
+                            children: displayPlans.map((SubscriptionPlanModel plan) {
                               final bool isSelected = plan.id == state.selectedPlanId;
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: Dimens.space12),
-                                child: _buildPlanRadioCard(context, isDark, textColor, subtextColor, cardBorder, plan, isSelected, state.isYearly),
+                                child: _buildPlanRadioCard(context, isDark, textColor, subtextColor, cardBorder, plan, isSelected),
                               );
                             }).toList(),
                           ),
@@ -296,7 +297,7 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
       child: Row(
         children: <Widget>[
           GestureDetector(
-            onTap: () => context.router.back(),
+            onTap: () => context.router.maybePop(),
             child: Container(
               padding: const EdgeInsets.all(Dimens.space8),
               decoration: BoxDecoration(
@@ -406,10 +407,9 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
     Color borderCol,
     SubscriptionPlanModel plan,
     bool isSelected,
-    bool isYearly,
   ) {
-    final int price = isYearly ? plan.yearlyPrice : plan.monthlyPrice;
-    final String periodLabel = isYearly ? 'yr' : 'mo';
+    final int price = plan.price;
+    final String periodLabel = plan.billingCycle.toUpperCase() == 'YEARLY' ? 'yr' : 'mo';
 
     final String subtitle = plan.description;
 

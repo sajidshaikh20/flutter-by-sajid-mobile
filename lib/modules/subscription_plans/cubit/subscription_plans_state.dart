@@ -16,6 +16,12 @@ class SubscriptionPlansState extends BaseState {
   final List<PlanResponse> rawPlans;
   final String? selectedPlanId;
 
+  List<SubscriptionPlanModel> get visiblePlans {
+    final String targetCycle = isYearly ? 'YEARLY' : 'MONTHLY';
+    final List<SubscriptionPlanModel> filtered = plans.where((SubscriptionPlanModel p) => p.billingCycle.toUpperCase() == targetCycle).toList();
+    return filtered.isNotEmpty ? filtered : plans;
+  }
+
   factory SubscriptionPlansState.initial() => const SubscriptionPlansState();
 
   SubscriptionPlansState copyWith({

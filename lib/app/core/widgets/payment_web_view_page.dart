@@ -1,11 +1,10 @@
 import '../../../utils/exports.dart';
 
-
-/// A page that launches the payment URL in the system's external browser
-/// and monitors app lifecycle state to check payment status when the user returns.
+/// A page that displays the payment checkout URL inside an embedded In-App WebView
+/// and listens exclusively to WebView events & redirections to confirm payment deposition.
 @RoutePage()
 class PaymentWebViewPage extends StatefulWidget {
-  /// The payment URL to load
+  /// The payment checkout URL to load
   final String paymentUrl;
 
   /// Creates a [PaymentWebViewPage] with the given [paymentUrl].
@@ -20,17 +19,86 @@ class PaymentWebViewPage extends StatefulWidget {
 
 /// State for [PaymentWebViewPage]
 class PaymentWebViewPageState extends State<PaymentWebViewPage> with WidgetsBindingObserver {
+  late final WebViewController _controller;
+
   bool _hasHandledCallback = false;
-  bool _isCheckingStatus = false;
+  bool _isLoadingPage = true;
+  int _loadingProgress = 0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Auto-launch the external browser after the UI renders
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(_launchExternalBrowser());
-    });
+
+    _initWebViewController();
+  }
+
+  void _initWebViewController() {
+    _controller = WebViewController();
+    unawaited(_controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(_controller.setBackgroundColor(Colors.transparent));
+    
+    // Add JavaScript Channel for web-to-app communication if gateway postMessages
+    unawaited(
+      _controller.addJavaScriptChannel(
+        'PaymentListener',
+        onMessageReceived: (JavaScriptMessage message) {
+          DebugLog.instance.i('🟢 PaymentWebView JS Message: ${message.message}');
+          final String lowerMsg = message.message.toLowerCase();
+          if (lowerMsg.contains('success') || lowerMsg.contains('paid') || lowerMsg.contains('complete')) {
+            unawaited(_handlePaymentSuccess());
+          }
+        },
+      ),
+    );
+
+    unawaited(
+      _controller.setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            if (mounted) {
+              setState(() {
+                _loadingProgress = progress;
+                _isLoadingPage = progress < 100;
+              });
+            }
+          },
+          onPageStarted: (String url) {
+            DebugLog.instance.i('🔵 PaymentWebView PageStarted: $url');
+            if (mounted) {
+              setState(() {
+                _isLoadingPage = true;
+              });
+            }
+            _checkUrlForSuccess(url);
+          },
+          onPageFinished: (String url) {
+            DebugLog.instance.i('🔵 PaymentWebView PageFinished: $url');
+            if (mounted) {
+              setState(() {
+                _isLoadingPage = false;
+              });
+            }
+            _checkUrlForSuccess(url);
+          },
+          onUrlChange: (UrlChange change) {
+            if (change.url != null) {
+              DebugLog.instance.i('🔵 PaymentWebView UrlChange: ${change.url}');
+              _checkUrlForSuccess(change.url!);
+            }
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            DebugLog.instance.i('🔵 PaymentWebView NavigationRequest: ${request.url}');
+            if (_isSuccessRedirectUrl(request.url)) {
+              unawaited(_handlePaymentSuccess());
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      ),
+    );
+    unawaited(_controller.loadRequest(Uri.parse(widget.paymentUrl)));
   }
 
   @override
@@ -39,102 +107,47 @@ class PaymentWebViewPageState extends State<PaymentWebViewPage> with WidgetsBind
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      DebugLog.instance.i('🔵 PaymentWebView: App resumed. Checking subscription status...');
-      unawaited(_checkPaymentStatus(showFeedbackOnPending: false));
+  /// Checks if the webview URL indicates a successful payment completion or redirect.
+  bool _isSuccessRedirectUrl(String url) {
+    final String lowerUrl = url.toLowerCase();
+    return lowerUrl.contains('payment-success') ||
+        lowerUrl.contains('status=success') ||
+        lowerUrl.contains('status=completed') ||
+        lowerUrl.contains('payment_status=success') ||
+        lowerUrl.contains('payment/success') ||
+        lowerUrl.contains('deposit/success') ||
+        lowerUrl.contains('success_callback') ||
+        lowerUrl.contains('thankyou') ||
+        lowerUrl.contains('thank-you') ||
+        lowerUrl.contains('approved') ||
+        lowerUrl.contains('status=active') ||
+        lowerUrl.contains('payment_completed');
+  }
+
+  void _checkUrlForSuccess(String url) {
+    if (_isSuccessRedirectUrl(url)) {
+      DebugLog.instance.i('🟢 PaymentWebView: Success URL pattern matched: $url');
+      unawaited(_handlePaymentSuccess());
     }
   }
 
-  Future<void> _launchExternalBrowser() async {
-    final Uri uri = Uri.parse(widget.paymentUrl);
-    try {
-      DebugLog.instance.i('🔵 PaymentWebView: Launching payment URL: ${widget.paymentUrl}');
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        DebugLog.instance.e('🔴 PaymentWebView: Could not launch $uri');
-      }
-    } on Object catch (e) {
-      DebugLog.instance.e('🔴 PaymentWebView: Error launching external browser: $e');
-    }
-  }
+  /// Handles successful payment completion: updates local profile and pops back.
+  Future<void> _handlePaymentSuccess() async {
+    if (_hasHandledCallback) return;
+    _hasHandledCallback = true;
 
-  /// Verifies the payment/subscription status with the backend.
-  Future<void> _checkPaymentStatus({required bool showFeedbackOnPending}) async {
-    if (_isCheckingStatus || _hasHandledCallback) return;
+    DebugLog.instance.i('🟢 PaymentWebView: Payment deposition completed! Updating status & popping back...');
 
-    setState(() {
-      _isCheckingStatus = true;
-    });
+    // Update local profile state
+    await UserProfileService.instance().updateUserProfile(
+      paymentStatus: 'SUCCESS',
+      subscriptionStatus: 'ACTIVE',
+      isActive: true,
+    );
 
-    try {
-      // Call the API to fetch latest client profile data
-      final ResponseHandler<Map<String, dynamic>?> rawResponse = await MainConfig.apiClient.handleApiCall<Map<String, dynamic>>(
-        endUrl: Apis.getClientProfile,
-        showLoader: true,
-      );
-
-      if (rawResponse.isSuccess()) {
-        final Map<String, dynamic>? responseData = rawResponse.getSuccessInstance()?.response;
-        if (responseData != null) {
-          final Map<String, dynamic>? dataMap = responseData['data'] as Map<String, dynamic>?;
-          if (dataMap != null) {
-            final Map<String, dynamic>? activeSub = dataMap['activeSubscription'] as Map<String, dynamic>?;
-            final bool isSubActive = dataMap['isActive'] == true || 
-                                    (activeSub != null && activeSub['isActive'] == true) ||
-                                    (activeSub != null && activeSub['subscriptionStatus']?.toString().toUpperCase() == 'ACTIVE');
-
-            DebugLog.instance.i('🔵 PaymentWebView: Checked status. isSubActive = $isSubActive');
-
-            if (isSubActive) {
-              // Update the local UserProfileService
-              await UserProfileService.instance().updateUserProfile(
-                paymentStatus: activeSub?['paymentStatus']?.toString() ?? 'SUCCESS',
-                subscriptionStatus: activeSub?['subscriptionStatus']?.toString() ?? 'ACTIVE',
-                isActive: true,
-                subscriptionPublicId: activeSub?['subscriptionPublicId']?.toString() ?? dataMap['subscriptionPublicId']?.toString(),
-                planName: activeSub?['planName']?.toString() ?? dataMap['planName']?.toString(),
-                planCode: activeSub?['planCode']?.toString() ?? dataMap['planCode']?.toString(),
-                category: activeSub?['category']?.toString() ?? dataMap['category']?.toString(),
-                billingCycle: activeSub?['billingCycle']?.toString() ?? dataMap['billingCycle']?.toString(),
-                amount: activeSub?['amount'] != null 
-                    ? double.tryParse(activeSub!['amount'].toString()) 
-                    : (dataMap['amount'] != null ? double.tryParse(dataMap['amount'].toString()) : null),
-                currencyCode: activeSub?['currencyCode']?.toString() ?? dataMap['currencyCode']?.toString(),
-                startDate: activeSub?['startDate']?.toString() ?? dataMap['startDate']?.toString(),
-                endDate: activeSub?['endDate']?.toString() ?? dataMap['endDate']?.toString(),
-                durationDays: activeSub?['durationDays'] != null 
-                    ? int.tryParse(activeSub!['durationDays'].toString()) 
-                    : (dataMap['durationDays'] != null ? int.tryParse(dataMap['durationDays'].toString()) : null),
-              );
-
-              if (mounted) {
-                _hasHandledCallback = true;
-                displaySnackBar('Subscription activated successfully!', context);
-                unawaited(context.router.maybePop("success"));
-              }
-              return;
-            }
-          }
-        }
-      }
-
-      if (showFeedbackOnPending && mounted) {
-        displaySnackBar(
-          "We couldn't verify your active subscription yet. Crypto payments can take 1-3 minutes to confirm.",
-          context,
-        );
-      }
-    } on Object catch (e) {
-      DebugLog.instance.e('🔴 PaymentWebView: Error checking status: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isCheckingStatus = false;
-        });
-      }
+    if (mounted) {
+      displaySnackBar('Payment deposited & subscription activated successfully!', context);
+      await context.router.maybePop("success");
     }
   }
 
@@ -142,8 +155,8 @@ class PaymentWebViewPageState extends State<PaymentWebViewPage> with WidgetsBind
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
     final Color backgroundColor = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
+    final Color cardBgColor = isDark ? AppColors.surfaceDark : Colors.white;
     final Color textColor = isDark ? Colors.white : AppColors.textPrimaryLight;
-    final Color subTextColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
 
     return PopScope(
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
@@ -158,142 +171,87 @@ class PaymentWebViewPageState extends State<PaymentWebViewPage> with WidgetsBind
         body: SafeArea(
           child: Column(
             children: <Widget>[
+              // Top Bar
               CustomAppBar(
-                title: 'Crypto Payment',
+                title: 'Deposit & Payment',
                 onTap: () async {
                   if (_hasHandledCallback) return;
                   _hasHandledCallback = true;
                   await context.router.maybePop("Goback");
                 },
               ),
+
+              // Web Loading Indicator
+              if (_isLoadingPage)
+                LinearProgressIndicator(
+                  value: _loadingProgress > 0 ? _loadingProgress / 100.0 : null,
+                  backgroundColor: AppColors.primaryPurple.withValues(alpha: 0.2),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryPurple),
+                  minHeight: 3,
+                ),
+
+              // Embedded In-App WebView
               Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Card(
-                      color: isDark ? AppColors.surfaceDark : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+                child: CustomWebView(
+                  webViewController: _controller,
+                ),
+              ),
+
+              // Bottom Status & Manual Completion Bar (No API Polling)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                decoration: BoxDecoration(
+                  color: cardBgColor,
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: <Widget>[
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryPurple),
                       ),
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            // Decorative pulsing icons or progress indicator
-                            Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryPurple.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.open_in_browser_rounded,
-                                size: 48,
-                                color: AppColors.primaryPurple,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Text(
-                              'Complete Payment in Browser',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'We have opened the Match2Pay checkout page in your default browser. Please complete your transaction there.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: subTextColor,
-                                height: 1.4,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Crypto transactions typically take 1 to 3 minutes to confirm.',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontStyle: FontStyle.italic,
-                                color: AppColors.primaryPurple.withValues(alpha: 0.8),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 32),
-                            // Primary Action Button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryPurple,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                onPressed: _isCheckingStatus
-                                    ? null
-                                    : () => _checkPaymentStatus(showFeedbackOnPending: true),
-                                child: _isCheckingStatus
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                        ),
-                                      )
-                                    : const Text(
-                                        'Check Payment Status',
-                                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                      ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            // Reopen Browser Button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: AppColors.primaryPurple),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                onPressed: _isCheckingStatus ? null : _launchExternalBrowser,
-                                child: const Text(
-                                  'Reopen Checkout Page',
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primaryPurple),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            TextButton(
-                              onPressed: () async {
-                                if (_hasHandledCallback) return;
-                                _hasHandledCallback = true;
-                                await context.router.maybePop("Goback");
-                              },
-                              child: Text(
-                                'Cancel & Go Back',
-                                style: TextStyle(
-                                  color: Colors.red[400],
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Listening for payment deposition...',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: textColor.withValues(alpha: 0.8),
                         ),
                       ),
                     ),
-                  ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryPurple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: _handlePaymentSuccess,
+                      child: const Text(
+                        'Payment Done',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

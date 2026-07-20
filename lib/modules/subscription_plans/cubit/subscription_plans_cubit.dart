@@ -13,20 +13,24 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
     if (response.isSuccess()) {
       final BaseResponse<List<PlanResponse>>? baseResponse = response.getSuccessInstance()?.response;
       final List<PlanResponse> apiPlans = baseResponse?.data ?? <PlanResponse>[];
-      
+
       final List<SubscriptionPlanModel> mappedPlans = _mapApiPlansToUiModels(apiPlans);
-      
-      // Determine default selected plan
+
       String? defaultSelectedId;
       if (mappedPlans.isNotEmpty) {
-        final SubscriptionPlanModel? elitePlan = mappedPlans.firstWhereOrNull((SubscriptionPlanModel p) => p.id == 'plan_elite');
-        defaultSelectedId = elitePlan?.id ?? mappedPlans.first.id;
+        final List<SubscriptionPlanModel> monthlyPlans = mappedPlans
+            .where((SubscriptionPlanModel p) => p.billingCycle.toUpperCase() == 'MONTHLY')
+            .toList();
+        final SubscriptionPlanModel defaultPlan = monthlyPlans.firstWhereOrNull((SubscriptionPlanModel p) => p.isPopular) ??
+            (monthlyPlans.isNotEmpty ? monthlyPlans.first : mappedPlans.first);
+        defaultSelectedId = defaultPlan.id;
       }
 
       emit(state.copyWith(
         rawPlans: apiPlans,
         plans: mappedPlans,
         selectedPlanId: defaultSelectedId,
+        isYearly: false,
         status: BaseStateStatus.success,
       ));
     } else {
@@ -39,48 +43,37 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
   }
 
   List<SubscriptionPlanModel> _mapApiPlansToUiModels(List<PlanResponse> apiPlans) {
-    final Map<String, List<PlanResponse>> grouped = <String, List<PlanResponse>>{};
-    for (final PlanResponse plan in apiPlans) {
-      final String cat = plan.category.toUpperCase();
-      grouped.putIfAbsent(cat, () => <PlanResponse>[]).add(plan);
-    }
+    return apiPlans.map((PlanResponse plan) {
+      final int price = plan.prices.firstOrNull?.price.toInt() ?? 0;
+      final String currency = plan.prices.firstOrNull?.currencyCode ?? 'USD';
+      final List<String> features = _getFeaturesForCategory(plan.category);
+      final String description = (plan.description.isNotEmpty && plan.description != 'sample_description')
+          ? plan.description
+          : _getDescriptionForCategory(plan.category, plan.planName);
 
-    final List<SubscriptionPlanModel> uiPlans = <SubscriptionPlanModel>[];
+      final bool isPopular = plan.category.toUpperCase().contains('ELITE') ||
+          plan.planCode.toUpperCase().contains('ELT') ||
+          plan.planName.toUpperCase().contains('ELITE');
 
-    grouped.forEach((String category, List<PlanResponse> plans) {
-      final PlanResponse? monthlyPlan = plans.firstWhereOrNull((PlanResponse p) => p.billingCycle.toUpperCase() == 'MONTHLY');
-      final PlanResponse? yearlyPlan = plans.firstWhereOrNull((PlanResponse p) => p.billingCycle.toUpperCase() == 'YEARLY');
-
-      if (monthlyPlan == null && yearlyPlan == null) return;
-
-      final PlanResponse activePlan = monthlyPlan ?? yearlyPlan!;
-      final String id = _getPlanUiId(category, activePlan.planCode);
-      final String name = _getPlanDisplayName(category);
-
-      final int monthlyPrice = monthlyPlan?.prices.firstOrNull?.price.toInt() ?? 
-          ((yearlyPlan?.prices.firstOrNull?.price ?? 0) / 12).toInt();
-      final int yearlyPrice = yearlyPlan?.prices.firstOrNull?.price.toInt() ?? 
-          (monthlyPrice * 10);
-
-      final List<String> features = _getFeaturesForCategory(category);
-      final String description = _getDescriptionForCategory(category);
-
-      uiPlans.add(SubscriptionPlanModel(
-        id: id,
-        name: name,
-        monthlyPrice: monthlyPrice,
-        yearlyPrice: yearlyPrice,
+      return SubscriptionPlanModel(
+        id: plan.id.toString(),
+        planId: plan.id,
+        name: plan.planName,
+        planCode: plan.planCode,
+        category: plan.category,
+        billingCycle: plan.billingCycle,
+        price: price,
+        currencyCode: currency,
         features: features,
         description: description,
-        isPopular: category.contains('ELITE') || activePlan.planCode.toLowerCase().contains('elite'),
-      ));
-    });
-
-    return uiPlans;
+        isPopular: isPopular,
+      );
+    }).toList();
   }
 
   List<String> _getFeaturesForCategory(String category) {
-    if (category.contains('CRYPTO')) {
+    final String upperCat = category.toUpperCase();
+    if (upperCat.contains('CRYPTO')) {
       return const <String>[
         '2-4 High quality strategies per day',
         '75-80% accuracy',
@@ -91,7 +84,7 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
         'AI Suites',
         '10+ trading strategies',
       ];
-    } else if (category.contains('FOREX')) {
+    } else if (upperCat.contains('FOREX')) {
       return const <String>[
         '2-4 High quality strategies per day',
         '30-40 Pips target range',
@@ -122,38 +115,39 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
     }
   }
 
-  String _getDescriptionForCategory(String category) {
-    if (category.contains('CRYPTO')) {
+  String _getDescriptionForCategory(String category, String planName) {
+    final String combined = '$category $planName'.toUpperCase();
+    if (combined.contains('TEST')) {
+      return 'Test plan for trial access & testing';
+    } else if (combined.contains('CRYPTO')) {
       return 'Best for crypto scalping & altcoin traders';
-    } else if (category.contains('FOREX')) {
+    } else if (combined.contains('FOREX')) {
       return 'Perfect for standard currency pairs trading';
     } else {
       return 'Combined high quality Forex + Crypto strategies';
     }
   }
 
-  String _getPlanDisplayName(String category) {
-    if (category.contains('ELITE')) {
-      return 'Elite Plan (Forex + Crypto)';
-    } else if (category.contains('CRYPTO')) {
-      return 'Crypto Plan';
-    } else {
-      return 'Forex Plan';
-    }
-  }
-
-  String _getPlanUiId(String category, String planCode) {
-    if (category.contains('ELITE') || planCode.toLowerCase().contains('elite')) {
-      return 'plan_elite';
-    } else if (category.contains('CRYPTO')) {
-      return 'plan_crypto';
-    } else {
-      return 'plan_forex';
-    }
-  }
-
   void toggleYearly({required bool isYearly}) {
-    emit(state.copyWith(isYearly: isYearly));
+    final String targetCycle = isYearly ? 'YEARLY' : 'MONTHLY';
+    final List<SubscriptionPlanModel> targetPlans = state.plans
+        .where((SubscriptionPlanModel p) => p.billingCycle.toUpperCase() == targetCycle)
+        .toList();
+
+    SubscriptionPlanModel? selected;
+    if (state.selectedPlanId != null) {
+      final SubscriptionPlanModel? currentSelected = state.plans.firstWhereOrNull((SubscriptionPlanModel p) => p.id == state.selectedPlanId);
+      if (currentSelected != null) {
+        selected = targetPlans.firstWhereOrNull((SubscriptionPlanModel p) => p.category.toUpperCase() == currentSelected.category.toUpperCase());
+      }
+    }
+    selected ??= targetPlans.firstWhereOrNull((SubscriptionPlanModel p) => p.isPopular) ??
+        (targetPlans.isNotEmpty ? targetPlans.first : null);
+
+    emit(state.copyWith(
+      isYearly: isYearly,
+      selectedPlanId: selected?.id ?? state.selectedPlanId,
+    ));
   }
 
   void selectPlan(String planId) {
@@ -164,23 +158,15 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
     final String? selectedId = state.selectedPlanId;
     if (selectedId == null) return;
 
-    String resolvedCategory = 'ELITE';
-    if (selectedId == 'plan_crypto') resolvedCategory = 'CRYPTO';
-    if (selectedId == 'plan_forex') resolvedCategory = 'FOREX';
-
-    final String targetCycle = state.isYearly ? 'YEARLY' : 'MONTHLY';
-    PlanResponse? resolvedPlan = state.rawPlans.firstWhereOrNull(
-      (PlanResponse p) => p.category.toUpperCase() == resolvedCategory && p.billingCycle.toUpperCase() == targetCycle,
-    );
-
-    resolvedPlan ??= state.rawPlans.firstWhereOrNull(
-      (PlanResponse p) => p.category.toUpperCase() == resolvedCategory,
+    final SubscriptionPlanModel? selectedUiPlan = state.plans.firstWhereOrNull((SubscriptionPlanModel p) => p.id == selectedId);
+    final PlanResponse? resolvedPlan = state.rawPlans.firstWhereOrNull(
+      (PlanResponse p) => p.id.toString() == selectedId || (selectedUiPlan != null && p.id == selectedUiPlan.planId),
     );
 
     if (resolvedPlan == null) {
       emit(state.copyWith(
         status: BaseStateStatus.failure,
-        msg: 'The selected plan is not available for $targetCycle billing.',
+        msg: 'The selected plan is not available.',
       ));
       return;
     }
