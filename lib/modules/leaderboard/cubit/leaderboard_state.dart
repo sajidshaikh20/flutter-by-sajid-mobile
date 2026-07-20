@@ -34,8 +34,13 @@ class LeaderboardState extends BaseState {
 
   List<LeaderboardItemModel> get filteredItems {
     // 1. Filter by activeType ('Traders' -> 'TRADER', 'Clients' -> 'CLIENT')
-    final String requiredType = activeType == 'Traders' ? 'TRADER' : 'CLIENT';
-    List<LeaderboardItemModel> items = leaderboardItems.where((LeaderboardItemModel item) => item.type == requiredType).toList();
+    List<LeaderboardItemModel> items = leaderboardItems.where((LeaderboardItemModel item) {
+      if (activeType == 'Traders') {
+        return item.type == 'TRADER' || item.type.isEmpty;
+      } else {
+        return item.type == 'CLIENT';
+      }
+    }).toList();
 
     // 2. Filter by searchQuery (matches name or username case-insensitive)
     if (searchQuery.isNotEmpty) {

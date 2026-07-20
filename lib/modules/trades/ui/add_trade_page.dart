@@ -13,61 +13,37 @@ class _AddTradePageState extends State<AddTradePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Market & Currency Pair State
-  String _selectedMarket = 'FOREX';
+  String _selectedMarket = 'COMMODITY';
   List<CurrencyPairResponse> _currencyPairs = <CurrencyPairResponse>[];
   CurrencyPairResponse? _selectedPair;
   bool _isLoadingPairs = false;
 
-  // Order Direction: 'BUY' or 'SELL'
-  String _orderDirection = 'BUY';
-  // Order Execution Type: 0: Market, 1: Limit, 2: Stop, 3: Stop-limit
-  int _orderTypeIndex = 0;
-  final List<String> _orderTypes = const <String>[
-    'Market',
-    'Limit',
-    'Stop',
-    'Stop-limit'
+  // Socket Live Price Stream
+  StreamSubscription<Map<String, dynamic>>? _priceSubscription;
+  String? _registeredSymbol;
+  double? _liveSocketPrice;
+
+  // Trade Type Options
+  String _selectedTradeType = 'BUY';
+  final List<String> _tradeTypes = const <String>[
+    'BUY',
+    'SELL',
+    'BUY LIMIT',
+    'SELL LIMIT',
+    'BUY STOP',
+    'SELL STOP',
   ];
 
-  String get _executionType {
-    switch (_orderTypeIndex) {
-      case 1:
-        return 'LIMIT';
-      case 2:
-        return 'STOP';
-      case 3:
-        return 'STOP_LIMIT';
-      default:
-        return 'MARKET';
-    }
-  }
+  // Price vs Pips Toggles for SL & TP1
+  bool _isSlInPips = false;
+  bool _isTp1InPips = false;
 
-  String get _selectedOrderType => '${_orderDirection}_$_executionType';
-
-  // Lots & Quantity
-  double _lots = 1.5;
-  bool _marketRange = false;
-  final TextEditingController _marketRangePipsController =
-      TextEditingController(text: '10');
-
-  // SL & TP Toggles
-  bool _stopLossOn = true;
-  bool _takeProfitOn = true;
-  bool _trailingStop = false;
-  bool _breakEven = false;
-
-  // SL & TP Inputs
-  final TextEditingController _slPipsController =
-      TextEditingController(text: '99');
-  final TextEditingController _tp1PipsController =
-      TextEditingController(text: '150');
-  final TextEditingController _tp2PipsController = TextEditingController();
-  final TextEditingController _tp3PipsController = TextEditingController();
-
-  bool _showTp2 = false;
-  bool _showTp3 = false;
-
-  // Comment & TradingView URL
+  // Controllers
+  final TextEditingController _entryController = TextEditingController();
+  final TextEditingController _slController = TextEditingController();
+  final TextEditingController _tp1Controller = TextEditingController();
+  final TextEditingController _tp2Controller = TextEditingController();
+  final TextEditingController _tp3Controller = TextEditingController();
   final TextEditingController _tradingViewUrlController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
 
@@ -77,18 +53,26 @@ class _AddTradePageState extends State<AddTradePage> {
   void initState() {
     super.initState();
     unawaited(_loadPairs());
-    _slPipsController.addListener(_onCalculationsChanged);
-    _tp1PipsController.addListener(_onCalculationsChanged);
-    _commentController.addListener(_onCalculationsChanged);
+    _subscribeLivePrice();
+
+    _entryController.addListener(_onCalculationsChanged);
+    _slController.addListener(_onCalculationsChanged);
+    _tp1Controller.addListener(_onCalculationsChanged);
+    _tp2Controller.addListener(_onCalculationsChanged);
+    _tp3Controller.addListener(_onCalculationsChanged);
   }
 
   @override
   void dispose() {
-    _marketRangePipsController.dispose();
-    _slPipsController.dispose();
-    _tp1PipsController.dispose();
-    _tp2PipsController.dispose();
-    _tp3PipsController.dispose();
+    unawaited(_priceSubscription?.cancel());
+    if (_registeredSymbol != null) {
+      unawaited(MainConfig.chatSocketConnection.unregisterSymbol(_registeredSymbol!));
+    }
+    _entryController.dispose();
+    _slController.dispose();
+    _tp1Controller.dispose();
+    _tp2Controller.dispose();
+    _tp3Controller.dispose();
     _tradingViewUrlController.dispose();
     _commentController.dispose();
     super.dispose();
@@ -98,21 +82,64 @@ class _AddTradePageState extends State<AddTradePage> {
     setState(() {});
   }
 
+  void _subscribeLivePrice() {
+    unawaited(_priceSubscription?.cancel());
+    _priceSubscription = MainConfig.chatSocketConnection.priceStream.listen((Map<String, dynamic> data) {
+      final String? symbol = data['symbol'] as String?;
+      final double? price = double.tryParse(data['price']?.toString() ?? '');
+      if (symbol != null && price != null && price > 0) {
+        final String normSymbol = symbol.replaceAll('/', '').toUpperCase();
+        final String normSelected = (_selectedPair?.symbol ?? '').replaceAll('/', '').toUpperCase();
+        if (normSymbol == normSelected) {
+          if (mounted) {
+            setState(() {
+              _liveSocketPrice = price;
+              if (_selectedPair != null) {
+                _selectedPair = CurrencyPairResponse(
+                  id: _selectedPair!.id,
+                  symbol: _selectedPair!.symbol,
+                  baseCurrency: _selectedPair!.baseCurrency,
+                  quoteCurrency: _selectedPair!.quoteCurrency,
+                  market: _selectedPair!.market,
+                  currentPrice: price,
+                  pipValue: _selectedPair!.pipValue,
+                );
+              }
+              if (_entryController.text.isEmpty) {
+                _entryController.text = price.toStringAsFixed(_getPricePrecision());
+              }
+            });
+          }
+        }
+      }
+    });
+  }
+
+  void _updateSocketRegistration(String? newSymbol) {
+    if (_registeredSymbol != null && _registeredSymbol != newSymbol) {
+      unawaited(MainConfig.chatSocketConnection.unregisterSymbol(_registeredSymbol!));
+      _registeredSymbol = null;
+    }
+    if (newSymbol != null && newSymbol.isNotEmpty) {
+      _registeredSymbol = newSymbol;
+      unawaited(MainConfig.chatSocketConnection.registerSymbol(newSymbol));
+    }
+  }
+
   Future<void> _loadPairs() async {
     setState(() {
       _isLoadingPairs = true;
       _currencyPairs = <CurrencyPairResponse>[];
       _selectedPair = null;
+      _liveSocketPrice = null;
     });
 
     try {
-      // 1. Attempt with uppercase market name
       ResponseHandler<BaseResponse<List<CurrencyPairResponse>>> response =
           await _repository.getCurrencyPairs(market: _selectedMarket);
       List<CurrencyPairResponse>? pairs =
           response.getSuccessInstance()?.response.data;
 
-      // 2. Fallback with lowercase market name
       if (pairs == null || pairs.isEmpty) {
         response = await _repository.getCurrencyPairs(
           market: _selectedMarket.toLowerCase(),
@@ -120,7 +147,6 @@ class _AddTradePageState extends State<AddTradePage> {
         pairs = response.getSuccessInstance()?.response.data;
       }
 
-      // 3. Fallback without market filter (get all pairs)
       if (pairs == null || pairs.isEmpty) {
         response = await _repository.getCurrencyPairs(market: '');
         pairs = response.getSuccessInstance()?.response.data;
@@ -130,7 +156,12 @@ class _AddTradePageState extends State<AddTradePage> {
         setState(() {
           _currencyPairs = pairs!;
           _selectedPair = _currencyPairs.first;
+          if (_selectedPair!.currentPrice > 0) {
+            _liveSocketPrice = _selectedPair!.currentPrice;
+          }
+          _entryController.text = _getLivePrice().toStringAsFixed(_getPricePrecision());
         });
+        _updateSocketRegistration(_selectedPair!.symbol);
       }
     } on Object catch (e) {
       debugPrint('Failed to load currency pairs: $e');
@@ -161,6 +192,16 @@ class _AddTradePageState extends State<AddTradePage> {
     return 4;
   }
 
+  double _getLivePrice() {
+    if (_liveSocketPrice != null && _liveSocketPrice! > 0) {
+      return _liveSocketPrice!;
+    }
+    if (_selectedPair != null && _selectedPair!.currentPrice > 0) {
+      return _selectedPair!.currentPrice;
+    }
+    return 2200.0;
+  }
+
   double _priceToPips(double price, double reference) {
     final double pipSize = _getPipSize();
     if (pipSize == 0) return 0.0;
@@ -176,54 +217,59 @@ class _AddTradePageState extends State<AddTradePage> {
     return double.parse(value.toStringAsFixed(_getPricePrecision()));
   }
 
-  double _getLivePrice() {
-    if (_selectedPair != null && _selectedPair!.currentPrice > 0) {
-      return _selectedPair!.currentPrice;
-    }
-    return 1.13974;
-  }
-
   double _getCalculatedEntry() {
+    final double? val = double.tryParse(_entryController.text);
+    if (val != null && val > 0) return val;
     return _getLivePrice();
   }
 
-  double? _getCalculatedSL(double entry) {
-    if (!_stopLossOn) return null;
-    final double? pips = double.tryParse(_slPipsController.text);
-    if (pips == null) return null;
-    final bool isBuy = _orderDirection == 'BUY';
-    return _pipsToPrice(pips, entry, !isBuy);
+  double? _getEffectiveSL(double entry) {
+    if (_slController.text.trim().isEmpty) return null;
+    final double? inputVal = double.tryParse(_slController.text.trim());
+    if (inputVal == null) return null;
+
+    final bool isBuy = _selectedTradeType.contains('BUY');
+    if (_isSlInPips) {
+      return _pipsToPrice(inputVal, entry, !isBuy);
+    } else {
+      return inputVal;
+    }
   }
 
-  double? _getCalculatedTP(String pipsText, double entry) {
-    if (!_takeProfitOn) return null;
-    final double? pips = double.tryParse(pipsText);
-    if (pips == null || pips == 0) return null;
-    final bool isBuy = _orderDirection == 'BUY';
-    return _pipsToPrice(pips, entry, isBuy);
+  double? _getEffectiveTP1(double entry) {
+    if (_tp1Controller.text.trim().isEmpty) return null;
+    final double? inputVal = double.tryParse(_tp1Controller.text.trim());
+    if (inputVal == null) return null;
+
+    final bool isBuy = _selectedTradeType.contains('BUY');
+    if (_isTp1InPips) {
+      return _pipsToPrice(inputVal, entry, isBuy);
+    } else {
+      return inputVal;
+    }
   }
 
   Map<String, dynamic>? _calculateTradeRR() {
     final double entry = _getCalculatedEntry();
-    final double? sl = _getCalculatedSL(entry);
-    final double? tp = _getCalculatedTP(_tp1PipsController.text, entry);
+    final double? sl = _getEffectiveSL(entry);
+    final double? tp = _getEffectiveTP1(entry);
 
     if (sl == null || tp == null) return null;
 
-    final bool isBuy = _orderDirection == 'BUY';
+    final bool isBuy = _selectedTradeType.contains('BUY');
 
     if (isBuy) {
       if (sl >= entry) {
         return <String, dynamic>{
           'valid': false,
-          'reason': 'Stop Loss must be below Entry',
+          'reason': 'Stop Loss must be below Entry price',
           'rr': 0.0,
         };
       }
       if (tp <= entry) {
         return <String, dynamic>{
           'valid': false,
-          'reason': 'Take Profit must be above Entry',
+          'reason': 'Take Profit must be above Entry price',
           'rr': 0.0,
         };
       }
@@ -231,14 +277,14 @@ class _AddTradePageState extends State<AddTradePage> {
       if (sl <= entry) {
         return <String, dynamic>{
           'valid': false,
-          'reason': 'Stop Loss must be above Entry',
+          'reason': 'Stop Loss must be above Entry price',
           'rr': 0.0,
         };
       }
       if (tp >= entry) {
         return <String, dynamic>{
           'valid': false,
-          'reason': 'Take Profit must be below Entry',
+          'reason': 'Take Profit must be below Entry price',
           'rr': 0.0,
         };
       }
@@ -270,7 +316,7 @@ class _AddTradePageState extends State<AddTradePage> {
         SnackBar(
           content: Text(
             (calculation?['reason'] as String?) ??
-                'Invalid Risk-Reward calculations',
+                'Invalid Risk-Reward calculations. Please enter valid SL and TP.',
           ),
           backgroundColor: AppColors.errorColor,
         ),
@@ -284,11 +330,11 @@ class _AddTradePageState extends State<AddTradePage> {
 
     try {
       final double entry = _getCalculatedEntry();
-      final double sl = _getCalculatedSL(entry)!;
-      final double tp1 = _getCalculatedTP(_tp1PipsController.text, entry)!;
+      final double sl = _getEffectiveSL(entry)!;
+      final double tp1 = _getEffectiveTP1(entry)!;
 
-      final double slPips = double.tryParse(_slPipsController.text) ?? 30.0;
-      final double tp1Pips = double.tryParse(_tp1PipsController.text) ?? 60.0;
+      final double slPips = _priceToPips(sl, entry);
+      final double tp1Pips = _priceToPips(tp1, entry);
 
       final List<Map<String, dynamic>> levels = <Map<String, dynamic>>[
         <String, dynamic>{
@@ -303,33 +349,33 @@ class _AddTradePageState extends State<AddTradePage> {
         }
       ];
 
-      if (_showTp2) {
-        final double? tp2 = _getCalculatedTP(_tp2PipsController.text, entry);
+      if (_tp2Controller.text.trim().isNotEmpty) {
+        final double? tp2 = double.tryParse(_tp2Controller.text.trim());
         if (tp2 != null) {
           levels.add(<String, dynamic>{
             'levelType': 'TAKE_PROFIT',
             'takeProfit': tp2,
             'level': 2,
-            'tpPips': double.tryParse(_tp2PipsController.text) ?? 0,
+            'tpPips': _priceToPips(tp2, entry),
           });
         }
       }
 
-      if (_showTp3) {
-        final double? tp3 = _getCalculatedTP(_tp3PipsController.text, entry);
+      if (_tp3Controller.text.trim().isNotEmpty) {
+        final double? tp3 = double.tryParse(_tp3Controller.text.trim());
         if (tp3 != null) {
           levels.add(<String, dynamic>{
             'levelType': 'TAKE_PROFIT',
             'takeProfit': tp3,
             'level': 3,
-            'tpPips': double.tryParse(_tp3PipsController.text) ?? 0,
+            'tpPips': _priceToPips(tp3, entry),
           });
         }
       }
 
       final Map<String, dynamic> payload = <String, dynamic>{
         'market': _selectedMarket,
-        'marketType': _selectedOrderType,
+        'marketType': _selectedTradeType,
         'currencyPairSymbol': _selectedPair?.symbol ?? 'EURUSD',
         'currencyPairId': _selectedPair?.id ?? 0,
         'riskRewardRatio': calculation['rr'].toString(),
@@ -348,7 +394,7 @@ class _AddTradePageState extends State<AddTradePage> {
         if (mounted) {
           context.scaffoldMessenger.showSnackBar(
             const SnackBar(
-              content: Text('Order placed successfully!'),
+              content: Text('Trade signal created successfully!'),
               backgroundColor: AppColors.successColor,
             ),
           );
@@ -358,7 +404,7 @@ class _AddTradePageState extends State<AddTradePage> {
         if (mounted) {
           final String errMsg =
               response.getFailureInstance()?.error?.errorMessage ??
-                  'Failed to place order';
+                  'Failed to create trade signal';
           context.scaffoldMessenger.showSnackBar(
             SnackBar(
               content: Text(errMsg),
@@ -440,7 +486,7 @@ class _AddTradePageState extends State<AddTradePage> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: <String>['FOREX', 'CRYPTO', 'COMMODITY', 'STOCK']
+                      children: <String>['COMMODITY', 'FOREX', 'CRYPTO', 'STOCK']
                           .map((String m) {
                         final bool isSelected = selectedTabMarket == m;
                         return Padding(
@@ -487,7 +533,7 @@ class _AddTradePageState extends State<AddTradePage> {
                     onChanged: (String val) => setModalState(() => query = val),
                     style: TextStyle(color: textColor, fontSize: 13),
                     decoration: InputDecoration(
-                      hintText: 'Search EURUSD, BTCUSD...',
+                      hintText: 'Search EURUSD, BTCUSD, ALUMINIUM...',
                       hintStyle: const TextStyle(fontSize: 12),
                       prefixIcon: const Icon(Icons.search_rounded, size: 18),
                       filled: true,
@@ -520,7 +566,7 @@ class _AddTradePageState extends State<AddTradePage> {
                               )
                             : ListView.separated(
                                 itemCount: filtered.length,
-                                separatorBuilder: (_, __) =>
+                                separatorBuilder: (BuildContext context, int index) =>
                                     const Divider(height: 1),
                                 itemBuilder: (BuildContext context, int index) {
                                   final CurrencyPairResponse pair = filtered[index];
@@ -537,7 +583,7 @@ class _AddTradePageState extends State<AddTradePage> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      'Live Price: ${pair.currentPrice}',
+                                      'Live Price: ${pair.currentPrice > 0 ? pair.currentPrice : "--"}',
                                       style: const TextStyle(
                                         color: AppColors.successColor,
                                         fontSize: 12,
@@ -553,7 +599,14 @@ class _AddTradePageState extends State<AddTradePage> {
                                     onTap: () {
                                       setState(() {
                                         _selectedPair = pair;
+                                        if (pair.currentPrice > 0) {
+                                          _liveSocketPrice = pair.currentPrice;
+                                        } else {
+                                          _liveSocketPrice = null;
+                                        }
+                                        _entryController.text = _getLivePrice().toStringAsFixed(_getPricePrecision());
                                       });
+                                      _updateSocketRegistration(pair.symbol);
                                       Navigator.pop(ctx);
                                     },
                                   );
@@ -569,1054 +622,659 @@ class _AddTradePageState extends State<AddTradePage> {
     );
   }
 
+  void _showOrderTypeInfo() {
+    final bool isDark = context.isDark;
+    unawaited(showDialog<void>(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+        title: const Text('Trade Types', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('• BUY / SELL: Immediate market execution at current live price.', style: TextStyle(fontSize: 13)),
+            SizedBox(height: 6),
+            Text('• BUY LIMIT: Buy order placed below current price.', style: TextStyle(fontSize: 13)),
+            SizedBox(height: 6),
+            Text('• SELL LIMIT: Sell order placed above current price.', style: TextStyle(fontSize: 13)),
+            SizedBox(height: 6),
+            Text('• BUY STOP: Buy order placed above current price.', style: TextStyle(fontSize: 13)),
+            SizedBox(height: 6),
+            Text('• SELL STOP: Sell order placed below current price.', style: TextStyle(fontSize: 13)),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
 
-    // Adaptive Theme Palette matching user UI
-    final Color bg = isDark ? const Color(0xFF14161C) : AppColors.backgroundLight;
-    final Color topBarBg = isDark ? const Color(0xFF1C1F27) : AppColors.surfaceLight;
-    final Color cardBg = isDark ? const Color(0xFF1C1F27) : AppColors.surfaceLight;
-    final Color cardInnerBg = isDark ? const Color(0xFF20232C) : AppColors.whiteSmokeShade;
-    final Color fieldBg = isDark ? const Color(0xFF181B22) : AppColors.surfaceLight;
-    final Color borderColor = isDark ? const Color(0xFF2C303A) : AppColors.borderLight;
+    final Color pageBg = isDark ? const Color(0xFF0F1218) : AppColors.backgroundLight;
+    final Color cardBg = isDark ? const Color(0xFF181C24) : AppColors.surfaceLight;
+    final Color fieldBg = isDark ? const Color(0xFF202530) : AppColors.whiteSmokeShade;
+    final Color borderColor = isDark ? const Color(0xFF2C3240) : AppColors.borderLight;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
-    final Color greenColor = const Color(0xFF25D077);
-    final Color greenTextColor = const Color(0xFF2EBD70);
-    final Color orangeColor = const Color(0xFFE8642C);
-    final Color greyColor = const Color(0xFF9099A8);
-    final Color lightGreyColor = isDark ? const Color(0xFFB8C0CC) : AppColors.textSecondaryLight;
-    final Color whiteColor = isDark ? const Color(0xFFEDEFF3) : AppColors.textPrimaryLight;
+    final Map<String, dynamic>? rrCalculation = _calculateTradeRR();
+    final double entryPrice = _getCalculatedEntry();
+    final double? slPrice = _getEffectiveSL(entryPrice);
+    final double? tp1Price = _getEffectiveTP1(entryPrice);
 
-    final double livePrice = _getLivePrice();
-    final String livePriceStr = livePrice.toStringAsFixed(_getPricePrecision());
-    final String askPriceStr = (livePrice * 1.00015).toStringAsFixed(_getPricePrecision());
+    final double slPips = slPrice != null ? _priceToPips(slPrice, entryPrice) : 0.0;
+    final double tp1Pips = tp1Price != null ? _priceToPips(tp1Price, entryPrice) : 0.0;
+
+    final String livePriceStr = _getLivePrice() > 0
+        ? _getLivePrice().toStringAsFixed(_getPricePrecision())
+        : '--';
 
     return Scaffold(
-      backgroundColor: bg,
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              // TOP BAR
-              _topBar(topBarBg, whiteColor, greyColor, lightGreyColor),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(12),
-                  child: _orderPanel(
-                    cardBg,
-                    cardInnerBg,
-                    fieldBg,
-                    borderColor,
-                    greenColor,
-                    greenTextColor,
-                    orangeColor,
-                    greyColor,
-                    lightGreyColor,
-                    whiteColor,
-                    livePriceStr,
-                    askPriceStr,
-                  ),
-                ),
-              ),
-            ],
+      backgroundColor: pageBg,
+      appBar: AppBar(
+        backgroundColor: pageBg,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: textColor, size: 18),
+          onPressed: () => context.router.maybePop(),
+        ),
+        title: Text(
+          'Add New Trade',
+          style: TextStyle(
+            color: textColor,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
-    );
-  }
-
-  // ---------------- TOP BAR ----------------
-  Widget _topBar(
-    Color topBarBg,
-    Color whiteColor,
-    Color greyColor,
-    Color lightGreyColor,
-  ) {
-    final String symbol = _selectedPair?.symbol ?? 'EURUSD';
-
-    return Container(
-      color: topBarBg,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Row(
-        children: <Widget>[
-          InkWell(
-            onTap: _openPairSelectionSheet,
-            child: Row(
-              children: <Widget>[
-                Text(
-                  symbol,
-                  style: TextStyle(
-                    color: whiteColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(Icons.keyboard_arrow_down, color: greyColor),
-              ],
-            ),
-          ),
-          const Spacer(),
-          _iconBtn(Icons.share_outlined, lightGreyColor),
-          _iconBtn(Icons.star_border, lightGreyColor),
-          _iconBtn(Icons.edit_note, lightGreyColor),
-          _iconBtn(Icons.notifications_none, lightGreyColor),
-        ],
-      ),
-    );
-  }
-
-  Widget _iconBtn(IconData icon, Color color) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 14),
-      child: Icon(icon, color: color, size: 22),
-    );
-  }
-
-  // ---------------- MAIN PANEL ----------------
-  Widget _orderPanel(
-    Color cardBg,
-    Color cardInnerBg,
-    Color fieldBg,
-    Color borderColor,
-    Color greenColor,
-    Color greenTextColor,
-    Color orangeColor,
-    Color greyColor,
-    Color lightGreyColor,
-    Color whiteColor,
-    String sellPriceStr,
-    String buyPriceStr,
-  ) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _panelHeader(whiteColor, greyColor),
-          Container(
-            margin: const EdgeInsets.fromLTRB(14, 0, 14, 16),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: cardInnerBg,
-              borderRadius: BorderRadius.circular(10),
-            ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _instrumentRow(whiteColor, greenColor, greenTextColor, greyColor),
-                const SizedBox(height: 14),
-                _orderTypeTabs(whiteColor, greyColor, greenColor, borderColor),
-                const SizedBox(height: 14),
-                _sellBuyRow(orangeColor, greenColor, sellPriceStr, buyPriceStr),
-                const SizedBox(height: 8),
-                _spreadBar(orangeColor, greenColor),
-                const SizedBox(height: 10),
-                _spreadInfoRow(greyColor, sellPriceStr),
-                const SizedBox(height: 18),
-                _quantityRow(
-                  lightGreyColor,
-                  whiteColor,
-                  fieldBg,
-                  borderColor,
-                  greyColor,
+                // Subtitle
+                Text(
+                  'Create a premium signal with smart entries, SL, TP and auto RR insights.',
+                  style: TextStyle(
+                    color: subtextColor,
+                    fontSize: 13,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                _marginPipRow(greyColor),
                 const SizedBox(height: 20),
-                _stopLossTakeProfitRow(
-                  lightGreyColor,
-                  whiteColor,
-                  fieldBg,
-                  borderColor,
-                  greyColor,
+
+                // 1. Market Type Dropdown
+                _buildFieldLabel('Market Type *', textColor),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: fieldBg,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedMarket,
+                      isExpanded: true,
+                      dropdownColor: cardBg,
+                      style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
+                      icon: Icon(Icons.keyboard_arrow_down_rounded, color: subtextColor),
+                      items: <String>['COMMODITY', 'FOREX', 'CRYPTO', 'STOCK'].map((String m) {
+                        return DropdownMenuItem<String>(
+                          value: m,
+                          child: Text(m),
+                        );
+                      }).toList(),
+                      onChanged: (String? val) {
+                        if (val != null && val != _selectedMarket) {
+                          setState(() {
+                            _selectedMarket = val;
+                          });
+                          unawaited(_loadPairs());
+                        }
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 18),
-                _trailingStopRow(lightGreyColor, whiteColor, greyColor),
-                const SizedBox(height: 14),
-                _breakEvenRow(lightGreyColor, whiteColor, greyColor),
+
+                // 2. Currency Pair Selector
+                _buildFieldLabel('Currency Pair', textColor),
+                const SizedBox(height: 6),
+                InkWell(
+                  onTap: _openPairSelectionSheet,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: fieldBg,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          _selectedPair?.symbol ?? 'Select Currency Pair',
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (_isLoadingPairs)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        else
+                          Icon(Icons.keyboard_arrow_down_rounded, color: subtextColor),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 18),
-                _commentField(whiteColor, greyColor, fieldBg, borderColor),
+
+                // 3. Live Market Price Card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF092019) : const Color(0xFFE8F8F1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.successColor.withOpacity(0.4)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.successColor,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'LIVE MARKET PRICE',
+                                style: TextStyle(
+                                  color: AppColors.successColor,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.black38 : Colors.black12,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'Source: Twelve Data',
+                              style: TextStyle(
+                                color: Colors.orangeAccent,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            _selectedPair?.symbol ?? 'SYMB',
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            livePriceStr,
+                            style: const TextStyle(
+                              color: AppColors.successColor,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // 4. Trade Type & Entry 1
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Trade Type
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              _buildFieldLabel('Trade Type *', textColor),
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: _showOrderTypeInfo,
+                                child: Icon(Icons.info_outline_rounded, size: 16, color: subtextColor),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                              color: fieldBg,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: borderColor),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _selectedTradeType,
+                                isExpanded: true,
+                                dropdownColor: cardBg,
+                                style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.bold),
+                                icon: Icon(Icons.keyboard_arrow_down_rounded, color: subtextColor, size: 20),
+                                items: _tradeTypes.map((String t) {
+                                  return DropdownMenuItem<String>(
+                                    value: t,
+                                    child: Text(t),
+                                  );
+                                }).toList(),
+                                onChanged: (String? val) {
+                                  if (val != null) {
+                                    setState(() {
+                                      _selectedTradeType = val;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Entry 1
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _buildFieldLabel('Entry 1 *', textColor),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _entryController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
+                            decoration: _inputDecoration(fieldBg, borderColor, hintText: '2200'),
+                            validator: (String? val) {
+                              if (val == null || val.trim().isEmpty) return 'Required';
+                              if (double.tryParse(val.trim()) == null) return 'Invalid price';
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 18),
-                _placeOrderButton(greenColor),
+
+                // 5. Stop Loss & Take Profit 1
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Stop Loss
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              _buildFieldLabel('Stop Loss *', textColor),
+                              _buildModeToggle(
+                                isPips: _isSlInPips,
+                                onToggle: (bool val) => setState(() => _isSlInPips = val),
+                                borderColor: borderColor,
+                                textColor: textColor,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _slController,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
+                            decoration: _inputDecoration(fieldBg, borderColor, hintText: _isSlInPips ? 'Pips (e.g. 50)' : 'Price'),
+                            validator: (String? val) {
+                              if (val == null || val.trim().isEmpty) return 'Required';
+                              if (double.tryParse(val.trim()) == null) return 'Invalid';
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '≈ ${slPips > 0 ? slPips.toStringAsFixed(1) : '--'} Pips',
+                            style: TextStyle(color: subtextColor, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Take Profit 1
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              _buildFieldLabel('Take Profit 1 *', textColor),
+                              _buildModeToggle(
+                                isPips: _isTp1InPips,
+                                onToggle: (bool val) => setState(() => _isTp1InPips = val),
+                                borderColor: borderColor,
+                                textColor: textColor,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _tp1Controller,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
+                            decoration: _inputDecoration(fieldBg, borderColor, hintText: _isTp1InPips ? 'Pips (e.g. 100)' : 'Price'),
+                            validator: (String? val) {
+                              if (val == null || val.trim().isEmpty) return 'Required';
+                              if (double.tryParse(val.trim()) == null) return 'Invalid';
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '≈ ${tp1Pips > 0 ? tp1Pips.toStringAsFixed(1) : '--'} Pips',
+                            style: TextStyle(color: subtextColor, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // 6. Take Profit 2 & Take Profit 3 (Optional)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _buildFieldLabel('Take Profit 2', textColor),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _tp2Controller,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            style: TextStyle(color: textColor, fontSize: 14),
+                            decoration: _inputDecoration(fieldBg, borderColor, hintText: 'Optional'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _buildFieldLabel('Take Profit 3', textColor),
+                          const SizedBox(height: 6),
+                          TextFormField(
+                            controller: _tp3Controller,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            style: TextStyle(color: textColor, fontSize: 14),
+                            decoration: _inputDecoration(fieldBg, borderColor, hintText: 'Optional'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+
+                // 7. Risk Reward Ratio TP1 Card
+                _buildFieldLabel('Risk Reward Ratio TP1', textColor),
+                const SizedBox(height: 6),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF0F1E24) : const Color(0xFFF0FDF8),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.black26 : Colors.black12,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          'AUTO CALCULATED',
+                          style: TextStyle(
+                            color: subtextColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        (rrCalculation != null && rrCalculation['valid'] == true)
+                            ? '1 : ${(rrCalculation['rr'] as double).toStringAsFixed(2)}'
+                            : '--',
+                        style: const TextStyle(
+                          color: AppColors.successColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+
+                // 8. TradingView Chart URL
+                _buildFieldLabel('TradingView Chart URL *', textColor),
+                const SizedBox(height: 6),
+                TextFormField(
+                  controller: _tradingViewUrlController,
+                  keyboardType: TextInputType.url,
+                  style: TextStyle(color: textColor, fontSize: 13),
+                  decoration: _inputDecoration(
+                    fieldBg,
+                    borderColor,
+                    hintText: 'https://www.tradingview.com/...',
+                  ),
+                  validator: (String? val) {
+                    if (val == null || val.trim().isEmpty) return 'Please provide a TradingView chart URL';
+                    if (!val.startsWith('http')) return 'Enter a valid URL starting with http:// or https://';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 18),
+
+                // 9. Trade Notes
+                _buildFieldLabel('Trade Notes', textColor),
+                const SizedBox(height: 6),
+                TextFormField(
+                  controller: _commentController,
+                  maxLines: 3,
+                  style: TextStyle(color: textColor, fontSize: 13),
+                  decoration: _inputDecoration(
+                    fieldBg,
+                    borderColor,
+                    hintText: 'Enter setup analysis, key levels, or strategy notes...',
+                  ),
+                ),
+                const SizedBox(height: 28),
+
+                // 10. Create Trade Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: _isSubmitting ? null : _submitTrade,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                        : const Text(
+                            'Create Trade Signal',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _panelHeader(Color whiteColor, Color greyColor) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 10, 14),
-      child: Row(
-        children: <Widget>[
-          Text(
-            'New order',
-            style: TextStyle(
-              color: whiteColor,
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const Spacer(),
-          Icon(Icons.keyboard_arrow_up, color: greyColor),
-        ],
+  Widget _buildFieldLabel(String text, Color color) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: color,
+        fontSize: 13,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
 
-  Widget _instrumentRow(
-    Color whiteColor,
-    Color greenColor,
-    Color greenTextColor,
-    Color greyColor,
-  ) {
-    final String base = _selectedPair?.baseCurrency.isNotEmpty == true
-        ? _selectedPair!.baseCurrency
-        : 'Euro';
-    final String quote = _selectedPair?.quoteCurrency.isNotEmpty == true
-        ? _selectedPair!.quoteCurrency
-        : 'US Dollar';
-
-    return Row(
-      children: <Widget>[
-        Container(
-          width: 18,
-          height: 18,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: Icon(Icons.check, color: greenColor, size: 18),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '$base vs $quote',
-          style: TextStyle(color: whiteColor, fontSize: 15),
-        ),
-        const Spacer(),
-        Text(
-          '+7.6 (+0.07%)',
-          style: TextStyle(
-            color: greenTextColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Icon(Icons.ios_share, color: greyColor, size: 18),
-      ],
-    );
-  }
-
-  Widget _orderTypeTabs(
-    Color whiteColor,
-    Color greyColor,
-    Color greenColor,
-    Color borderColor,
-  ) {
-    return Row(
-      children: List<Widget>.generate(_orderTypes.length, (int i) {
-        final bool selected = i == _orderTypeIndex;
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _orderTypeIndex = i),
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: selected ? greenColor : borderColor,
-                    width: 2,
-                  ),
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                _orderTypes[i],
-                style: TextStyle(
-                  color: selected ? whiteColor : greyColor,
-                  fontSize: 14,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                ),
-              ),
-            ),
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget _sellBuyRow(
-    Color orangeColor,
-    Color greenColor,
-    String sellPriceStr,
-    String buyPriceStr,
-  ) {
-    final bool isBuy = _orderDirection == 'BUY';
-
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _orderDirection = 'SELL'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF15171D),
-                border: Border.all(
-                  color: !isBuy ? orangeColor : Colors.transparent,
-                  width: 1.5,
-                ),
-                borderRadius:
-                    const BorderRadius.horizontal(left: Radius.circular(8)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text('Sell', style: TextStyle(color: orangeColor, fontSize: 13)),
-                  const SizedBox(height: 4),
-                  Text(
-                    sellPriceStr,
-                    style: TextStyle(
-                      color: orangeColor,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 2),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => setState(() => _orderDirection = 'BUY'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF15171D),
-                border: Border.all(
-                  color: isBuy ? greenColor : Colors.transparent,
-                  width: 1.5,
-                ),
-                borderRadius:
-                    const BorderRadius.horizontal(right: Radius.circular(8)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Text('Buy', style: TextStyle(color: greenColor, fontSize: 13)),
-                  const SizedBox(height: 4),
-                  Text(
-                    buyPriceStr,
-                    style: TextStyle(
-                      color: greenColor,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _spreadBar(Color orangeColor, Color greenColor) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(3),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(height: 4, color: orangeColor),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(height: 4, color: greenColor),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _spreadInfoRow(Color greyColor, String currentPriceStr) {
-    final double p = double.tryParse(currentPriceStr) ?? 1.13974;
-    final String highStr = (p * 1.0015).toStringAsFixed(_getPricePrecision());
-    final String lowStr = (p * 0.9985).toStringAsFixed(_getPricePrecision());
-
-    return Center(
-      child: Text(
-        'Spread: 0.2; High: $highStr; Low: $lowStr',
-        style: TextStyle(color: greyColor, fontSize: 12.5),
-      ),
-    );
-  }
-
-  Widget _quantityRow(
-    Color lightGreyColor,
-    Color whiteColor,
-    Color fieldBg,
-    Color borderColor,
-    Color greyColor,
-  ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('Quantity', style: TextStyle(color: lightGreyColor, fontSize: 13)),
-              const SizedBox(height: 8),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _stepperField(
-                      _lots.toStringAsFixed(1),
-                      (double delta) {
-                        setState(() {
-                          _lots = (_lots + delta).clamp(0.01, 999.0);
-                        });
-                      },
-                      fieldBg,
-                      borderColor,
-                      whiteColor,
-                      greyColor,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text('Lots', style: TextStyle(color: lightGreyColor, fontSize: 13)),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  _checkbox(
-                    _marketRange,
-                    (bool v) => setState(() => _marketRange = v),
-                    whiteColor,
-                    greyColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text('Market range',
-                      style: TextStyle(color: lightGreyColor, fontSize: 13)),
-                  const SizedBox(width: 6),
-                  _infoIcon(greyColor),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: _stepperField(
-                      _marketRangePipsController.text,
-                      null,
-                      fieldBg,
-                      borderColor,
-                      whiteColor,
-                      greyColor,
-                      enabled: _marketRange,
-                      controller: _marketRangePipsController,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text('Pips', style: TextStyle(color: lightGreyColor, fontSize: 13)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _marginPipRow(Color greyColor) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Text(
-            'Sell margin: ~1 500.00',
-            style: TextStyle(color: greyColor, fontSize: 12.5),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Text(
-            'Pip value: 13.16 EUR',
-            style: TextStyle(color: greyColor, fontSize: 12.5),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _stopLossTakeProfitRow(
-    Color lightGreyColor,
-    Color whiteColor,
-    Color fieldBg,
-    Color borderColor,
-    Color greyColor,
-  ) {
-    final double entry = _getLivePrice();
-    final double? slPrice = _getCalculatedSL(entry);
-    final double? tpPrice = _getCalculatedTP(_tp1PipsController.text, entry);
-
-    final String slVal = _slPipsController.text.startsWith('-')
-        ? _slPipsController.text
-        : '-${_slPipsController.text}';
-    final String slPriceStr = slPrice != null
-        ? slPrice.toStringAsFixed(_getPricePrecision())
-        : '1.14964';
-
-    final String tpVal = _tp1PipsController.text;
-    final String tpPriceStr = tpPrice != null
-        ? tpPrice.toStringAsFixed(_getPricePrecision())
-        : '1.12474';
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: _slTpColumn(
-            title: 'Stop loss',
-            checked: _stopLossOn,
-            onCheck: (bool v) => setState(() => _stopLossOn = v),
-            trailingIcon: Icons.arrow_forward,
-            rows: <_SlTpRowData>[
-              _SlTpRowData(
-                symbol: '=',
-                label: 'Pips',
-                value: slVal,
-                controller: _slPipsController,
-              ),
-              _SlTpRowData(
-                symbol: '~',
-                label: 'Price',
-                value: slPriceStr,
-              ),
-              const _SlTpRowData(
-                symbol: '~',
-                label: 'Balance',
-                value: '-130.29',
-                suffix: '%',
-              ),
-              const _SlTpRowData(
-                symbol: '~',
-                label: 'Profit',
-                value: '-1302.91',
-                suffix: 'EUR',
-                prefix: '~EUR',
-              ),
-            ],
-            enabled: _stopLossOn,
-            lightGreyColor: lightGreyColor,
-            whiteColor: whiteColor,
-            fieldBg: fieldBg,
-            borderColor: borderColor,
-            greyColor: greyColor,
-          ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: _slTpColumn(
-            title: 'Take profit',
-            checked: _takeProfitOn,
-            onCheck: (bool v) => setState(() => _takeProfitOn = v),
-            rows: <_SlTpRowData>[
-              _SlTpRowData(
-                symbol: '=',
-                label: 'Pips',
-                value: tpVal,
-                controller: _tp1PipsController,
-              ),
-              _SlTpRowData(
-                symbol: '~',
-                label: 'Price',
-                value: tpPriceStr,
-              ),
-              const _SlTpRowData(
-                symbol: '~',
-                label: 'Balance',
-                value: '197.41',
-                suffix: '%',
-              ),
-              const _SlTpRowData(
-                symbol: '~',
-                label: 'Profit',
-                value: '1974.1',
-                suffix: 'EUR',
-              ),
-            ],
-            enabled: _takeProfitOn,
-            lightGreyColor: lightGreyColor,
-            whiteColor: whiteColor,
-            fieldBg: fieldBg,
-            borderColor: borderColor,
-            greyColor: greyColor,
-            footerButton: '+ Add TP',
-            onFooterTap: () {
-              setState(() {
-                if (!_showTp2) {
-                  _showTp2 = true;
-                } else if (!_showTp3) {
-                  _showTp3 = true;
-                }
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _slTpColumn({
-    required String title,
-    required bool checked,
-    required ValueChanged<bool> onCheck,
-    required List<_SlTpRowData> rows,
-    required bool enabled,
-    required Color lightGreyColor,
-    required Color whiteColor,
-    required Color fieldBg,
+  Widget _buildModeToggle({
+    required bool isPips,
+    required ValueChanged<bool> onToggle,
     required Color borderColor,
-    required Color greyColor,
-    IconData? trailingIcon,
-    String? footerButton,
-    VoidCallback? onFooterTap,
+    required Color textColor,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            _checkbox(checked, onCheck, whiteColor, greyColor),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                color: lightGreyColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (trailingIcon != null) ...<Widget>[
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: fieldBg,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Icon(trailingIcon, size: 12, color: greyColor),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: 10),
-        for (final _SlTpRowData r in rows) ...<Widget>[
-          _slTpFieldRow(
-            r,
-            enabled,
-            fieldBg,
-            borderColor,
-            whiteColor,
-            greyColor,
-            lightGreyColor,
-          ),
-          const SizedBox(height: 8),
-        ],
-        if (footerButton != null)
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: onFooterTap,
-              style: OutlinedButton.styleFrom(
-                backgroundColor: const Color(0xFF3A3E48),
-                side: BorderSide.none,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
+    return Container(
+      height: 26,
+      decoration: BoxDecoration(
+        color: borderColor.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () => onToggle(false),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: !isPips ? AppColors.primaryPurple : Colors.transparent,
+                borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                footerButton,
-                style: TextStyle(color: whiteColor, fontSize: 13),
+                'Price',
+                style: TextStyle(
+                  color: !isPips ? Colors.white : textColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-      ],
-    );
-  }
-
-  Widget _slTpFieldRow(
-    _SlTpRowData r,
-    bool enabled,
-    Color fieldBg,
-    Color borderColor,
-    Color whiteColor,
-    Color greyColor,
-    Color lightGreyColor,
-  ) {
-    final Color color = enabled ? whiteColor : greyColor;
-
-    return Opacity(
-      opacity: enabled ? 1 : 0.45,
-      child: Row(
-        children: <Widget>[
-          Expanded(
+          GestureDetector(
+            onTap: () => onToggle(true),
             child: Container(
-              height: 34,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: fieldBg,
+                color: isPips ? AppColors.primaryPurple : Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: borderColor),
               ),
-              child: Row(
-                children: <Widget>[
-                  Text(r.symbol,
-                      style: TextStyle(color: greyColor, fontSize: 12)),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: r.controller != null
-                        ? TextFormField(
-                            controller: r.controller,
-                            enabled: enabled,
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            style: TextStyle(color: color, fontSize: 13),
-                            decoration: const InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
-                            ),
-                          )
-                        : Text(
-                            r.value,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: color, fontSize: 13),
-                          ),
-                  ),
-                  if (r.suffix != null)
-                    Text(r.suffix!,
-                        style: TextStyle(color: greyColor, fontSize: 11)),
-                  const SizedBox(width: 2),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(Icons.keyboard_arrow_up,
-                          size: 12, color: greyColor),
-                      Icon(Icons.keyboard_arrow_down,
-                          size: 12, color: greyColor),
-                    ],
-                  ),
-                ],
+              child: Text(
+                'Pips',
+                style: TextStyle(
+                  color: isPips ? Colors.white : textColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 6),
-          SizedBox(
-            width: 46,
-            child: Text(
-              r.label,
-              style: TextStyle(color: lightGreyColor, fontSize: 12),
-            ),
-          ),
-          const SizedBox(width: 4),
-          _infoIcon(greyColor),
         ],
       ),
     );
   }
 
-  Widget _trailingStopRow(
-    Color lightGreyColor,
-    Color whiteColor,
-    Color greyColor,
-  ) {
-    return Row(
-      children: <Widget>[
-        _checkbox(
-          _trailingStop,
-          (bool v) => setState(() => _trailingStop = v),
-          whiteColor,
-          greyColor,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          'Trailing stop loss',
-          style: TextStyle(color: lightGreyColor, fontSize: 13),
-        ),
-      ],
-    );
-  }
-
-  Widget _breakEvenRow(
-    Color lightGreyColor,
-    Color whiteColor,
-    Color greyColor,
-  ) {
-    return Row(
-      children: <Widget>[
-        _checkbox(
-          _breakEven,
-          (bool v) => setState(() => _breakEven = v),
-          whiteColor,
-          greyColor,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          'Break-even',
-          style: TextStyle(color: lightGreyColor, fontSize: 13),
-        ),
-      ],
-    );
-  }
-
-  Widget _commentField(
-    Color whiteColor,
-    Color greyColor,
-    Color fieldBg,
-    Color borderColor,
-  ) {
-    return Column(
-      children: <Widget>[
-        // TradingView URL input field (Hidden backend field required)
-        SizedBox(
-          height: 36,
-          child: TextFormField(
-            controller: _tradingViewUrlController,
-            style: TextStyle(color: whiteColor, fontSize: 13),
-            decoration: InputDecoration(
-              hintText: 'TradingView URL (e.g. https://tradingview.com/...)',
-              hintStyle: TextStyle(color: greyColor, fontSize: 12),
-              prefixIcon: Icon(Icons.link_rounded, size: 16, color: greyColor),
-              filled: true,
-              fillColor: fieldBg,
-              contentPadding: const EdgeInsets.symmetric(vertical: 4),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(color: borderColor),
-              ),
-            ),
-            validator: (String? val) {
-              if (val != null && val.isNotEmpty && !val.contains('tradingview.com')) {
-                return 'Must be a valid TradingView link';
-              }
-              return null;
-            },
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // Comment Box
-        Container(
-          decoration: BoxDecoration(
-            color: fieldBg,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: borderColor),
-          ),
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              TextField(
-                controller: _commentController,
-                maxLength: 100,
-                style: TextStyle(color: whiteColor, fontSize: 13),
-                decoration: InputDecoration(
-                  hintText: 'Comment',
-                  hintStyle: TextStyle(color: greyColor, fontSize: 14),
-                  border: InputBorder.none,
-                  isDense: true,
-                  counterText: '',
-                ),
-                onChanged: (_) => setState(() {}),
-              ),
-              Text(
-                '${_commentController.text.length}/100',
-                style: TextStyle(color: greyColor, fontSize: 11),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _placeOrderButton(Color greenColor) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _isSubmitting ? null : () => unawaited(_submitTrade()),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: greenColor,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 0,
-        ),
-        child: _isSubmitting
-            ? const CircularProgressIndicator(color: Colors.black)
-            : const Text(
-                'Place order',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+  InputDecoration _inputDecoration(Color fill, Color border, {required String hintText}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(color: border, fontSize: 13),
+      filled: true,
+      fillColor: fill,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: AppColors.primaryPurple),
       ),
     );
   }
-
-  // ---------------- SHARED WIDGETS ----------------
-  Widget _checkbox(
-    bool value,
-    ValueChanged<bool> onChanged,
-    Color whiteColor,
-    Color greyColor,
-  ) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: Container(
-        width: 18,
-        height: 18,
-        decoration: BoxDecoration(
-          color: value ? whiteColor : Colors.transparent,
-          border: Border.all(
-            color: value ? whiteColor : greyColor,
-            width: 1.4,
-          ),
-          borderRadius: BorderRadius.circular(3),
-        ),
-        child: value
-            ? const Icon(Icons.check, size: 13, color: Colors.black)
-            : null,
-      ),
-    );
-  }
-
-  Widget _infoIcon(Color greyColor) {
-    return Container(
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        border: Border.all(color: greyColor, width: 1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        'i',
-        style: TextStyle(
-          color: greyColor,
-          fontSize: 10,
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    );
-  }
-
-  Widget _stepperField(
-    String value,
-    void Function(double delta)? onDelta,
-    Color fieldBg,
-    Color borderColor,
-    Color whiteColor,
-    Color greyColor, {
-    bool enabled = true,
-    TextEditingController? controller,
-  }) {
-    return Opacity(
-      opacity: enabled ? 1 : 0.4,
-      child: Container(
-        height: 38,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: fieldBg,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: borderColor),
-        ),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: controller != null
-                  ? TextFormField(
-                      controller: controller,
-                      enabled: enabled,
-                      keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true),
-                      style: TextStyle(color: whiteColor, fontSize: 14),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                        border: InputBorder.none,
-                      ),
-                    )
-                  : Text(
-                      value,
-                      style: TextStyle(color: whiteColor, fontSize: 14),
-                    ),
-            ),
-            if (onDelta != null)
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => onDelta(0.1),
-                    child:
-                        Icon(Icons.keyboard_arrow_up, size: 14, color: greyColor),
-                  ),
-                  GestureDetector(
-                    onTap: () => onDelta(-0.1),
-                    child: Icon(Icons.keyboard_arrow_down,
-                        size: 14, color: greyColor),
-                  ),
-                ],
-              )
-            else
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(Icons.keyboard_arrow_up, size: 14, color: greyColor),
-                  Icon(Icons.keyboard_arrow_down, size: 14, color: greyColor),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SlTpRowData {
-  final String symbol;
-  final String label;
-  final String value;
-  final String? suffix;
-  final String? prefix;
-  final TextEditingController? controller;
-
-  const _SlTpRowData({
-    required this.symbol,
-    required this.label,
-    required this.value,
-    this.suffix,
-    this.prefix,
-    this.controller,
-  });
 }

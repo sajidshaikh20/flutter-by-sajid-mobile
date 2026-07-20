@@ -21,15 +21,29 @@ class LeaderboardItemResponse {
 
   factory LeaderboardItemResponse.fromJson(Map<String, dynamic> json) {
     final String publicId = json['publicId']?.toString() ?? '';
-    final String inferredType = publicId.startsWith('TD') ? 'TRADER' : 'CLIENT';
+    final String inferredType = (publicId.startsWith('TD') || publicId.startsWith('MENTOR') || publicId.startsWith('USBD') || publicId.isNotEmpty)
+        ? 'TRADER'
+        : 'TRADER';
+
+    double parseDouble(dynamic val) {
+      if (val == null) return 0.0;
+      return double.tryParse(val.toString()) ?? 0.0;
+    }
+
+    int parseInt(dynamic val) {
+      if (val == null) return 0;
+      if (val is int) return val;
+      return int.tryParse(val.toString()) ?? 0;
+    }
+
     return LeaderboardItemResponse(
-      rank: json['rank'] ?? 0,
-      name: json['name'] ?? '',
-      winRate: json['winRate'] != null ? double.parse(json['winRate'].toString()) : 0.0,
-      status: json['accountStatus'] ?? json['status'] ?? 'INACTIVE',
-      type: json['type'] ?? inferredType,
-      pnl: json['netPoints'] != null ? double.parse(json['netPoints'].toString()) : (json['pnl'] != null ? double.parse(json['pnl'].toString()) : 0.0),
-      tradesCount: json['totalTrades'] ?? json['tradesCount'] ?? 0,
+      rank: parseInt(json['rank']),
+      name: json['name']?.toString() ?? '',
+      winRate: parseDouble(json['winRate']),
+      status: json['accountStatus']?.toString() ?? json['status']?.toString() ?? 'ACTIVE',
+      type: json['type']?.toString() ?? inferredType,
+      pnl: json['netPoints'] != null ? parseDouble(json['netPoints']) : parseDouble(json['pnl']),
+      tradesCount: json['totalTrades'] != null ? parseInt(json['totalTrades']) : parseInt(json['tradesCount']),
       avatarUrl: json['profilePictureUrl']?.toString() ?? json['avatarUrl']?.toString(),
     );
   }
