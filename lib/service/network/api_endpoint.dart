@@ -208,6 +208,9 @@ abstract class Apis {
   /// Endpoint to get client dashboard data
   static const String clientDashboard = '$subBaseUrl/client/dashboard';
 
+  /// Endpoint to get trader dashboard data
+  static const String traderDashboard = '$subBaseUrl/trader/dashboard';
+
   /// Endpoint to get all currency pairs by market
   static const String getCurrencyPairs = '$subBaseUrl/currency-pairs/all';
 

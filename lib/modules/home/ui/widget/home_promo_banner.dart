@@ -7,115 +7,129 @@ class HomePromoBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: isDark ? AppColors.darkPromoBannerGradient : AppColors.lightPromoBannerGradient,
-          borderRadius: BorderRadius.circular(Dimens.radius16),
-          border: Border.all(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-          ),
-          boxShadow: <BoxShadow>[
-            if (isDark)
-              BoxShadow(
-                color: AppColors.primaryPurple.withValues(alpha: 0.15),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
+    return ListenableBuilder(
+      listenable: UserProfileService.instance(),
+      builder: (BuildContext context, Widget? child) {
+        final UserProfileService profile = UserProfileService.instance();
+        final bool isTrader = profile.isTrader;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: isDark ? AppColors.darkPromoBannerGradient : AppColors.lightPromoBannerGradient,
+              borderRadius: BorderRadius.circular(Dimens.radius16),
+              border: Border.all(
+                color: isDark ? AppColors.borderDark : AppColors.borderLight,
               ),
-          ],
-        ),
-        padding: const EdgeInsets.all(Dimens.space16),
-        child: Row(
-          children: <Widget>[
-            // Left text panel
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // WEKO PRO label
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+              boxShadow: <BoxShadow>[
+                if (isDark)
+                  BoxShadow(
+                    color: AppColors.primaryPurple.withValues(alpha: 0.15),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+              ],
+            ),
+            padding: const EdgeInsets.all(Dimens.space16),
+            child: Row(
+              children: <Widget>[
+                // Left text panel
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Icon(
-                        Icons.workspace_premium,
-                        color: isDark ? AppColors.successColor : AppColors.greenTextColor,
-                        size: Dimens.size14,
+                      // Tag label
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            isTrader ? Icons.show_chart_rounded : Icons.workspace_premium,
+                            color: isDark ? AppColors.successColor : AppColors.greenTextColor,
+                            size: Dimens.size14,
+                          ),
+                          const SizedBox(width: Dimens.space4),
+                          CustomTextLabelWidget(
+                            label: isTrader ? 'TRADER HUB' : 'WEKO PRO',
+                            style: const TextStyle(
+                              color: AppColors.primaryPurple,
+                              fontWeight: FontWeight.w600,
+                              fontSize: Dimens.fontSize11,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: Dimens.space4),
-                      const CustomTextLabelWidget(
-                        label: 'WEKO PRO',
+                      const SizedBox(height: Dimens.space10),
+                      CustomTextLabelWidget(
+                        label: isTrader
+                            ? 'Welcome Back, ${profile.customerName.isNotEmpty ? profile.customerName : "Trader"}'
+                            : 'Unlock Advanced Tools',
                         style: TextStyle(
-                          color: AppColors.primaryPurple,
+                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                           fontWeight: FontWeight.w600,
-                          fontSize: Dimens.fontSize11,
+                          fontSize: Dimens.fontSize16,
+                          height: 1.2,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                      const SizedBox(height: Dimens.space6),
+                      CustomTextLabelWidget(
+                        label: isTrader
+                            ? 'Track live trades, publish signals & analyze performance.'
+                            : 'Automate, Backtest & Optimize Your Strategies',
+                        style: TextStyle(
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                          fontSize: Dimens.fontSize10,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                      const SizedBox(height: Dimens.space16),
+                      // Action Button
+                      Container(
+                        height: Dimens.size36,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryButtonGradient,
+                          borderRadius: BorderRadius.circular(Dimens.radius10),
+                        ),
+                        child: InkWell(
+                          onTap: () async {
+                            if (isTrader) {
+                              await context.router.push(const AddTradeRoute());
+                            } else {
+                              await context.router.push(const SubscriptionPlansRoute());
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(Dimens.radius10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: Dimens.space12),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                CustomTextLabelWidget(
+                                  label: isTrader ? '+ Add New Trade' : 'Explore Pro',
+                                  style: const TextStyle(
+                                    color: AppColors.whiteColor,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: Dimens.fontSize11,
+                                  ),
+                                ),
+                                const SizedBox(width: Dimens.space6),
+                                const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: AppColors.whiteColor,
+                                  size: Dimens.size10,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: Dimens.space10),
-                  CustomTextLabelWidget(
-                    label: 'Unlock Advanced Tools',
-                    style: TextStyle(
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-                      fontWeight: FontWeight.w600,
-                      fontSize: Dimens.fontSize16,
-                      height: 1.2,
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
-                  const SizedBox(height: Dimens.space6),
-                  CustomTextLabelWidget(
-                    label: 'Automate, Backtest & Optimize Your Strategies',
-                    style: TextStyle(
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                      fontSize: Dimens.fontSize10,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
-                  const SizedBox(height: Dimens.space16),
-                  // Explore Button
-                  Container(
-                    height: Dimens.size36,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryButtonGradient,
-                      borderRadius: BorderRadius.circular(Dimens.radius10),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        await context.router.push(const SubscriptionPlansRoute());
-                      },
-                      borderRadius: BorderRadius.circular(Dimens.radius10),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Dimens.space12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            CustomTextLabelWidget(
-                              label: 'Explore Pro',
-                              style: TextStyle(
-                                color: AppColors.whiteColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: Dimens.fontSize11,
-                              ),
-                            ),
-                            SizedBox(width: Dimens.space6),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              color: AppColors.whiteColor,
-                              size: Dimens.size10,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
             // Right Graphics Panel (futuristic UI look without placeholders)
             Expanded(
               flex: 2,
@@ -220,5 +234,7 @@ class HomePromoBanner extends StatelessWidget {
         ),
       ),
     );
+  },
+);
   }
 }

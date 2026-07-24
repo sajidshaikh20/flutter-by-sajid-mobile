@@ -90,6 +90,12 @@ class UserProfileService extends ChangeNotifier {
   /// The user's role name.
   String get roleName => _dataModel?.roleName ?? '';
 
+  /// Whether the user has TRADER or MENTOR role.
+  bool get isTrader {
+    final String role = roleName.toUpperCase();
+    return role == 'TRADER' || role == 'MENTOR';
+  }
+
   /// Subscription public ID.
   String get subscriptionPublicId => _dataModel?.subscriptionPublicId ?? '';
 
@@ -123,12 +129,27 @@ class UserProfileService extends ChangeNotifier {
   /// Subscription end date.
   String get endDate => _dataModel?.endDate ?? '';
 
-  /// Whether subscription is active.
+  /// Whether subscription is active (Traders do not require subscription).
   bool get isSubscriptionActive {
     if (_dataModel == null) return false;
+    if (isTrader) return true;
     final bool active = _dataModel?.isActive ?? false;
+    final String subStatus = (_dataModel?.subscriptionStatus ?? '').toUpperCase();
+    final String payStatus = (_dataModel?.paymentStatus ?? '').toUpperCase();
+
+    if (subStatus == 'PENDING' || payStatus == 'PENDING' || !active) {
+      return false;
+    }
+    return active;
+  }
+
+  /// Whether payment is pending for a subscription.
+  bool get isPaymentPending {
+    if (_dataModel == null || isTrader) return false;
+    final String subStatus = (_dataModel?.subscriptionStatus ?? '').toUpperCase();
+    final String payStatus = (_dataModel?.paymentStatus ?? '').toUpperCase();
     final String subId = _dataModel?.subscriptionPublicId ?? '';
-    return active || subId.isNotEmpty;
+    return subId.isNotEmpty && (subStatus == 'PENDING' || payStatus == 'PENDING');
   }
 
   /// Subscription duration in days.

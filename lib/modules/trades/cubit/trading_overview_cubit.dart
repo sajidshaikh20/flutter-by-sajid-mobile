@@ -112,9 +112,9 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
       if (currentStatus != 'ACTIVE' && currentStatus != 'PENDING') return;
       final String? symbol = data['symbol'] as String?;
       if (symbol != null) {
-        final String normalizedSymbol = symbol.replaceAll('/', '').toUpperCase();
-        final String normalizedSignalPair = signal.pair.replaceAll('/', '').toUpperCase();
-        if (normalizedSymbol == normalizedSignalPair) {
+        final String s1 = symbol.replaceAll(RegExp(r'[^A-Z0-9]'), '').toUpperCase();
+        final String s2 = signal.pair.replaceAll(RegExp(r'[^A-Z0-9]'), '').toUpperCase();
+        if (s1 == s2 || s1.startsWith(s2) || s2.startsWith(s1) || s1.contains(s2) || s2.contains(s1)) {
           final double? price = double.tryParse(data['price']?.toString() ?? '');
           if (price != null) {
             _updatePriceAndProgress(price);

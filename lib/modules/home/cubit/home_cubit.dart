@@ -100,6 +100,7 @@ class HomeCubit extends BaseCubit<HomeState> {
         );
       }
 
+      if (isClosed) return;
       emit(state.copyWith(
         status: BaseStateStatus.success,
         totalTrades: dashboardData?.totalTrades ?? 0,
@@ -111,6 +112,7 @@ class HomeCubit extends BaseCubit<HomeState> {
         firstTimeLogin: profileData?.firstTimeLogin ?? UserProfileService.instance().firstTimeLogin,
       ));
     } on Object catch (_) {
+      if (isClosed) return;
       emit(state.copyWith(
         status: BaseStateStatus.failure,
         msg: 'An unexpected error occurred. Please try again.',

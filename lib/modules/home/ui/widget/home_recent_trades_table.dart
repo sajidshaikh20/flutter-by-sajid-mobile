@@ -51,58 +51,65 @@ class HomeRecentTradesTable extends StatelessWidget {
                   ),
                   const SizedBox(height: Dimens.space12),
                   if (!isSubscribed)
-                    Container(
-                      height: 160,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.cardDark : AppColors.cardLight,
-                        borderRadius: BorderRadius.circular(Dimens.radius12),
-                        border: Border.all(
-                          color: isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: Dimens.space20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Icon(
-                            Icons.lock_outline_rounded,
-                            color: AppColors.primaryPurple,
-                            size: Dimens.size28,
-                          ),
-                          const SizedBox(height: Dimens.space10),
-                          const CustomTextLabelWidget(
-                            label: 'Subscription Required',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: Dimens.fontSize14,
+                    Builder(
+                      builder: (BuildContext context) {
+                        final bool isPending = UserProfileService.instance().isPaymentPending;
+                        return Container(
+                          height: 160,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.cardDark : AppColors.cardLight,
+                            borderRadius: BorderRadius.circular(Dimens.radius12),
+                            border: Border.all(
+                              color: isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5),
                             ),
                           ),
-                          const SizedBox(height: Dimens.space4),
-                          CustomTextLabelWidget(
-                            label: 'Unlock recent trade activity and signals.',
-                            style: TextStyle(
-                              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                              fontSize: Dimens.fontSize11,
-                              height: 1.3,
-                            ),
-                          ),
-                          const SizedBox(height: Dimens.space12),
-                          GestureDetector(
-                            onTap: () => context.router.push(const SubscriptionPlansRoute()),
-                            child: const CustomTextLabelWidget(
-                              label: 'Get Premium Access',
-                              style: TextStyle(
-                                color: AppColors.primaryPurple,
-                                fontWeight: FontWeight.w500,
-                                fontSize: Dimens.fontSize12,
-                                decoration: TextDecoration.underline,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: Dimens.space20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                isPending ? Icons.pending_actions_rounded : Icons.lock_outline_rounded,
+                                color: isPending ? Colors.orangeAccent : AppColors.primaryPurple,
+                                size: Dimens.size28,
                               ),
-                            ),
+                              const SizedBox(height: Dimens.space10),
+                              CustomTextLabelWidget(
+                                label: isPending ? 'Your Payment is Pending' : 'Subscription Required',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: Dimens.fontSize14,
+                                ),
+                              ),
+                              const SizedBox(height: Dimens.space4),
+                              CustomTextLabelWidget(
+                                label: isPending
+                                    ? 'Your subscription payment is pending verification. Complete payment to activate your plan.'
+                                    : 'Unlock recent trade activity and signals.',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                                  fontSize: Dimens.fontSize11,
+                                  height: 1.3,
+                                ),
+                              ),
+                              const SizedBox(height: Dimens.space12),
+                              GestureDetector(
+                                onTap: () => context.router.push(const SubscriptionPlansRoute()),
+                                child: CustomTextLabelWidget(
+                                  label: isPending ? 'Complete Payment' : 'Get Premium Access',
+                                  style: const TextStyle(
+                                    color: AppColors.primaryPurple,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: Dimens.fontSize12,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     )
                   else if (trades.isEmpty)
                     Container(

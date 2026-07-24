@@ -13,7 +13,7 @@ class _AddTradePageState extends State<AddTradePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Market & Currency Pair State
-  String _selectedMarket = 'COMMODITY';
+  String _selectedMarket = 'CRYPTO';
   List<CurrencyPairResponse> _currencyPairs = <CurrencyPairResponse>[];
   CurrencyPairResponse? _selectedPair;
   bool _isLoadingPairs = false;
@@ -23,16 +23,16 @@ class _AddTradePageState extends State<AddTradePage> {
   String? _registeredSymbol;
   double? _liveSocketPrice;
 
-  // Trade Type Options
-  String _selectedTradeType = 'BUY';
-  final List<String> _tradeTypes = const <String>[
-    'BUY',
-    'SELL',
-    'BUY LIMIT',
-    'SELL LIMIT',
-    'BUY STOP',
-    'SELL STOP',
-  ];
+  // Trade Type Options (Matching Web Frontend)
+  String _selectedTradeType = 'BUY_MARKET';
+  final Map<String, String> _tradeTypeLabels = const <String, String>{
+    'BUY_MARKET': 'Buy By Market',
+    'SELL_MARKET': 'Sell By Market',
+    'BUY_LIMIT': 'Buy Limit',
+    'SELL_LIMIT': 'Sell Limit',
+    'BUY_STOP': 'Buy Stop',
+    'SELL_STOP': 'Sell Stop',
+  };
 
   // Price vs Pips Toggles for SL & TP1
   bool _isSlInPips = false;
@@ -82,15 +82,28 @@ class _AddTradePageState extends State<AddTradePage> {
     setState(() {});
   }
 
+  bool get _isMarketOrder => _selectedTradeType.contains('MARKET');
+
+  bool _isSymbolMatch(String wsSymbol, String pairSymbol) {
+    if (wsSymbol.isEmpty || pairSymbol.isEmpty) return false;
+    final String s1 = wsSymbol.replaceAll(RegExp(r'[^A-Z0-9]'), '').toUpperCase();
+    final String s2 = pairSymbol.replaceAll(RegExp(r'[^A-Z0-9]'), '').toUpperCase();
+    if (s1 == s2) return true;
+    if (s1.startsWith(s2) || s2.startsWith(s1)) return true;
+    if (s1.contains(s2) || s2.contains(s1)) return true;
+    final String baseS1 = s1.replaceAll('USDT', 'USD');
+    final String baseS2 = s2.replaceAll('USDT', 'USD');
+    return baseS1.startsWith(baseS2) || baseS2.startsWith(baseS1);
+  }
+
   void _subscribeLivePrice() {
     unawaited(_priceSubscription?.cancel());
     _priceSubscription = MainConfig.chatSocketConnection.priceStream.listen((Map<String, dynamic> data) {
       final String? symbol = data['symbol'] as String?;
       final double? price = double.tryParse(data['price']?.toString() ?? '');
       if (symbol != null && price != null && price > 0) {
-        final String normSymbol = symbol.replaceAll('/', '').toUpperCase();
-        final String normSelected = (_selectedPair?.symbol ?? '').replaceAll('/', '').toUpperCase();
-        if (normSymbol == normSelected) {
+        final String pairSym = _selectedPair?.symbol ?? '';
+        if (_isSymbolMatch(symbol, pairSym)) {
           if (mounted) {
             setState(() {
               _liveSocketPrice = price;
@@ -105,7 +118,7 @@ class _AddTradePageState extends State<AddTradePage> {
                   pipValue: _selectedPair!.pipValue,
                 );
               }
-              if (_entryController.text.isEmpty) {
+              if (_entryController.text.isEmpty || _isMarketOrder) {
                 _entryController.text = price.toStringAsFixed(_getPricePrecision());
               }
             });
@@ -126,13 +139,29 @@ class _AddTradePageState extends State<AddTradePage> {
     }
   }
 
-  Future<void> _loadPairs() async {
+  String _getPriceSource(String market) {
+    switch (market.toUpperCase()) {
+      case 'CRYPTO':
+        return 'Source: Binance';
+      case 'FOREX':
+      case 'COMMODITY':
+      case 'STOCK':
+        return 'Source: Twelve Data';
+      default:
+        return 'Source: Live Market Feed';
+    }
+  }
+
+  Future<void> _loadPairs({StateSetter? modalSetState}) async {
     setState(() {
       _isLoadingPairs = true;
       _currencyPairs = <CurrencyPairResponse>[];
       _selectedPair = null;
       _liveSocketPrice = null;
     });
+    if (modalSetState != null) {
+      modalSetState(() {});
+    }
 
     try {
       ResponseHandler<BaseResponse<List<CurrencyPairResponse>>> response =
@@ -170,6 +199,9 @@ class _AddTradePageState extends State<AddTradePage> {
         setState(() {
           _isLoadingPairs = false;
         });
+        if (modalSetState != null) {
+          modalSetState(() {});
+        }
       }
     }
   }
@@ -228,7 +260,7 @@ class _AddTradePageState extends State<AddTradePage> {
     final double? inputVal = double.tryParse(_slController.text.trim());
     if (inputVal == null) return null;
 
-    final bool isBuy = _selectedTradeType.contains('BUY');
+    final bool isBuy = _selectedTradeType.startsWith('BUY');
     if (_isSlInPips) {
       return _pipsToPrice(inputVal, entry, !isBuy);
     } else {
@@ -241,7 +273,7 @@ class _AddTradePageState extends State<AddTradePage> {
     final double? inputVal = double.tryParse(_tp1Controller.text.trim());
     if (inputVal == null) return null;
 
-    final bool isBuy = _selectedTradeType.contains('BUY');
+    final bool isBuy = _selectedTradeType.startsWith('BUY');
     if (_isTp1InPips) {
       return _pipsToPrice(inputVal, entry, isBuy);
     } else {
@@ -256,7 +288,7 @@ class _AddTradePageState extends State<AddTradePage> {
 
     if (sl == null || tp == null) return null;
 
-    final bool isBuy = _selectedTradeType.contains('BUY');
+    final bool isBuy = _selectedTradeType.startsWith('BUY');
 
     if (isBuy) {
       if (sl >= entry) {
@@ -303,6 +335,22 @@ class _AddTradePageState extends State<AddTradePage> {
 
     final double rr = double.parse((reward / risk).toStringAsFixed(2));
     return <String, dynamic>{'valid': true, 'reason': '', 'rr': rr};
+  }
+
+  String _getRrLabel(double rr) {
+    if (rr < 1.0) return 'BAD';
+    if (rr < 1.5) return 'RISKY';
+    if (rr < 2.0) return 'AVERAGE';
+    if (rr < 3.0) return 'GOOD';
+    return 'EXCELLENT';
+  }
+
+  Color _getRrColor(double rr) {
+    if (rr < 1.0) return AppColors.errorColor;
+    if (rr < 1.5) return Colors.orange;
+    if (rr < 2.0) return Colors.amber;
+    if (rr < 3.0) return Colors.lightGreen;
+    return AppColors.successColor;
   }
 
   Future<void> _submitTrade() async {
@@ -437,6 +485,8 @@ class _AddTradePageState extends State<AddTradePage> {
         isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
     final Color textColor =
         isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor =
+        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 
     await showModalBottomSheet<void>(
       context: context,
@@ -449,18 +499,37 @@ class _AddTradePageState extends State<AddTradePage> {
         String query = '';
         String selectedTabMarket = _selectedMarket;
 
+        final TextEditingController searchController = TextEditingController();
+
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
             final List<CurrencyPairResponse> filtered = _currencyPairs.where((CurrencyPairResponse p) {
-              return p.symbol.toLowerCase().contains(query.toLowerCase());
+              final String cleanQuery = query.trim().toLowerCase();
+              if (cleanQuery.isEmpty) return true;
+              return p.symbol.toLowerCase().contains(cleanQuery) ||
+                     p.baseCurrency.toLowerCase().contains(cleanQuery) ||
+                     p.quoteCurrency.toLowerCase().contains(cleanQuery);
             }).toList();
 
             return Container(
-              height: MediaQuery.of(context).size.height * 0.70,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              height: MediaQuery.of(context).size.height * 0.75,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  // Drag handle indicator
+                  Center(
+                    child: Container(
+                      width: 38,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF2C3240) : Colors.black12,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -468,50 +537,57 @@ class _AddTradePageState extends State<AddTradePage> {
                         'Select Currency Pair',
                         style: TextStyle(
                           color: textColor,
-                          fontSize: 16,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.close_rounded, color: textColor, size: 20),
+                        icon: Icon(Icons.close_rounded, color: subtextColor, size: 20),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         onPressed: () => Navigator.pop(ctx),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
                   // Market Tabs in Sheet
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: <String>['COMMODITY', 'FOREX', 'CRYPTO', 'STOCK']
+                      children: <String>['CRYPTO', 'FOREX', 'COMMODITY', 'STOCK']
                           .map((String m) {
                         final bool isSelected = selectedTabMarket == m;
                         return Padding(
-                          padding: const EdgeInsets.only(right: 6),
+                          padding: const EdgeInsets.only(right: 8),
                           child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
                             onTap: () {
                               setModalState(() {
                                 selectedTabMarket = m;
                                 _selectedMarket = m;
                               });
                               setState(() {});
-                              unawaited(_loadPairs());
+                              unawaited(_loadPairs(modalSetState: setModalState));
                             },
-                            child: Container(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
+                                horizontal: 16,
+                                vertical: 7,
                               ),
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? AppColors.primaryPurple
                                     : (isDark
-                                        ? AppColors.cardDark
+                                        ? const Color(0xFF1E2430)
                                         : AppColors.whiteSmokeShade),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.primaryPurple
+                                      : (isDark ? const Color(0xFF2C3240) : Colors.transparent),
+                                ),
                               ),
                               child: Text(
                                 m,
@@ -528,87 +604,174 @@ class _AddTradePageState extends State<AddTradePage> {
                     ),
                   ),
 
-                  const SizedBox(height: 10),
-                  TextField(
-                    onChanged: (String val) => setModalState(() => query = val),
-                    style: TextStyle(color: textColor, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: 'Search EURUSD, BTCUSD, ALUMINIUM...',
-                      hintStyle: const TextStyle(fontSize: 12),
-                      prefixIcon: const Icon(Icons.search_rounded, size: 18),
-                      filled: true,
-                      fillColor: isDark
-                          ? AppColors.cardDark
-                          : AppColors.whiteSmokeShade,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
+                  const SizedBox(height: 12),
+
+                  // Professional Search Bar Input
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E2430) : const Color(0xFFF2F4F7),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: query.isNotEmpty
+                            ? AppColors.primaryPurple
+                            : (isDark ? const Color(0xFF2C3240) : Colors.transparent),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (String val) => setModalState(() => query = val),
+                      style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.w600),
+                      decoration: InputDecoration(
+                        hintText: 'Search BTCUSD, EURUSD, XAUUSD...',
+                        hintStyle: TextStyle(
+                          color: subtextColor.withValues(alpha: 0.65),
+                          fontSize: 12,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          size: 20,
+                          color: query.isNotEmpty ? AppColors.primaryPurple : subtextColor,
+                        ),
+                        suffixIcon: query.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () {
+                                  setModalState(() {
+                                    query = '';
+                                    searchController.clear();
+                                  });
+                                },
+                                child: Icon(Icons.cancel_rounded, size: 18, color: subtextColor),
+                              )
+                            : null,
+                        filled: false,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
+                  // Results Count Bar
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        query.trim().isNotEmpty
+                            ? 'Found ${filtered.length} results'
+                            : '${filtered.length} pairs available',
+                        style: TextStyle(
+                          color: query.trim().isNotEmpty ? AppColors.primaryPurple : subtextColor,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        selectedTabMarket,
+                        style: TextStyle(color: subtextColor.withValues(alpha: 0.6), fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
 
                   Expanded(
                     child: _isLoadingPairs
                         ? const Center(child: CircularProgressIndicator())
                         : filtered.isEmpty
                             ? Center(
-                                child: Text(
-                                  'No pairs found for $selectedTabMarket',
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? AppColors.textSecondaryDark
-                                        : AppColors.textSecondaryLight,
-                                    fontSize: 12,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.search_off_rounded,
+                                        size: 44,
+                                        color: subtextColor.withValues(alpha: 0.4),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        'No pairs found for "$query"',
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Try searching for another pair symbol or select a different market tab.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: subtextColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               )
-                            : ListView.separated(
+                            : ListView.builder(
                                 itemCount: filtered.length,
-                                separatorBuilder: (BuildContext context, int index) =>
-                                    const Divider(height: 1),
+                                padding: const EdgeInsets.only(top: 4, bottom: 12),
                                 itemBuilder: (BuildContext context, int index) {
                                   final CurrencyPairResponse pair = filtered[index];
                                   final bool isSelected =
                                       _selectedPair?.id == pair.id;
-                                  return ListTile(
-                                    dense: true,
-                                    title: Text(
-                                      pair.symbol,
-                                      style: TextStyle(
-                                        color: textColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 6),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.primaryPurple.withValues(alpha: 0.12)
+                                          : (isDark ? AppColors.cardDark : AppColors.whiteSmokeShade),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? AppColors.primaryPurple
+                                            : (isDark ? const Color(0xFF2C3240) : Colors.transparent),
+                                        width: isSelected ? 1.5 : 1.0,
                                       ),
                                     ),
-                                    subtitle: Text(
-                                      'Live Price: ${pair.currentPrice > 0 ? pair.currentPrice : "--"}',
-                                      style: const TextStyle(
-                                        color: AppColors.successColor,
-                                        fontSize: 12,
+                                    child: ListTile(
+                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                       title: Text(
+                                        pair.symbol,
+                                        style: TextStyle(
+                                          color: isSelected ? AppColors.primaryPurple : textColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
                                       ),
+                                      trailing: isSelected
+                                          ? const Icon(
+                                              Icons.check_circle_rounded,
+                                              color: AppColors.primaryPurple,
+                                              size: 20,
+                                            )
+                                          : Icon(
+                                              Icons.chevron_right_rounded,
+                                              color: subtextColor.withValues(alpha: 0.5),
+                                              size: 20,
+                                            ),
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedPair = pair;
+                                          if (pair.currentPrice > 0) {
+                                            _liveSocketPrice = pair.currentPrice;
+                                          } else {
+                                            _liveSocketPrice = null;
+                                          }
+                                          _entryController.text = _getLivePrice().toStringAsFixed(_getPricePrecision());
+                                        });
+                                        _updateSocketRegistration(pair.symbol);
+                                        Navigator.pop(ctx);
+                                      },
                                     ),
-                                    trailing: isSelected
-                                        ? const Icon(
-                                            Icons.check_circle_rounded,
-                                            color: AppColors.primaryPurple,
-                                            size: 18,
-                                          )
-                                        : null,
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedPair = pair;
-                                        if (pair.currentPrice > 0) {
-                                          _liveSocketPrice = pair.currentPrice;
-                                        } else {
-                                          _liveSocketPrice = null;
-                                        }
-                                        _entryController.text = _getLivePrice().toStringAsFixed(_getPricePrecision());
-                                      });
-                                      _updateSocketRegistration(pair.symbol);
-                                      Navigator.pop(ctx);
-                                    },
                                   );
                                 },
                               ),
@@ -624,30 +787,81 @@ class _AddTradePageState extends State<AddTradePage> {
 
   void _showOrderTypeInfo() {
     final bool isDark = context.isDark;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color cardBg = isDark ? AppColors.surfaceDark : Colors.white;
+
+    final String title = _tradeTypeLabels[_selectedTradeType] ?? 'Trade Type';
+    String description = '';
+
+    switch (_selectedTradeType) {
+      case 'BUY_MARKET':
+        description = 'Buy Market order is immediately matched to the best available market price.';
+      case 'SELL_MARKET':
+        description = 'Sell Market order is immediately matched to the best available market price.';
+      case 'BUY_LIMIT':
+        description = 'A Buy Limit order is an order to buy at a specific price or better (below current market price).';
+      case 'SELL_LIMIT':
+        description = 'A Sell Limit order is an order to sell at a specific price or better (above current market price).';
+      case 'BUY_STOP':
+        description = 'Buy Stop order executes when price moves above the trigger level.';
+      case 'SELL_STOP':
+        description = 'Sell Stop order executes when price moves below the trigger level.';
+    }
+
     unawaited(showDialog<void>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-        title: const Text('Trade Types', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Column(
+        backgroundColor: cardBg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: <Widget>[
+            const Icon(Icons.info_outline_rounded, color: AppColors.primaryPurple, size: 22),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('• BUY / SELL: Immediate market execution at current live price.', style: TextStyle(fontSize: 13)),
-            SizedBox(height: 6),
-            Text('• BUY LIMIT: Buy order placed below current price.', style: TextStyle(fontSize: 13)),
-            SizedBox(height: 6),
-            Text('• SELL LIMIT: Sell order placed above current price.', style: TextStyle(fontSize: 13)),
-            SizedBox(height: 6),
-            Text('• BUY STOP: Buy order placed above current price.', style: TextStyle(fontSize: 13)),
-            SizedBox(height: 6),
-            Text('• SELL STOP: Sell order placed below current price.', style: TextStyle(fontSize: 13)),
+            Text(
+              description,
+              style: TextStyle(color: subtextColor, fontSize: 13, height: 1.4),
+            ),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.cardDark : AppColors.whiteSmokeShade,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('• BUY / SELL MARKET: Instant execution.', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                  SizedBox(height: 4),
+                  Text('• BUY LIMIT: Placed below live price.', style: TextStyle(fontSize: 11)),
+                  SizedBox(height: 4),
+                  Text('• SELL LIMIT: Placed above live price.', style: TextStyle(fontSize: 11)),
+                  SizedBox(height: 4),
+                  Text('• BUY STOP: Placed above live price.', style: TextStyle(fontSize: 11)),
+                  SizedBox(height: 4),
+                  Text('• SELL STOP: Placed below live price.', style: TextStyle(fontSize: 11)),
+                ],
+              ),
+            ),
           ],
         ),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Got it'),
+            child: const Text('Got it', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -677,6 +891,14 @@ class _AddTradePageState extends State<AddTradePage> {
         ? _getLivePrice().toStringAsFixed(_getPricePrecision())
         : '--';
 
+    final bool isRrValid = rrCalculation != null && rrCalculation['valid'] == true;
+    final double rrVal = isRrValid ? (rrCalculation['rr'] as double) : 0.0;
+    final String rrLabel = isRrValid ? _getRrLabel(rrVal) : 'AUTO CALCULATED';
+    final Color rrColor = isRrValid ? _getRrColor(rrVal) : AppColors.successColor;
+    final String validationMsg = (rrCalculation != null && rrCalculation['valid'] == false)
+        ? (rrCalculation['reason'] as String? ?? '')
+        : '';
+
     return Scaffold(
       backgroundColor: pageBg,
       appBar: AppBar(
@@ -703,7 +925,6 @@ class _AddTradePageState extends State<AddTradePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Subtitle
                 Text(
                   'Create a premium signal with smart entries, SL, TP and auto RR insights.',
                   style: TextStyle(
@@ -730,7 +951,7 @@ class _AddTradePageState extends State<AddTradePage> {
                       dropdownColor: cardBg,
                       style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
                       icon: Icon(Icons.keyboard_arrow_down_rounded, color: subtextColor),
-                      items: <String>['COMMODITY', 'FOREX', 'CRYPTO', 'STOCK'].map((String m) {
+                      items: <String>['CRYPTO', 'FOREX', 'COMMODITY', 'STOCK'].map((String m) {
                         return DropdownMenuItem<String>(
                           value: m,
                           child: Text(m),
@@ -787,91 +1008,93 @@ class _AddTradePageState extends State<AddTradePage> {
                 const SizedBox(height: 18),
 
                 // 3. Live Market Price Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF092019) : const Color(0xFFE8F8F1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.successColor.withOpacity(0.4)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.successColor,
-                                  shape: BoxShape.circle,
+                if (_selectedPair != null) ...<Widget>[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF092019) : const Color(0xFFE8F8F1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.successColor.withValues(alpha: 0.4)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.successColor,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'LIVE MARKET PRICE',
-                                style: TextStyle(
-                                  color: AppColors.successColor,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'LIVE MARKET PRICE',
+                                  style: TextStyle(
+                                    color: AppColors.successColor,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: isDark ? Colors.black38 : Colors.black12,
-                              borderRadius: BorderRadius.circular(6),
+                              ],
                             ),
-                            child: const Text(
-                              'Source: Twelve Data',
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isDark ? Colors.black38 : Colors.black12,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                _getPriceSource(_selectedMarket),
+                                style: const TextStyle(
+                                  color: AppColors.errorColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              _selectedPair?.symbol ?? 'SYMB',
                               style: TextStyle(
-                                color: Colors.orangeAccent,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
+                                color: textColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            _selectedPair?.symbol ?? 'SYMB',
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            Text(
+                              livePriceStr,
+                              style: const TextStyle(
+                                color: AppColors.successColor,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
-                          ),
-                          Text(
-                            livePriceStr,
-                            style: const TextStyle(
-                              color: AppColors.successColor,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
+                  const SizedBox(height: 18),
+                ],
 
                 // 4. Trade Type & Entry 1
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Trade Type
+                    // Trade Type Dropdown with (i) info icon
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -880,9 +1103,9 @@ class _AddTradePageState extends State<AddTradePage> {
                             children: <Widget>[
                               _buildFieldLabel('Trade Type *', textColor),
                               const SizedBox(width: 4),
-                              GestureDetector(
+                              InkWell(
                                 onTap: _showOrderTypeInfo,
-                                child: Icon(Icons.info_outline_rounded, size: 16, color: subtextColor),
+                                child: const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.primaryPurple),
                               ),
                             ],
                           ),
@@ -901,16 +1124,19 @@ class _AddTradePageState extends State<AddTradePage> {
                                 dropdownColor: cardBg,
                                 style: TextStyle(color: textColor, fontSize: 13, fontWeight: FontWeight.bold),
                                 icon: Icon(Icons.keyboard_arrow_down_rounded, color: subtextColor, size: 20),
-                                items: _tradeTypes.map((String t) {
+                                items: _tradeTypeLabels.entries.map((MapEntry<String, String> entry) {
                                   return DropdownMenuItem<String>(
-                                    value: t,
-                                    child: Text(t),
+                                    value: entry.key,
+                                    child: Text(entry.value),
                                   );
                                 }).toList(),
                                 onChanged: (String? val) {
                                   if (val != null) {
                                     setState(() {
                                       _selectedTradeType = val;
+                                      if (val.contains('MARKET')) {
+                                        _entryController.text = livePriceStr;
+                                      }
                                     });
                                   }
                                 },
@@ -921,7 +1147,8 @@ class _AddTradePageState extends State<AddTradePage> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Entry 1
+
+                    // Entry 1 Input
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -930,10 +1157,21 @@ class _AddTradePageState extends State<AddTradePage> {
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _entryController,
+                            readOnly: _isMarketOrder,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
-                            decoration: _inputDecoration(fieldBg, borderColor, hintText: '2200'),
+                            style: TextStyle(
+                              color: _isMarketOrder ? subtextColor : textColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            decoration: _inputDecoration(
+                              _isMarketOrder ? borderColor.withValues(alpha: 0.2) : fieldBg,
+                              borderColor,
+                              subtextColor,
+                              hintText: livePriceStr,
+                            ),
                             validator: (String? val) {
+                              if (_isMarketOrder) return null;
                               if (val == null || val.trim().isEmpty) return 'Required';
                               if (double.tryParse(val.trim()) == null) return 'Invalid price';
                               return null;
@@ -958,7 +1196,8 @@ class _AddTradePageState extends State<AddTradePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              _buildFieldLabel('Stop Loss *', textColor),
+                              Expanded(child: _buildFieldLabel('Stop Loss *', textColor)),
+                              const SizedBox(width: 4),
                               _buildModeToggle(
                                 isPips: _isSlInPips,
                                 onToggle: (bool val) => setState(() => _isSlInPips = val),
@@ -972,7 +1211,7 @@ class _AddTradePageState extends State<AddTradePage> {
                             controller: _slController,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
-                            decoration: _inputDecoration(fieldBg, borderColor, hintText: _isSlInPips ? 'Pips (e.g. 50)' : 'Price'),
+                            decoration: _inputDecoration(fieldBg, borderColor, subtextColor, hintText: _isSlInPips ? 'Pips (e.g. 50)' : 'Price'),
                             validator: (String? val) {
                               if (val == null || val.trim().isEmpty) return 'Required';
                               if (double.tryParse(val.trim()) == null) return 'Invalid';
@@ -981,13 +1220,16 @@ class _AddTradePageState extends State<AddTradePage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '≈ ${slPips > 0 ? slPips.toStringAsFixed(1) : '--'} Pips',
+                            _isSlInPips
+                                ? '≈ ${_slController.text.isNotEmpty ? _slController.text : '--'} Pips'
+                                : '≈ ${slPips > 0 ? slPips.toStringAsFixed(1) : '--'} Pips',
                             style: TextStyle(color: subtextColor, fontSize: 11),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 12),
+
                     // Take Profit 1
                     Expanded(
                       child: Column(
@@ -996,7 +1238,8 @@ class _AddTradePageState extends State<AddTradePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              _buildFieldLabel('Take Profit 1 *', textColor),
+                              Expanded(child: _buildFieldLabel('Take Profit 1 *', textColor)),
+                              const SizedBox(width: 4),
                               _buildModeToggle(
                                 isPips: _isTp1InPips,
                                 onToggle: (bool val) => setState(() => _isTp1InPips = val),
@@ -1010,7 +1253,7 @@ class _AddTradePageState extends State<AddTradePage> {
                             controller: _tp1Controller,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
-                            decoration: _inputDecoration(fieldBg, borderColor, hintText: _isTp1InPips ? 'Pips (e.g. 100)' : 'Price'),
+                            decoration: _inputDecoration(fieldBg, borderColor, subtextColor, hintText: _isTp1InPips ? 'Pips (e.g. 100)' : 'Price'),
                             validator: (String? val) {
                               if (val == null || val.trim().isEmpty) return 'Required';
                               if (double.tryParse(val.trim()) == null) return 'Invalid';
@@ -1019,7 +1262,9 @@ class _AddTradePageState extends State<AddTradePage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '≈ ${tp1Pips > 0 ? tp1Pips.toStringAsFixed(1) : '--'} Pips',
+                            _isTp1InPips
+                                ? '≈ ${_tp1Controller.text.isNotEmpty ? _tp1Controller.text : '--'} Pips'
+                                : '≈ ${tp1Pips > 0 ? tp1Pips.toStringAsFixed(1) : '--'} Pips',
                             style: TextStyle(color: subtextColor, fontSize: 11),
                           ),
                         ],
@@ -1043,7 +1288,7 @@ class _AddTradePageState extends State<AddTradePage> {
                             controller: _tp2Controller,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             style: TextStyle(color: textColor, fontSize: 14),
-                            decoration: _inputDecoration(fieldBg, borderColor, hintText: 'Optional'),
+                            decoration: _inputDecoration(fieldBg, borderColor, subtextColor, hintText: 'Optional'),
                           ),
                         ],
                       ),
@@ -1059,7 +1304,7 @@ class _AddTradePageState extends State<AddTradePage> {
                             controller: _tp3Controller,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
                             style: TextStyle(color: textColor, fontSize: 14),
-                            decoration: _inputDecoration(fieldBg, borderColor, hintText: 'Optional'),
+                            decoration: _inputDecoration(fieldBg, borderColor, subtextColor, hintText: 'Optional'),
                           ),
                         ],
                       ),
@@ -1067,6 +1312,36 @@ class _AddTradePageState extends State<AddTradePage> {
                   ],
                 ),
                 const SizedBox(height: 18),
+
+                // Validation Warning Box (if SL/TP invalid)
+                if (validationMsg.isNotEmpty) ...<Widget>[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.errorColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.errorColor.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        const Icon(Icons.warning_amber_rounded, color: AppColors.errorColor, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            validationMsg,
+                            style: const TextStyle(
+                              color: AppColors.errorColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                ],
 
                 // 7. Risk Reward Ratio TP1 Card
                 _buildFieldLabel('Risk Reward Ratio TP1', textColor),
@@ -1077,7 +1352,7 @@ class _AddTradePageState extends State<AddTradePage> {
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF0F1E24) : const Color(0xFFF0FDF8),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.successColor.withOpacity(0.3)),
+                    border: Border.all(color: rrColor.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1085,13 +1360,13 @@ class _AddTradePageState extends State<AddTradePage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.black26 : Colors.black12,
+                          color: rrColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'AUTO CALCULATED',
+                          rrLabel,
                           style: TextStyle(
-                            color: subtextColor,
+                            color: rrColor,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
@@ -1099,12 +1374,10 @@ class _AddTradePageState extends State<AddTradePage> {
                         ),
                       ),
                       Text(
-                        (rrCalculation != null && rrCalculation['valid'] == true)
-                            ? '1 : ${(rrCalculation['rr'] as double).toStringAsFixed(2)}'
-                            : '--',
-                        style: const TextStyle(
-                          color: AppColors.successColor,
-                          fontSize: 16,
+                        isRrValid ? '1 : ${rrVal.toStringAsFixed(2)}' : '--',
+                        style: TextStyle(
+                          color: rrColor,
+                          fontSize: 18,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -1123,6 +1396,7 @@ class _AddTradePageState extends State<AddTradePage> {
                   decoration: _inputDecoration(
                     fieldBg,
                     borderColor,
+                    subtextColor,
                     hintText: 'https://www.tradingview.com/...',
                   ),
                   validator: (String? val) {
@@ -1143,12 +1417,13 @@ class _AddTradePageState extends State<AddTradePage> {
                   decoration: _inputDecoration(
                     fieldBg,
                     borderColor,
+                    subtextColor,
                     hintText: 'Enter setup analysis, key levels, or strategy notes...',
                   ),
                 ),
                 const SizedBox(height: 28),
 
-                // 10. Create Trade Submit Button
+                // 10. Publish Trade Submit Button
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -1171,7 +1446,7 @@ class _AddTradePageState extends State<AddTradePage> {
                             ),
                           )
                         : const Text(
-                            'Create Trade Signal',
+                            'Publish Trade',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -1192,9 +1467,11 @@ class _AddTradePageState extends State<AddTradePage> {
   Widget _buildFieldLabel(String text, Color color) {
     return Text(
       text,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
         color: color,
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -1207,9 +1484,9 @@ class _AddTradePageState extends State<AddTradePage> {
     required Color textColor,
   }) {
     return Container(
-      height: 26,
+      height: 24,
       decoration: BoxDecoration(
-        color: borderColor.withOpacity(0.5),
+        color: borderColor.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -1218,36 +1495,54 @@ class _AddTradePageState extends State<AddTradePage> {
           GestureDetector(
             onTap: () => onToggle(false),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
                 color: !isPips ? AppColors.primaryPurple : Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Text(
-                'Price',
-                style: TextStyle(
-                  color: !isPips ? Colors.white : textColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Price',
+                    style: TextStyle(
+                      color: !isPips ? Colors.white : textColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (!isPips) ...<Widget>[
+                    const SizedBox(width: 2),
+                    const Icon(Icons.swap_horiz_rounded, size: 11, color: Colors.white),
+                  ],
+                ],
               ),
             ),
           ),
           GestureDetector(
             onTap: () => onToggle(true),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
                 color: isPips ? AppColors.primaryPurple : Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Text(
-                'Pips',
-                style: TextStyle(
-                  color: isPips ? Colors.white : textColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Pips',
+                    style: TextStyle(
+                      color: isPips ? Colors.white : textColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (isPips) ...<Widget>[
+                    const SizedBox(width: 2),
+                    const Icon(Icons.swap_horiz_rounded, size: 11, color: Colors.white),
+                  ],
+                ],
               ),
             ),
           ),
@@ -1256,10 +1551,10 @@ class _AddTradePageState extends State<AddTradePage> {
     );
   }
 
-  InputDecoration _inputDecoration(Color fill, Color border, {required String hintText}) {
+  InputDecoration _inputDecoration(Color fill, Color border, Color subtextColor, {required String hintText}) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: border, fontSize: 13),
+      hintStyle: TextStyle(color: subtextColor.withValues(alpha: 0.65), fontSize: 13),
       filled: true,
       fillColor: fill,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
