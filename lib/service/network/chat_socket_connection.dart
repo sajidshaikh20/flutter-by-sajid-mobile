@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:async';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../../../utils/exports.dart';
 
@@ -6,7 +8,8 @@ class ChatSocketConnection {
   StompClient? _client;
   bool _isConnected = false;
   final Set<String> _registeredSymbols = <String>{};
-  void Function({Map<String, String>? unsubscribeHeaders})? _pricesSubscription;
+  final Map<String, void Function({Map<String, String>? unsubscribeHeaders})> _symbolSubscriptions =
+      <String, void Function({Map<String, String>? unsubscribeHeaders})>{};
 
   // Broadcast stream controllers to distribute updates to multiple listeners
   final StreamController<Map<String, dynamic>> _priceStreamController =
@@ -88,7 +91,7 @@ class ChatSocketConnection {
   void _onDisconnect(StompFrame frame) {
     _isConnected = false;
     connectionStatus = "Disconnected";
-    _pricesSubscription = null;
+    _symbolSubscriptions.clear();
     DebugLog.instance.w('WebSocket: STOMP connection disconnected.');
   }
 
@@ -103,50 +106,54 @@ class ChatSocketConnection {
   void _onWebSocketDone() {
     _isConnected = false;
     connectionStatus = "Disconnected";
-    _pricesSubscription = null;
+    _symbolSubscriptions.clear();
     DebugLog.instance.w('WebSocket: WebSocket Closed.');
   }
 
-  void _subscribePricesTopic() {
+  void _subscribePricesTopic(String symbol) {
     if (_client == null || !_client!.connected) return;
-    if (_pricesSubscription != null) return; // Already subscribed
+    if (_symbolSubscriptions.containsKey(symbol)) return; // Already subscribed
 
-    DebugLog.instance.i('WebSocket: Subscribing to /topic/prices topic');
-    _pricesSubscription = _client!.subscribe(
-      destination: '/topic/prices',
+    DebugLog.instance.i('WebSocket: Subscribing to /topic/prices/$symbol');
+    final void Function({Map<String, String>? unsubscribeHeaders}) unsubscribeFn = _client!.subscribe(
+      destination: '/topic/prices/$symbol',
       callback: (StompFrame frame) {
         if (frame.body != null) {
           try {
             final Map<String, dynamic> data =
                 jsonDecode(frame.body!) as Map<String, dynamic>;
             _priceStreamController.add(data);
-            DebugLog.instance.d('WebSocket: Price update received: $data');
+            DebugLog.instance.d('WebSocket: Price update received for $symbol: $data');
           } on Exception catch (e) {
-            DebugLog.instance.e('WebSocket: Error parsing price update: $e');
+            DebugLog.instance.e('WebSocket: Error parsing price update for $symbol: $e');
           }
         }
       },
     );
+    _symbolSubscriptions[symbol] = unsubscribeFn;
   }
 
-  void _unsubscribePricesTopic() {
-    if (_pricesSubscription != null) {
-      DebugLog.instance.i('WebSocket: Unsubscribing from /topic/prices topic');
+  void _unsubscribePricesTopic(String symbol) {
+    final void Function({Map<String, String>? unsubscribeHeaders})? unsubscribeFn = _symbolSubscriptions.remove(symbol);
+    if (unsubscribeFn != null) {
+      DebugLog.instance.i('WebSocket: Unsubscribing from /topic/prices/$symbol');
       try {
-        _pricesSubscription!();
+        unsubscribeFn();
       } on Exception catch (e) {
-        DebugLog.instance.e('WebSocket: Error unsubscribing from /topic/prices: $e');
+        DebugLog.instance.e('WebSocket: Error unsubscribing from /topic/prices/$symbol: $e');
       }
-      _pricesSubscription = null;
     }
   }
 
   void _subscribeTopics() {
     if (_client == null || !_client!.connected) return;
 
-    // 1. Subscribe to Live Market Price Updates if there are registered symbols
-    if (_registeredSymbols.isNotEmpty) {
-      _subscribePricesTopic();
+    // Clear old active subscriptions to avoid duplicates
+    _symbolSubscriptions.clear();
+
+    // 1. Re-subscribe to all active symbols
+    for (final String symbol in _registeredSymbols) {
+      _subscribePricesTopic(symbol);
     }
 
     // 2. Subscribe to Trade Status Updates
@@ -186,7 +193,12 @@ class ChatSocketConnection {
 
   /// Disconnects the socket client and clears listeners.
   void disconnectSocket({bool shouldClearTheSocket = false}) {
-    _unsubscribePricesTopic();
+    // Unsubscribe all active symbol subscriptions
+    for (final String symbol in _symbolSubscriptions.keys.toList()) {
+      _unsubscribePricesTopic(symbol);
+    }
+    _symbolSubscriptions.clear();
+
     if (_client != null) {
       _client!.deactivate();
       if (shouldClearTheSocket) {
@@ -202,65 +214,32 @@ class ChatSocketConnection {
   Future<void> registerSymbol(String symbol) async {
     final String normalized = _normalizeSymbol(symbol);
     final bool added = _registeredSymbols.add(normalized);
-    _subscribePricesTopic();
+
+    if (_client != null && _client!.connected) {
+      _subscribePricesTopic(normalized);
+    }
 
     if (!added) {
       DebugLog.instance.d('WebSocket: Symbol $normalized is already registered.');
       return;
     }
 
-    final bool isCrypto = normalized.endsWith('USDT');
-    final String endUrl = isCrypto ? Apis.cryptoLivePrice : Apis.marketLivePrice;
-
-    DebugLog.instance.i('WebSocket: Registering symbol $normalized via $endUrl');
-
-    try {
-      final ResponseHandler<Map<String, dynamic>?> response = await MainConfig.apiClient.handleApiCall<Map<String, dynamic>>(
-        endUrl: endUrl,
-        params: <String, dynamic>{'symbol': normalized},
-      );
-      if (response.isSuccess()) {
-        DebugLog.instance.i('WebSocket: Successfully registered symbol $normalized');
-      } else {
-        DebugLog.instance.e('WebSocket: Failed to register symbol $normalized');
-      }
-    } on Exception catch (e) {
-      DebugLog.instance.e('WebSocket: Error registering symbol $normalized: $e');
-    }
+    DebugLog.instance.i('WebSocket: Symbol $normalized registered successfully.');
   }
 
   /// Unregisters a symbol from backend streaming.
   Future<void> unregisterSymbol(String symbol) async {
     final String normalized = _normalizeSymbol(symbol);
     final bool removed = _registeredSymbols.remove(normalized);
-    if (_registeredSymbols.isEmpty) {
-      _unsubscribePricesTopic();
-    }
+
+    _unsubscribePricesTopic(normalized);
 
     if (!removed) {
       DebugLog.instance.d('WebSocket: Symbol $normalized was not registered.');
       return;
     }
 
-    final bool isCrypto = normalized.endsWith('USDT');
-    final String endUrl = isCrypto ? Apis.cryptoLivePrice : Apis.marketLivePrice;
-
-    DebugLog.instance.i('WebSocket: Unregistering symbol $normalized via $endUrl');
-
-    try {
-      final ResponseHandler<Map<String, dynamic>?> response = await MainConfig.apiClient.handleApiCall<Map<String, dynamic>>(
-        endUrl: endUrl,
-        apiType: ApiType.delete,
-        params: <String, dynamic>{'symbol': normalized},
-      );
-      if (response.isSuccess()) {
-        DebugLog.instance.i('WebSocket: Successfully unregistered symbol $normalized');
-      } else {
-        DebugLog.instance.e('WebSocket: Failed to unregister symbol $normalized');
-      }
-    } on Exception catch (e) {
-      DebugLog.instance.e('WebSocket: Error unregistering symbol $normalized: $e');
-    }
+    DebugLog.instance.i('WebSocket: Symbol $normalized unregistered successfully.');
   }
 
   String _normalizeSymbol(String symbol) {
