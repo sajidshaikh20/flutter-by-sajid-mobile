@@ -231,7 +231,7 @@ class _AddTradePageState extends State<AddTradePage> {
     if (_selectedPair != null && _selectedPair!.currentPrice > 0) {
       return _selectedPair!.currentPrice;
     }
-    return 2200.0;
+    return 0;
   }
 
   double _priceToPips(double price, double reference) {
