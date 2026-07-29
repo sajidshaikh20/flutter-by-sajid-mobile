@@ -6,6 +6,8 @@ abstract class MyTradesRepository extends BaseRepository {
     String? status,
     int? limit,
     int? offset,
+    String? fromDate,
+    String? toDate,
   });
 
   /// Search trade signals by keyword

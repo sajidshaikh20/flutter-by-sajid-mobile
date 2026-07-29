@@ -12,6 +12,8 @@ class LeaderboardState extends BaseState {
     this.hasReachedMax = false,
     this.isLoadingMore = false,
     this.totalCount = 0,
+    this.fromDate,
+    this.toDate,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -27,6 +29,8 @@ class LeaderboardState extends BaseState {
   final bool hasReachedMax;
   final bool isLoadingMore;
   final int totalCount;
+  final String? fromDate;
+  final String? toDate;
 
   bool get showLoadMoreIndicator => isLoadingMore && !hasReachedMax && !shimmerLoading;
 
@@ -74,6 +78,9 @@ class LeaderboardState extends BaseState {
     bool? hasReachedMax,
     bool? isLoadingMore,
     int? totalCount,
+    String? fromDate,
+    String? toDate,
+    bool clearDates = false,
   }) =>
       LeaderboardState(
         status: status ?? this.status,
@@ -89,6 +96,8 @@ class LeaderboardState extends BaseState {
         hasReachedMax: hasReachedMax ?? this.hasReachedMax,
         isLoadingMore: isLoadingMore ?? this.isLoadingMore,
         totalCount: totalCount ?? this.totalCount,
+        fromDate: clearDates ? null : (fromDate ?? this.fromDate),
+        toDate: clearDates ? null : (toDate ?? this.toDate),
       );
 
   @override
@@ -106,5 +115,7 @@ class LeaderboardState extends BaseState {
         hasReachedMax,
         isLoadingMore,
         totalCount,
+        fromDate,
+        toDate,
       ];
 }

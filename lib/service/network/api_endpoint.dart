@@ -219,6 +219,9 @@ abstract class Apis {
 
   /// Endpoint to get trader's own trades (for TRADER role)
   static const String traderMyTrades = '$subBaseUrl/mentor/trades/my-trades';
+
+  /// Endpoint to get clients who took a specific trade
+  static const String traderClients = '$subBaseUrl/mentor/trades/clients';
 }
 
 

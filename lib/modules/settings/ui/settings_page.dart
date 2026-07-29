@@ -1,4 +1,5 @@
 import '../../../utils/exports.dart';
+import '../../../app/core/widgets/profile_image_preview_page.dart';
 
 @RoutePage()
 class SettingsPage extends BaseResponsiveView {
@@ -178,37 +179,66 @@ class _SettingsViewState extends State<SettingsView> {
                               child: Row(
                                 children: <Widget>[
                                   // Avatar
-                                  Container(
-                                    width: Dimens.size64,
-                                    height: Dimens.size64,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: LinearGradient(
-                                        colors: AppColors.primaryGradient,
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
-                                    ),
-                                    padding: const EdgeInsets.all(2),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute<void>(
+                                          builder: (BuildContext context) => ProfileImagePreviewPage(
+                                            name: name,
+                                            initial: initial,
+                                            imageUrl: imageUrl,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     child: Container(
-                                      decoration: BoxDecoration(
+                                      width: Dimens.size64,
+                                      height: Dimens.size64,
+                                      decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: backgroundColor,
+                                        gradient: LinearGradient(
+                                          colors: AppColors.primaryGradient,
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
                                       ),
                                       padding: const EdgeInsets.all(2),
-                                      child: ClipOval(
-                                        child: hasImageUrl
-                                            ? FastCachedImage(
-                                                key: ValueKey<String>(imageUrl),
-                                                url: imageUrl,
-                                                fit: BoxFit.cover,
-                                                loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
-                                                  child: CircularProgressIndicator(
-                                                    strokeWidth: 2,
-                                                    color: AppColors.primaryPurple,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: backgroundColor,
+                                        ),
+                                        padding: const EdgeInsets.all(2),
+                                        child: ClipOval(
+                                          child: hasImageUrl
+                                              ? FastCachedImage(
+                                                  key: ValueKey<String>(imageUrl),
+                                                  url: imageUrl,
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: AppColors.primaryPurple,
+                                                    ),
                                                   ),
-                                                ),
-                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                                    decoration: const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: AppColors.primaryButtonGradient,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: CustomTextLabelWidget(
+                                                      label: initial,
+                                                      style: const TextStyle(
+                                                        color: AppColors.whiteColor,
+                                                        fontWeight: FontWeight.w800,
+                                                        fontSize: Dimens.fontSize24,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
                                                   decoration: const BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     gradient: AppColors.primaryButtonGradient,
@@ -223,22 +253,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            : Container(
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  gradient: AppColors.primaryButtonGradient,
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: CustomTextLabelWidget(
-                                                  label: initial,
-                                                  style: const TextStyle(
-                                                    color: AppColors.whiteColor,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: Dimens.fontSize24,
-                                                  ),
-                                                ),
-                                              ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -422,18 +437,20 @@ class _SettingsViewState extends State<SettingsView> {
                                   onTap: () => context.router.push(const SubscriptionPlansRoute()),
                                 ),
                                 _Divider(isDark: isDark),
-                                SettingsListTileWidget(
-                                  icon: Icons.tune_outlined,
-                                  title: context.appString.settingsTradingTitleKey,
-                                  subtitle: context.appString.settingsTradingSubtitleKey,
-                                  trailing: Icon(
-                                    Icons.keyboard_arrow_right_rounded,
-                                    color: subtitleColor,
-                                    size: Dimens.size18,
+                                if (!profile.isTrader) ...<Widget>[
+                                  SettingsListTileWidget(
+                                    icon: Icons.tune_outlined,
+                                    title: context.appString.settingsTradingTitleKey,
+                                    subtitle: context.appString.settingsTradingSubtitleKey,
+                                    trailing: Icon(
+                                      Icons.keyboard_arrow_right_rounded,
+                                      color: subtitleColor,
+                                      size: Dimens.size18,
+                                    ),
+                                    onTap: () => context.router.push(const TradingPreferencesRoute()),
                                   ),
-                                  onTap: () => context.router.push(const TradingPreferencesRoute()),
-                                ),
-                                _Divider(isDark: isDark),
+                                  _Divider(isDark: isDark),
+                                ],
 /*
                                 SettingsListTileWidget(
                                   icon: Icons.analytics_outlined,

@@ -4,5 +4,8 @@ abstract class LeaderboardRepository extends BaseRepository {
   Future<ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>>> getLeaderboard({
     int? limit,
     int? offset,
+    String? period,
+    String? fromDate,
+    String? toDate,
   });
 }

@@ -6,6 +6,8 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
     String? status,
     int? limit,
     int? offset,
+    String? fromDate,
+    String? toDate,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{};
     if (status != null) {
@@ -16,6 +18,12 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
     }
     if (offset != null) {
       params['offset'] = offset;
+    }
+    if (fromDate != null) {
+      params['fromDate'] = fromDate;
+    }
+    if (toDate != null) {
+      params['toDate'] = toDate;
     }
 
     final String role = UserProfileService.instance().roleName;

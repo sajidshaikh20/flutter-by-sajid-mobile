@@ -1,3 +1,6 @@
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/intl.dart';
+import '../../../../app/core/widgets/date_range_picker_modal.dart';
 import '../../../../utils/exports.dart';
 
 /// Main subscribed content for My Trades — state comes from [MyTradesCubit].
@@ -55,6 +58,9 @@ class MyTradesContentWidget extends StatelessWidget {
                       onLoadMore: () => unawaited(cubit.loadMore()),
                       onRefresh: () => cubit.loadMyTrades(isRefresh: true),
                       showTakeTrade: false,
+                      onDatePickerTapped: () => _selectDateRange(context, cubit, state),
+                      onDatePickerClear: () => cubit.updateDateRange(null, null),
+                      hasActiveDateRange: state.fromDate != null && state.toDate != null,
                     ),
                   ),
                 ],
@@ -64,6 +70,34 @@ class MyTradesContentWidget extends StatelessWidget {
         },
       ),
     );
+  }
+
+  PickerDateRange? _getDateRangeFromState(String? fromDate, String? toDate) {
+    if (fromDate == null || toDate == null) return null;
+    try {
+      return PickerDateRange(DateTime.parse(fromDate), DateTime.parse(toDate));
+    } on Object catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _selectDateRange(BuildContext context, MyTradesCubit cubit, MyTradesState state) async {
+    final PickerDateRange? currentRange = _getDateRangeFromState(state.fromDate, state.toDate);
+    final PickerDateRange? result = await showDateRangePickerModal(
+      context,
+      initialRange: currentRange,
+    );
+
+    if (result != null) {
+      if (result.startDate == null && result.endDate == null) {
+        cubit.updateDateRange(null, null);
+      } else if (result.startDate != null) {
+        final DateFormat formatter = DateFormat('yyyy-MM-dd');
+        final String fromStr = formatter.format(result.startDate!);
+        final String toStr = formatter.format(result.endDate ?? result.startDate!);
+        cubit.updateDateRange(fromStr, toStr);
+      }
+    }
   }
 
   static void _onStateChanged(BuildContext context, MyTradesState state) {

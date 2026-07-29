@@ -118,4 +118,7 @@ abstract class AppPaths {
 
   /// Add Trade screen route.
   static const String addTrade = 'add_trade';
+
+  /// My Clients screen route.
+  static const String myClients = '/my_clients';
 }

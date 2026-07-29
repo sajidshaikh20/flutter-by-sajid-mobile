@@ -19,6 +19,8 @@ class TradesState extends BaseState {
     this.cachedSignals = const <TradingSignalModel>[],
     this.cachedOffset = 0,
     this.cachedHasReachedMax = false,
+    this.fromDate,
+    this.toDate,
     super.status = BaseStateStatus.initial,
     super.msg = '',
     super.redirectRoute,
@@ -35,6 +37,8 @@ class TradesState extends BaseState {
   final int pendingCount;
   final int closedCount;
   final int lossesCount;
+  final String? fromDate;
+  final String? toDate;
 
   // Cached standard state properties to restore instantly when clearSearch is clicked
   final List<TradingSignalModel> cachedSignals;
@@ -86,6 +90,9 @@ class TradesState extends BaseState {
     List<TradingSignalModel>? cachedSignals,
     int? cachedOffset,
     bool? cachedHasReachedMax,
+    String? fromDate,
+    String? toDate,
+    bool clearDates = false,
   }) =>
       TradesState(
         status: status ?? this.status,
@@ -105,6 +112,8 @@ class TradesState extends BaseState {
         cachedSignals: cachedSignals ?? this.cachedSignals,
         cachedOffset: cachedOffset ?? this.cachedOffset,
         cachedHasReachedMax: cachedHasReachedMax ?? this.cachedHasReachedMax,
+        fromDate: clearDates ? null : (fromDate ?? this.fromDate),
+        toDate: clearDates ? null : (toDate ?? this.toDate),
       );
 
   @override
@@ -126,5 +135,7 @@ class TradesState extends BaseState {
         cachedSignals,
         cachedOffset,
         cachedHasReachedMax,
+        fromDate,
+        toDate,
       ];
 }

@@ -58,11 +58,16 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
         status: _mapFiltersToStatus(state.selectedFilters),
         limit: _pageLimit,
         offset: currentOffset,
+        fromDate: state.fromDate,
+        toDate: state.toDate,
       ));
 
       final bool needCounts = currentOffset == 0;
       if (needCounts) {
-        futures.add(repository.getMyTrades());
+        futures.add(repository.getMyTrades(
+          fromDate: state.fromDate,
+          toDate: state.toDate,
+        ));
       }
     }
 
@@ -262,6 +267,15 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
       emit(state.copyWith(searchQuery: ''));
       unawaited(loadMyTrades(isRefresh: true));
     }
+  }
+
+  void updateDateRange(String? fromDate, String? toDate) {
+    emit(state.copyWith(
+      fromDate: fromDate,
+      toDate: toDate,
+      clearDates: fromDate == null && toDate == null,
+    ));
+    unawaited(loadMyTrades(isRefresh: true));
   }
 
   @override

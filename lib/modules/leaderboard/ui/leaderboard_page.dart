@@ -1,3 +1,7 @@
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import '../../../app/core/widgets/date_range_picker_modal.dart';
+import '../../trades/ui/widget/trades_search_bar_widget.dart';
 import '../../../utils/exports.dart';
 
 @RoutePage()
@@ -32,6 +36,198 @@ class LeaderboardViewBody extends StatefulWidget {
 }
 
 class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
+  PickerDateRange? _getDateRangeFromState(String? fromDate, String? toDate) {
+    if (fromDate == null || toDate == null) return null;
+    try {
+      return PickerDateRange(DateTime.parse(fromDate), DateTime.parse(toDate));
+    } on Object catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _selectDateRange(BuildContext context, LeaderboardCubit cubit, LeaderboardState state) async {
+    final PickerDateRange? currentRange = _getDateRangeFromState(state.fromDate, state.toDate);
+    final PickerDateRange? result = await showDateRangePickerModal(
+      context,
+      initialRange: currentRange,
+    );
+
+    if (result != null) {
+      if (result.startDate == null && result.endDate == null) {
+        cubit.updateDateRange(null, null);
+      } else if (result.startDate != null) {
+        final DateFormat formatter = DateFormat('yyyy-MM-dd');
+        final String fromStr = formatter.format(result.startDate!);
+        final String toStr = formatter.format(result.endDate ?? result.startDate!);
+        cubit.updateDateRange(fromStr, toStr);
+      }
+    }
+  }
+
+  Widget _buildTimePeriodSelector(BuildContext context, LeaderboardCubit cubit, LeaderboardState state) {
+    final bool isDark = context.isDark;
+    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color cardBg = isDark ? AppColors.cardDark : AppColors.surfaceLight;
+    final Color segmentBg = isDark ? const Color(0xFF0F1218) : AppColors.whiteSmokeShade;
+    final Color borderColor = isDark ? const Color(0xFF2C3240) : AppColors.borderLight;
+
+    String customLabel = 'Custom';
+    if (state.fromDate != null && state.toDate != null) {
+      try {
+        final DateTime from = DateTime.parse(state.fromDate!);
+        final DateTime to = DateTime.parse(state.toDate!);
+        final DateFormat formatter = DateFormat('MMM dd');
+        customLabel = '${formatter.format(from)} - ${formatter.format(to)}';
+      } on Object catch (_) {}
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: Dimens.space16, vertical: Dimens.space8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(Dimens.radius12),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          // Left Side: Icon & Title (Wrapped in Flexible to prevent overflow on small screens)
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.history_rounded,
+                  color: AppColors.primaryPurple,
+                  size: 18,
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: CustomTextLabelWidget(
+                    label: 'Time Period',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: Dimens.fontSize12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Right Side: Selector
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: segmentBg,
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(color: borderColor, width: 0.5),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _buildSegmentItem(
+                  label: 'Weekly',
+                  isSelected: state.activeTimeframe == 'Weekly',
+                  onTap: () => cubit.updateTimeframe('Weekly'),
+                  isDark: isDark,
+                ),
+                _buildSegmentItem(
+                  label: 'Monthly',
+                  isSelected: state.activeTimeframe == 'Monthly',
+                  onTap: () => cubit.updateTimeframe('Monthly'),
+                  isDark: isDark,
+                ),
+                _buildSegmentItem(
+                  label: customLabel,
+                  isSelected: state.activeTimeframe == 'Custom',
+                  hasArrow: state.fromDate == null || state.toDate == null,
+                  hasClear: state.fromDate != null && state.toDate != null,
+                  onTap: () async {
+                    cubit.updateTimeframe('Custom');
+                    await _selectDateRange(context, cubit, state);
+                  },
+                  onClear: () {
+                    cubit.updateTimeframe('Weekly');
+                  },
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSegmentItem({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+    bool hasArrow = false,
+    bool hasClear = false,
+    VoidCallback? onClear,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(7),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (hasArrow) ...<Widget>[
+              const SizedBox(width: 2),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                size: 13,
+              ),
+            ],
+            if (hasClear) ...<Widget>[
+              const SizedBox(width: 3),
+              GestureDetector(
+                onTap: onClear,
+                child: Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: Icon(
+                    Icons.cancel_rounded,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                    size: 13,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
@@ -46,6 +242,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
 
     return BlocBuilder<LeaderboardCubit, LeaderboardState>(
       builder: (BuildContext context, LeaderboardState state) {
+        final LeaderboardCubit cubit = context.read<LeaderboardCubit>();
         final bool showPodium = state.filteredItems.length >= 3;
         final bool hasListItems = showPodium
             ? state.filteredItems.any((LeaderboardItemModel x) => x.rank > 3)
@@ -60,6 +257,9 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 // 1. Header (Leaderboard, Refresh, Notifications)
                 _buildHeader(
                     context, isDark, textColor, subtextColor, cardBorder),
+
+                // Time Period Selector segment matching user screenshot
+                _buildTimePeriodSelector(context, cubit, state),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -88,7 +288,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: Dimens.space16),
+                      horizontal: Dimens.space16),
                     child: _buildRankingsContent(
                         context, isDark, textColor, subtextColor, cardBorder,
                         state),

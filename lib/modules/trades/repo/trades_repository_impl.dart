@@ -6,6 +6,8 @@ class TradesRepositoryImpl extends TradesRepository {
     String? status,
     int? limit,
     int? offset,
+    String? fromDate,
+    String? toDate,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{};
     if (status != null) {
@@ -16,6 +18,12 @@ class TradesRepositoryImpl extends TradesRepository {
     }
     if (offset != null) {
       params['offset'] = offset;
+    }
+    if (fromDate != null) {
+      params['fromDate'] = fromDate;
+    }
+    if (toDate != null) {
+      params['toDate'] = toDate;
     }
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig

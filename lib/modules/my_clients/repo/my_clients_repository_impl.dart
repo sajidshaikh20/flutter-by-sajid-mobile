@@ -1,13 +1,11 @@
 import '../../../utils/exports.dart';
 
-class LeaderboardRepositoryImpl extends LeaderboardRepository {
+
+class MyClientsRepositoryImpl extends MyClientsRepository {
   @override
-  Future<ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>>> getLeaderboard({
+  Future<ResponseHandler<BaseResponse<List<TradeWithClientsModel>>>> getMyClients({
     int? limit,
     int? offset,
-    String? period,
-    String? fromDate,
-    String? toDate,
   }) async {
     final Map<String, dynamic> params = <String, dynamic>{};
     if (limit != null) {
@@ -16,30 +14,23 @@ class LeaderboardRepositoryImpl extends LeaderboardRepository {
     if (offset != null) {
       params['offset'] = offset;
     }
-    if (period != null) {
-      params['period'] = period;
-    }
-    if (fromDate != null && toDate != null) {
-      params['from'] = fromDate;
-      params['to'] = toDate;
-    }
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: Apis.getLeaderboard,
+          endUrl: Apis.traderClients,
           params: params,
         );
 
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<List<LeaderboardItemResponse>>.fromJson(
+        return BaseResponse<List<TradeWithClientsModel>>.fromJson(
           value,
           (Object? json) {
             final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
             return list
-                .map((dynamic item) => LeaderboardItemResponse.fromJson(item as Map<String, dynamic>))
+                .map((dynamic t) => TradeWithClientsModel.fromJson(t as Map<String, dynamic>))
                 .toList();
           },
         );

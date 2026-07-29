@@ -379,37 +379,39 @@ class TradingSignalCard extends StatelessWidget {
                 ),
                 // PIPS block
                 Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      CustomTextLabelWidget(
-                        label: signal.pips,
-                        style: TextStyle(
-                          color: (signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor,
-                          fontWeight: FontWeight.w800,
-                          fontSize: Dimens.fontSize14,
+                  child: _shouldHidePips(signal.pips, signal.resultInPips)
+                      ? const SizedBox()
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            CustomTextLabelWidget(
+                              label: signal.pips,
+                              style: TextStyle(
+                                color: (signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor,
+                                fontWeight: FontWeight.w800,
+                                fontSize: Dimens.fontSize14,
+                              ),
+                            ),
+                            const SizedBox(height: Dimens.space4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: Dimens.space6, vertical: Dimens.space2),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: ((signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor).withValues(alpha: 0.5),
+                                ),
+                                borderRadius: BorderRadius.circular(Dimens.radius4),
+                              ),
+                              child: CustomTextLabelWidget(
+                                label: 'PIPS',
+                                style: TextStyle(
+                                  color: (signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: Dimens.fontSize8,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: Dimens.space4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: Dimens.space6, vertical: Dimens.space2),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: ((signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor).withValues(alpha: 0.5),
-                          ),
-                          borderRadius: BorderRadius.circular(Dimens.radius4),
-                        ),
-                        child: CustomTextLabelWidget(
-                          label: 'PIPS',
-                          style: TextStyle(
-                            color: (signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor,
-                            fontWeight: FontWeight.w800,
-                            fontSize: Dimens.fontSize8,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
                 // Risk-Reward block
                 Expanded(
@@ -429,31 +431,33 @@ class TradingSignalCard extends StatelessWidget {
               children: <Widget>[
                 // Result
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      CustomTextLabelWidget(
-                        label: 'Result',
-                        style: TextStyle(
-                          color: subtextColor,
-                          fontSize: Dimens.fontSize10,
-                          fontWeight: FontWeight.w500,
+                  child: _shouldHidePips(signal.pips, signal.resultInPips)
+                      ? const SizedBox()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            CustomTextLabelWidget(
+                              label: 'Result',
+                              style: TextStyle(
+                                color: subtextColor,
+                                fontSize: Dimens.fontSize10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: Dimens.space4),
+                            CustomTextLabelWidget(
+                              label: signal.resultInPips != null
+                                  ? '${signal.resultInPips! >= 0 ? '+' : ''}${signal.resultInPips!.toStringAsFixed(2)} PIPS'
+                                  : signal.pips,
+                              style: TextStyle(
+                                color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                                fontWeight: FontWeight.w800,
+                                fontSize: Dimens.fontSize14,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: Dimens.space4),
-                      CustomTextLabelWidget(
-                        label: signal.resultInPips != null
-                            ? '${signal.resultInPips! >= 0 ? '+' : ''}${signal.resultInPips!.toStringAsFixed(2)} PIPS'
-                            : signal.pips,
-                        style: TextStyle(
-                          color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
-                          fontWeight: FontWeight.w800,
-                          fontSize: Dimens.fontSize14,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
                 // RR
                 Expanded(
@@ -586,30 +590,32 @@ class TradingSignalCard extends StatelessWidget {
                 ),
                 // PIPS
                 Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      CustomTextLabelWidget(
-                        label: 'PIPS',
-                        style: TextStyle(
-                          color: subtextColor,
-                          fontSize: Dimens.fontSize10,
-                          fontWeight: FontWeight.w500,
+                  child: _shouldHidePips(signal.pips, signal.resultInPips)
+                      ? const SizedBox()
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            CustomTextLabelWidget(
+                              label: 'PIPS',
+                              style: TextStyle(
+                                color: subtextColor,
+                                fontSize: Dimens.fontSize10,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: Dimens.space4),
+                            CustomTextLabelWidget(
+                              label: signal.pips,
+                              style: TextStyle(
+                                color: (signal.pips.startsWith('+'))
+                                    ? themeGreen
+                                    : (signal.pips.startsWith('-') ? AppColors.errorColor : textColor),
+                                fontWeight: FontWeight.w800,
+                                fontSize: Dimens.fontSize14,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: Dimens.space4),
-                      CustomTextLabelWidget(
-                        label: signal.pips,
-                        style: TextStyle(
-                          color: (signal.pips.startsWith('+'))
-                              ? themeGreen
-                              : (signal.pips.startsWith('-') ? AppColors.errorColor : textColor),
-                          fontWeight: FontWeight.w800,
-                          fontSize: Dimens.fontSize14,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
                 // RR
                 Expanded(
@@ -895,6 +901,16 @@ class _ValueColumn extends StatelessWidget {
       ],
     );
   }
+}
+
+bool _shouldHidePips(String pips, double? resultInPips) {
+  if (resultInPips != null) {
+    return resultInPips == 0.0;
+  }
+  final String clean = pips.replaceAll(RegExp(r'[^0-9.]'), '').trim();
+  if (clean.isEmpty) return true;
+  final double? val = double.tryParse(clean);
+  return val == 0.0;
 }
 
 

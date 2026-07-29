@@ -1,8 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../utils/exports.dart';
+import '../../../app/core/widgets/profile_image_preview_page.dart';
 @RoutePage()
 /// Page for editing user profile details.
 class EditProfilePage extends BaseResponsiveView {
@@ -556,60 +555,96 @@ class _EditProfileFormState extends State<EditProfileForm> {
 
                           return Stack(
                             children: <Widget>[
-                              Container(
-                                width: Dimens.size110,
-                                height: Dimens.size110,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: AppColors.primaryGradient,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(3),
+                              GestureDetector(
+                                onTap: () async {
+                                  Uint8List? localBytes;
+                                  if (_selectedImage != null) {
+                                    localBytes = await _selectedImage!.readAsBytes();
+                                  }
+                                  if (context.mounted) {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) => ProfileImagePreviewPage(
+                                          name: name,
+                                          initial: initial,
+                                          imageUrl: imageUrl,
+                                          localImageBytes: localBytes,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
                                 child: Container(
-                                  decoration: BoxDecoration(
+                                  width: Dimens.size110,
+                                  height: Dimens.size110,
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: backgroundColor,
+                                    gradient: LinearGradient(
+                                      colors: AppColors.primaryGradient,
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
                                   ),
-                                  padding: const EdgeInsets.all(2),
-                                  child: ClipOval(
-                                    child: _selectedImage != null
-                                        ? FutureBuilder<List<int>>(
-                                            future: _selectedImage!.readAsBytes(),
-                                            builder: (
-                                              BuildContext context,
-                                              AsyncSnapshot<List<int>> snapshot,
-                                            ) {
-                                              if (snapshot.hasData) {
-                                                return Image.memory(
-                                                  Uint8List.fromList(snapshot.data!),
-                                                  fit: BoxFit.cover,
-                                                  width: Dimens.size110,
-                                                  height: Dimens.size110,
-                                                );
-                                              }
-                                              return const Center(
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: AppColors.primaryPurple,
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        : hasImageUrl
-                                            ? FastCachedImage(
-                                                key: ValueKey<String>(imageUrl),
-                                                url: imageUrl,
-                                                fit: BoxFit.cover,
-                                                loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                  padding: const EdgeInsets.all(3),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: backgroundColor,
+                                    ),
+                                    padding: const EdgeInsets.all(2),
+                                    child: ClipOval(
+                                      child: _selectedImage != null
+                                          ? FutureBuilder<List<int>>(
+                                              future: _selectedImage!.readAsBytes(),
+                                              builder: (
+                                                BuildContext context,
+                                                AsyncSnapshot<List<int>> snapshot,
+                                              ) {
+                                                if (snapshot.hasData) {
+                                                  return Image.memory(
+                                                    Uint8List.fromList(snapshot.data!),
+                                                    fit: BoxFit.cover,
+                                                    width: Dimens.size110,
+                                                    height: Dimens.size110,
+                                                  );
+                                                }
+                                                return const Center(
                                                   child: CircularProgressIndicator(
                                                     strokeWidth: 2,
                                                     color: AppColors.primaryPurple,
                                                   ),
-                                                ),
-                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                                );
+                                              },
+                                            )
+                                          : hasImageUrl
+                                              ? FastCachedImage(
+                                                  key: ValueKey<String>(imageUrl),
+                                                  url: imageUrl,
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: AppColors.primaryPurple,
+                                                    ),
+                                                  ),
+                                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
+                                                    decoration: const BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      gradient: AppColors.primaryButtonGradient,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: CustomTextLabelWidget(
+                                                      label: initial,
+                                                      style: const TextStyle(
+                                                        color: AppColors.whiteColor,
+                                                        fontWeight: FontWeight.w800,
+                                                        fontSize: Dimens.fontSize40,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
                                                   decoration: const BoxDecoration(
                                                     shape: BoxShape.circle,
                                                     gradient: AppColors.primaryButtonGradient,
@@ -624,22 +659,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            : Container(
-                                                decoration: const BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  gradient: AppColors.primaryButtonGradient,
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: CustomTextLabelWidget(
-                                                  label: initial,
-                                                  style: const TextStyle(
-                                                    color: AppColors.whiteColor,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: Dimens.fontSize40,
-                                                  ),
-                                                ),
-                                              ),
+                                    ),
                                   ),
                                 ),
                               ),

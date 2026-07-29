@@ -7,6 +7,8 @@ abstract class TradesRepository extends BaseRepository {
     String? status,
     int? limit,
     int? offset,
+    String? fromDate,
+    String? toDate,
   });
 
   /// Client's taken trades — used on Trades tab to mark signals as already taken.

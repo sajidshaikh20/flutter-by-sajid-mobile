@@ -9,6 +9,19 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
 
   static const int _pageLimit = 10;
 
+  String _mapTimeframeToPeriod(String tf) {
+    switch (tf) {
+      case 'Weekly':
+        return 'WEEKLY';
+      case 'Monthly':
+        return 'MONTHLY';
+      case 'Custom':
+        return 'CUSTOM';
+      default:
+        return 'WEEKLY';
+    }
+  }
+
   Future<void> loadLeaderboard({bool isRefresh = false}) async {
     emit(state.copyWith(
       shimmerLoading: !isRefresh,
@@ -22,6 +35,9 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
     final ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>> response = await repository.getLeaderboard(
       limit: _pageLimit,
       offset: 0,
+      period: _mapTimeframeToPeriod(state.activeTimeframe),
+      fromDate: state.fromDate,
+      toDate: state.toDate,
     );
 
     if (response.isSuccess()) {
@@ -74,6 +90,9 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
     final ResponseHandler<BaseResponse<List<LeaderboardItemResponse>>> response = await repository.getLeaderboard(
       limit: _pageLimit,
       offset: currentOffset,
+      period: _mapTimeframeToPeriod(state.activeTimeframe),
+      fromDate: state.fromDate,
+      toDate: state.toDate,
     );
 
     if (response.isSuccess()) {
@@ -116,8 +135,6 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
     }
   }
 
-
-
   /// Simulated pull-to-refresh action
   Future<void> refreshLeaderboard() async {
     await loadLeaderboard(isRefresh: true);
@@ -128,6 +145,16 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
     emit(state.copyWith(searchQuery: query));
   }
 
+  /// Updates custom date range
+  void updateDateRange(String? fromDate, String? toDate) {
+    emit(state.copyWith(
+      fromDate: fromDate,
+      toDate: toDate,
+      clearDates: fromDate == null && toDate == null,
+    ));
+    unawaited(loadLeaderboard(isRefresh: true));
+  }
+
   /// Switches between Traders and Clients
   void updateTypeTab(String type) {
     emit(state.copyWith(activeType: type));
@@ -135,7 +162,13 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
 
   /// Updates the selected timeframe (Daily, Weekly, Monthly, All Time)
   void updateTimeframe(String timeframe) {
-    emit(state.copyWith(activeTimeframe: timeframe));
+    emit(state.copyWith(
+      activeTimeframe: timeframe,
+      clearDates: timeframe != 'Custom',
+    ));
+    if (timeframe != 'Custom') {
+      unawaited(loadLeaderboard(isRefresh: true));
+    }
   }
 
   /// Updates sorting category (Win Rate, Trades, PnL)

@@ -129,42 +129,56 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
                         Dimens.size8,
                         Dimens.size16,
                       ),
-                      child: StepProgress(
-                        totalSteps: state.totalSteps,
-                        currentStep: state.currentStep,
-                        stepNodeSize: Dimens.size40,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Dimens.size4,
-                        ),
-                        theme: buildSignUpStepProgressTheme(context),
-                        nodeIconBuilder: (int index, int currentStep) {
-                          return SignUpStepNodeCircle(
-                            stepNumber: index + 1,
-                            state: signUpStepNodeState(
-                              index: index,
-                              currentStep: currentStep,
+                      child: LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints) {
+                          final double minRequiredWidth = state.totalSteps * 1.45 * Dimens.size40;
+                          final Widget stepProgress = StepProgress(
+                            totalSteps: state.totalSteps,
+                            currentStep: state.currentStep,
+                            stepNodeSize: Dimens.size40,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Dimens.size4,
                             ),
-                            isDark: isDark,
+                            theme: buildSignUpStepProgressTheme(context),
+                            nodeIconBuilder: (int index, int currentStep) {
+                              return SignUpStepNodeCircle(
+                                stepNumber: index + 1,
+                                state: signUpStepNodeState(
+                                  index: index,
+                                  currentStep: currentStep,
+                                ),
+                                isDark: isDark,
+                              );
+                            },
+                            nodeLabelBuilder: (int index, int currentStep) {
+                              if (state.totalSteps > 3) {
+                                return null;
+                              }
+                              return buildSignUpStepLabel(
+                                context,
+                                index: index,
+                                currentStep: currentStep,
+                                titles: _stepTitles(context, state.totalSteps, state.accountType),
+                              );
+                            },
+                            onStepNodeTapped: (int index) {
+                              if (index <= state.currentStep) {
+                                _syncStep(context, index);
+                              }
+                            },
+                            onStepChanged: (int index) {
+                              _syncStep(context, index);
+                            },
                           );
-                        },
-                        nodeLabelBuilder: (int index, int currentStep) {
-                          if (state.totalSteps > 3) {
-                            return null;
+
+                          if (minRequiredWidth > constraints.maxWidth) {
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              physics: const BouncingScrollPhysics(),
+                              child: stepProgress,
+                            );
                           }
-                          return buildSignUpStepLabel(
-                            context,
-                            index: index,
-                            currentStep: currentStep,
-                            titles: _stepTitles(context, state.totalSteps, state.accountType),
-                          );
-                        },
-                        onStepNodeTapped: (int index) {
-                          if (index <= state.currentStep) {
-                            _syncStep(context, index);
-                          }
-                        },
-                        onStepChanged: (int index) {
-                          _syncStep(context, index);
+                          return stepProgress;
                         },
                       ),
                     ),
