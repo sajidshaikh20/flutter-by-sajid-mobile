@@ -18,8 +18,7 @@ class SocialLoginCubit extends Cubit<SocialLoginState> {
   Future<void> socialLoginWithGoogle() async {
     try {
       emit(state.copyWith(status: BaseStateStatus.loading));
-      final SocialLoginResult? result = await _socialLoginServices
-          .signInWithGoogle();
+      final SocialLoginResult? result = await _socialLoginServices.signInWithGoogle();
       if (result == null) {
         emit(state.copyWith(status: BaseStateStatus.initial));
         return;

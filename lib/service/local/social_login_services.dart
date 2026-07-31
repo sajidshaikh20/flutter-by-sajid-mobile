@@ -65,6 +65,16 @@ class SocialLoginServices {
         .authorizationClient
         .authorizationForScopes(<String>['email', 'profile']);
 
+    DebugLog.instance.i('=== Google Login User Data ===');
+    DebugLog.instance.i('ID: ${googleUser.id}');
+    DebugLog.instance.i('Email: ${googleUser.email}');
+    DebugLog.instance.i('DisplayName: ${googleUser.displayName}');
+    DebugLog.instance.i('PhotoUrl: ${googleUser.photoUrl}');
+    DebugLog.instance.i('ID Token: ${googleAuth.idToken}');
+    DebugLog.instance.i('ServerAuthCode: ${googleUser.authentication}');
+    DebugLog.instance.i('Access Token: ${authorization?.accessToken}');
+    DebugLog.instance.i('==============================');
+
     return SocialLoginResult(
       id: googleUser.id,
       email: googleUser.email,

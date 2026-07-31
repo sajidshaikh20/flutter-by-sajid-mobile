@@ -12,7 +12,20 @@
           "package_name": "com.wekopro.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "81561226063-a2stqaodp44lt4mjcm47tpvp1q10p7nd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wekopro.app",
+            "certificate_hash": "9e3fbd051824a74031cdbce8a6386a9a97584c9c"
+          }
+        },
+        {
+          "client_id": "81561226063-9p2ho349u5g34lrj3ep46r86s19m7ftq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCy481KA0xFE9ed_cnNjyY2q4R03Fcy6Gs"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "81561226063-9p2ho349u5g34lrj3ep46r86s19m7ftq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "81561226063-ruqrqcrjbo27hfimpkeqmjsgie4kp1l9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wekopro.app"
+              }
+            }
+          ]
         }
       }
     }
