@@ -46,4 +46,41 @@ class LeaderboardRepositoryImpl extends LeaderboardRepository {
       },
     );
   }
+
+  @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> followTrader(String traderPublicId) async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.followTrader(traderPublicId),
+          apiType: ApiType.post,
+          data: <String, dynamic>{},
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
+      },
+    );
+  }
+
+  @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> unfollowTrader(String traderPublicId) async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.unfollowTrader(traderPublicId),
+          apiType: ApiType.delete,
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
+      },
+    );
+  }
 }

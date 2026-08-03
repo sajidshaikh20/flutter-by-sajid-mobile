@@ -360,13 +360,19 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
           ? (state.selectedTradeType.startsWith('BUY') ? 'BUY' : 'SELL')
           : state.selectedTradeType;
 
+      final bool isRrValid = calculation != null && calculation['valid'] == true;
+      final double rrVal = isRrValid ? (calculation['rr'] as double) : 2.0;
+
       final Map<String, dynamic> payload = <String, dynamic>{
         'market': state.selectedMarket.toUpperCase(),
         'marketType': outcomeVal,
         'currencyPairId': state.selectedPair?.id,
         'note': state.commentController.text.trim(),
         'tradingViewUrl': state.tradingViewUrlController.text.trim(),
-        'tradeLevels': levels,
+        'riskRewardRatio': '1:${rrVal.toStringAsFixed(2)}',
+        'slPips': slPips,
+        'tpPips': tp1Pips,
+        'levels': levels,
       };
 
       final ResponseHandler<BaseResponse<dynamic>> response =

@@ -33,6 +33,7 @@ StepProgressThemeData buildSignUpStepProgressTheme(BuildContext context) {
       defualtColor: inactiveLabel,
       activeColor: AppColors.primaryPurple,
       padding: const EdgeInsets.only(bottom: Dimens.size8),
+      margin: const EdgeInsets.symmetric(vertical: Dimens.size2),
       titleStyle: context.textTheme.bodySmall?.copyWith(
         fontSize: Dimens.fontSize12,
         fontWeight: FontWeight.w500,

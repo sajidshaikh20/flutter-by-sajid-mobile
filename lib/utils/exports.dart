@@ -31,9 +31,11 @@ export 'package:nested/nested.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:shimmer/shimmer.dart';
+export 'package:syncfusion_flutter_datepicker/datepicker.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:webview_flutter/webview_flutter.dart';
 
+export '../../../app/core/widgets/date_range_picker_modal.dart';
 export '../../app/app.dart' hide X509Certificate;
 export '../../base/base.dart';
 export '../../gen/assets.gen.dart';

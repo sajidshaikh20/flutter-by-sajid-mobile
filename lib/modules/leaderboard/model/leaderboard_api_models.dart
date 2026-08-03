@@ -7,6 +7,8 @@ class LeaderboardItemResponse {
   final double pnl;
   final int tradesCount;
   final String? avatarUrl;
+  final String publicId;
+  final bool isFollowing;
 
   LeaderboardItemResponse({
     required this.rank,
@@ -17,11 +19,13 @@ class LeaderboardItemResponse {
     required this.pnl,
     required this.tradesCount,
     this.avatarUrl,
+    required this.publicId,
+    required this.isFollowing,
   });
 
   factory LeaderboardItemResponse.fromJson(Map<String, dynamic> json) {
-    final String publicId = json['publicId']?.toString() ?? '';
-    final String inferredType = (publicId.startsWith('TD') || publicId.startsWith('MENTOR') || publicId.startsWith('USBD') || publicId.isNotEmpty)
+    final String pubId = json['publicId']?.toString() ?? '';
+    final String inferredType = (pubId.startsWith('TD') || pubId.startsWith('MENTOR') || pubId.startsWith('USBD') || pubId.isNotEmpty)
         ? 'TRADER'
         : 'TRADER';
 
@@ -45,6 +49,8 @@ class LeaderboardItemResponse {
       pnl: json['netPoints'] != null ? parseDouble(json['netPoints']) : parseDouble(json['pnl']),
       tradesCount: json['totalTrades'] != null ? parseInt(json['totalTrades']) : parseInt(json['tradesCount']),
       avatarUrl: json['profilePictureUrl']?.toString() ?? json['avatarUrl']?.toString(),
+      publicId: pubId,
+      isFollowing: json['isFollowing'] == true || json['isFollowing'] == 'true',
     );
   }
 

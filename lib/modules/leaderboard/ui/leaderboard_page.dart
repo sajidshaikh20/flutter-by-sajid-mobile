@@ -1,8 +1,6 @@
-import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import '../../../app/core/widgets/date_range_picker_modal.dart';
-import '../../trades/ui/widget/trades_search_bar_widget.dart';
-import '../../../utils/exports.dart';
+
+import '../../../../utils/exports.dart';
+
 
 @RoutePage()
 class LeaderboardPage extends BaseResponsiveView {
@@ -240,7 +238,24 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
     final Color cardBorder = isDark ? AppColors.borderDark : AppColors
         .borderLight;
 
-    return BlocBuilder<LeaderboardCubit, LeaderboardState>(
+    return BlocConsumer<LeaderboardCubit, LeaderboardState>(
+      listener: (BuildContext context, LeaderboardState state) {
+        if (state.status == BaseStateStatus.loading) {
+          unawaited(EasyLoading.show(status: 'Loading...'));
+        } else {
+          unawaited(EasyLoading.dismiss());
+        }
+
+        if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
+          displaySnackBar(state.msg!, context);
+          context.read<LeaderboardCubit>().resetError();
+        }
+
+        if (state.status == BaseStateStatus.failure && state.msg != null && state.msg!.isNotEmpty) {
+          displaySnackBar(state.msg!, context);
+          context.read<LeaderboardCubit>().resetError();
+        }
+      },
       builder: (BuildContext context, LeaderboardState state) {
         final LeaderboardCubit cubit = context.read<LeaderboardCubit>();
         final bool showPodium = state.filteredItems.length >= 3;
@@ -921,6 +936,8 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             ? (isDark ? AppColors.successColor : AppColors.greenTextColor)
             : AppColors.errorColor;
 
+        final bool isClient = UserProfileService.instance().roleName == 'CLIENT';
+
         return Padding(
           padding: const EdgeInsets.symmetric(
               vertical: Dimens.space12, horizontal: Dimens.space12),
@@ -928,7 +945,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             children: <Widget>[
               // Rank
               SizedBox(
-                width: 50.0,
+                width: 36.0,
                 child: CustomTextLabelWidget(
                   label: item.rank.toString(),
                   style: TextStyle(
@@ -991,7 +1008,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
 
               // Points
               SizedBox(
-                width: 80.0,
+                width: 70.0,
                 child: CustomTextLabelWidget(
                   label: '${item.pnl >= 0 ? '+' : ''}${item.pnl.toStringAsFixed(2)} pts',
                   style: TextStyle(
@@ -1002,6 +1019,39 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                   textAlign: TextAlign.end,
                 ),
               ),
+
+              if (isClient && item.type == 'TRADER') ...<Widget>[
+                const SizedBox(width: Dimens.space12),
+                GestureDetector(
+                  onTap: () async {
+                    await context.read<LeaderboardCubit>().toggleFollowTrader(item);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Dimens.space8,
+                      vertical: Dimens.space4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: item.isFollowing
+                          ? Colors.transparent
+                          : AppColors.primaryPurple,
+                      border: Border.all(
+                        color: AppColors.primaryPurple,
+                        width: 1.0,
+                      ),
+                      borderRadius: BorderRadius.circular(Dimens.radius4),
+                    ),
+                    child: CustomTextLabelWidget(
+                      label: item.isFollowing ? 'Unfollow' : 'Follow',
+                      style: TextStyle(
+                        color: item.isFollowing ? AppColors.primaryPurple : Colors.white,
+                        fontSize: Dimens.fontSize11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         );

@@ -8,4 +8,7 @@ abstract class LeaderboardRepository extends BaseRepository {
     String? fromDate,
     String? toDate,
   });
+
+  Future<ResponseHandler<BaseResponse<dynamic>>> followTrader(String traderPublicId);
+  Future<ResponseHandler<BaseResponse<dynamic>>> unfollowTrader(String traderPublicId);
 }

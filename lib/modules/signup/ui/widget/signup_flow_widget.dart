@@ -131,7 +131,10 @@ class _SignUpFlowWidgetState extends State<SignUpFlowWidget> {
                       ),
                       child: LayoutBuilder(
                         builder: (BuildContext context, BoxConstraints constraints) {
-                          final double minRequiredWidth = state.totalSteps * 1.45 * Dimens.size40;
+                          final double labelWidth = buildSignUpStepProgressTheme(context).nodeLabelStyle.maxWidth;
+                          final double minRequiredWidth = state.totalSteps > 3
+                              ? state.totalSteps * 1.45 * Dimens.size40
+                              : state.totalSteps * labelWidth;
                           final Widget stepProgress = StepProgress(
                             totalSteps: state.totalSteps,
                             currentStep: state.currentStep,

@@ -145,6 +145,12 @@ abstract class Apis {
   /// Endpoint to create subscription
   static const String createSubscription = '$subBaseUrl/subscriptions/create';
 
+  /// Endpoint to follow a trader
+  static String followTrader(String traderPublicId) => '$subBaseUrl/client/$traderPublicId/follow';
+
+  /// Endpoint to unfollow a trader
+  static String unfollowTrader(String traderPublicId) => '$subBaseUrl/client/$traderPublicId/unfollow';
+
   /// Endpoint to get leaderboard
   static const String getLeaderboard = '$subBaseUrl/common/leaderboard';
 

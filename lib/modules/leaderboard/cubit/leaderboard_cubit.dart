@@ -57,6 +57,8 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
           pnl: e.pnl,
           tradesCount: e.tradesCount,
           avatarUrl: e.avatarUrl,
+          publicId: e.publicId,
+          isFollowing: e.isFollowing,
         ));
       }
 
@@ -112,6 +114,8 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
           pnl: e.pnl,
           tradesCount: e.tradesCount,
           avatarUrl: e.avatarUrl,
+          publicId: e.publicId,
+          isFollowing: e.isFollowing,
         ));
       }
 
@@ -174,6 +178,39 @@ class LeaderboardCubit extends BaseCubit<LeaderboardState> {
   /// Updates sorting category (Win Rate, Trades, PnL)
   void updateSortBy(String sortBy) {
     emit(state.copyWith(sortBy: sortBy));
+  }
+
+  Future<void> toggleFollowTrader(LeaderboardItemModel trader) async {
+    final String traderPublicId = trader.publicId;
+    if (traderPublicId.isEmpty) return;
+
+    emit(state.copyWith(status: BaseStateStatus.loading));
+
+    final bool isCurrentlyFollowing = trader.isFollowing;
+    final ResponseHandler<BaseResponse<dynamic>> response = isCurrentlyFollowing
+        ? await repository.unfollowTrader(traderPublicId)
+        : await repository.followTrader(traderPublicId);
+
+    if (response.isSuccess()) {
+      final List<LeaderboardItemModel> updatedItems = state.leaderboardItems.map((LeaderboardItemModel item) {
+        if (item.publicId == traderPublicId) {
+          return item.copyWith(isFollowing: !isCurrentlyFollowing);
+        }
+        return item;
+      }).toList();
+
+      emit(state.copyWith(
+        leaderboardItems: updatedItems,
+        status: BaseStateStatus.success,
+        msg: isCurrentlyFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+      ));
+    } else {
+      final OnFailureResponse<BaseResponse<dynamic>>? failure = response.getFailureInstance();
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: failure?.error?.errorMessage ?? 'Failed to update follow status.',
+      ));
+    }
   }
 
   @override
