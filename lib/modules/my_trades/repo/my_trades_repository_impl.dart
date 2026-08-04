@@ -26,8 +26,8 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
       params['toDate'] = toDate;
     }
 
-    final String role = UserProfileService.instance().roleName;
-    final String endUrl = (role == 'TRADER' || role == 'ADMIN')
+    final String role = UserProfileService.instance().roleName.toUpperCase();
+    final String endUrl = (role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN')
         ? Apis.traderMyTrades
         : Apis.clientMyTrades;
 

@@ -38,9 +38,23 @@ class SocialLoginServices {
   /// Signs in the current user with Google.
   Future<SocialLoginResult?> signInWithGoogle() async {
     if (!_isGoogleSignInInitialized) {
+      final String? clientId;
+      final String? serverClientId;
+
+      if (kIsWeb) {
+        clientId = configGoogleClientId;
+        serverClientId = configGoogleClientId;
+      } else if (Platform.isIOS) {
+        clientId = configIosClientId;
+        serverClientId = null;
+      } else {
+        clientId = null;
+        serverClientId = configGoogleClientId;
+      }
+
       await GoogleSignIn.instance.initialize(
-        clientId: configGoogleClientId,
-        serverClientId: configGoogleClientId,
+        clientId: clientId,
+        serverClientId: serverClientId,
       );
       _isGoogleSignInInitialized = true;
     }

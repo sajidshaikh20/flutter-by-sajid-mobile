@@ -265,10 +265,10 @@ class TradesPageShimmerWidget extends StatelessWidget {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: Dimens.space8),
-          child: TradesSummaryCardsShimmerWidget(),
-        ),
+        // const Padding(
+        //   padding: EdgeInsets.symmetric(vertical: Dimens.space8),
+        //   child: TradesSummaryCardsShimmerWidget(),
+        // ),
         ShimmerEffectWidget(
           isDark: theme.isDark,
           child: SizedBox(

@@ -43,8 +43,8 @@ class DashboardPage extends BaseResponsiveView {
     final AppString strings = context.appString;
     final double iconSize =
         device == ScreenType.tablet ? Dimens.size26 : Dimens.size24;
-    final String role = UserProfileService.instance().roleName;
-    final bool isTraderOrAdmin = role == 'TRADER' || role == 'ADMIN';
+    final String role = UserProfileService.instance().roleName.toUpperCase();
+    final bool isTraderOrAdmin = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
 
     return AutoTabsRouter(
       curve: Curves.easeInOutQuad,

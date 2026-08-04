@@ -930,7 +930,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             ? (isDark ? AppColors.successColor : AppColors.greenTextColor)
             : AppColors.errorColor;
 
-        final bool isClient = UserProfileService.instance().roleName == 'CLIENT';
+        final bool isClient = UserProfileService.instance().roleName.toUpperCase() == 'CLIENT';
 
         return Padding(
           padding: const EdgeInsets.symmetric(

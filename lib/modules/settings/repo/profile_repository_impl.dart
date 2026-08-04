@@ -6,8 +6,8 @@ class ProfileRepositoryImpl extends ProfileRepository {
   @override
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>>
   getProfile() async {
-    final String role = UserProfileService.instance().roleName;
-    final String endUrl = role == 'TRADER'
+    final String role = UserProfileService.instance().roleName.toUpperCase();
+    final String endUrl = (role == 'TRADER' || role == 'MENTOR')
         ? Apis.getTraderProfile
         : (role == 'ADMIN' ? Apis.getAdminProfile : Apis.getClientProfile);
 
@@ -34,8 +34,8 @@ class ProfileRepositoryImpl extends ProfileRepository {
   Future<ResponseHandler<BaseResponse<ClientProfileResponse>>> updateProfile(
     UpdateClientProfileRequest request,
   ) async {
-    final String role = UserProfileService.instance().roleName;
-    final bool isTraderOrAdmin = role == 'TRADER' || role == 'ADMIN';
+    final String role = UserProfileService.instance().roleName.toUpperCase();
+    final bool isTraderOrAdmin = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
 
     final Map<String, dynamic> data = <String, dynamic>{
       'phone': request.phone,
@@ -57,7 +57,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
 
     final FormData formData = FormData.fromMap(data);
 
-    final String endUrl = role == 'TRADER'
+    final String endUrl = (role == 'TRADER' || role == 'MENTOR')
         ? Apis.updateTraderProfile
         : (role == 'ADMIN' ? Apis.updateAdminProfile : Apis.updateClientProfile);
 
@@ -91,8 +91,8 @@ class ProfileRepositoryImpl extends ProfileRepository {
       'profilePicture': MultipartFile.fromBytes(bytes, filename: file.name),
     });
 
-    final String role = UserProfileService.instance().roleName;
-    final String endUrl = role == 'TRADER'
+    final String role = UserProfileService.instance().roleName.toUpperCase();
+    final String endUrl = (role == 'TRADER' || role == 'MENTOR')
         ? Apis.updateTraderProfile
         : (role == 'ADMIN' ? Apis.updateAdminProfile : Apis.updateClientProfile);
 

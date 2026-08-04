@@ -57,6 +57,9 @@ class TradeResponse {
   final bool isAlreadyTaken;
   final double? slPips;
   final double? tpPips;
+  final int? clientTradeId;
+  final String? takenAt;
+  final String? clientTradeStatus;
 
   TradeResponse({
     required this.publicId,
@@ -79,6 +82,9 @@ class TradeResponse {
     this.isAlreadyTaken = false,
     this.slPips,
     this.tpPips,
+    this.clientTradeId,
+    this.takenAt,
+    this.clientTradeStatus,
   });
 
   factory TradeResponse.fromJson(Map<String, dynamic> json) {
@@ -91,7 +97,7 @@ class TradeResponse {
       publicId: source['tradePublicId'] ?? source['publicId'] ?? '',
       market: source['market']?.toString() ?? '',
       marketType: source['marketType']?.toString() ?? '',
-      status: _normalizeTradeStatus(source['tradeStatus'] ?? source['status']),
+      status: _normalizeTradeStatus(source['clientTradeStatus'] ?? source['tradeStatus'] ?? source['status']),
       riskRewardRatio: source['riskRewardRatio']?.toString() ?? '1:2',
       note: source['note']?.toString() ?? '',
       tradingViewUrl: source['tradingViewUrl']?.toString() ?? '',
@@ -108,7 +114,7 @@ class TradeResponse {
       outcome: source['outcome']?.toString(),
       currencyPair: source['currencyPair'] is Map<String, dynamic>
           ? source['currencyPair'] as Map<String, dynamic>
-          : (source['currencyPairSymbol'] != null
+          : ((source['currencyPairSymbol'] != null)
               ? <String, dynamic>{'symbol': source['currencyPairSymbol']}
               : null),
       traderName: source['traderName']?.toString(),
@@ -128,6 +134,11 @@ class TradeResponse {
       tpPips: source['tpPips'] != null
           ? double.tryParse(source['tpPips'].toString())
           : null,
+      clientTradeId: source['clientTradeId'] != null
+          ? int.tryParse(source['clientTradeId'].toString())
+          : null,
+      takenAt: source['takenAt']?.toString(),
+      clientTradeStatus: source['clientTradeStatus']?.toString(),
     );
   }
 
@@ -171,6 +182,9 @@ class TradeResponse {
       'isAlreadyTaken': isAlreadyTaken,
       'slPips': slPips,
       'tpPips': tpPips,
+      'clientTradeId': clientTradeId,
+      'takenAt': takenAt,
+      'clientTradeStatus': clientTradeStatus,
     };
   }
 
@@ -295,6 +309,9 @@ class TradeResponse {
       resultInPips: resultInPips,
       slPips: slPips,
       tpPips: tpPips,
+      clientTradeId: clientTradeId,
+      takenAt: takenAt,
+      clientTradeStatus: clientTradeStatus,
     );
   }
 }

@@ -9,9 +9,9 @@ class MyTradesBodyWidget extends StatelessWidget {
     return ListenableBuilder(
       listenable: UserProfileService.instance(),
       builder: (BuildContext context, Widget? child) {
-        final String role = UserProfileService.instance().roleName;
+        final String role = UserProfileService.instance().roleName.toUpperCase();
         final bool isSubscribed = UserProfileService.instance().isSubscriptionActive;
-        if (!isSubscribed && role != 'TRADER' && role != 'ADMIN') {
+        if (!isSubscribed && role != 'TRADER' && role != 'MENTOR' && role != 'ADMIN') {
           return const MyTradesLockedWidget();
         }
         return const MyTradesContentWidget();

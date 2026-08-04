@@ -42,9 +42,9 @@ class HomeCubit extends BaseCubit<HomeState> {
       }
 
       try {
-        closedResponse = await tradesRepository.getTradesByPlan(status: 'CLOSED', limit: 5);
+        closedResponse = await repository.getRecentTrades(limit: 8);
       } on Object catch (e) {
-        debugPrint('Closed trades failed: $e');
+        debugPrint('Recent trades failed: $e');
       }
 
       try {

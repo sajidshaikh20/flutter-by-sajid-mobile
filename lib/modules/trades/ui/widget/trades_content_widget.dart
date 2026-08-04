@@ -16,8 +16,8 @@ class TradesContentWidget extends StatelessWidget {
       listener: TradesContentWidget._onStateChanged,
       builder: (BuildContext context, TradesState state) {
         final TradesCubit cubit = context.read<TradesCubit>();
-        final String role = UserProfileService.instance().roleName;
-        final bool canAddTrade = role == 'TRADER' || role == 'ADMIN';
+        final String role = UserProfileService.instance().roleName.toUpperCase();
+        final bool canAddTrade = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
 
         return Scaffold(
           backgroundColor: pageBg,

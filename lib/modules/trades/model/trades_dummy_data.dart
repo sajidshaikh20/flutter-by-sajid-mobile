@@ -29,6 +29,9 @@ class TradingSignalModel {
   final double? resultInPips;
   final double? slPips;
   final double? tpPips;
+  final int? clientTradeId;
+  final String? takenAt;
+  final String? clientTradeStatus;
 
   const TradingSignalModel({
     this.publicId = '',
@@ -61,6 +64,9 @@ class TradingSignalModel {
     this.resultInPips,
     this.slPips,
     this.tpPips,
+    this.clientTradeId,
+    this.takenAt,
+    this.clientTradeStatus,
   });
 
   TradingSignalModel copyWith({
@@ -94,6 +100,9 @@ class TradingSignalModel {
     double? resultInPips,
     double? slPips,
     double? tpPips,
+    int? clientTradeId,
+    String? takenAt,
+    String? clientTradeStatus,
   }) {
     return TradingSignalModel(
       publicId: publicId ?? this.publicId,
@@ -126,6 +135,9 @@ class TradingSignalModel {
       resultInPips: resultInPips ?? this.resultInPips,
       slPips: slPips ?? this.slPips,
       tpPips: tpPips ?? this.tpPips,
+      clientTradeId: clientTradeId ?? this.clientTradeId,
+      takenAt: takenAt ?? this.takenAt,
+      clientTradeStatus: clientTradeStatus ?? this.clientTradeStatus,
     );
   }
 

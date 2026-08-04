@@ -20,14 +20,17 @@ class HomePage extends BaseResponsiveView {
             current.firstTimeLogin ?? false,
         listener: (BuildContext context, HomeState state) {
           if (state.firstTimeLogin ?? false) {
-            final String role = UserProfileService.instance().roleName;
+            final String role = UserProfileService.instance().roleName
+                .toUpperCase();
             if (role == 'CLIENT') {
               context.read<HomeCubit>().dismissFirstTimeLoginPrompt();
-              unawaited(showDialog<bool>(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) => const FirstLoginDialog(),
-              ));
+              unawaited(
+                showDialog<bool>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) => const FirstLoginDialog(),
+                ),
+              );
             } else {
               context.read<HomeCubit>().dismissFirstTimeLoginPrompt();
             }
@@ -53,8 +56,8 @@ class HomePage extends BaseResponsiveView {
                         SizedBox(height: Dimens.space20),
                         HomeRecentTradesTable(),
                         SizedBox(height: Dimens.space20),
-                        HomeLiveTradesCard(),
-                        SizedBox(height: Dimens.space20),
+                        // HomeLiveTradesCard(),
+                        // const SizedBox(height: Dimens.space20),
                       ],
                     ),
                   ),
@@ -89,10 +92,18 @@ class HomeNavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
-    final Color drawerBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final Color subtitleColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final Color dividerColor = isDark ? AppColors.dividerDark : AppColors.dividerLight;
+    final Color drawerBg = isDark
+        ? AppColors.surfaceDark
+        : AppColors.surfaceLight;
+    final Color textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final Color subtitleColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final Color dividerColor = isDark
+        ? AppColors.dividerDark
+        : AppColors.dividerLight;
 
     return Drawer(
       backgroundColor: drawerBg,
@@ -105,11 +116,15 @@ class HomeNavigationDrawer extends StatelessWidget {
               final UserProfileService profile = UserProfileService.instance();
               final String name = profile.customerName.isNotEmpty
                   ? profile.customerName
-                  : (profile.username.isNotEmpty ? profile.username : 'Guest User');
+                  : (profile.username.isNotEmpty
+                        ? profile.username
+                        : 'Guest User');
               final String email = profile.customerEmail.isNotEmpty
                   ? profile.customerEmail
                   : 'guest@example.com';
-              final String initial = name.isNotEmpty ? name[0].toUpperCase() : 'G';
+              final String initial = name.isNotEmpty
+                  ? name[0].toUpperCase()
+                  : 'G';
               final String imageUrl = profile.profilePictureUrl;
               final bool hasImageUrl = imageUrl.isNotEmpty;
 
@@ -142,7 +157,9 @@ class HomeNavigationDrawer extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+                          color: isDark
+                              ? AppColors.surfaceDark
+                              : AppColors.surfaceLight,
                         ),
                         padding: const EdgeInsets.all(1.5),
                         child: ClipOval(
@@ -151,27 +168,37 @@ class HomeNavigationDrawer extends StatelessWidget {
                                   key: ValueKey<String>(imageUrl),
                                   url: imageUrl,
                                   fit: BoxFit.cover,
-                                  loadingBuilder: (BuildContext context, FastCachedProgressData progress) => const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 1.5,
-                                      color: AppColors.primaryPurple,
-                                    ),
-                                  ),
-                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stacktrace) => Container(
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: AppColors.primaryButtonGradient,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: CustomTextLabelWidget(
-                                      label: initial,
-                                      style: const TextStyle(
-                                        color: AppColors.whiteColor,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: Dimens.fontSize18,
+                                  loadingBuilder:
+                                      (
+                                        BuildContext context,
+                                        FastCachedProgressData progress,
+                                      ) => const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 1.5,
+                                          color: AppColors.primaryPurple,
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                  errorBuilder:
+                                      (
+                                        BuildContext context,
+                                        Object exception,
+                                        StackTrace? stacktrace,
+                                      ) => Container(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient:
+                                              AppColors.primaryButtonGradient,
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: CustomTextLabelWidget(
+                                          label: initial,
+                                          style: const TextStyle(
+                                            color: AppColors.whiteColor,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: Dimens.fontSize18,
+                                          ),
+                                        ),
+                                      ),
                                 )
                               : Container(
                                   decoration: const BoxDecoration(
@@ -214,22 +241,29 @@ class HomeNavigationDrawer extends StatelessWidget {
                               vertical: Dimens.space2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryPurple.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(Dimens.radius6),
+                              color: AppColors.primaryPurple.withValues(
+                                alpha: 0.12,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius6,
+                              ),
                               border: Border.all(
-                                color: AppColors.primaryPurple.withValues(alpha: 0.3),
+                                color: AppColors.primaryPurple.withValues(
+                                  alpha: 0.3,
+                                ),
                                 width: 0.5,
                               ),
                             ),
                             child: CustomTextLabelWidget(
-                              label: profile.roleName.isNotEmpty ? profile.roleName : 'CLIENT',
+                              label: profile.roleName.isNotEmpty
+                                  ? profile.roleName
+                                  : 'CLIENT',
                               style: const TextStyle(
                                 color: AppColors.primaryPurple,
                                 fontSize: Dimens.fontSize10,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-
                           ),
                           const SizedBox(height: Dimens.space4),
                           CustomTextLabelWidget(
@@ -254,7 +288,10 @@ class HomeNavigationDrawer extends StatelessWidget {
           // Menu List Options
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: Dimens.space12, horizontal: Dimens.space8),
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimens.space12,
+                horizontal: Dimens.space8,
+              ),
               children: <Widget>[
                 // Leaderboard Menu
                 _buildDrawerItem(
@@ -269,7 +306,13 @@ class HomeNavigationDrawer extends StatelessWidget {
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 // Training Menu
                 _buildDrawerItem(
@@ -284,7 +327,13 @@ class HomeNavigationDrawer extends StatelessWidget {
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 // Broker Menu
                 _buildDrawerItem(
@@ -299,7 +348,13 @@ class HomeNavigationDrawer extends StatelessWidget {
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 // Result Menu
                 _buildDrawerItem(
@@ -314,7 +369,13 @@ class HomeNavigationDrawer extends StatelessWidget {
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 if (UserProfileService.instance().isTrader) ...<Widget>[
                   // My Clients Menu
@@ -329,7 +390,13 @@ class HomeNavigationDrawer extends StatelessWidget {
                       await context.router.push(const MyClientsRoute());
                     },
                   ),
-                  Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                  Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: dividerColor,
+                    indent: Dimens.space16,
+                    endIndent: Dimens.space16,
+                  ),
                 ],
 
                 // About Us
@@ -344,16 +411,23 @@ class HomeNavigationDrawer extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute<dynamic>(
-                        builder: (BuildContext context) => const InAppWebViewPage(
-                          title: 'About WEKO',
-                          url: AppConstant.aboutUsUrl,
-                        ),
+                        builder: (BuildContext context) =>
+                            const InAppWebViewPage(
+                              title: 'About WEKO',
+                              url: AppConstant.aboutUsUrl,
+                            ),
                       ),
                     );
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 // Terms & Conditions
                 _buildDrawerItem(
@@ -367,16 +441,23 @@ class HomeNavigationDrawer extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute<dynamic>(
-                        builder: (BuildContext context) => const InAppWebViewPage(
-                          title: 'Terms & Conditions',
-                          url: AppConstant.termsAndConditionsUrl,
-                        ),
+                        builder: (BuildContext context) =>
+                            const InAppWebViewPage(
+                              title: 'Terms & Conditions',
+                              url: AppConstant.termsAndConditionsUrl,
+                            ),
                       ),
                     );
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 // Privacy Policy
                 _buildDrawerItem(
@@ -390,16 +471,23 @@ class HomeNavigationDrawer extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute<dynamic>(
-                        builder: (BuildContext context) => const InAppWebViewPage(
-                          title: 'Privacy Policy',
-                          url: AppConstant.privacyPolicyUrl,
-                        ),
+                        builder: (BuildContext context) =>
+                            const InAppWebViewPage(
+                              title: 'Privacy Policy',
+                              url: AppConstant.privacyPolicyUrl,
+                            ),
                       ),
                     );
                   },
                 ),
 
-                Divider(height: 1, thickness: 0.5, color: dividerColor, indent: Dimens.space16, endIndent: Dimens.space16),
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: dividerColor,
+                  indent: Dimens.space16,
+                  endIndent: Dimens.space16,
+                ),
 
                 // Contact Us
                 _buildDrawerItem(
@@ -413,10 +501,11 @@ class HomeNavigationDrawer extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute<dynamic>(
-                        builder: (BuildContext context) => const InAppWebViewPage(
-                          title: 'Contact Us',
-                          url: AppConstant.contactUsUrl,
-                        ),
+                        builder: (BuildContext context) =>
+                            const InAppWebViewPage(
+                              title: 'Contact Us',
+                              url: AppConstant.contactUsUrl,
+                            ),
                       ),
                     );
                   },
@@ -448,7 +537,11 @@ class HomeNavigationDrawer extends StatelessWidget {
         ),
         textAlign: TextAlign.start,
       ),
-      trailing: Icon(Icons.keyboard_arrow_right_rounded, color: subtitleColor, size: Dimens.size18),
+      trailing: Icon(
+        Icons.keyboard_arrow_right_rounded,
+        color: subtitleColor,
+        size: Dimens.size18,
+      ),
       onTap: onTap,
     );
   }

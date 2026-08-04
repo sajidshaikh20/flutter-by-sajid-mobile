@@ -13,6 +13,7 @@ const String _sentryDSNKey = 'sentryDSN';
 const String _envKey = 'envKey';
 const String _googleApiKey = 'googleApiKey';
 const String _googleClientId = 'googleClientId';
+const String _iosClientIdKey = 'iosClientId';
 const String _webAppId = 'webAppId';
 const String _webApiKey = 'webApiKey';
 const String _authDomain = 'authDomain';
@@ -124,6 +125,11 @@ String get configGoogleApiKey {
 ///configGoogleClientId
 String get configGoogleClientId {
   return const String.fromEnvironment(_googleClientId);
+}
+
+///configIosClientId
+String get configIosClientId {
+  return const String.fromEnvironment(_iosClientIdKey);
 }
 
 ///configWebAppId

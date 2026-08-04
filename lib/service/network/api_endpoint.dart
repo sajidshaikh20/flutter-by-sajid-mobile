@@ -235,6 +235,9 @@ mixin Apis {
 
   /// Endpoint to mark notification as read
   static String markNotificationRead(dynamic id) => '$subBaseUrl/v1/notifications/$id/read';
+
+  /// Endpoint to get recent trades
+  static const String getRecentTrades = '$subBaseUrl/common/recent';
 }
 
 

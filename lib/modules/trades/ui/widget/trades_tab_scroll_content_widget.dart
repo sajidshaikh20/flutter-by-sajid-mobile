@@ -72,17 +72,17 @@ class TradesTabScrollContentWidget extends StatelessWidget {
                   hasActiveDateRange: hasActiveDateRange,
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
-                  child: TradesSummaryCards(
-                    activeCount: activeCount,
-                    pendingCount: pendingCount,
-                    closedCount: closedCount,
-                    lossesCount: lossesCount,
-                  ),
-                ),
-              ),
+              // SliverToBoxAdapter(
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(vertical: Dimens.space8),
+              //     child: TradesSummaryCards(
+              //       activeCount: activeCount,
+              //       pendingCount: pendingCount,
+              //       closedCount: closedCount,
+              //       lossesCount: lossesCount,
+              //     ),
+              //   ),
+              // ),
               SliverStickyHeader(
                 header: Container(
                   color: pageBg,

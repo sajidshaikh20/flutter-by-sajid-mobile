@@ -1,4 +1,5 @@
 import '../../../../utils/exports.dart';
+import '../../../my_trades/ui/widget/client_trade_card.dart';
 
 /// Paginated list of trade signal cards inside a [CustomScrollView].
 class TradesSignalsListSliverWidget extends StatelessWidget {
@@ -30,12 +31,15 @@ class TradesSignalsListSliverWidget extends StatelessWidget {
               );
             }
 
+            final TradingSignalModel sig = signals[index];
             return Padding(
               padding: const EdgeInsets.only(bottom: Dimens.space12),
-              child: TradingSignalCard(
-                signal: signals[index],
-                showTakeTrade: showTakeTrade,
-              ),
+              child: sig.clientTradeId != null
+                  ? ClientTradeCard(signal: sig)
+                  : TradingSignalCard(
+                      signal: sig,
+                      showTakeTrade: showTakeTrade,
+                    ),
             );
           },
           childCount: signals.length + (showLoadMore ? 1 : 0),

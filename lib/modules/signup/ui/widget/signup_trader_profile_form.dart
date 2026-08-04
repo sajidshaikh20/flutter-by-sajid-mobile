@@ -20,6 +20,7 @@ class SignUpTraderProfileForm extends StatelessWidget {
           Dimens.size16.heightBox,
 
           // Developer Autofill Banner
+          if(kDebugMode)
           Container(
             padding: const EdgeInsets.all(Dimens.space12),
             decoration: BoxDecoration(

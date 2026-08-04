@@ -898,9 +898,9 @@ class _ValueColumn extends StatelessWidget {
             ),
           ),
         ],
-      ],
-    );
+    ]);
   }
+
 }
 
 bool _shouldHidePips(String pips, double? resultInPips) {
