@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:async';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import '../../../utils/exports.dart';
 
@@ -16,18 +14,12 @@ class ChatSocketConnection {
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _tradeStreamController =
       StreamController<Map<String, dynamic>>.broadcast();
-  final StreamController<Map<String, dynamic>> _tradeNotificationStreamController =
-      StreamController<Map<String, dynamic>>.broadcast();
 
   /// Exposes live price updates stream.
   Stream<Map<String, dynamic>> get priceStream => _priceStreamController.stream;
 
   /// Exposes trade status updates stream.
   Stream<Map<String, dynamic>> get tradeStream => _tradeStreamController.stream;
-
-  /// Exposes new trade notifications stream.
-  Stream<Map<String, dynamic>> get tradeNotificationStream =>
-      _tradeNotificationStreamController.stream;
 
   /// Returns true if currently connected to the WebSocket endpoint.
   bool get isConnected => _isConnected;
@@ -168,23 +160,6 @@ class ChatSocketConnection {
             DebugLog.instance.d('WebSocket: Trade status update received: $data');
           } on Exception catch (e) {
             DebugLog.instance.e('WebSocket: Error parsing trade update: $e');
-          }
-        }
-      },
-    );
-
-    // 3. Subscribe to New Trade Notifications
-    _client!.subscribe(
-      destination: '/topic/trade-notifications',
-      callback: (StompFrame frame) {
-        if (frame.body != null) {
-          try {
-            final Map<String, dynamic> data =
-                jsonDecode(frame.body!) as Map<String, dynamic>;
-            _tradeNotificationStreamController.add(data);
-            DebugLog.instance.d('WebSocket: Trade notification received: $data');
-          }  on Exception catch (e) {
-            DebugLog.instance.e('WebSocket: Error parsing trade notification: $e');
           }
         }
       },

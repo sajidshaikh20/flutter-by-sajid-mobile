@@ -240,12 +240,6 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
 
     return BlocConsumer<LeaderboardCubit, LeaderboardState>(
       listener: (BuildContext context, LeaderboardState state) {
-        if (state.status == BaseStateStatus.loading) {
-          unawaited(EasyLoading.show(status: 'Loading...'));
-        } else {
-          unawaited(EasyLoading.dismiss());
-        }
-
         if (state.status == BaseStateStatus.success && state.msg != null && state.msg!.isNotEmpty) {
           displaySnackBar(state.msg!, context);
           context.read<LeaderboardCubit>().resetError();

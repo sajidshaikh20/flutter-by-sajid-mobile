@@ -17,7 +17,12 @@ mixin _$LoginRequestModel {
 
 /// User's email or username for login.
 @JsonKey(name: 'emailOrUsername') String get emailOrUsername;/// User's password for authentication.
- String get password;
+ String get password;/// FCM token
+ String? get fcmToken;/// Device Type
+ String? get deviceType;/// Device ID
+ String? get deviceId;/// Platform
+ String? get platform;/// App version
+ String? get appVersion;
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,16 +35,16 @@ $LoginRequestModelCopyWith<LoginRequestModel> get copyWith => _$LoginRequestMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginRequestModel&&(identical(other.emailOrUsername, emailOrUsername) || other.emailOrUsername == emailOrUsername)&&(identical(other.password, password) || other.password == password));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginRequestModel&&(identical(other.emailOrUsername, emailOrUsername) || other.emailOrUsername == emailOrUsername)&&(identical(other.password, password) || other.password == password)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.deviceType, deviceType) || other.deviceType == deviceType)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.appVersion, appVersion) || other.appVersion == appVersion));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,emailOrUsername,password);
+int get hashCode => Object.hash(runtimeType,emailOrUsername,password,fcmToken,deviceType,deviceId,platform,appVersion);
 
 @override
 String toString() {
-  return 'LoginRequestModel(emailOrUsername: $emailOrUsername, password: $password)';
+  return 'LoginRequestModel(emailOrUsername: $emailOrUsername, password: $password, fcmToken: $fcmToken, deviceType: $deviceType, deviceId: $deviceId, platform: $platform, appVersion: $appVersion)';
 }
 
 
@@ -50,7 +55,7 @@ abstract mixin class $LoginRequestModelCopyWith<$Res>  {
   factory $LoginRequestModelCopyWith(LoginRequestModel value, $Res Function(LoginRequestModel) _then) = _$LoginRequestModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'emailOrUsername') String emailOrUsername, String password
+@JsonKey(name: 'emailOrUsername') String emailOrUsername, String password, String? fcmToken, String? deviceType, String? deviceId, String? platform, String? appVersion
 });
 
 
@@ -67,11 +72,16 @@ class _$LoginRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? emailOrUsername = null,Object? password = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? emailOrUsername = null,Object? password = null,Object? fcmToken = freezed,Object? deviceType = freezed,Object? deviceId = freezed,Object? platform = freezed,Object? appVersion = freezed,}) {
   return _then(_self.copyWith(
 emailOrUsername: null == emailOrUsername ? _self.emailOrUsername : emailOrUsername // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
-as String,
+as String,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
+as String?,deviceType: freezed == deviceType ? _self.deviceType : deviceType // ignore: cast_nullable_to_non_nullable
+as String?,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
+as String?,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as String?,appVersion: freezed == appVersion ? _self.appVersion : appVersion // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -156,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password,  String? fcmToken,  String? deviceType,  String? deviceId,  String? platform,  String? appVersion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginRequestModel() when $default != null:
-return $default(_that.emailOrUsername,_that.password);case _:
+return $default(_that.emailOrUsername,_that.password,_that.fcmToken,_that.deviceType,_that.deviceId,_that.platform,_that.appVersion);case _:
   return orElse();
 
 }
@@ -177,10 +187,10 @@ return $default(_that.emailOrUsername,_that.password);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password,  String? fcmToken,  String? deviceType,  String? deviceId,  String? platform,  String? appVersion)  $default,) {final _that = this;
 switch (_that) {
 case _LoginRequestModel():
-return $default(_that.emailOrUsername,_that.password);case _:
+return $default(_that.emailOrUsername,_that.password,_that.fcmToken,_that.deviceType,_that.deviceId,_that.platform,_that.appVersion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +207,10 @@ return $default(_that.emailOrUsername,_that.password);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'emailOrUsername')  String emailOrUsername,  String password,  String? fcmToken,  String? deviceType,  String? deviceId,  String? platform,  String? appVersion)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginRequestModel() when $default != null:
-return $default(_that.emailOrUsername,_that.password);case _:
+return $default(_that.emailOrUsername,_that.password,_that.fcmToken,_that.deviceType,_that.deviceId,_that.platform,_that.appVersion);case _:
   return null;
 
 }
@@ -212,13 +222,23 @@ return $default(_that.emailOrUsername,_that.password);case _:
 @JsonSerializable()
 
 class _LoginRequestModel implements LoginRequestModel {
-  const _LoginRequestModel({@JsonKey(name: 'emailOrUsername') required this.emailOrUsername, required this.password});
+  const _LoginRequestModel({@JsonKey(name: 'emailOrUsername') required this.emailOrUsername, required this.password, this.fcmToken, this.deviceType, this.deviceId, this.platform, this.appVersion});
   factory _LoginRequestModel.fromJson(Map<String, dynamic> json) => _$LoginRequestModelFromJson(json);
 
 /// User's email or username for login.
 @override@JsonKey(name: 'emailOrUsername') final  String emailOrUsername;
 /// User's password for authentication.
 @override final  String password;
+/// FCM token
+@override final  String? fcmToken;
+/// Device Type
+@override final  String? deviceType;
+/// Device ID
+@override final  String? deviceId;
+/// Platform
+@override final  String? platform;
+/// App version
+@override final  String? appVersion;
 
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +253,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginRequestModel&&(identical(other.emailOrUsername, emailOrUsername) || other.emailOrUsername == emailOrUsername)&&(identical(other.password, password) || other.password == password));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginRequestModel&&(identical(other.emailOrUsername, emailOrUsername) || other.emailOrUsername == emailOrUsername)&&(identical(other.password, password) || other.password == password)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.deviceType, deviceType) || other.deviceType == deviceType)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.platform, platform) || other.platform == platform)&&(identical(other.appVersion, appVersion) || other.appVersion == appVersion));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,emailOrUsername,password);
+int get hashCode => Object.hash(runtimeType,emailOrUsername,password,fcmToken,deviceType,deviceId,platform,appVersion);
 
 @override
 String toString() {
-  return 'LoginRequestModel(emailOrUsername: $emailOrUsername, password: $password)';
+  return 'LoginRequestModel(emailOrUsername: $emailOrUsername, password: $password, fcmToken: $fcmToken, deviceType: $deviceType, deviceId: $deviceId, platform: $platform, appVersion: $appVersion)';
 }
 
 
@@ -253,7 +273,7 @@ abstract mixin class _$LoginRequestModelCopyWith<$Res> implements $LoginRequestM
   factory _$LoginRequestModelCopyWith(_LoginRequestModel value, $Res Function(_LoginRequestModel) _then) = __$LoginRequestModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'emailOrUsername') String emailOrUsername, String password
+@JsonKey(name: 'emailOrUsername') String emailOrUsername, String password, String? fcmToken, String? deviceType, String? deviceId, String? platform, String? appVersion
 });
 
 
@@ -270,11 +290,16 @@ class __$LoginRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of LoginRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? emailOrUsername = null,Object? password = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? emailOrUsername = null,Object? password = null,Object? fcmToken = freezed,Object? deviceType = freezed,Object? deviceId = freezed,Object? platform = freezed,Object? appVersion = freezed,}) {
   return _then(_LoginRequestModel(
 emailOrUsername: null == emailOrUsername ? _self.emailOrUsername : emailOrUsername // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
-as String,
+as String,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
+as String?,deviceType: freezed == deviceType ? _self.deviceType : deviceType // ignore: cast_nullable_to_non_nullable
+as String?,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
+as String?,platform: freezed == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as String?,appVersion: freezed == appVersion ? _self.appVersion : appVersion // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

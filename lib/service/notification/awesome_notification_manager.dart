@@ -1,5 +1,6 @@
 
 import '../../utils/exports.dart';
+import '../navigation/deep_link_manager.dart';
 
 /// Use this method to detect when a new notification or a schedule is created
 @pragma('vm:entry-point')
@@ -29,18 +30,9 @@ Future<void> onNotificationDisplayedMethod(
 ///  a notification or action button
 @pragma('vm:entry-point')
 Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
-  // manage your redirection here
-
-  // Type :-- 'Product' ---> Product Detail Screen
-  // Type :-- 'Order' ---> Order Detail Screen
-  // Type :-- 'Promotional' ---> Home Screen
-
-  DebugLog.instance.t('on Action Received Method ');
-  Map<String, String?> payload = receivedAction.payload ?? <String, String?>{};
-
-  String type = payload['type']?.toString().toLowerCase() ?? '';
-
-  DebugLog.instance.e(type);
+  DebugLog.instance.t('on Action Received Method via isolate port');
+  IsolateNameServer.lookupPortByName('notification_action_port')
+      ?.send(receivedAction);
 }
 
 /// A singleton class to manage and initialize AwesomeNotifications
@@ -64,6 +56,17 @@ class AwesomeNotificationManager {
   Future<void> init() async {
     await _initializeAwesomeNotification();
     _initializeIsolatePort();
+
+    // Check for initial action when app launched from killed state
+    final ReceivedAction? initialAction = await _awesomeNotification.getInitialNotificationAction();
+    if (initialAction != null) {
+      DebugLog.instance.i('AwesomeNotificationManager: App launched from initial action: ${initialAction.payload}');
+      final Map<String, String?> payload = initialAction.payload ?? <String, String?>{};
+      if (payload.isNotEmpty) {
+        final Map<String, dynamic> data = Map<String, dynamic>.from(payload);
+        unawaited(DeepLinkManager.instance.handleDeepLink(data));
+      }
+    }
   }
 
   /// Initializes the AwesomeNotification with required settings.
@@ -79,6 +82,11 @@ class AwesomeNotificationManager {
           channelDescription: NotificationConst.channelDescription,
           defaultColor: Colors.blue,
           ledColor: Colors.white,
+          playSound: true,
+          importance: NotificationImportance.Max,
+          defaultRingtoneType: DefaultRingtoneType.Notification,
+          channelShowBadge: true,
+          criticalAlerts: true,
         ),
       ],
       channelGroups: <NotificationChannelGroup>[
@@ -137,6 +145,9 @@ class AwesomeNotificationManager {
 
   /// Initializes the isolate port for receiving notification actions.
   void _initializeIsolatePort() {
+    // Clean up previous registration to avoid routing actions to a dead isolate after hot-restarts
+    IsolateNameServer.removePortNameMapping('notification_action_port');
+
     receivePort = ReceivePort('Notification action port in main isolate')
       ..listen((dynamic silentData) async {
         await onActionReceivedImplementationMethod(
@@ -154,7 +165,12 @@ class AwesomeNotificationManager {
   static Future<void> onActionReceivedImplementationMethod(
     ReceivedAction receivedAction,
   ) async {
-    DebugLog.instance.t('on Action Received Method');
+    DebugLog.instance.t('on Action Received Implementation Method');
+    final Map<String, String?> payload = receivedAction.payload ?? <String, String?>{};
+    if (payload.isNotEmpty) {
+      final Map<String, dynamic> data = Map<String, dynamic>.from(payload);
+      await DeepLinkManager.instance.handleDeepLink(data);
+    }
   }
 
   /// Creates and shows a notification in the system tray.

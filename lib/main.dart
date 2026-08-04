@@ -22,6 +22,11 @@ Future<void> firebaseBackground(RemoteMessage message) async {
           channelDescription: NotificationConst.channelDescription,
           defaultColor: Colors.blue,
           ledColor: Colors.white,
+          playSound: true,
+          importance: NotificationImportance.Max,
+          defaultRingtoneType: DefaultRingtoneType.Notification,
+          channelShowBadge: true,
+          criticalAlerts: true,
         ),
       ],
       channelGroups: <NotificationChannelGroup>[

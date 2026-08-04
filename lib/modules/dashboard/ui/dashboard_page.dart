@@ -1,4 +1,5 @@
 import '../../../../utils/exports.dart';
+import '../../../service/navigation/deep_link_manager.dart';
 
 /// Main dashboard with 5 bottom tabs.
 @RoutePage()
@@ -72,6 +73,13 @@ class DashboardPage extends BaseResponsiveView {
           scheduleMicrotask(() {
             if (context.mounted) {
               getIt<TabRouterService>().tabsRouterContext = context;
+              DeepLinkManager.instance.checkAndProcessPendingDeepLink();
+            }
+          });
+        } else {
+          scheduleMicrotask(() {
+            if (context.mounted) {
+              DeepLinkManager.instance.checkAndProcessPendingDeepLink();
             }
           });
         }

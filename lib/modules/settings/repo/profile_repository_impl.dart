@@ -138,6 +138,24 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> logout() async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.logout,
+          apiType: ApiType.post,
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
+      },
+    );
+  }
+
+  @override
   Future<ResponseHandler<BaseResponse<TradingPreferencesResponse>>> getTradingPreferences() async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient

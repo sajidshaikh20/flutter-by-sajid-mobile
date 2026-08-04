@@ -14,6 +14,21 @@ abstract class LoginRequestModel with _$LoginRequestModel {
 
     /// User's password for authentication.
     required String password,
+
+    /// FCM token
+    String? fcmToken,
+
+    /// Device Type
+    String? deviceType,
+
+    /// Device ID
+    String? deviceId,
+
+    /// Platform
+    String? platform,
+
+    /// App version
+    String? appVersion,
   }) = _LoginRequestModel;
 
   /// Creates a [LoginRequestModel] instance from a JSON map.

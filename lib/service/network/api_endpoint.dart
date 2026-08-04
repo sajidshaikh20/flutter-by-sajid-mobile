@@ -1,6 +1,4 @@
-/// A class containing API endpoint constants used in the app.
-abstract class Apis {
-  /// Base URL for the service.
+mixin Apis {
 
   static const String subBaseUrl = 'api';
 
@@ -124,7 +122,7 @@ abstract class Apis {
   static const String deleteAccount = '$subBaseUrl/auth/delete';
 
   /// logout API
-  static const String logout = '$apiVersion/logOut';
+  static const String logout = '$subBaseUrl/auth/logout';
 
   /// Endpoint for Notification List.
   static const String notificationList = '$apiVersion/getNotificationList';
@@ -228,6 +226,15 @@ abstract class Apis {
 
   /// Endpoint to get clients who took a specific trade
   static const String traderClients = '$subBaseUrl/mentor/trades/clients';
+
+  /// Endpoint to sync FCM device token
+  static const String syncDeviceToken = '$subBaseUrl/v1/devices/token';
+
+  /// Endpoint to get notifications (paginated)
+  static const String notifications = '$subBaseUrl/v1/notifications';
+
+  /// Endpoint to mark notification as read
+  static String markNotificationRead(dynamic id) => '$subBaseUrl/v1/notifications/$id/read';
 }
 
 

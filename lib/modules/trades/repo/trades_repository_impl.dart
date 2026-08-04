@@ -138,7 +138,7 @@ class TradesRepositoryImpl extends TradesRepository {
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<TradeResponse>>> getTradeDetails(String tradePublicId) async {
+  Future<ResponseHandler<BaseResponse<TradeResponse>>>  getTradeDetails(String tradePublicId) async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(

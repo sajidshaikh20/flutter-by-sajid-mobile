@@ -4,6 +4,7 @@ export 'app_path_provider.dart';
 export 'context_extension.dart';
 export 'date_utils.dart';
 export 'debug_log.dart';
+export 'device_info_helper.dart';
 export 'dotted_line.dart';
 export 'encryption_utils.dart';
 export 'extensions.dart';

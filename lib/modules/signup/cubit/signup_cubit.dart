@@ -635,14 +635,26 @@ class SignUpCubit extends Cubit<SignUpState> {
     try {
       emit(state.copyWith(status: BaseStateStatus.loading));
 
-      String cleanPhone = state.fullPhoneNumber;
-      final String dialCode = state.countryDialCode.replaceAll(RegExp(r'[^\d]'), '');
-      if (cleanPhone.startsWith('+')) {
-        cleanPhone = cleanPhone.substring(1);
+      double? experience;
+      String? bio;
+      if (state.accountType == UserRole.trader) {
+        final String exp = state.tradingExperience;
+        if (exp.contains('0-1')) {
+          experience = 0.5;
+        } else if (exp.contains('1-3')) {
+          experience = 2.0;
+        } else if (exp.contains('3-5')) {
+          experience = 4.0;
+        } else if (exp.contains('5+')) {
+          experience = 6.0;
+        }
+        bio = state.strategyDescriptionController.text.trim();
+        if (bio.isEmpty) {
+          bio = 'Forex Trader';
+        }
       }
-      if (dialCode.isNotEmpty && cleanPhone.startsWith(dialCode)) {
-        cleanPhone = cleanPhone.substring(dialCode.length);
-      }
+
+      final String fcmToken = await NotificationManager.instance.getOrRefreshFCMToken() ?? '';
 
       final ResponseHandler<BaseResponse<SignUpResponse>> response =
           await repository.completeRegistration(
@@ -650,12 +662,13 @@ class SignUpCubit extends Cubit<SignUpState> {
           email: state.email,
           username: state.usernameController.text.trim(),
           password: state.passwordController.text.trim(),
-          name: state.fullName,
-          phone: cleanPhone,
-          role: state.accountType,
-          questionnaire: state.accountType == UserRole.trader
-              ? _buildQuestionnaireModel()
-              : null,
+          experience: experience,
+          bio: bio,
+          fcmToken: fcmToken,
+          deviceType: DeviceInfoHelper.getDeviceType(),
+          deviceId: DeviceInfoHelper.getDeviceId(),
+          platform: DeviceInfoHelper.getPlatform(),
+          appVersion: DeviceInfoHelper.getAppVersion(),
         ),
       );
 

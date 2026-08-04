@@ -51,6 +51,10 @@ class _SettingsViewState extends State<SettingsView> {
       ),
       onOkClicked: () async {
         final StackRouter router = context.router;
+        
+        // Call backend logout API
+        await ProfileRepositoryImpl().logout();
+        
         // Clear session
         await SharedPref.instance.clearUserDataOnly();
         await UserProfileService.instance().loadUserData();

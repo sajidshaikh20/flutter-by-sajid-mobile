@@ -428,17 +428,35 @@ enum CartOperation {
 
 /// Enum representing different types of notifications in the app.
 enum NotificationType {
-  /// Delivery notification type.
-  deliverd('deliverd'),
+  /// Email notification type.
+  email('EMAIL'),
 
-  /// Pickup notification type.
-  pickup('pickup'),
+  /// WhatsApp notification type.
+  whatsapp('WHATSAPP'),
 
-  /// Loyalty points notification type.
-  loyalty('loyalty'),
+  /// Telegram notification type.
+  telegram('TELEGRAM'),
 
-  /// Promotion notification type.
-  promotion('promotion');
+  /// Push notification type.
+  push('PUSH'),
+
+  /// Trade Signal notification type.
+  tradeSignal('TRADE_SIGNAL'),
+
+  /// Trade Teaser notification type.
+  tradeTeaser('TRADE_TEASER'),
+
+  /// Trade Taken notification type.
+  tradeTaken('TRADE_TAKEN'),
+
+  /// Trade Take Profit Hit notification type.
+  tradeTpHit('TRADE_TP_HIT'),
+
+  /// Trade Stop Loss Hit notification type.
+  tradeSlHit('TRADE_SL_HIT'),
+
+  /// Trade Closed notification type.
+  tradeClosed('TRADE_CLOSED');
 
   /// The string value of the notification type.
   final String value;
@@ -449,24 +467,90 @@ enum NotificationType {
   /// Default Material icon for this notification type.
   IconData get icon {
     switch (this) {
-      case NotificationType.deliverd:
-        return Icons.local_shipping_outlined;
-      case NotificationType.pickup:
-        return Icons.storefront_outlined;
-      case NotificationType.loyalty:
-        return Icons.card_giftcard_outlined;
-      case NotificationType.promotion:
-        return Icons.campaign_outlined;
+      case NotificationType.email:
+        return Icons.mail_outline_rounded;
+      case NotificationType.whatsapp:
+        return Icons.chat_rounded;
+      case NotificationType.telegram:
+        return Icons.send_rounded; // Represents paper plane/telegram
+      case NotificationType.push:
+        return Icons.notifications_active_rounded;
+      case NotificationType.tradeSignal:
+        return Icons.trending_up_rounded;
+      case NotificationType.tradeTeaser:
+        return Icons.visibility_rounded;
+      case NotificationType.tradeTaken:
+        return Icons.check_circle_rounded;
+      case NotificationType.tradeTpHit:
+        return Icons.done_all_rounded;
+      case NotificationType.tradeSlHit:
+        return Icons.trending_down_rounded;
+      case NotificationType.tradeClosed:
+        return Icons.archive_rounded;
+    }
+  }
+
+  /// Custom color styling for this notification type.
+  Color get color {
+    switch (this) {
+      case NotificationType.email:
+        return const Color(0xFF2196F3); // Blue
+      case NotificationType.whatsapp:
+        return const Color(0xFF25D366); // WhatsApp Green
+      case NotificationType.telegram:
+        return const Color(0xFF0088CC); // Telegram Blue
+      case NotificationType.push:
+        return const Color(0xFFFF9800); // Amber/Orange
+      case NotificationType.tradeSignal:
+        return const Color(0xFF9C27B0); // Purple
+      case NotificationType.tradeTeaser:
+        return const Color(0xFF00BCD4); // Cyan
+      case NotificationType.tradeTaken:
+        return const Color(0xFF3F51B5); // Indigo
+      case NotificationType.tradeTpHit:
+        return const Color(0xFF4CAF50); // Success Green
+      case NotificationType.tradeSlHit:
+        return const Color(0xFFF44336); // Red/Loss
+      case NotificationType.tradeClosed:
+        return const Color(0xFF757575); // Dark Grey
+    }
+  }
+
+  /// User-friendly display name of the notification type.
+  String get displayName {
+    switch (this) {
+      case NotificationType.email:
+        return 'Email';
+      case NotificationType.whatsapp:
+        return 'WhatsApp';
+      case NotificationType.telegram:
+        return 'Telegram';
+      case NotificationType.push:
+        return 'Push Alert';
+      case NotificationType.tradeSignal:
+        return 'New Signal';
+      case NotificationType.tradeTeaser:
+        return 'Teaser';
+      case NotificationType.tradeTaken:
+        return 'Trade Taken';
+      case NotificationType.tradeTpHit:
+        return 'TP Hit';
+      case NotificationType.tradeSlHit:
+        return 'SL Hit';
+      case NotificationType.tradeClosed:
+        return 'Closed';
     }
   }
 
   /// Converts a string value to the corresponding NotificationType enum safely.
   ///
-  /// Returns [NotificationType.promotion] as fallback if no match is found.
+  /// Returns [NotificationType.push] as fallback if no match is found.
   static NotificationType fromValue(String? value) {
+    if (value == null) return NotificationType.push;
+    final String lowerValue = value.toLowerCase().trim();
     return NotificationType.values.firstWhere(
-          (NotificationType e) => e.value.toLowerCase() == (value ?? '').toLowerCase(),
-      orElse: () => NotificationType.promotion, // fallback default
+      (NotificationType e) => e.value.toLowerCase() == lowerValue || e.name.toLowerCase() == lowerValue,
+      orElse: () => NotificationType.push, // fallback default
     );
   }
 }

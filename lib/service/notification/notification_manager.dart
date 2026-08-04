@@ -1,4 +1,5 @@
 import '../../utils/exports.dart';
+import '../navigation/deep_link_manager.dart';
 
 /// A manager class to handle Firebase messaging and Awesome notifications.
 /// It manages FCM token retrieval, background, foreground, and opened app
@@ -28,6 +29,7 @@ class NotificationManager {
     await _getInitialMessage();
     _onMessage();
     _onMessageOpenedApp();
+    _listenToTokenRefresh();
   }
 
   /// Initializes Firebase, enabling Crashlytics and Analytics services.
@@ -183,14 +185,13 @@ class NotificationManager {
     
     await FirebaseMessaging.instance
         .getInitialMessage()
-        .then((RemoteMessage? message) {
+        .then((RemoteMessage? message) async {
       DebugLog.instance.i(
         'FCM Initial Message : ${message?.data} ${message?.notification}',
       );
-      Map<String, dynamic> data = message?.data ?? <String, dynamic>{};
-      String type = data['type']?.toString().toLowerCase() ?? '';
-
-
+      if (message != null && message.data.isNotEmpty) {
+        await DeepLinkManager.instance.handleDeepLink(message.data);
+      }
     });
   }
 
@@ -213,8 +214,15 @@ class NotificationManager {
         'FCM Foreground Message :${message.notification}',
       );
       if (Platform.isAndroid) {
+        final Map<String, dynamic> payload = Map<String, dynamic>.from(message.data);
+        if (!payload.containsKey('title') && message.notification?.title != null) {
+          payload['title'] = message.notification!.title;
+        }
+        if (!payload.containsKey('body') && message.notification?.body != null) {
+          payload['body'] = message.notification!.body;
+        }
         await AwesomeNotificationManager.instance
-            .showNotification(payload: message.data);
+            .showNotification(payload: payload);
       }
     });
   }
@@ -228,22 +236,52 @@ class NotificationManager {
       return;
     }
     
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       DebugLog.instance.i(
         'FCM MessageOpenedApp Message : ${message.data} ${message.notification}',
       );
-
-      Map<String, dynamic> data = message.data;
-      String type = data['type']?.toString().toLowerCase() ?? '';
-      String entity = data['entity']?.toString().toLowerCase() ?? '';
-
-      DebugLog.instance.i(
-        'FCM MessageOpenedApp Message type : $type',
-      );
-      DebugLog.instance.i(
-        'FCM MessageOpenedApp Message entity : $entity',
-      );
-
+      if (message.data.isNotEmpty) {
+        await DeepLinkManager.instance.handleDeepLink(message.data);
+      }
     });
+  }
+
+  /// Listens to runtime token changes from Firebase Messaging and updates the server.
+  void _listenToTokenRefresh() {
+    if (Firebase.apps.isEmpty) return;
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((String token) async {
+      DebugLog.instance.i('FCM Token rotated at runtime: $token');
+      await SharedPref.instance.setValue(PrefsKey.fcmTokenKey, token);
+
+      final bool isLoggedIn = SharedPref.instance.getBool(PrefsKey.isLoggedInKey, defValue: false);
+      if (isLoggedIn) {
+        await syncFCMToken(token);
+      }
+    });
+  }
+
+  /// Syncs current FCM token to backend device storage.
+  Future<void> syncFCMToken(String token) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{
+        'fcmToken': token,
+        'deviceType': DeviceInfoHelper.getDeviceType(),
+        'deviceId': DeviceInfoHelper.getDeviceId(),
+        'platform': DeviceInfoHelper.getPlatform(),
+        'appVersion': DeviceInfoHelper.getAppVersion(),
+      };
+
+      DebugLog.instance.d('Syncing FCM token: $data');
+      await MainConfig.apiClient.handleApiCall(
+        endUrl: Apis.syncDeviceToken,
+        apiType: ApiType.post,
+        showLoader: false,
+        data: data,
+      );
+      DebugLog.instance.i('FCM token synced successfully.');
+    } on Exception catch (e) {
+      DebugLog.instance.e('Error syncing FCM token to server: $e');
+    }
   }
 }

@@ -45,9 +45,19 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       emit(state.copyWith(status: BaseStateStatus.loading));
 
+      final String fcmToken = await NotificationManager.instance.getOrRefreshFCMToken() ?? '';
+
       final ResponseHandler<BaseResponse<LoginUserResponse>> response =
           await repository.callLoginApi(
-            LoginRequestModel(emailOrUsername: emailMobile, password: password),
+            LoginRequestModel(
+              emailOrUsername: emailMobile,
+              password: password,
+              fcmToken: fcmToken,
+              deviceType: DeviceInfoHelper.getDeviceType(),
+              deviceId: DeviceInfoHelper.getDeviceId(),
+              platform: DeviceInfoHelper.getPlatform(),
+              appVersion: DeviceInfoHelper.getAppVersion(),
+            ),
           );
 
       if (response.isSuccess()) {
