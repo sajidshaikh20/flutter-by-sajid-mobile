@@ -15,15 +15,7 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
   StreamSubscription<Map<String, dynamic>>? _priceSubscription;
   String? _registeredSymbol;
 
-  // Market label mapping
-  final Map<String, String> tradeTypeLabels = const <String, String>{
-    'BUY_MARKET': 'Buy By Market',
-    'SELL_MARKET': 'Sell By Market',
-    'BUY_LIMIT': 'Buy Limit',
-    'SELL_LIMIT': 'Sell Limit',
-    'BUY_STOP': 'Buy Stop',
-    'SELL_STOP': 'Sell Stop',
-  };
+
 
   void _subscribeLivePrice() {
     unawaited(_priceSubscription?.cancel());
@@ -313,70 +305,35 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
       final double slPips = priceToPips(sl, entry);
       final double tp1Pips = priceToPips(tp1, entry);
 
-      final List<Map<String, dynamic>> levels = <Map<String, dynamic>>[
-        <String, dynamic>{
-          'levelType': 'ENTRY',
-          'entryPoint': entry,
-          'stopLoss': sl,
-          'takeProfit': tp1,
-          'level': 0,
-          'entryPips': 0,
-          'slPips': slPips,
-          'tpPips': tp1Pips,
-        }
-      ];
-
       final double? tp2Val = double.tryParse(state.tp2Controller.text.trim());
-      if (tp2Val != null && tp2Val > 0) {
-        final double tp2Pips = priceToPips(tp2Val, entry);
-        levels.add(<String, dynamic>{
-          'levelType': 'TAKE_PROFIT',
-          'entryPoint': entry,
-          'stopLoss': sl,
-          'takeProfit': tp2Val,
-          'level': 2,
-          'entryPips': 0,
-          'slPips': slPips,
-          'tpPips': tp2Pips,
-        });
-      }
+      final double? tp2Pips = (tp2Val != null && tp2Val > 0) ? priceToPips(tp2Val, entry) : null;
 
       final double? tp3Val = double.tryParse(state.tp3Controller.text.trim());
-      if (tp3Val != null && tp3Val > 0) {
-        final double tp3Pips = priceToPips(tp3Val, entry);
-        levels.add(<String, dynamic>{
-          'levelType': 'TAKE_PROFIT',
-          'entryPoint': entry,
-          'stopLoss': sl,
-          'takeProfit': tp3Val,
-          'level': 3,
-          'entryPips': 0,
-          'slPips': slPips,
-          'tpPips': tp3Pips,
-        });
-      }
-
-      final String outcomeVal = state.isMarketOrder
-          ? (state.selectedTradeType.startsWith('BUY') ? 'BUY' : 'SELL')
-          : state.selectedTradeType;
+      final double? tp3Pips = (tp3Val != null && tp3Val > 0) ? priceToPips(tp3Val, entry) : null;
 
       final bool isRrValid = calculation != null && calculation['valid'] == true;
       final double rrVal = isRrValid ? (calculation['rr'] as double) : 2.0;
 
-      final Map<String, dynamic> payload = <String, dynamic>{
-        'market': state.selectedMarket.toUpperCase(),
-        'marketType': outcomeVal,
-        'currencyPairId': state.selectedPair?.id,
-        'note': state.commentController.text.trim(),
-        'tradingViewUrl': state.tradingViewUrlController.text.trim(),
-        'riskRewardRatio': '1:${rrVal.toStringAsFixed(2)}',
-        'slPips': slPips,
-        'tpPips': tp1Pips,
-        'levels': levels,
-      };
+      final CreateSignalRequest request = CreateSignalMapper.toRequest(
+        market: state.selectedMarket.toUpperCase(),
+        marketType: state.selectedTradeType,
+        currencyPairId: state.selectedPair?.id,
+        note: state.commentController.text.trim(),
+        tradingViewUrl: state.tradingViewUrlController.text.trim(),
+        rrVal: rrVal,
+        entry: entry,
+        sl: sl,
+        tp1: tp1,
+        slPips: slPips,
+        tp1Pips: tp1Pips,
+        tp2Val: tp2Val,
+        tp2Pips: tp2Pips,
+        tp3Val: tp3Val,
+        tp3Pips: tp3Pips,
+      );
 
       final ResponseHandler<BaseResponse<dynamic>> response =
-          await repository.createTrade(payload);
+          await repository.createTrade(request);
 
       if (response.isSuccess()) {
         emit(state.copyWith(

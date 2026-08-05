@@ -10,3 +10,4 @@ export 'trades_signals_list_sliver_widget.dart';
 export 'trades_summary_cards.dart';
 export 'trades_tab_scroll_content_widget.dart';
 export 'trading_signal_card.dart';
+export 'add_trade/add_trade.dart';

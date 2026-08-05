@@ -186,15 +186,14 @@ class TradesRepositoryImpl extends TradesRepository {
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(Map<String, dynamic> payload) async {
+  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(CreateSignalRequest request) async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
           endUrl: Apis.createTrade,
           apiType: ApiType.post,
-          data: payload,
+          data: request.toMap(),
           showLoader: true,
-
         );
 
     return getParsedResponseHandler(

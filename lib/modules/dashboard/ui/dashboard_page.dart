@@ -47,42 +47,42 @@ class DashboardPage extends BaseResponsiveView {
     final bool isTraderOrAdmin = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
 
     return AutoTabsRouter(
-      curve: Curves.easeInOutQuad,
-      duration: const Duration(milliseconds: Dimens.milliseconds400),
-      transitionBuilder:
-          (BuildContext context, Widget child, Animation<double> animation) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOutQuad,
-          ),
-          child: child,
-        );
-      },
-      routes: <PageRouteInfo<dynamic>>[
-        HomeRoute(),
-        const MyTradesRoute(),
-        isTraderOrAdmin ? const AddTradeRoute() : const TradesRoute(),
-        const ToolRoute(),
-        const SettingsRoute(),
-      ],
-      builder: (BuildContext context, Widget child) {
-        final TabsRouter tabsRouter = AutoTabsRouter.of(context);
-        MainConfig.tabContext = context;
-        if (getIt<TabRouterService>().tabsRouterContext == null) {
-          scheduleMicrotask(() {
-            if (context.mounted) {
-              getIt<TabRouterService>().tabsRouterContext = context;
-              DeepLinkManager.instance.checkAndProcessPendingDeepLink();
-            }
-          });
-        } else {
-          scheduleMicrotask(() {
-            if (context.mounted) {
-              DeepLinkManager.instance.checkAndProcessPendingDeepLink();
-            }
-          });
-        }
+        curve: Curves.easeInOutQuad,
+        duration: const Duration(milliseconds: Dimens.milliseconds400),
+        transitionBuilder:
+            (BuildContext context, Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOutQuad,
+            ),
+            child: child,
+          );
+        },
+        routes: <PageRouteInfo<dynamic>>[
+          HomeRoute(),
+          const MyTradesRoute(),
+          isTraderOrAdmin ? const AddTradeRoute() : const TradesRoute(),
+          const ToolRoute(),
+          const SettingsRoute(),
+        ],
+        builder: (BuildContext context, Widget child) {
+          final TabsRouter tabsRouter = AutoTabsRouter.of(context);
+          MainConfig.tabContext = context;
+          if (getIt<TabRouterService>().tabsRouterContext == null) {
+            scheduleMicrotask(() {
+              if (context.mounted) {
+                getIt<TabRouterService>().tabsRouterContext = context;
+                DeepLinkManager.instance.checkAndProcessPendingDeepLink();
+              }
+            });
+          } else {
+            scheduleMicrotask(() {
+              if (context.mounted) {
+                DeepLinkManager.instance.checkAndProcessPendingDeepLink();
+              }
+            });
+          }
 
         return PopScope(
           canPop: Navigator.canPop(context),

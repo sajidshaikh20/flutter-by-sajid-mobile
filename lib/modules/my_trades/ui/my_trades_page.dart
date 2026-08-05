@@ -15,19 +15,10 @@ class MyTradesPage extends BaseResponsiveView {
   Widget buildMobileWidget(BuildContext context) => _build(context);
 
   Widget _build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: <BlocProvider<dynamic>>[
-        BlocProvider<MyTradesCubit>(
-          create: (BuildContext context) => MyTradesCubit(
-            repository: MyTradesRepositoryImpl(),
-          ),
-        ),
-        BlocProvider<TradesCubit>(
-          create: (BuildContext context) => TradesCubit(
-            repository: TradesRepositoryImpl(),
-          ),
-        ),
-      ],
+    return BlocProvider<TradesCubit>(
+      create: (BuildContext context) => TradesCubit(
+        repository: TradesRepositoryImpl(),
+      ),
       child: const MyTradesBodyWidget(),
     );
   }

@@ -33,6 +33,6 @@ abstract class TradesRepository extends BaseRepository {
   });
 
   /// Create a new trade
-  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(Map<String, dynamic> payload);
+  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(CreateSignalRequest request);
 }
 

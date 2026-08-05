@@ -85,6 +85,16 @@ abstract class AppConstant {
   static const String googleSignInFailed = "Google Sign in Failed";
   static const String facebookSignInSuccess = "facebook Sign in Complete";
   static const String facebookSignInFailed = "Facebook Sign in Failed";
+
+  // Trade related constants
+  static const Map<String, String> tradeTypeLabels = <String, String>{
+    'BUY_MARKET': 'Buy By Market',
+    'SELL_MARKET': 'Sell By Market',
+    'BUY_LIMIT': 'Buy Limit',
+    'SELL_LIMIT': 'Sell Limit',
+    'BUY_STOP': 'Buy Stop',
+    'SELL_STOP': 'Sell Stop',
+  };
 }
 
 abstract class NotificationConst {
