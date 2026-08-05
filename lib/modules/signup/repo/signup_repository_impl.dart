@@ -99,6 +99,40 @@ class SignUpRepositoryImpl extends SignUpRepository {
       CompleteRegistrationRequest request) async {
     final Map<String, dynamic> data = request.toJson();
 
+    if (request.role == UserRole.trader) {
+      if (request.questionnaire != null) {
+        final String? governmentIdPath = request.questionnaire!.governmentId;
+        if (governmentIdPath != null && governmentIdPath.isNotEmpty && !governmentIdPath.startsWith('/mock')) {
+          data['governmentIdFile'] = await MultipartFile.fromFile(
+            governmentIdPath,
+            filename: governmentIdPath.split('/').last,
+          );
+        } else {
+          data.remove('governmentIdFile');
+        }
+
+        final String? bankStatementPath = request.questionnaire!.bankStatement;
+        if (bankStatementPath != null && bankStatementPath.isNotEmpty && !bankStatementPath.startsWith('/mock')) {
+          data['bankStatementFile'] = await MultipartFile.fromFile(
+            bankStatementPath,
+            filename: bankStatementPath.split('/').last,
+          );
+        } else {
+          data.remove('bankStatementFile');
+        }
+
+        final String? tradingCertificatePath = request.questionnaire!.tradingCertificate;
+        if (tradingCertificatePath != null && tradingCertificatePath.isNotEmpty && !tradingCertificatePath.startsWith('/mock')) {
+          data['tradingCertificateFile'] = await MultipartFile.fromFile(
+            tradingCertificatePath,
+            filename: tradingCertificatePath.split('/').last,
+          );
+        } else {
+          data.remove('tradingCertificateFile');
+        }
+      }
+    }
+
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(

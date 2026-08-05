@@ -635,6 +635,15 @@ class SignUpCubit extends Cubit<SignUpState> {
     try {
       emit(state.copyWith(status: BaseStateStatus.loading));
 
+      String cleanPhone = state.fullPhoneNumber;
+      final String dialCode = state.countryDialCode.replaceAll(RegExp(r'[^\d]'), '');
+      if (cleanPhone.startsWith('+')) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+      if (dialCode.isNotEmpty && cleanPhone.startsWith(dialCode)) {
+        cleanPhone = cleanPhone.substring(dialCode.length);
+      }
+
       double? experience;
       String? bio;
       if (state.accountType == UserRole.trader) {
@@ -662,6 +671,9 @@ class SignUpCubit extends Cubit<SignUpState> {
           email: state.email,
           username: state.usernameController.text.trim(),
           password: state.passwordController.text.trim(),
+          name: state.fullName,
+          phone: cleanPhone,
+          role: state.accountType,
           experience: experience,
           bio: bio,
           fcmToken: fcmToken,
@@ -669,6 +681,9 @@ class SignUpCubit extends Cubit<SignUpState> {
           deviceId: DeviceInfoHelper.getDeviceId(),
           platform: DeviceInfoHelper.getPlatform(),
           appVersion: DeviceInfoHelper.getAppVersion(),
+          questionnaire: state.accountType == UserRole.trader
+              ? _buildQuestionnaireModel()
+              : null,
         ),
       );
 

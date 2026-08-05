@@ -819,11 +819,11 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
                     CustomTextLabelWidget(
                       label: '${item.pnl >= 0 ? '+' : ''}${item.pnl.toStringAsFixed(2)} pts',
                       style: TextStyle(
-                        color: item.pnl >= 0 
+                        color: item.pnl >= 0
                             ? (isDark ? AppColors.successColor : AppColors.greenTextColor)
                             : AppColors.errorColor,
                         fontSize: Dimens.fontSize16,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -930,7 +930,7 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
             ? (isDark ? AppColors.successColor : AppColors.greenTextColor)
             : AppColors.errorColor;
 
-        final bool isClient = UserProfileService.instance().roleName.toUpperCase() == 'CLIENT';
+        final bool isClient = getIt<UserProfileService>().roleName.toUpperCase() == 'CLIENT';
 
         return Padding(
           padding: const EdgeInsets.symmetric(
@@ -1001,19 +1001,15 @@ class _LeaderboardViewBodyState extends State<LeaderboardViewBody> {
               ),
 
               // Points
-              SizedBox(
-                width: 70.0,
-                child: CustomTextLabelWidget(
-                  label: '${item.pnl >= 0 ? '+' : ''}${item.pnl.toStringAsFixed(2)} pts',
-                  style: TextStyle(
-                    color: pointsColor,
-                    fontSize: Dimens.fontSize13,
-                    fontWeight: FontWeight.w900,
-                  ),
-                  textAlign: TextAlign.end,
+              CustomTextLabelWidget(
+                label: '${item.pnl >= 0 ? '+' : ''}${item.pnl.toStringAsFixed(2)} pts',
+                style: TextStyle(
+                  color: pointsColor,
+                  fontSize: Dimens.fontSize13,
+                  fontWeight: FontWeight.w600,
                 ),
+                textAlign: TextAlign.end,
               ),
-
               if (isClient && item.type == 'TRADER') ...<Widget>[
                 const SizedBox(width: Dimens.space12),
                 GestureDetector(

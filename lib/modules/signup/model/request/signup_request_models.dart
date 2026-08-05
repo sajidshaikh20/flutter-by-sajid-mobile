@@ -86,6 +86,9 @@ class CompleteRegistrationRequest {
   final String email;
   final String username;
   final String password;
+  final String name;
+  final String phone;
+  final UserRole role;
   final double? experience;
   final String? bio;
   final String fcmToken;
@@ -93,11 +96,15 @@ class CompleteRegistrationRequest {
   final String deviceId;
   final String platform;
   final String appVersion;
+  final SignUpQuestionnaireModel? questionnaire;
 
   CompleteRegistrationRequest({
     required this.email,
     required this.username,
     required this.password,
+    required this.name,
+    required this.phone,
+    this.role = UserRole.client,
     this.experience,
     this.bio,
     required this.fcmToken,
@@ -105,13 +112,17 @@ class CompleteRegistrationRequest {
     required this.deviceId,
     required this.platform,
     required this.appVersion,
+    this.questionnaire,
   });
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+    final Map<String, dynamic> data = <String, dynamic>{
       'email': email,
       'username': username,
       'password': password,
+      'name': name,
+      'phone': phone,
+      'role': role.value,
       if (experience != null) 'experience': experience,
       if (bio != null) 'bio': bio,
       'fcmToken': fcmToken,
@@ -120,6 +131,10 @@ class CompleteRegistrationRequest {
       'platform': platform,
       'appVersion': appVersion,
     };
+    if (questionnaire != null) {
+      data.addAll(questionnaire!.toJson());
+    }
+    return data;
   }
 }
 
