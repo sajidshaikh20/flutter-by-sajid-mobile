@@ -40,9 +40,15 @@ class AddTradeForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
-    final Color pageBg = isDark ? const Color(0xFF0F1218) : AppColors.backgroundLight;
-    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color pageBg = isDark
+        ? const Color(0xFF0F1218)
+        : AppColors.backgroundLight;
+    final Color textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return BlocConsumer<AddTradeCubit, AddTradeState>(
       listener: (BuildContext context, AddTradeState state) async {
@@ -55,12 +61,8 @@ class AddTradeForm extends StatelessWidget {
               ),
             );
             try {
-             // AutoTabsRouter.of(context).setActiveIndex(1);
-              AutoTabsRouter.of(context).setActiveIndex(2);
-              //await context.read<MyTradesCubit>().loadMyTrades(isRefresh: true);
-            } on Object catch (_) {
-
-            }
+              AutoTabsRouter.of(context).setActiveIndex(0);
+            } on Object catch (_) {}
           } else if (state.status == BaseStateStatus.failure) {
             context.scaffoldMessenger.showSnackBar(
               SnackBar(
@@ -69,7 +71,7 @@ class AddTradeForm extends StatelessWidget {
               ),
             );
           }
-          if(context.mounted){
+          if (context.mounted) {
             context.read<AddTradeCubit>().resetError();
           }
         }
@@ -81,13 +83,13 @@ class AddTradeForm extends StatelessWidget {
             backgroundColor: pageBg,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new_rounded, color: textColor, size: 18),
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: textColor,
+                size: 18,
+              ),
               onPressed: () {
-                try {
-                  AutoTabsRouter.of(context).setActiveIndex(0);
-                } on Object catch (_) {
-                  unawaited(context.router.maybePop());
-                }
+                unawaited(context.router.navigate(HomeRoute()));
               },
             ),
             title: Text(
@@ -109,10 +111,7 @@ class AddTradeForm extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       'Create a premium signal with smart entries, SL, TP and auto RR insights.',
-                      style: TextStyle(
-                        color: subtextColor,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: subtextColor, fontSize: 13),
                     ),
                     const SizedBox(height: 20),
                     const MarketTypeDropdown(),

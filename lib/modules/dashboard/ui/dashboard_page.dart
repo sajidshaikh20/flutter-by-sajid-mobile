@@ -46,7 +46,20 @@ class DashboardPage extends BaseResponsiveView {
     final String role = UserProfileService.instance().roleName.toUpperCase();
     final bool isTraderOrAdmin = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
 
-    return AutoTabsRouter(
+    return MultiBlocProvider(
+      providers: <BlocProvider<dynamic>>[
+        BlocProvider<TradesCubit>(
+          create: (BuildContext context) => TradesCubit(
+            repository: TradesRepositoryImpl(),
+          ),
+        ),
+        BlocProvider<MyTradesCubit>(
+          create: (BuildContext context) => MyTradesCubit(
+            repository: MyTradesRepositoryImpl(),
+          ),
+        ),
+      ],
+      child: AutoTabsRouter(
         curve: Curves.easeInOutQuad,
         duration: const Duration(milliseconds: Dimens.milliseconds400),
         transitionBuilder:
@@ -84,71 +97,72 @@ class DashboardPage extends BaseResponsiveView {
             });
           }
 
-        return PopScope(
-          canPop: Navigator.canPop(context),
-          onPopInvokedWithResult: (bool didPop, Object? result) async {
-            await systemBackButtonPressed(tabsRouter, canPop: didPop);
-          },
-          child: Scaffold(
-            body: child,
-            bottomNavigationBar: CustomBottomNavBar(
-              currentIndex: tabsRouter.activeIndex,
-              iconSize: iconSize,
-              onTap: (int index) {
-                if (index == TabState.home.index &&
-                    tabsRouter.activeIndex != index) {
-                  context.read<HomeCubit>().refreshHomeData();
-                }
-                tabsRouter.setActiveIndex(index);
-              },
-              items: <CustomBottomNavBarItem>[
-                CustomBottomNavBarItem(
-                  iconBuilder: (Color color, double size) => Icon(
-                    Icons.home_rounded,
-                    size: size,
-                    color: color,
+          return PopScope(
+            canPop: Navigator.canPop(context),
+            onPopInvokedWithResult: (bool didPop, Object? result) async {
+              await systemBackButtonPressed(tabsRouter, canPop: didPop);
+            },
+            child: Scaffold(
+              body: child,
+              bottomNavigationBar: CustomBottomNavBar(
+                currentIndex: tabsRouter.activeIndex,
+                iconSize: iconSize,
+                onTap: (int index) {
+                  if (index == TabState.home.index &&
+                      tabsRouter.activeIndex != index) {
+                    context.read<HomeCubit>().refreshHomeData();
+                  }
+                  tabsRouter.setActiveIndex(index);
+                },
+                items: <CustomBottomNavBarItem>[
+                  CustomBottomNavBarItem(
+                    iconBuilder: (Color color, double size) => Icon(
+                      Icons.home_rounded,
+                      size: size,
+                      color: color,
+                    ),
+                    routeName: AppPaths.home,
+                    label: strings.navHomeKey,
                   ),
-                  routeName: AppPaths.home,
-                  label: strings.navHomeKey,
-                ),
-                CustomBottomNavBarItem(
-                  iconBuilder: (Color color, double size) => Icon(
-                    Icons.candlestick_chart_outlined,
-                    size: size,
-                    color: color,
+                  CustomBottomNavBarItem(
+                    iconBuilder: (Color color, double size) => Icon(
+                      Icons.candlestick_chart_outlined,
+                      size: size,
+                      color: color,
+                    ),
+                    routeName: AppPaths.myTrades,
+                    label: strings.navMyTradesKey,
                   ),
-                  routeName: AppPaths.myTrades,
-                  label: strings.navMyTradesKey,
-                ),
-                CustomBottomNavBarItem(
-                  isCenterElevated: true,
-                  routeName: isTraderOrAdmin ? AppPaths.addTrade : AppPaths.trades,
-                  label: isTraderOrAdmin ? 'Add Trade' : strings.navTradesKey,
-                ),
+                  CustomBottomNavBarItem(
+                    isCenterElevated: true,
+                    routeName: isTraderOrAdmin ? AppPaths.addTrade : AppPaths.trades,
+                    label: isTraderOrAdmin ? 'Add Trade' : strings.navTradesKey,
+                  ),
 
-                CustomBottomNavBarItem(
-                  iconBuilder: (Color color, double size) => Icon(
-                    Icons.build_circle_outlined,
-                    size: size,
-                    color: color,
+                  CustomBottomNavBarItem(
+                    iconBuilder: (Color color, double size) => Icon(
+                      Icons.build_circle_outlined,
+                      size: size,
+                      color: color,
+                    ),
+                    routeName: AppPaths.tool,
+                    label: strings.navToolKey,
                   ),
-                  routeName: AppPaths.tool,
-                  label: strings.navToolKey,
-                ),
-                CustomBottomNavBarItem(
-                  iconBuilder: (Color color, double size) => Icon(
-                    Icons.settings_outlined,
-                    size: size,
-                    color: color,
+                  CustomBottomNavBarItem(
+                    iconBuilder: (Color color, double size) => Icon(
+                      Icons.settings_outlined,
+                      size: size,
+                      color: color,
+                    ),
+                    routeName: AppPaths.settings,
+                    label: strings.navSettingsKey,
                   ),
-                  routeName: AppPaths.settings,
-                  label: strings.navSettingsKey,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

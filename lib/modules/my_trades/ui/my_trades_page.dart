@@ -15,11 +15,6 @@ class MyTradesPage extends BaseResponsiveView {
   Widget buildMobileWidget(BuildContext context) => _build(context);
 
   Widget _build(BuildContext context) {
-    return BlocProvider<TradesCubit>(
-      create: (BuildContext context) => TradesCubit(
-        repository: TradesRepositoryImpl(),
-      ),
-      child: const MyTradesBodyWidget(),
-    );
+    return const MyTradesBodyWidget();
   }
 }
