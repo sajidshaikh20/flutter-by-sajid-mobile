@@ -222,7 +222,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                                           style: TextStyle(
                                             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                                             fontWeight: FontWeight.w500,
-                                            fontSize: Dimens.fontSize13,
+                                            fontSize: Dimens.fontSize12,
                                           ),
                                           textAlign: TextAlign.start,
                                         ),

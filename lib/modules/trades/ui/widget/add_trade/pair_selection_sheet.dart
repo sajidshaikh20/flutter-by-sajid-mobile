@@ -67,7 +67,7 @@ class PairSelectionSheet extends StatelessWidget {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF2C3240) : Colors.black12,
+                      color: isDark ? AppColors.borderDark : Colors.black12,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -117,13 +117,13 @@ class PairSelectionSheet extends StatelessWidget {
                               color: isSelected
                                   ? AppColors.primaryPurple
                                   : (isDark
-                                      ? const Color(0xFF1E2430)
+                                      ? AppColors.surfaceDark
                                       : AppColors.whiteSmokeShade),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primaryPurple
-                                    : (isDark ? const Color(0xFF2C3240) : Colors.transparent),
+                                    : (isDark ? AppColors.borderDark : Colors.transparent),
                               ),
                             ),
                             child: Text(
@@ -145,12 +145,12 @@ class PairSelectionSheet extends StatelessWidget {
 
                 DecoratedBox(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2430) : const Color(0xFFF2F4F7),
+                    color: isDark ? AppColors.surfaceDark : const Color(0xFFF2F4F7),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: state.pairSearchQuery.isNotEmpty
                           ? AppColors.primaryPurple
-                          : (isDark ? const Color(0xFF2C3240) : Colors.transparent),
+                          : (isDark ? AppColors.borderDark : Colors.transparent),
                       width: 1.2,
                     ),
                   ),
@@ -264,7 +264,7 @@ class PairSelectionSheet extends StatelessWidget {
                                     border: Border.all(
                                       color: isSelected
                                           ? AppColors.primaryPurple
-                                          : (isDark ? const Color(0xFF2C3240) : Colors.transparent),
+                                          : (isDark ? AppColors.borderDark : Colors.transparent),
                                       width: isSelected ? 1.5 : 1.0,
                                     ),
                                   ),

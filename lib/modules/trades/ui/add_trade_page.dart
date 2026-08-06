@@ -41,7 +41,7 @@ class AddTradeForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
     final Color pageBg = isDark
-        ? const Color(0xFF0F1218)
+        ? AppColors.backgroundDark
         : AppColors.backgroundLight;
     final Color textColor = isDark
         ? AppColors.textPrimaryDark
@@ -133,9 +133,11 @@ class AddTradeForm extends StatelessWidget {
                       children: <Widget>[
                         Expanded(child: StopLossField()),
                         SizedBox(width: 12),
-                        Expanded(child: TakeProfitFields()),
+                        Expanded(child: TakeProfit1Field()),
                       ],
                     ),
+                    const SizedBox(height: 18),
+                    const TakeProfit2And3Fields(),
                     const SizedBox(height: 18),
                     const ValidationWarningBox(),
                     const RiskRewardRatioCard(),

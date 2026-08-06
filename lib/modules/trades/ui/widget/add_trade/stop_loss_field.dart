@@ -6,8 +6,8 @@ class StopLossField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
-    final Color fieldBg = isDark ? const Color(0xFF202530) : AppColors.whiteSmokeShade;
-    final Color borderColor = isDark ? const Color(0xFF2C3240) : AppColors.borderLight;
+    final Color fieldBg = isDark ? AppColors.cardDark : AppColors.whiteSmokeShade;
+    final Color borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
     final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
     final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
 

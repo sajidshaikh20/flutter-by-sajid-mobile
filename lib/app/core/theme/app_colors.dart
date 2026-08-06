@@ -19,13 +19,13 @@ class AppColors {
   static const Color primaryPurple = Color(0xFF8B40FF);
   static const Color secondaryPurple = Color(0xFF8A2BE2);
   static const Color accentPink = Color(0xFFFF4F0B);
-  static const Color backgroundDark = Color(0xFF030511);
-  static const Color surfaceDark = Color(0xFF141023);
-  static const Color cardDark = Color(0xFF1B162E);
+  static const Color backgroundDark = Color(0xFF0F1218);
+  static const Color surfaceDark = Color(0xFF181C24);
+  static const Color cardDark = Color(0xFF202530);
   static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB7B3C8);
-  static const Color borderDark = Color(0xFF2B2147);
-  static const Color dividerDark = Color(0xFF211A33);
+  static const Color borderDark = Color(0xFF2C3240);
+  static const Color dividerDark = Color(0xFF1F2430);
   static const Color backgroundLight = Color(0xFFF8F9FD);
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color cardLight = Color(0xFFFFFFFF);
@@ -58,8 +58,8 @@ class AppColors {
   ];
 
   static const List<Color> darkPromoGradient = <Color>[
-    Color(0xFF130E26),
-    Color(0xFF1A1435),
+    Color(0xFF131722),
+    Color(0xFF1C2230),
   ];
 
   static const LinearGradient lightPromoBannerGradient = LinearGradient(
@@ -551,17 +551,17 @@ class AppColors {
   static final Color shimmerBaseColor = Colors.grey.shade300;
 
   /// Represents the base color for dark shimmer effects.
-  static const Color shimmerBaseDarkColor = Color(0xFF1B162E);
+  static const Color shimmerBaseDarkColor = Color(0xFF202530);
 
   /// Represents the highlight color for shimmer effects, a very light shade of gray.
   static final Color shimmerHighlightColor = Colors.grey.shade100;
 
   /// Represents the highlight color for dark shimmer effects.
-  static const Color shimmerHighlightDarkColor = Color(0xFF2E274C);
+  static const Color shimmerHighlightDarkColor = Color(0xFF2F3646);
 
   /// Shimmer placeholder fill shown inside the animated overlay.
   static Color shimmerPlaceholderColor({required bool isDark}) =>
-      isDark ? const Color(0xFF2A2345) : Colors.white;
+      isDark ? const Color(0xFF2E3544) : Colors.white;
 
     /// Represents a standard yellow color.
   Color yellowColor = const Color(0xFFFFBB00);
