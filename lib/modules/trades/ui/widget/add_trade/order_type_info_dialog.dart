@@ -45,10 +45,6 @@ class OrderTypeInfoDialog extends StatelessWidget {
         description = 'A Buy Limit order is an order to buy at a specific price or better (below current market price).';
       case 'SELL_LIMIT':
         description = 'A Sell Limit order is an order to sell at a specific price or better (above current market price).';
-      case 'BUY_STOP':
-        description = 'Buy Stop order executes when price moves above the trigger level.';
-      case 'SELL_STOP':
-        description = 'Sell Stop order executes when price moves below the trigger level.';
     }
 
     return Column(
@@ -87,10 +83,6 @@ class OrderTypeInfoDialog extends StatelessWidget {
               Text('• BUY LIMIT: Placed below live price.', style: TextStyle(fontSize: 11)),
               SizedBox(height: 4),
               Text('• SELL LIMIT: Placed above live price.', style: TextStyle(fontSize: 11)),
-              SizedBox(height: 4),
-              Text('• BUY STOP: Placed above live price.', style: TextStyle(fontSize: 11)),
-              SizedBox(height: 4),
-              Text('• SELL STOP: Placed below live price.', style: TextStyle(fontSize: 11)),
             ],
           ),
         ),

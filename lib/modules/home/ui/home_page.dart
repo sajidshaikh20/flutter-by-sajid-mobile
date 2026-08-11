@@ -321,9 +321,14 @@ class HomeNavigationDrawer extends StatelessWidget {
                   title: 'Training',
                   textColor: textColor,
                   subtitleColor: subtitleColor,
-                  onTap: () async {
+                  onTap: () {
                     Navigator.pop(context); // Close Drawer
-                    await context.router.push(const TrainingRoute());
+                    context.scaffoldMessenger.showSnackBar(
+                      const SnackBar(
+                        content: Text('Training section is under development.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
                   },
                 ),
 

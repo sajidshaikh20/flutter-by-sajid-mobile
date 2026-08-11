@@ -94,8 +94,8 @@ android {
         release {
             debuggable false
             // Disabled to avoid "package appears invalid" on install; re-enable with proper ProGuard rules if needed.
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             multiDexEnabled = true
             // Always sign release: use release keystore if present, else debug (so APK is installable).

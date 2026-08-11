@@ -92,8 +92,6 @@ abstract class AppConstant {
     'SELL_MARKET': 'Sell By Market',
     'BUY_LIMIT': 'Buy Limit',
     'SELL_LIMIT': 'Sell Limit',
-    'BUY_STOP': 'Buy Stop',
-    'SELL_STOP': 'Sell Stop',
   };
 }
 

@@ -88,6 +88,8 @@ class AddTradeState extends BaseState {
     bool? isSlInPips,
     bool? isTp1InPips,
     bool? isSubmitting,
+    bool clearSelectedPair = false,
+    bool clearLiveSocketPrice = false,
   }) =>
       AddTradeState(
         formKey: formKey,
@@ -104,10 +106,10 @@ class AddTradeState extends BaseState {
         redirectRoute: redirectRoute ?? this.redirectRoute,
         selectedMarket: selectedMarket ?? this.selectedMarket,
         currencyPairs: currencyPairs ?? this.currencyPairs,
-        selectedPair: selectedPair ?? this.selectedPair,
+        selectedPair: clearSelectedPair ? null : (selectedPair ?? this.selectedPair),
         isLoadingPairs: isLoadingPairs ?? this.isLoadingPairs,
         pairSearchQuery: pairSearchQuery ?? this.pairSearchQuery,
-        liveSocketPrice: liveSocketPrice ?? this.liveSocketPrice,
+        liveSocketPrice: clearLiveSocketPrice ? null : (liveSocketPrice ?? this.liveSocketPrice),
         selectedTradeType: selectedTradeType ?? this.selectedTradeType,
         isSlInPips: isSlInPips ?? this.isSlInPips,
         isTp1InPips: isTp1InPips ?? this.isTp1InPips,

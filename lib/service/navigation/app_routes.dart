@@ -198,7 +198,6 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: fadePageTransition,
       children: <AutoRoute>[
         CustomRoute<dynamic>(
-
           page: HomeRoute.page,
           path: AppPaths.home,
           durationInMilliseconds: Dimens.milliseconds400,

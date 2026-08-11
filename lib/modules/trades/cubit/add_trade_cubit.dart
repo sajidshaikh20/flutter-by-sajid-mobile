@@ -73,8 +73,8 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
     emit(state.copyWith(
       isLoadingPairs: true,
       currencyPairs: <CurrencyPairResponse>[],
-      selectedPair: null,
-      liveSocketPrice: null,
+      clearSelectedPair: true,
+      clearLiveSocketPrice: true,
     ));
 
     try {
@@ -96,20 +96,18 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
       }
 
       if (pairs != null && pairs.isNotEmpty) {
-        final CurrencyPairResponse initialPair = pairs.first;
-        final double? price = initialPair.currentPrice > 0 ? initialPair.currentPrice : null;
         emit(state.copyWith(
           currencyPairs: pairs,
-          selectedPair: initialPair,
-          liveSocketPrice: price,
+          clearSelectedPair: true,
+          clearLiveSocketPrice: true,
         ));
-        state.entryController.text = getLivePrice().toStringAsFixed(getPricePrecision());
-        updateSocketRegistration(initialPair.symbol);
+        state.entryController.text = '';
+        updateSocketRegistration(null);
       } else {
         emit(state.copyWith(
           currencyPairs: const <CurrencyPairResponse>[],
-          selectedPair: null,
-          liveSocketPrice: null,
+          clearSelectedPair: true,
+          clearLiveSocketPrice: true,
         ));
       }
     } on Object catch (e) {
@@ -127,7 +125,7 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
   void updateSelectedPair(CurrencyPairResponse pair) {
     emit(state.copyWith(
       selectedPair: pair,
-      liveSocketPrice: pair.currentPrice > 0 ? pair.currentPrice : null,
+      clearLiveSocketPrice: true,
     ));
     state.entryController.text = getLivePrice().toStringAsFixed(getPricePrecision());
     updateSocketRegistration(pair.symbol);
@@ -285,6 +283,21 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
   }
 
   Future<void> submitTrade() async {
+    if (state.selectedPair == null) {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'Please select a currency pair.',
+      ));
+      return;
+    }
+    if (state.liveSocketPrice == null || state.liveSocketPrice! <= 0) {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'Waiting for live price update. Please wait.',
+      ));
+      return;
+    }
+
     final Map<String, dynamic>? calculation = calculateTradeRR();
     if (calculation == null || calculation['valid'] == false) {
       emit(state.copyWith(

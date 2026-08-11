@@ -34,7 +34,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                           fontSize: Dimens.fontSize16,
                         ),
                       ),
-                      GestureDetector(
+                     /* GestureDetector(
                         onTap: () {
                           AutoTabsRouter.of(context).setActiveIndex(2);
                         },
@@ -46,7 +46,7 @@ class HomeRecentTradesTable extends StatelessWidget {
                             fontSize: Dimens.fontSize12,
                           ),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                   const SizedBox(height: Dimens.space12),
