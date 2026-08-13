@@ -382,6 +382,28 @@ class HomeNavigationDrawer extends StatelessWidget {
                   endIndent: Dimens.space16,
                 ),
 
+                if (!UserProfileService.instance().isTrader) ...<Widget>[
+                  // My Following Menu
+                  _buildDrawerItem(
+                    context: context,
+                    icon: Icons.people_outline_rounded,
+                    title: 'My Following',
+                    textColor: textColor,
+                    subtitleColor: subtitleColor,
+                    onTap: () async {
+                      Navigator.pop(context); // Close Drawer
+                      await context.router.push(const MyFollowingRoute());
+                    },
+                  ),
+                  Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: dividerColor,
+                    indent: Dimens.space16,
+                    endIndent: Dimens.space16,
+                  ),
+                ],
+
                 if (UserProfileService.instance().isTrader) ...<Widget>[
                   // My Clients Menu
                   _buildDrawerItem(

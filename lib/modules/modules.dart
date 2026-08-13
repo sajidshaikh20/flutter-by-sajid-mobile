@@ -29,3 +29,4 @@ export 'transaction_history/transaction_history.dart';
 export 'verification_pending/verification_pending.dart';
 export 'whatsapp_login/whatsapp_login.dart';
 export 'my_clients/my_clients.dart';
+export 'my_following/my_following.dart';

@@ -3,7 +3,7 @@ description: Weko Pro - A Flutter application for Android, iOS, and Web.
 
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+4
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -69,6 +69,8 @@ dependencies:
   file_picker: ^8.0.3
   syncfusion_flutter_pdfviewer: ^33.2.13
   syncfusion_flutter_datepicker: ^33.2.15
+  purchases_flutter: ^10.8.0
+  purchases_ui_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:

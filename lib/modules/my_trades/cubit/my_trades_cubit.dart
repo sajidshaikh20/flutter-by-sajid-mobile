@@ -175,23 +175,17 @@ class MyTradesCubit extends BaseCubit<MyTradesState> {
   }
 
   void selectFilter(SignalFilter filter) {
-    final Set<SignalFilter> current = Set<SignalFilter>.from(state.selectedFilters);
-    if (filter == SignalFilter.all) {
-      current
-        ..clear()
-        ..add(SignalFilter.all);
+    Set<SignalFilter> newFilters;
+    if (state.selectedFilters.contains(filter) && filter != SignalFilter.all) {
+      newFilters = <SignalFilter>{SignalFilter.all};
     } else {
-      current.remove(SignalFilter.all);
-      if (current.contains(filter)) {
-        current.remove(filter);
-      } else {
-        current.add(filter);
-      }
-      if (current.isEmpty) {
-        current.add(SignalFilter.all);
-      }
+      newFilters = <SignalFilter>{filter};
     }
-    emit(state.copyWith(selectedFilters: current));
+    emit(state.copyWith(
+      selectedFilters: newFilters,
+      offset: 0,
+      hasReachedMax: false,
+    ));
     unawaited(loadMyTrades(isRefresh: true));
   }
 

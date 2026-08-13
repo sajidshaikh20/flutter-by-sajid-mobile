@@ -429,19 +429,19 @@ class _SettingsViewState extends State<SettingsView> {
                                   onTap: () {},
                                 ),*/
                                 _Divider(isDark: isDark),
-                                SettingsListTileWidget(
-                                  icon: Icons.card_membership_outlined,
-                                  title: context.appString.settingsSubscriptionTitleKey,
-                                  subtitle: context.appString.settingsSubscriptionSubtitleKey,
-                                  trailing: Icon(
-                                    Icons.keyboard_arrow_right_rounded,
-                                    color: subtitleColor,
-                                    size: Dimens.size18,
-                                  ),
-                                  onTap: () => context.router.push(const SubscriptionPlansRoute()),
-                                ),
-                                _Divider(isDark: isDark),
                                 if (!profile.isTrader) ...<Widget>[
+                                  SettingsListTileWidget(
+                                    icon: Icons.card_membership_outlined,
+                                    title: context.appString.settingsSubscriptionTitleKey,
+                                    subtitle: context.appString.settingsSubscriptionSubtitleKey,
+                                    trailing: Icon(
+                                      Icons.keyboard_arrow_right_rounded,
+                                      color: subtitleColor,
+                                      size: Dimens.size18,
+                                    ),
+                                    onTap: () => context.router.push(const SubscriptionPlansRoute()),
+                                  ),
+                                  _Divider(isDark: isDark),
                                   SettingsListTileWidget(
                                     icon: Icons.tune_outlined,
                                     title: context.appString.settingsTradingTitleKey,

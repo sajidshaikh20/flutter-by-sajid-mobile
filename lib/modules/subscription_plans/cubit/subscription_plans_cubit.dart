@@ -1,3 +1,4 @@
+import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../../utils/exports.dart';
 
 class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
@@ -226,6 +227,85 @@ class SubscriptionPlansCubit extends BaseCubit<SubscriptionPlansState> {
       emit(state.copyWith(
         status: BaseStateStatus.failure,
         msg: failure?.error?.errorMessage ?? 'Failed to create subscription.',
+      ));
+    }
+  }
+
+  /// Initiates one-time or subscription purchases through RevenueCat using local plan config.
+  Future<void> purchaseWithRevenueCat(BuildContext context) async {
+    final String? selectedId = state.selectedPlanId;
+    if (selectedId == null) {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'Please select a plan to continue.',
+      ));
+      return;
+    }
+
+    final String timeframe = state.isYearly ? 'yearly' : 'monthly';
+    final String lookupKey = '${selectedId}_$timeframe';
+
+    emit(state.copyWith(status: BaseStateStatus.loading));
+
+    try {
+      final RevenueCatService revenueCat = getIt<RevenueCatService>();
+
+      final Offerings? offerings = await revenueCat.getOfferings();
+      if (offerings == null || offerings.current == null) {
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: 'No subscription offerings available at the moment.',
+        ));
+        return;
+      }
+
+      final String? packageId = RevenueCatConfig.planToPackageMap[lookupKey];
+      if (packageId == null) {
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: 'Plan configuration mapping not found.',
+        ));
+        return;
+      }
+
+      Package? packageToPurchase;
+      if (packageId == 'monthly') {
+        packageToPurchase = offerings.current!.monthly;
+      } else if (packageId == 'yearly') {
+        packageToPurchase = offerings.current!.annual;
+      } else if (packageId == 'lifetime') {
+        packageToPurchase = offerings.current!.lifetime;
+      } else {
+        packageToPurchase = offerings.current!.availablePackages.firstWhereOrNull(
+          (Package p) => p.identifier == packageId,
+        );
+      }
+
+      if (packageToPurchase == null) {
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: 'The selected plan is not available in the store configuration.',
+        ));
+        return;
+      }
+
+      final bool purchaseSuccess = await revenueCat.purchasePackage(packageToPurchase);
+
+      if (purchaseSuccess) {
+        emit(state.copyWith(
+          status: BaseStateStatus.success,
+          msg: 'Subscription active! Premium features unlocked.',
+        ));
+      } else {
+        emit(state.copyWith(
+          status: BaseStateStatus.failure,
+          msg: 'Purchase was cancelled or could not be completed.',
+        ));
+      }
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: 'An error occurred during purchase: $e',
       ));
     }
   }

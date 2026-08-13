@@ -1,5 +1,4 @@
 import '../../../../utils/exports.dart';
-import '../../../my_trades/ui/widget/client_trade_card.dart';
 
 /// Paginated list of trade signal cards inside a [CustomScrollView].
 class TradesSignalsListSliverWidget extends StatelessWidget {

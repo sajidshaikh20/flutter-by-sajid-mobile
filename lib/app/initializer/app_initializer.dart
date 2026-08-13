@@ -65,6 +65,19 @@ class AppInitializer {
     await FirebaseInitializer.instance.initialize();
     await getIt<UserProfileService>().loadUserData();
     DebugLog.instance.i('AppInitializer: UserProfileService loaded');
+    
+    // Initialize RevenueCat SDK and login if customer ID is available
+    try {
+      final RevenueCatService revenueCat = getIt<RevenueCatService>();
+      await revenueCat.init();
+      final String? customerId = getIt<UserProfileService>().customerId;
+      if (customerId != null && customerId.isNotEmpty) {
+        await revenueCat.logIn(customerId);
+      }
+    } on Exception catch (e) {
+      DebugLog.instance.e('AppInitializer: RevenueCat initialization failed: $e');
+    }
+
     _setStatusBarTheme();
   }
 

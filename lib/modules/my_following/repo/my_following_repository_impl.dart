@@ -1,8 +1,9 @@
 import '../../../utils/exports.dart';
+import 'my_following_repository.dart';
 
-class MyTradesRepositoryImpl extends MyTradesRepository {
+class MyFollowingRepositoryImpl extends MyFollowingRepository {
   @override
-  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getMyTrades({
+  Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> getWishlistTrades({
     String? status,
     int? limit,
     int? offset,
@@ -33,18 +34,12 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
       params['endDate'] = toDate;
     }
 
-    final String role = UserProfileService.instance().roleName.toUpperCase();
-    final String endUrl = (role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN')
-        ? Apis.traderMyTrades
-        : Apis.clientMyTrades;
-
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
-          endUrl: endUrl,
+          endUrl: Apis.getFollowing,
           params: params,
         );
-
 
     return getParsedResponseHandler(
       responseHandler: response,

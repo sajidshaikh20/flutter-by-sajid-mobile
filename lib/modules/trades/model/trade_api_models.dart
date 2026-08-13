@@ -145,8 +145,8 @@ class TradeResponse {
   static Map<String, dynamic> _mergeTradeJson(Map<String, dynamic> json) {
     if (json['trade'] is Map<String, dynamic>) {
       return <String, dynamic>{
-        ...json['trade'] as Map<String, dynamic>,
         ...json,
+        ...json['trade'] as Map<String, dynamic>,
       };
     }
     return json;

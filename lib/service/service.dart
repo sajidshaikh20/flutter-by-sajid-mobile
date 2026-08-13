@@ -11,5 +11,6 @@ export 'network/network.dart';
 export 'notification/awesome_notification_manager.dart';
 export 'notification/notification_manager.dart';
 export 'permission/permission_manager.dart';
+export 'purchase/revenue_cat_service.dart';
 
 

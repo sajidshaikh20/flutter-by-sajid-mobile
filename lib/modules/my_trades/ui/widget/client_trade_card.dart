@@ -227,7 +227,12 @@ class ClientTradeCard extends StatelessWidget {
               onPressed: () async {
                 await context.router.push(TradingOverviewRoute(signal: signal));
                 if (context.mounted) {
-                  unawaited(context.read<MyTradesCubit>().loadMyTrades(isRefresh: true));
+                  try {
+                    unawaited(context.read<MyFollowingCubit>().loadWishlistTrades(isRefresh: true));
+                  } on Object catch (_) {}
+                  try {
+                    unawaited(context.read<MyTradesCubit>().loadMyTrades(isRefresh: true));
+                  } on Object catch (_) {}
                 }
               },
               style: ElevatedButton.styleFrom(

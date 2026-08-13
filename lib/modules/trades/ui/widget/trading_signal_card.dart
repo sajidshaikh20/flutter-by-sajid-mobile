@@ -746,11 +746,16 @@ class TradingSignalCard extends StatelessWidget {
                     onTap: () async {
                       await context.router.push(TradingOverviewRoute(signal: signal));
                       if (context.mounted) {
-                        if (showTakeTrade) {
-                          unawaited(context.read<TradesCubit>().loadTrades());
-                        } else {
-                          unawaited(context.read<MyTradesCubit>().loadMyTrades(isRefresh: true));
-                        }
+                        try {
+                          unawaited(context.read<MyFollowingCubit>().loadWishlistTrades(isRefresh: true));
+                        } on Object catch (_) {}
+                        try {
+                          if (showTakeTrade) {
+                            unawaited(context.read<TradesCubit>().loadTrades());
+                          } else {
+                            unawaited(context.read<MyTradesCubit>().loadMyTrades(isRefresh: true));
+                          }
+                        } on Object catch (_) {}
                       }
                     },
                     child: Container(

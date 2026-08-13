@@ -186,6 +186,13 @@ class AppRouter extends RootStackRouter {
       reverseDurationInMilliseconds: Dimens.milliseconds400,
       transitionsBuilder: fadePageTransition,
     ),
+    CustomRoute<dynamic>(
+      page: MyFollowingRoute.page,
+      path: AppPaths.myFollowing,
+      durationInMilliseconds: Dimens.milliseconds400,
+      reverseDurationInMilliseconds: Dimens.milliseconds400,
+      transitionsBuilder: fadePageTransition,
+    ),
 
 
 

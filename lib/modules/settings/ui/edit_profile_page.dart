@@ -202,24 +202,20 @@ class _EditProfileFormState extends State<EditProfileForm> {
 
   Future<void> _pickImage(ImageSource source) async {
     final PermissionManager permManager = PermissionManager();
-    bool hasPermission = false;
     
     if (source == ImageSource.camera) {
-      hasPermission = await permManager.requestCameraPermission();
-    } else {
-      hasPermission = await permManager.requestPhotosPermission();
-    }
-
-    if (!hasPermission) {
-      if (mounted) {
-        context.scaffoldMessenger.showSnackBar(
-          const SnackBar(
-            content: Text('Permission denied. Please grant permission in settings.'),
-            backgroundColor: AppColors.errorColor,
-          ),
-        );
+      final bool hasPermission = await permManager.requestCameraPermission();
+      if (!hasPermission) {
+        if (mounted) {
+          context.scaffoldMessenger.showSnackBar(
+            const SnackBar(
+              content: Text('Camera permission denied. Please grant permission in settings.'),
+              backgroundColor: AppColors.errorColor,
+            ),
+          );
+        }
+        return;
       }
-      return;
     }
 
     try {

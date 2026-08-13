@@ -149,6 +149,9 @@ mixin Apis {
   /// Endpoint to unfollow a trader
   static String unfollowTrader(String traderPublicId) => '$subBaseUrl/client/$traderPublicId/unfollow';
 
+  /// Endpoint to get the list of traders the client is following
+  static const String getFollowing = '$subBaseUrl/trade/wishlist';
+
   /// Endpoint to get leaderboard
   static const String getLeaderboard = '$subBaseUrl/common/leaderboard';
 

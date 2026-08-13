@@ -19,6 +19,7 @@ const String _webApiKey = 'webApiKey';
 const String _authDomain = 'authDomain';
 const String _storageBucket = 'storageBucket';
 const String _measurementId = 'measurementId';
+const String _revenueCatApiKey = 'revenueCatApiKey';
 
 ///configBaseUrl
 String get configBaseUrl {
@@ -155,4 +156,9 @@ String get configStorageBucket {
 ///configMeasurementId
 String get configMeasurementId {
   return const String.fromEnvironment(_measurementId);
+}
+
+///configRevenueCatApiKey
+String get configRevenueCatApiKey {
+  return const String.fromEnvironment(_revenueCatApiKey);
 }

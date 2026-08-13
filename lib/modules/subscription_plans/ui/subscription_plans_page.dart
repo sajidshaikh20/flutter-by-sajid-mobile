@@ -218,9 +218,7 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
 
                 // Premium Gradient Continue Button
                 GestureDetector(
-                  onTap: () {
-
-                  },
+                  onTap: () => unawaited(context.read<SubscriptionPlansCubit>().purchaseWithRevenueCat(context)),
                   child: Container(
                     height: 52,
                     decoration: BoxDecoration(
@@ -256,6 +254,62 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
                       ],
                     ),
                   ),
+                ),
+                const SizedBox(height: Dimens.space12),
+
+                // Restore Purchases & Manage Subscriptions
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: () async {
+                        unawaited(EasyLoading.show(status: 'Restoring...'));
+                        final bool restored = await getIt<RevenueCatService>().restorePurchases();
+                        unawaited(EasyLoading.dismiss());
+                        if (restored) {
+                          if (context.mounted) {
+                            context.scaffoldMessenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('Purchases restored successfully!'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                            context.router.back();
+                          }
+                        } else {
+                          if (context.mounted) {
+                            context.scaffoldMessenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('No active subscriptions found to restore.'),
+                                backgroundColor: AppColors.errorColor,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      child: CustomTextLabelWidget(
+                        label: 'Restore Purchases',
+                        style: TextStyle(
+                          fontSize: Dimens.fontSize12,
+                          color: subtextColor,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => unawaited(getIt<RevenueCatService>().presentCustomerCenter()),
+                      child: CustomTextLabelWidget(
+                        label: 'Manage Subscriptions',
+                        style: TextStyle(
+                          fontSize: Dimens.fontSize12,
+                          color: subtextColor,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

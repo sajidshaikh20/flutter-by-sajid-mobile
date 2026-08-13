@@ -21,6 +21,7 @@ FutureOr<void> setupLocator() {
     ..registerSingleton<DebugLog>(DebugLog())
     ..registerSingleton<JsonDataManagerService>(JsonDataManagerService())
     ..registerLazySingleton<UserProfileService>(UserProfileService.new)
+    ..registerLazySingleton<RevenueCatService>(RevenueCatService.new)
 
   // Utilities — lazy unless used instantly
     ..registerLazySingleton<AESEncryption>(AESEncryption.new)

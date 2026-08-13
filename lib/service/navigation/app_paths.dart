@@ -121,4 +121,7 @@ abstract class AppPaths {
 
   /// My Clients screen route.
   static const String myClients = '/my_clients';
+
+  /// My Following screen route.
+  static const String myFollowing = '/my_following';
 }
