@@ -95,7 +95,6 @@ flutter:
   assets:
     - assets/png/
     - assets/svgs/
-    - assets/json/
     - assets/language/
     - assets/webp/
 

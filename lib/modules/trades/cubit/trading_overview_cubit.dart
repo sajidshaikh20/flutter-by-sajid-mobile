@@ -70,6 +70,41 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
     }
   }
 
+  Future<void> closeTrade({
+    String? outcome,
+    double? exitPrice,
+    double? resultInPips,
+    String? note,
+  }) async {
+    emit(state.copyWith(status: BaseStateStatus.loading));
+    final ResponseHandler<BaseResponse<dynamic>> response = await repository.closeTrade(
+      tradePublicId: signal.publicId,
+      outcome: outcome,
+      exitPrice: exitPrice,
+      resultInPips: resultInPips,
+      note: note,
+    );
+
+    if (response.isSuccess()) {
+      final TradingSignalModel closedSignal = state.signal.copyWith(
+        status: 'CLOSED',
+        outcome: outcome ?? state.signal.outcome,
+        resultInPips: resultInPips ?? state.signal.resultInPips,
+      );
+      emit(state.copyWith(
+        status: BaseStateStatus.success,
+        signal: closedSignal,
+        msg: 'Trade closed successfully!',
+      ));
+    } else {
+      final OnFailureResponse<BaseResponse<dynamic>>? failure = response.getFailureInstance();
+      emit(state.copyWith(
+        status: BaseStateStatus.failure,
+        msg: failure?.error?.errorMessage ?? 'Failed to close trade.',
+      ));
+    }
+  }
+
   void _subscribeToSocketUpdates() {
     // Register the symbol to receive price updates only if trade is ACTIVE or PENDING
     final String initialStatus = state.signal.status.toUpperCase();
@@ -80,6 +115,7 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
 
     // Listen for live price updates
     _priceSubscription = MainConfig.chatSocketConnection.priceStream.listen((Map<String, dynamic> data) {
+      if (isClosed) return;
       final String? tradePublicId = data['tradePublicId'] as String?;
       final String? tradeStatus = data['tradeStatus'] as String?;
       
@@ -125,6 +161,7 @@ class TradingOverviewCubit extends BaseCubit<TradingOverviewState> {
 
     // Listen for trade status updates
     _tradeSubscription = MainConfig.chatSocketConnection.tradeStream.listen((Map<String, dynamic> data) {
+      if (isClosed) return;
       final String? tradePublicId = data['tradePublicId'] as String?;
       if (tradePublicId != null && tradePublicId == signal.publicId) {
         final String? status = data['status'] as String?;

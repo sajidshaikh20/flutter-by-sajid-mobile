@@ -20,6 +20,7 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
   void _subscribeLivePrice() {
     unawaited(_priceSubscription?.cancel());
     _priceSubscription = MainConfig.chatSocketConnection.priceStream.listen((Map<String, dynamic> data) {
+      if (isClosed) return;
       final String? symbol = data['symbol'] as String?;
       final double? price = double.tryParse(data['price']?.toString() ?? '');
       if (symbol != null && price != null && price > 0) {
@@ -80,6 +81,7 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
     try {
       ResponseHandler<BaseResponse<List<CurrencyPairResponse>>> response =
           await repository.getCurrencyPairs(market: state.selectedMarket);
+      if (isClosed) return;
       List<CurrencyPairResponse>? pairs =
           response.getSuccessInstance()?.response.data;
 
@@ -87,13 +89,17 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
         response = await repository.getCurrencyPairs(
           market: state.selectedMarket.toLowerCase(),
         );
+        if (isClosed) return;
         pairs = response.getSuccessInstance()?.response.data;
       }
 
       if (pairs == null || pairs.isEmpty) {
         response = await repository.getCurrencyPairs(market: '');
+        if (isClosed) return;
         pairs = response.getSuccessInstance()?.response.data;
       }
+
+      if (isClosed) return;
 
       if (pairs != null && pairs.isNotEmpty) {
         emit(state.copyWith(
@@ -113,7 +119,9 @@ class AddTradeCubit extends BaseCubit<AddTradeState> {
     } on Object catch (e) {
       debugPrint('Failed to load currency pairs in Cubit: $e');
     } finally {
-      emit(state.copyWith(isLoadingPairs: false));
+      if (!isClosed) {
+        emit(state.copyWith(isLoadingPairs: false));
+      }
     }
   }
 

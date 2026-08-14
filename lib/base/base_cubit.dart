@@ -26,6 +26,13 @@ abstract class BaseCubit<T extends BaseState> extends Cubit<T> {
   /// Creates a [BaseCubit] with the provided initial state.
   BaseCubit(super.initialState);
 
+  @override
+  void emit(T state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   /// Returns a state where any redirection information has been reset.
   T getResetRedirectionState();
 
@@ -34,11 +41,15 @@ abstract class BaseCubit<T extends BaseState> extends Cubit<T> {
 
   /// Emits a state with redirection cleared.
   void resetRedirection() {
-    emit(getResetRedirectionState());
+    if (!isClosed) {
+      emit(getResetRedirectionState());
+    }
   }
 
   /// Emits a state with error cleared.
   void resetError() {
-    emit(getResetErrorState());
+    if (!isClosed) {
+      emit(getResetErrorState());
+    }
   }
 }

@@ -1,4 +1,5 @@
 import '../../../utils/exports.dart';
+import 'widget/close_trade_dialog.dart';
 
 @RoutePage()
 /// Trading overview page showing details of a specific trading signal.
@@ -126,6 +127,9 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
         } else if (currentSignal.isCancelled) {
           statusBgColor = AppColors.neutralColor;
         }
+
+        final bool isTraderOrAdmin = UserProfileService.instance().isTrader ||
+            UserProfileService.instance().roleName.toUpperCase() == 'ADMIN';
 
         final double entryPrice = currentSignal.entryPrice;
         final double currentPrice = state.livePrice;
@@ -348,33 +352,46 @@ class _TradingOverviewViewBodyState extends State<TradingOverviewViewBody> {
                     ),
                   ),
                   child: SafeArea(
-                    child: GestureDetector(
-                      onTap: state.isTaken
-                          ? null
-                          : () {
-                              if (currentSignal.publicId.isNotEmpty) {
-                                unawaited(context.read<TradingOverviewCubit>().takeTrade(currentSignal.publicId));
-                              }
-                            },
-                      child: Container(
-                        width: double.infinity,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: state.isTaken ? null : AppColors.primaryButtonGradient,
-                          color: state.isTaken ? (isDark ? AppColors.borderDark : AppColors.borderLight) : null,
-                          borderRadius: BorderRadius.circular(Dimens.radius12),
-                        ),
-                        alignment: Alignment.center,
-                        child: CustomTextLabelWidget(
-                          label: state.isTaken ? 'Taken' : 'Trade Now',
-                          style: TextStyle(
-                            color: state.isTaken ? subtextColor : AppColors.whiteColor,
-                            fontWeight: FontWeight.w800,
-                            fontSize: Dimens.fontSize14,
+                    child: isTraderOrAdmin
+                        ? CustomButtonWidget(
+                            title: 'Close Trade',
+                            height: 48,
+                            borderRadius: Dimens.radius12,
+                            backgroundColor: AppColors.errorColor,
+                            titleTextStyle: context.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: Dimens.fontSize14,
+                              color: Colors.white,
+                            ),
+                            onTap: () => showCloseTradeModal(context, currentSignal, initialLivePrice: state.livePrice),
+                          )
+                        : GestureDetector(
+                            onTap: state.isTaken
+                                ? null
+                                : () {
+                                    if (currentSignal.publicId.isNotEmpty) {
+                                      unawaited(context.read<TradingOverviewCubit>().takeTrade(currentSignal.publicId));
+                                    }
+                                  },
+                            child: Container(
+                              width: double.infinity,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                gradient: state.isTaken ? null : AppColors.primaryButtonGradient,
+                                color: state.isTaken ? (isDark ? AppColors.borderDark : AppColors.borderLight) : null,
+                                borderRadius: BorderRadius.circular(Dimens.radius12),
+                              ),
+                              alignment: Alignment.center,
+                              child: CustomTextLabelWidget(
+                                label: state.isTaken ? 'Taken' : 'Trade Now',
+                                style: TextStyle(
+                                  color: state.isTaken ? subtextColor : AppColors.whiteColor,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: Dimens.fontSize14,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ),
                 )
               : null,

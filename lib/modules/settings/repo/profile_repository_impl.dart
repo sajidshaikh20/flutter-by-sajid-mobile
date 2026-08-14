@@ -209,4 +209,31 @@ class ProfileRepositoryImpl extends ProfileRepository {
       },
     );
   }
+
+  @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final Map<String, dynamic> data = <String, dynamic>{
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+    };
+
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.changePassword,
+          apiType: ApiType.post,
+          data: data,
+          showLoader: true,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
+      },
+    );
+  }
 }

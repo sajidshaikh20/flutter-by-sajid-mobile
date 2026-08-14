@@ -17,4 +17,8 @@ abstract class ProfileRepository extends BaseRepository {
     double? amountBalance,
     double? riskPercentage,
   });
+  Future<ResponseHandler<BaseResponse<dynamic>>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

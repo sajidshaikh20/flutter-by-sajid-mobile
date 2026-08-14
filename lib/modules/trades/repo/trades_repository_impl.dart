@@ -12,8 +12,6 @@ class TradesRepositoryImpl extends TradesRepository {
     final Map<String, dynamic> params = <String, dynamic>{};
     if (status != null && status.isNotEmpty) {
       params['status'] = status;
-      params['tradeStatus'] = status;
-      params['clientTradeStatus'] = status;
     }
     if (limit != null) {
       params['limit'] = limit;
@@ -23,14 +21,9 @@ class TradesRepositoryImpl extends TradesRepository {
     }
     if (fromDate != null && fromDate.isNotEmpty) {
       params['fromDate'] = fromDate;
-      params['from'] = fromDate;
-      params['startDate'] = fromDate;
-      params['createdDate'] = fromDate;
     }
     if (toDate != null && toDate.isNotEmpty) {
       params['toDate'] = toDate;
-      params['to'] = toDate;
-      params['endDate'] = toDate;
     }
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
@@ -43,15 +36,17 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<List<TradeResponse>>.fromJson(
-          value,
-          (Object? json) {
-            final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
-            return list
-                .map((dynamic t) => TradeResponse.fromJson(t as Map<String, dynamic>))
-                .toList();
-          },
-        );
+        return BaseResponse<List<TradeResponse>>.fromJson(value, (
+          Object? json,
+        ) {
+          final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
+          return list
+              .map(
+                (dynamic t) =>
+                    TradeResponse.fromJson(t as Map<String, dynamic>),
+              )
+              .toList();
+        });
       },
     );
   }
@@ -79,21 +74,25 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<List<TradeResponse>>.fromJson(
-          value,
-          (Object? json) {
-            final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
-            return list
-                .map((dynamic t) => TradeResponse.fromJson(t as Map<String, dynamic>))
-                .toList();
-          },
-        );
+        return BaseResponse<List<TradeResponse>>.fromJson(value, (
+          Object? json,
+        ) {
+          final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
+          return list
+              .map(
+                (dynamic t) =>
+                    TradeResponse.fromJson(t as Map<String, dynamic>),
+              )
+              .toList();
+        });
       },
     );
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<dynamic>>> takeTrade(String tradePublicId) async {
+  Future<ResponseHandler<BaseResponse<dynamic>>> takeTrade(
+    String tradePublicId,
+  ) async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
@@ -105,10 +104,7 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<dynamic>.fromJson(
-          value,
-          (Object? json) => json,
-        );
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
       },
     );
   }
@@ -117,9 +113,7 @@ class TradesRepositoryImpl extends TradesRepository {
   Future<ResponseHandler<BaseResponse<List<TradeResponse>>>> searchTrades({
     required String keyword,
   }) async {
-    final Map<String, dynamic> params = <String, dynamic>{
-      'keyword': keyword,
-    };
+    final Map<String, dynamic> params = <String, dynamic>{'keyword': keyword};
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
@@ -131,21 +125,25 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<List<TradeResponse>>.fromJson(
-          value,
-          (Object? json) {
-            final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
-            return list
-                .map((dynamic t) => TradeResponse.fromJson(t as Map<String, dynamic>))
-                .toList();
-          },
-        );
+        return BaseResponse<List<TradeResponse>>.fromJson(value, (
+          Object? json,
+        ) {
+          final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
+          return list
+              .map(
+                (dynamic t) =>
+                    TradeResponse.fromJson(t as Map<String, dynamic>),
+              )
+              .toList();
+        });
       },
     );
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<TradeResponse>>>  getTradeDetails(String tradePublicId) async {
+  Future<ResponseHandler<BaseResponse<TradeResponse>>> getTradeDetails(
+    String tradePublicId,
+  ) async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
@@ -155,20 +153,16 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<TradeResponse>.fromJson(
-          value,
-          (Object? json) {
-            return TradeResponse.fromJson(json as Map<String, dynamic>);
-          },
-        );
+        return BaseResponse<TradeResponse>.fromJson(value, (Object? json) {
+          return TradeResponse.fromJson(json as Map<String, dynamic>);
+        });
       },
     );
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<List<CurrencyPairResponse>>>> getCurrencyPairs({
-    required String market,
-  }) async {
+  Future<ResponseHandler<BaseResponse<List<CurrencyPairResponse>>>>
+  getCurrencyPairs({required String market}) async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
@@ -179,21 +173,25 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<List<CurrencyPairResponse>>.fromJson(
-          value,
-          (Object? json) {
-            final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
-            return list
-                .map((dynamic t) => CurrencyPairResponse.fromJson(t as Map<String, dynamic>))
-                .toList();
-          },
-        );
+        return BaseResponse<List<CurrencyPairResponse>>.fromJson(value, (
+          Object? json,
+        ) {
+          final List<dynamic> list = json as List<dynamic>? ?? <dynamic>[];
+          return list
+              .map(
+                (dynamic t) =>
+                    CurrencyPairResponse.fromJson(t as Map<String, dynamic>),
+              )
+              .toList();
+        });
       },
     );
   }
 
   @override
-  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(CreateSignalRequest request) async {
+  Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(
+    CreateSignalRequest request,
+  ) async {
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
         .apiClient
         .handleApiCall<Map<String, dynamic>>(
@@ -206,12 +204,43 @@ class TradesRepositoryImpl extends TradesRepository {
     return getParsedResponseHandler(
       responseHandler: response,
       parser: (Map<String, dynamic> value) {
-        return BaseResponse<dynamic>.fromJson(
-          value,
-          (Object? json) => json,
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
+      },
+    );
+  }
+
+  //https://thevinaymalviya.org/api/trade/TRCC78E0/status
+  @override
+  Future<ResponseHandler<BaseResponse<dynamic>>> closeTrade({
+    required String tradePublicId,
+    String? outcome,
+    double? exitPrice,
+    double? resultInPips,
+    String? note,
+  }) async {
+    final String endUrl = Apis.closeTrade(tradePublicId);
+
+    final Map<String, dynamic> data = <String, dynamic>{
+      'status': 'CLOSED',
+      if (outcome != null && outcome.isNotEmpty) 'outcome': outcome,
+      if (exitPrice != null) 'exitPrice': exitPrice,
+      if (resultInPips != null) 'resultInPips': resultInPips,
+      if (note != null && note.isNotEmpty) 'note': note,
+    };
+
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: endUrl,
+          apiType: ApiType.patch,
+          data: data,
         );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<dynamic>.fromJson(value, (Object? json) => json);
       },
     );
   }
 }
-

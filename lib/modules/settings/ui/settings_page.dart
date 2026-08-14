@@ -1,5 +1,6 @@
-import '../../../utils/exports.dart';
 import '../../../app/core/widgets/profile_image_preview_page.dart';
+import '../../../utils/exports.dart';
+import 'widget/change_password_dialog.dart';
 
 @RoutePage()
 class SettingsPage extends BaseResponsiveView {
@@ -365,15 +366,15 @@ class _SettingsViewState extends State<SettingsView> {
                                 ),
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(
-                                  icon: Icons.lock_outline_rounded,
-                                  title: context.appString.settingsSecurityTitleKey,
-                                  subtitle: context.appString.settingsSecuritySubtitleKey,
+                                  icon: Icons.lock_reset_rounded,
+                                  title: 'Change Password',
+                                  subtitle: 'Update your account password',
                                   trailing: Icon(
                                     Icons.keyboard_arrow_right_rounded,
                                     color: subtitleColor,
                                     size: Dimens.size18,
                                   ),
-                                  onTap: () => _showComingSoon('Security'),
+                                  onTap: () => showChangePasswordModal(context),
                                 ),
                                 _Divider(isDark: isDark),
                                 SettingsListTileWidget(
@@ -644,18 +645,18 @@ class _SettingsViewState extends State<SettingsView> {
                           child: InkWell(
                             onTap: _showDeleteAccountConfirmation,
                             borderRadius: BorderRadius.circular(Dimens.radius12),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: Dimens.space16),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: Dimens.space16),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  const Icon(
+                                  Icon(
                                     Icons.delete_forever_rounded,
                                     color: AppColors.errorColor,
                                     size: Dimens.size20,
                                   ),
-                                  const SizedBox(width: Dimens.space10),
-                                  const CustomTextLabelWidget(
+                                  SizedBox(width: Dimens.space10),
+                                  CustomTextLabelWidget(
                                     label: 'Delete Account',
                                     style: TextStyle(
                                       color: AppColors.errorColor,

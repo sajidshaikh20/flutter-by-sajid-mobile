@@ -13,8 +13,6 @@ class MyFollowingRepositoryImpl extends MyFollowingRepository {
     final Map<String, dynamic> params = <String, dynamic>{};
     if (status != null && status.isNotEmpty) {
       params['status'] = status;
-      params['tradeStatus'] = status;
-      params['clientTradeStatus'] = status;
     }
     if (limit != null) {
       params['limit'] = limit;
@@ -24,14 +22,9 @@ class MyFollowingRepositoryImpl extends MyFollowingRepository {
     }
     if (fromDate != null && fromDate.isNotEmpty) {
       params['fromDate'] = fromDate;
-      params['from'] = fromDate;
-      params['startDate'] = fromDate;
-      params['createdDate'] = fromDate;
     }
     if (toDate != null && toDate.isNotEmpty) {
       params['toDate'] = toDate;
-      params['to'] = toDate;
-      params['endDate'] = toDate;
     }
 
     final ResponseHandler<Map<String, dynamic>?> response = await MainConfig

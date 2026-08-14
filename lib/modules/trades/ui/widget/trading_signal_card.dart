@@ -14,19 +14,30 @@ class TradingSignalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = context.isDark;
     final Color cardBg = isDark ? AppColors.cardDark : AppColors.cardLight;
-    final Color textColor = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final Color borderColor = isDark ? AppColors.borderDark : AppColors.borderLight.withValues(alpha: 0.5);
+    final Color textColor = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final Color subtextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final Color borderColor = isDark
+        ? AppColors.borderDark
+        : AppColors.borderLight.withValues(alpha: 0.5);
 
     // Green color selection
-    final Color themeGreen = isDark ? AppColors.successColor : AppColors.greenTextColor;
+    final Color themeGreen = isDark
+        ? AppColors.successColor
+        : AppColors.greenTextColor;
 
     // Status colors
     Widget statusBadge = const SizedBox.shrink();
 
     if (signal.isActive) {
       statusBadge = Container(
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.space8, vertical: Dimens.space2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.space8,
+          vertical: Dimens.space2,
+        ),
         decoration: BoxDecoration(
           color: themeGreen.withValues(alpha: isDark ? 0.15 : 0.1),
           borderRadius: BorderRadius.circular(Dimens.radius4),
@@ -56,7 +67,10 @@ class TradingSignalCard extends StatelessWidget {
       );
     } else if (signal.isPending) {
       statusBadge = Container(
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.space8, vertical: Dimens.space2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.space8,
+          vertical: Dimens.space2,
+        ),
         decoration: BoxDecoration(
           color: AppColors.warningColor.withValues(alpha: isDark ? 0.15 : 0.1),
           borderRadius: BorderRadius.circular(Dimens.radius4),
@@ -87,9 +101,14 @@ class TradingSignalCard extends StatelessWidget {
     } else if (signal.isClosed) {
       final bool isWin = signal.outcome == 'WIN';
       statusBadge = Container(
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.space8, vertical: Dimens.space2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.space8,
+          vertical: Dimens.space2,
+        ),
         decoration: BoxDecoration(
-          color: (isWin ? themeGreen : AppColors.errorColor).withValues(alpha: isDark ? 0.15 : 0.1),
+          color: (isWin ? themeGreen : AppColors.errorColor).withValues(
+            alpha: isDark ? 0.15 : 0.1,
+          ),
           borderRadius: BorderRadius.circular(Dimens.radius4),
         ),
         child: Row(
@@ -114,7 +133,10 @@ class TradingSignalCard extends StatelessWidget {
       );
     } else if (signal.isCancelled) {
       statusBadge = Container(
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.space8, vertical: Dimens.space2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.space8,
+          vertical: Dimens.space2,
+        ),
         decoration: BoxDecoration(
           color: AppColors.neutralColor.withValues(alpha: isDark ? 0.15 : 0.1),
           borderRadius: BorderRadius.circular(Dimens.radius4),
@@ -202,7 +224,8 @@ class TradingSignalCard extends StatelessWidget {
           const SizedBox(height: Dimens.space16),
 
           // Mid Section 1: Entry, SL, TP (or TP 1, TP 2, TP 3 on separate line if multiple)
-          if (signal.takeProfitTwo != null || signal.takeProfitThree != null) ...<Widget>[
+          if (signal.takeProfitTwo != null ||
+              signal.takeProfitThree != null) ...<Widget>[
             Row(
               children: <Widget>[
                 Expanded(
@@ -217,7 +240,9 @@ class TradingSignalCard extends StatelessWidget {
                   child: _ValueColumn(
                     label: 'Stop Loss',
                     value: signal.stopLoss.toString(),
-                    subValue: signal.slPips != null ? '${signal.slPips!.toStringAsFixed(2)} Pips' : null,
+                    subValue: signal.slPips != null
+                        ? '${signal.slPips!.toStringAsFixed(2)} Pips'
+                        : null,
                     valueColor: AppColors.errorColor,
                     isDark: isDark,
                     alignment: CrossAxisAlignment.center,
@@ -235,7 +260,9 @@ class TradingSignalCard extends StatelessWidget {
                     value: (signal.takeProfitOne != null)
                         ? signal.takeProfitOne.toString()
                         : signal.takeProfit.toString(),
-                    subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
+                    subValue: signal.tpPips != null
+                        ? '${signal.tpPips!.toStringAsFixed(2)} Pips'
+                        : null,
                     valueColor: themeGreen,
                     isDark: isDark,
                   ),
@@ -278,7 +305,9 @@ class TradingSignalCard extends StatelessWidget {
                   child: _ValueColumn(
                     label: 'Stop Loss',
                     value: signal.stopLoss.toString(),
-                    subValue: signal.slPips != null ? '${signal.slPips!.toStringAsFixed(2)} Pips' : null,
+                    subValue: signal.slPips != null
+                        ? '${signal.slPips!.toStringAsFixed(2)} Pips'
+                        : null,
                     valueColor: AppColors.errorColor,
                     isDark: isDark,
                     alignment: CrossAxisAlignment.center,
@@ -288,7 +317,9 @@ class TradingSignalCard extends StatelessWidget {
                   child: _ValueColumn(
                     label: 'Take Profit',
                     value: signal.takeProfit.toString(),
-                    subValue: signal.tpPips != null ? '${signal.tpPips!.toStringAsFixed(2)} Pips' : null,
+                    subValue: signal.tpPips != null
+                        ? '${signal.tpPips!.toStringAsFixed(2)} Pips'
+                        : null,
                     valueColor: themeGreen,
                     isDark: isDark,
                     alignment: CrossAxisAlignment.end,
@@ -305,7 +336,8 @@ class TradingSignalCard extends StatelessWidget {
                   Expanded(
                     child: _ValueColumn(
                       label: 'Risk Amount',
-                      value: '\$${signal.riskAmount!.toStringAsFixed(signal.riskAmount! % 1 == 0 ? 0 : 2)}',
+                      value:
+                          '\$${signal.riskAmount!.toStringAsFixed(signal.riskAmount! % 1 == 0 ? 0 : 2)}',
                       valueColor: textColor,
                       isDark: isDark,
                     ),
@@ -387,24 +419,37 @@ class TradingSignalCard extends StatelessWidget {
                             CustomTextLabelWidget(
                               label: signal.pips,
                               style: TextStyle(
-                                color: (signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor,
+                                color: (signal.pips.startsWith('+'))
+                                    ? themeGreen
+                                    : AppColors.errorColor,
                                 fontWeight: FontWeight.w800,
                                 fontSize: Dimens.fontSize14,
                               ),
                             ),
                             const SizedBox(height: Dimens.space4),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: Dimens.space6, vertical: Dimens.space2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: Dimens.space6,
+                                vertical: Dimens.space2,
+                              ),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: ((signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor).withValues(alpha: 0.5),
+                                  color:
+                                      ((signal.pips.startsWith('+'))
+                                              ? themeGreen
+                                              : AppColors.errorColor)
+                                          .withValues(alpha: 0.5),
                                 ),
-                                borderRadius: BorderRadius.circular(Dimens.radius4),
+                                borderRadius: BorderRadius.circular(
+                                  Dimens.radius4,
+                                ),
                               ),
                               child: CustomTextLabelWidget(
                                 label: 'PIPS',
                                 style: TextStyle(
-                                  color: (signal.pips.startsWith('+')) ? themeGreen : AppColors.errorColor,
+                                  color: (signal.pips.startsWith('+'))
+                                      ? themeGreen
+                                      : AppColors.errorColor,
                                   fontWeight: FontWeight.w800,
                                   fontSize: Dimens.fontSize8,
                                 ),
@@ -451,7 +496,9 @@ class TradingSignalCard extends StatelessWidget {
                                   ? '${signal.resultInPips! >= 0 ? '+' : ''}${signal.resultInPips!.toStringAsFixed(2)} PIPS'
                                   : signal.pips,
                               style: TextStyle(
-                                color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                                color: signal.outcome == 'WIN'
+                                    ? themeGreen
+                                    : AppColors.errorColor,
                                 fontWeight: FontWeight.w800,
                                 fontSize: Dimens.fontSize14,
                               ),
@@ -503,7 +550,9 @@ class TradingSignalCard extends StatelessWidget {
                       CustomTextLabelWidget(
                         label: signal.outcome ?? 'LOSS',
                         style: TextStyle(
-                          color: signal.outcome == 'WIN' ? themeGreen : AppColors.errorColor,
+                          color: signal.outcome == 'WIN'
+                              ? themeGreen
+                              : AppColors.errorColor,
                           fontWeight: FontWeight.w800,
                           fontSize: Dimens.fontSize14,
                         ),
@@ -533,7 +582,9 @@ class TradingSignalCard extends StatelessWidget {
                   ),
                 ),
                 CustomTextLabelWidget(
-                  label: signal.traderName.isNotNullOrEmpty ? signal.traderName! : '--',
+                  label: signal.traderName.isNotNullOrEmpty
+                      ? signal.traderName!
+                      : '--',
                   style: TextStyle(
                     color: textColor,
                     fontSize: Dimens.fontSize10,
@@ -609,7 +660,9 @@ class TradingSignalCard extends StatelessWidget {
                               style: TextStyle(
                                 color: (signal.pips.startsWith('+'))
                                     ? themeGreen
-                                    : (signal.pips.startsWith('-') ? AppColors.errorColor : textColor),
+                                    : (signal.pips.startsWith('-')
+                                          ? AppColors.errorColor
+                                          : textColor),
                                 fontWeight: FontWeight.w800,
                                 fontSize: Dimens.fontSize14,
                               ),
@@ -674,7 +727,9 @@ class TradingSignalCard extends StatelessWidget {
                   ),
                   const SizedBox(width: Dimens.space6),
                   CustomTextLabelWidget(
-                    label: ((signal.isClosed || signal.isCancelled) && signal.createdAt != null)
+                    label:
+                        ((signal.isClosed || signal.isCancelled) &&
+                            signal.createdAt != null)
                         ? 'Created: ${DateFormat('dd MMM yyyy').format(DateTime.parse(signal.createdAt!).toLocal())}'
                         : signal.timeLabel,
                     style: TextStyle(
@@ -685,107 +740,157 @@ class TradingSignalCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  if (showTakeTrade && (signal.isActive || signal.isPending)) ...<Widget>[
-                    GestureDetector(
-                      onTap: signal.isTaken
-                          ? null
-                          : () {
-                              if (signal.publicId.isNotEmpty) {
-                                unawaited(context.read<TradesCubit>().takeTrade(signal.publicId));
+              Builder(
+                builder: (BuildContext context) {
+                  final bool isTraderOrAdmin =
+                      UserProfileService.instance().isTrader ||
+                      UserProfileService.instance().roleName.toUpperCase() ==
+                          'ADMIN';
+                  final bool shouldShowTakeTrade =
+                      showTakeTrade && !isTraderOrAdmin;
+
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      if (shouldShowTakeTrade &&
+                          (signal.isActive || signal.isPending)) ...<Widget>[
+                        GestureDetector(
+                          onTap: signal.isTaken
+                              ? null
+                              : () {
+                                  if (signal.publicId.isNotEmpty) {
+                                    unawaited(
+                                      context.read<TradesCubit>().takeTrade(
+                                        signal.publicId,
+                                      ),
+                                    );
+                                  } else {
+                                    context.scaffoldMessenger.showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Cannot take trade: invalid ID',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Dimens.space12,
+                              vertical: Dimens.space6,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: signal.isTaken
+                                  ? null
+                                  : AppColors.primaryButtonGradient,
+                              color: signal.isTaken
+                                  ? (isDark
+                                        ? AppColors.borderDark
+                                        : AppColors.borderLight)
+                                  : null,
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius8,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                CustomTextLabelWidget(
+                                  label: signal.isTaken
+                                      ? 'Taken'
+                                      : 'Take Trade',
+                                  style: TextStyle(
+                                    color: signal.isTaken
+                                        ? subtextColor
+                                        : AppColors.whiteColor,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: Dimens.fontSize10,
+                                  ),
+                                ),
+                                if (!signal.isTaken) ...<Widget>[
+                                  const SizedBox(width: Dimens.space4),
+                                  const Icon(
+                                    Icons.trending_up_rounded,
+                                    color: AppColors.whiteColor,
+                                    size: Dimens.size12,
+                                  ),
+                                ] else ...<Widget>[
+                                  const SizedBox(width: Dimens.space4),
+                                  Icon(
+                                    Icons.check_circle_rounded,
+                                    color: themeGreen,
+                                    size: Dimens.size12,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: Dimens.space8),
+                      ],
+                      GestureDetector(
+                        onTap: () async {
+                          await context.router.push(
+                            TradingOverviewRoute(signal: signal),
+                          );
+                          if (context.mounted) {
+                            try {
+                              unawaited(
+                                context
+                                    .read<MyFollowingCubit>()
+                                    .loadWishlistTrades(isRefresh: true),
+                              );
+                            } on Object catch (_) {}
+                            try {
+                              if (showTakeTrade) {
+                                unawaited(
+                                  context.read<TradesCubit>().loadTrades(),
+                                );
                               } else {
-                                context.scaffoldMessenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Cannot take trade: invalid ID'),
+                                unawaited(
+                                  context.read<MyTradesCubit>().loadMyTrades(
+                                    isRefresh: true,
                                   ),
                                 );
                               }
-                            },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
-                        decoration: BoxDecoration(
-                          gradient: signal.isTaken ? null : AppColors.primaryButtonGradient,
-                          color: signal.isTaken ? (isDark ? AppColors.borderDark : AppColors.borderLight) : null,
-                          borderRadius: BorderRadius.circular(Dimens.radius8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            CustomTextLabelWidget(
-                              label: signal.isTaken ? 'Taken' : 'Take Trade',
-                              style: TextStyle(
-                                color: signal.isTaken ? subtextColor : AppColors.whiteColor,
-                                fontWeight: FontWeight.w800,
-                                fontSize: Dimens.fontSize10,
-                              ),
+                            } on Object catch (_) {}
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Dimens.space12,
+                            vertical: Dimens.space6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryPurple.withValues(
+                              alpha: isDark ? 0.15 : 0.08,
                             ),
-                            if (!signal.isTaken) ...<Widget>[
-                              const SizedBox(width: Dimens.space4),
-                              const Icon(
-                                Icons.trending_up_rounded,
-                                color: AppColors.whiteColor,
-                                size: Dimens.size12,
+                            borderRadius: BorderRadius.circular(Dimens.radius8),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              CustomTextLabelWidget(
+                                label: 'View Details',
+                                style: TextStyle(
+                                  color: AppColors.primaryPurple,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: Dimens.fontSize10,
+                                ),
                               ),
-                            ] else ...<Widget>[
-                              const SizedBox(width: Dimens.space4),
+                              SizedBox(width: Dimens.space4),
                               Icon(
-                                Icons.check_circle_rounded,
-                                color: themeGreen,
-                                size: Dimens.size12,
+                                Icons.arrow_forward_ios_rounded,
+                                color: AppColors.primaryPurple,
+                                size: Dimens.size8,
                               ),
                             ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: Dimens.space8),
-                  ],
-                  GestureDetector(
-                    onTap: () async {
-                      await context.router.push(TradingOverviewRoute(signal: signal));
-                      if (context.mounted) {
-                        try {
-                          unawaited(context.read<MyFollowingCubit>().loadWishlistTrades(isRefresh: true));
-                        } on Object catch (_) {}
-                        try {
-                          if (showTakeTrade) {
-                            unawaited(context.read<TradesCubit>().loadTrades());
-                          } else {
-                            unawaited(context.read<MyTradesCubit>().loadMyTrades(isRefresh: true));
-                          }
-                        } on Object catch (_) {}
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: Dimens.space12, vertical: Dimens.space6),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryPurple.withValues(alpha: isDark ? 0.15 : 0.08),
-                        borderRadius: BorderRadius.circular(Dimens.radius8),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          CustomTextLabelWidget(
-                            label: 'View Details',
-                            style: TextStyle(
-                              color: AppColors.primaryPurple,
-                              fontWeight: FontWeight.w700,
-                              fontSize: Dimens.fontSize10,
-                            ),
-                          ),
-                          SizedBox(width: Dimens.space4),
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: AppColors.primaryPurple,
-                            size: Dimens.size8,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ],
           ),
@@ -803,7 +908,11 @@ class TradingSignalCard extends StatelessWidget {
           color: Color(0xFFFFF3E0),
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.currency_bitcoin, color: Colors.orange, size: Dimens.size18),
+        child: const Icon(
+          Icons.currency_bitcoin,
+          color: Colors.orange,
+          size: Dimens.size18,
+        ),
       );
     } else if (pair.contains('EUR')) {
       return Container(
@@ -813,7 +922,11 @@ class TradingSignalCard extends StatelessWidget {
           color: Color(0xFFE3F2FD),
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.euro_symbol_rounded, color: Colors.blue, size: Dimens.size18),
+        child: const Icon(
+          Icons.euro_symbol_rounded,
+          color: Colors.blue,
+          size: Dimens.size18,
+        ),
       );
     } else if (pair.contains('ETH')) {
       return Container(
@@ -823,7 +936,11 @@ class TradingSignalCard extends StatelessWidget {
           color: Color(0xFFE8EAF6),
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.token_outlined, color: Colors.indigo, size: Dimens.size18),
+        child: const Icon(
+          Icons.token_outlined,
+          color: Colors.indigo,
+          size: Dimens.size18,
+        ),
       );
     } else if (pair.contains('XAU') || pair.contains('GOLD')) {
       return Container(
@@ -833,7 +950,11 @@ class TradingSignalCard extends StatelessWidget {
           color: Color(0xFFFFFDE7),
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.monetization_on_rounded, color: Colors.amber, size: Dimens.size18),
+        child: const Icon(
+          Icons.monetization_on_rounded,
+          color: Colors.amber,
+          size: Dimens.size18,
+        ),
       );
     } else {
       return Container(
@@ -843,11 +964,14 @@ class TradingSignalCard extends StatelessWidget {
           color: Color(0xFFEDE7F6),
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.monetization_on_outlined, color: Colors.purple, size: Dimens.size18),
+        child: const Icon(
+          Icons.monetization_on_outlined,
+          color: Colors.purple,
+          size: Dimens.size18,
+        ),
       );
     }
   }
-
 }
 
 class _ValueColumn extends StatelessWidget {
@@ -869,7 +993,9 @@ class _ValueColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color subtextColor = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final Color subtextColor = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Column(
       crossAxisAlignment: alignment,
@@ -903,9 +1029,9 @@ class _ValueColumn extends StatelessWidget {
             ),
           ),
         ],
-    ]);
+      ],
+    );
   }
-
 }
 
 bool _shouldHidePips(String pips, double? resultInPips) {
@@ -917,6 +1043,3 @@ bool _shouldHidePips(String pips, double? resultInPips) {
   final double? val = double.tryParse(clean);
   return val == 0.0;
 }
-
-
-

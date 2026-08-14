@@ -142,8 +142,22 @@ class TradingSignalModel {
   }
 
   bool get isBuy => type.toUpperCase().contains('BUY');
-  bool get isActive => status.toUpperCase() == 'ACTIVE' || status.toUpperCase() == 'OPEN';
-  bool get isPending => status.toUpperCase() == 'PENDING';
-  bool get isClosed => status.toUpperCase() == 'CLOSED';
-  bool get isCancelled => status.toUpperCase() == 'CANCELLED' || status.toUpperCase() == 'CANCEL';
+  bool get isClosed =>
+      status.toUpperCase() == 'CLOSED' ||
+      clientTradeStatus?.toUpperCase() == 'CLOSED' ||
+      outcome?.toUpperCase() == 'WIN' ||
+      outcome?.toUpperCase() == 'LOSS';
+  bool get isCancelled =>
+      status.toUpperCase() == 'CANCELLED' ||
+      status.toUpperCase() == 'CANCEL' ||
+      clientTradeStatus?.toUpperCase() == 'CANCELLED' ||
+      clientTradeStatus?.toUpperCase() == 'CANCEL';
+  bool get isActive =>
+      !isClosed &&
+      !isCancelled &&
+      (status.toUpperCase() == 'ACTIVE' || status.toUpperCase() == 'OPEN');
+  bool get isPending =>
+      !isClosed &&
+      !isCancelled &&
+      status.toUpperCase() == 'PENDING';
 }

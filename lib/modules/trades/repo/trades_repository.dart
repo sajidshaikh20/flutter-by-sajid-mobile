@@ -34,5 +34,14 @@ abstract class TradesRepository extends BaseRepository {
 
   /// Create a new trade
   Future<ResponseHandler<BaseResponse<dynamic>>> createTrade(CreateSignalRequest request);
+
+  /// Close an active or pending trade
+  Future<ResponseHandler<BaseResponse<dynamic>>> closeTrade({
+    required String tradePublicId,
+    String? outcome,
+    double? exitPrice,
+    double? resultInPips,
+    String? note,
+  });
 }
 

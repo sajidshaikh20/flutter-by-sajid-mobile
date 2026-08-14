@@ -11,7 +11,9 @@ class HomeLiveTradesCard extends StatelessWidget {
     return ListenableBuilder(
       listenable: UserProfileService.instance(),
       builder: (BuildContext context, Widget? child) {
-        final bool isSubscribed = UserProfileService.instance().isSubscriptionActive;
+        final String role = UserProfileService.instance().roleName.toUpperCase();
+        final bool isTraderOrAdmin = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
+        final bool isSubscribed = UserProfileService.instance().isSubscriptionActive || isTraderOrAdmin;
 
         return BlocBuilder<HomeCubit, HomeState>(
           builder: (BuildContext context, HomeState state) {

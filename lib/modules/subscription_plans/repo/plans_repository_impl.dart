@@ -27,6 +27,27 @@ class PlansRepositoryImpl extends PlansRepository {
   }
 
   @override
+  Future<ResponseHandler<BaseResponse<UserResponseData>>> getMe() async {
+    final ResponseHandler<Map<String, dynamic>?> response = await MainConfig
+        .apiClient
+        .handleApiCall<Map<String, dynamic>>(
+          endUrl: Apis.getMe,
+        );
+
+    return getParsedResponseHandler(
+      responseHandler: response,
+      parser: (Map<String, dynamic> value) {
+        return BaseResponse<UserResponseData>.fromJson(
+          value,
+          (Object? json) => json != null
+              ? UserResponseData.fromJson(json as Map<String, dynamic>)
+              : const UserResponseData(),
+        );
+      },
+    );
+  }
+
+  @override
   Future<ResponseHandler<BaseResponse<dynamic>>> createSubscription(
     CreateSubscriptionRequest request,
   ) async {

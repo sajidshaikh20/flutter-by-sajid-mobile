@@ -59,6 +59,63 @@ class HomeCubit extends BaseCubit<HomeState> {
         debugPrint('Profile load failed: $e');
       }
 
+      try {
+        final ResponseHandler<BaseResponse<UserResponseData>> meResponse =
+            await PlansRepositoryImpl().getMe();
+        if (meResponse.isSuccess()) {
+          final UserResponseData? userData =
+              meResponse.getSuccessInstance()?.response.data;
+          if (userData != null) {
+            final UserSubscriptionData? sub = userData.activeSubscription;
+            if (sub != null) {
+              await UserProfileService.instance().updateUserProfile(
+                customerName: userData.name,
+                customerEmail: userData.email,
+                phoneNumber: userData.phone,
+                username: userData.username,
+                roleName: userData.role?.name,
+                roleId: userData.role?.id,
+                profilePictureUrl: userData.profilePictureUrl,
+                amountBalance: userData.amountBalance,
+                riskPercentage: userData.riskPercentage,
+                firstTimeLogin: userData.firstTimeLogin,
+                subscriptionPublicId: sub.subscriptionPublicId,
+                planName: sub.planName,
+                planCode: sub.planCode,
+                category: sub.category,
+                billingCycle: sub.billingCycle,
+                amount: sub.amount != null
+                    ? double.tryParse(sub.amount.toString())
+                    : null,
+                currencyCode: sub.currencyCode,
+                paymentStatus: sub.paymentStatus,
+                subscriptionStatus: sub.subscriptionStatus,
+                startDate: sub.startDate,
+                endDate: sub.endDate,
+                isActive: sub.isActive,
+                durationDays: sub.durationDays,
+              );
+            } else {
+              await UserProfileService.instance().updateUserProfile(
+                customerName: userData.name,
+                customerEmail: userData.email,
+                phoneNumber: userData.phone,
+                username: userData.username,
+                roleName: userData.role?.name,
+                roleId: userData.role?.id,
+                profilePictureUrl: userData.profilePictureUrl,
+                amountBalance: userData.amountBalance,
+                riskPercentage: userData.riskPercentage,
+                firstTimeLogin: userData.firstTimeLogin,
+                clearSubscription: true,
+              );
+            }
+          }
+        }
+      } on Object catch (e) {
+        debugPrint('Auth me call failed: $e');
+      }
+
       HomeDashboardResponse? dashboardData;
       List<TradingSignalModel> recentTrades = <TradingSignalModel>[];
       List<TradingSignalModel> liveTrades = <TradingSignalModel>[];

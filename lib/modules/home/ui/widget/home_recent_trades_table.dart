@@ -11,7 +11,9 @@ class HomeRecentTradesTable extends StatelessWidget {
     return ListenableBuilder(
       listenable: UserProfileService.instance(),
       builder: (BuildContext context, Widget? child) {
-        final bool isSubscribed = UserProfileService.instance().isSubscriptionActive;
+        final String role = UserProfileService.instance().roleName.toUpperCase();
+        final bool isTraderOrAdmin = role == 'TRADER' || role == 'MENTOR' || role == 'ADMIN';
+        final bool isSubscribed = UserProfileService.instance().isSubscriptionActive || isTraderOrAdmin;
 
         return BlocBuilder<HomeCubit, HomeState>(
           builder: (BuildContext context, HomeState state) {
@@ -34,23 +36,10 @@ class HomeRecentTradesTable extends StatelessWidget {
                           fontSize: Dimens.fontSize16,
                         ),
                       ),
-                     /* GestureDetector(
-                        onTap: () {
-                          AutoTabsRouter.of(context).setActiveIndex(2);
-                        },
-                        child: const CustomTextLabelWidget(
-                          label: 'View All',
-                          style: TextStyle(
-                            color: AppColors.primaryPurple,
-                            fontWeight: FontWeight.w500,
-                            fontSize: Dimens.fontSize12,
-                          ),
-                        ),
-                      ),*/
                     ],
                   ),
                   const SizedBox(height: Dimens.space12),
-                  if (!isSubscribed)
+                  if (!isSubscribed && trades.isEmpty)
                     Builder(
                       builder: (BuildContext context) {
                         final bool isPending = UserProfileService.instance().isPaymentPending;

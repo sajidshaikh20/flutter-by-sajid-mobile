@@ -12,8 +12,6 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
     final Map<String, dynamic> params = <String, dynamic>{};
     if (status != null && status.isNotEmpty) {
       params['status'] = status;
-      params['tradeStatus'] = status;
-      params['clientTradeStatus'] = status;
     }
     if (limit != null) {
       params['limit'] = limit;
@@ -23,14 +21,9 @@ class MyTradesRepositoryImpl extends MyTradesRepository {
     }
     if (fromDate != null && fromDate.isNotEmpty) {
       params['fromDate'] = fromDate;
-      params['from'] = fromDate;
-      params['startDate'] = fromDate;
-      params['createdDate'] = fromDate;
     }
     if (toDate != null && toDate.isNotEmpty) {
       params['toDate'] = toDate;
-      params['to'] = toDate;
-      params['endDate'] = toDate;
     }
 
     final String role = UserProfileService.instance().roleName.toUpperCase();

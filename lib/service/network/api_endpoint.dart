@@ -104,7 +104,7 @@ mixin Apis {
   static const String removeFromWishlist = '$apiVersion/remove_from_wishlist';
 
   ///Change Password api end points
-  static const String changePassword = '$apiVersion/changePassword';
+  static const String changePassword = '$subBaseUrl/common/change-password';
 
   ///  post api Endpoint to get the user's wishlist.
   static const String getWishlist = '$apiVersion/customer/wishlist';
@@ -241,6 +241,9 @@ mixin Apis {
 
   /// Endpoint to get recent trades
   static const String getRecentTrades = '$subBaseUrl/common/recent';
+
+  /// Endpoint to close a trade (Mentor/Trader)
+  static String closeTrade(String tradePublicId) => '$subBaseUrl/trade/$tradePublicId/status';
 }
 
 

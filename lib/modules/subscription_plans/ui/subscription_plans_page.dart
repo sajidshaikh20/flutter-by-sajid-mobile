@@ -105,6 +105,7 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
                 // Scrollable Body
                 Expanded(
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Dimens.space16),
@@ -112,6 +113,94 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           const SizedBox(height: Dimens.space8),
+
+                          // Membership & Billing Header & 2 Summary Cards (Only shown if subscription is active)
+                          ListenableBuilder(
+                            listenable: UserProfileService.instance(),
+                            builder: (BuildContext context, Widget? child) {
+                              final bool isSubActive = UserProfileService.instance().isSubscriptionActive;
+                              if (!isSubActive) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  CustomTextLabelWidget(
+                                    label: 'Membership & Billing',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  CustomTextLabelWidget(
+                                    label: 'Manage your subscription, billing and premium features.',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: subtextColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: Dimens.space12),
+
+                                  // Responsive 2 Membership Cards
+                                  LayoutBuilder(
+                                    builder: (BuildContext context, BoxConstraints constraints) {
+                                      final bool isWide = constraints.maxWidth > 700;
+                                      if (isWide) {
+                                        return Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Expanded(child: _buildCurrentPlanCard(context, isDark, textColor, subtextColor, cardBorder)),
+                                            const SizedBox(width: Dimens.space16),
+                                            Expanded(child: _buildAccountSummaryCard(context, isDark, textColor, subtextColor, cardBorder)),
+                                          ],
+                                        );
+                                      } else {
+                                        return Column(
+                                          children: <Widget>[
+                                            _buildCurrentPlanCard(context, isDark, textColor, subtextColor, cardBorder),
+                                            const SizedBox(height: Dimens.space16),
+                                            _buildAccountSummaryCard(context, isDark, textColor, subtextColor, cardBorder),
+                                          ],
+                                        );
+                                      }
+                                    },
+                                  ),
+
+                                  const SizedBox(height: Dimens.space28),
+
+                                  // Upgrade Membership Section Header
+                                  KeyedSubtree(
+                                    key: _upgradeSectionKey,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        CustomTextLabelWidget(
+                                          label: 'Upgrade Membership',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: textColor,
+                                          ),
+                                        ),
+                                        const SizedBox(height: Dimens.space4),
+                                        CustomTextLabelWidget(
+                                          label: 'Upgrade or renew your subscription.',
+                                          style: TextStyle(
+                                            fontSize: Dimens.fontSize12,
+                                            color: subtextColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: Dimens.space16),
+                                ],
+                              );
+                            },
+                          ),
 
                           // Monthly vs Yearly Timeframe Switcher
                           Center(
@@ -648,7 +737,259 @@ class _SubscriptionPlansViewBodyState extends State<SubscriptionPlansViewBody> {
     );
   }
 
-  void _handleChoosePlan(BuildContext context, String planName) {
-    unawaited(context.read<SubscriptionPlansCubit>().createSubscription(context));
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _upgradeSectionKey = GlobalKey();
+
+  void _scrollToUpgradeSection() {
+    if (_upgradeSectionKey.currentContext != null) {
+      unawaited(Scrollable.ensureVisible(
+        _upgradeSectionKey.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      ));
+    } else if (_scrollController.hasClients) {
+      unawaited(_scrollController.animateTo(
+        350.0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      ));
+    }
+  }
+
+  String _formatDateString(String? rawDate) {
+    if (rawDate == null || rawDate.trim().isEmpty) return '--';
+    try {
+      final DateTime parsed = DateTime.parse(rawDate.trim());
+      return DateFormat('dd MMM yyyy').format(parsed);
+    } on Object catch (_) {
+      if (rawDate.trim().length >= 10) {
+        try {
+          final DateTime parsed = DateTime.parse(rawDate.trim().substring(0, 10));
+          return DateFormat('dd MMM yyyy').format(parsed);
+        } on Object catch (_) {}
+      }
+      return rawDate;
+    }
+  }
+
+  String _capitalize(String? text) {
+    if (text == null || text.trim().isEmpty) return '--';
+    final String trimmed = text.trim();
+    return trimmed[0].toUpperCase() + trimmed.substring(1).toLowerCase();
+  }
+
+  Widget _buildCurrentPlanCard(
+    BuildContext context,
+    bool isDark,
+    Color textColor,
+    Color subtextColor,
+    Color cardBorder,
+  ) {
+    final UserProfileService userProfile = UserProfileService.instance();
+    final bool isActive = userProfile.isSubscriptionActive;
+    final String category = isActive
+        ? (userProfile.category.isNotEmpty
+            ? userProfile.category
+            : (userProfile.planName.isNotEmpty ? userProfile.planName : 'No Active Plan'))
+        : 'No Active Plan';
+    final String billingCycle = isActive && userProfile.billingCycle.isNotEmpty
+        ? userProfile.billingCycle.toUpperCase()
+        : '--';
+    final double amount = userProfile.amount ?? 0;
+    final String endDateStr = isActive ? _formatDateString(userProfile.endDate) : 'No active plan';
+
+    final Color cardBg = isDark ? const Color(0xFF0F172A) : Colors.white;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : cardBorder,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Header Title
+          Text(
+            'Current Plan',
+            style: TextStyle(
+              color: textColor,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Plan Name Category & Active Badge Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                category,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+
+              // Active / Expired Badge
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const SizedBox(width: 5),
+                  Text(
+                    isActive ? 'Active' : 'Expired',
+                    style: TextStyle(
+                      color: isActive ? const Color(0xFF34D399) : AppColors.errorColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Amount / Billing Cycle
+          Text(
+            isActive ? '${amount % 1 == 0 ? amount.toInt() : amount} / ${_capitalize(billingCycle)}' : '--',
+            style: const TextStyle(
+              color: Color(0xFF60A5FA),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            isActive ? 'Valid till $endDateStr' : 'No active subscription',
+            style: TextStyle(
+              color: subtextColor,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Upgrade Plan Button
+          CustomButtonWidget(
+            title: isActive ? 'Upgrade Plan' : 'Select Plan',
+            height: 38,
+            borderRadius: 8,
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+            onTap: _scrollToUpgradeSection,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccountSummaryCard(
+    BuildContext context,
+    bool isDark,
+    Color textColor,
+    Color subtextColor,
+    Color cardBorder,
+  ) {
+    final UserProfileService userProfile = UserProfileService.instance();
+    final bool isActive = userProfile.isSubscriptionActive;
+
+    final String category = isActive
+        ? (userProfile.category.isNotEmpty
+            ? userProfile.category
+            : (userProfile.planName.isNotEmpty ? userProfile.planName : 'None'))
+        : 'None';
+    final String paymentStatus = isActive
+        ? (userProfile.paymentStatus.isNotEmpty ? _capitalize(userProfile.paymentStatus) : 'Completed')
+        : 'Inactive';
+    final String subscriptionStatus = isActive
+        ? (userProfile.subscriptionStatus.isNotEmpty ? _capitalize(userProfile.subscriptionStatus) : 'Active')
+        : 'Expired';
+    final String startDateStr = isActive ? _formatDateString(userProfile.startDate) : '--';
+    final String endDateStr = isActive ? _formatDateString(userProfile.endDate) : '--';
+    final String durationDays = isActive && userProfile.durationDays > 0 ? '${userProfile.durationDays} Days' : '--';
+    final String billingCycle = isActive && userProfile.billingCycle.isNotEmpty
+        ? userProfile.billingCycle.toUpperCase()
+        : '--';
+
+    final Color cardBg = isDark ? const Color(0xFF0F172A) : Colors.white;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : cardBorder,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Header Title
+          Text(
+            'Account Summary',
+            style: TextStyle(
+              color: textColor,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          _buildSummaryRow('Subscription', category, textColor, subtextColor),
+          _buildSummaryRow('Payment Status', paymentStatus, textColor, subtextColor),
+          _buildSummaryRow('Subscription Status', subscriptionStatus, textColor, subtextColor),
+          _buildSummaryRow('Start Date', startDateStr, textColor, subtextColor),
+          _buildSummaryRow('Renewal Date', endDateStr, textColor, subtextColor),
+          _buildSummaryRow('Duration', durationDays, textColor, subtextColor),
+          _buildSummaryRow('Billing Cycle', billingCycle, textColor, subtextColor),
+          _buildSummaryRow(
+            'Active',
+            isActive ? 'Yes' : 'No',
+            isActive ? const Color(0xFF10B981) : AppColors.errorColor,
+            subtextColor,
+            isValueColorCustom: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(
+    String label,
+    String value,
+    Color valueColor,
+    Color labelColor, {
+    bool isValueColorCustom = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3.5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            label,
+            style: TextStyle(color: labelColor, fontSize: 12),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: isValueColorCustom ? valueColor : valueColor,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

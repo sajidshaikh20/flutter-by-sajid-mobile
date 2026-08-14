@@ -97,7 +97,7 @@ class TradeResponse {
       publicId: source['tradePublicId'] ?? source['publicId'] ?? '',
       market: source['market']?.toString() ?? '',
       marketType: source['marketType']?.toString() ?? '',
-      status: _normalizeTradeStatus(source['clientTradeStatus'] ?? source['tradeStatus'] ?? source['status']),
+      status: _normalizeTradeStatus(source),
       riskRewardRatio: source['riskRewardRatio']?.toString() ?? '1:2',
       note: source['note']?.toString() ?? '',
       tradingViewUrl: source['tradingViewUrl']?.toString() ?? '',
@@ -152,12 +152,30 @@ class TradeResponse {
     return json;
   }
 
-  static String _normalizeTradeStatus(Object? rawStatus) {
-    final String status = rawStatus?.toString().toUpperCase() ?? 'ACTIVE';
-    if (status == 'CANCEL' || status == 'CANCELLED') {
+  static String _normalizeTradeStatus(Map<String, dynamic> source) {
+    final String? clientStatus = source['clientTradeStatus']?.toString().toUpperCase();
+    final String? tradeStatus = source['tradeStatus']?.toString().toUpperCase();
+    final String? rawStatus = source['status']?.toString().toUpperCase();
+    final String? outcome = source['outcome']?.toString().toUpperCase();
+    final bool hasExitPrice = source['exitPrice'] != null;
+
+    if (clientStatus == 'CLOSED' ||
+        tradeStatus == 'CLOSED' ||
+        rawStatus == 'CLOSED' ||
+        outcome == 'WIN' ||
+        outcome == 'LOSS' ||
+        hasExitPrice) {
+      return 'CLOSED';
+    }
+    if (clientStatus == 'CANCEL' ||
+        clientStatus == 'CANCELLED' ||
+        tradeStatus == 'CANCEL' ||
+        tradeStatus == 'CANCELLED' ||
+        rawStatus == 'CANCEL' ||
+        rawStatus == 'CANCELLED') {
       return 'CANCELLED';
     }
-    return status;
+    return clientStatus ?? tradeStatus ?? rawStatus ?? 'ACTIVE';
   }
 
   Map<String, dynamic> toJson() {
@@ -241,7 +259,12 @@ class TradeResponse {
 
     final String pair =
         currencyPair?['symbol'] as String? ?? currencyPair?['name'] as String? ?? 'EURUSD';
-    final String normalizedStatus = _normalizeTradeStatus(status);
+    final String normalizedStatus = _normalizeTradeStatus(<String, dynamic>{
+      'clientTradeStatus': clientTradeStatus,
+      'status': status,
+      'outcome': outcome,
+      'exitPrice': exitPrice,
+    });
 
     final List<double> sparklineData = <double>[
       entryPrice * 0.998,

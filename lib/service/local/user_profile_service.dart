@@ -133,12 +133,17 @@ class UserProfileService extends ChangeNotifier {
   bool get isSubscriptionActive {
     if (_dataModel == null) return false;
     if (isTrader) return true;
+
     final bool active = _dataModel?.isActive ?? false;
     final String subStatus = (_dataModel?.subscriptionStatus ?? '').toUpperCase();
     final String payStatus = (_dataModel?.paymentStatus ?? '').toUpperCase();
+    final String subId = _dataModel?.subscriptionPublicId ?? '';
 
-    if (subStatus == 'PENDING' || payStatus == 'PENDING' || !active) {
+    if (subId.isEmpty || !active || subStatus == 'EXPIRED' || subStatus == 'CANCELLED' || subStatus == 'INACTIVE' || payStatus == 'INACTIVE') {
       return false;
+    }
+    if (active && subStatus == 'ACTIVE') {
+      return true;
     }
     return active;
   }
@@ -225,6 +230,7 @@ class UserProfileService extends ChangeNotifier {
     double? amountBalance,
     double? riskPercentage,
     bool? firstTimeLogin,
+    bool clearSubscription = false,
   }) async {
     // Ensure user data exists before updating; initialize if needed
     await ensureUserDataLoaded();
@@ -237,38 +243,68 @@ class UserProfileService extends ChangeNotifier {
       customerToken: '',
     );
 
-
-    // Update only the fields that are provided, keeping others unchanged
-    _dataModel = _dataModel?.copyWith(
-      customerName: customerName ?? _dataModel?.customerName,
-      customerEmail: customerEmail ?? _dataModel?.customerEmail,
-      phoneNumber: phoneNumber ?? _dataModel?.phoneNumber,
-      customerToken: customerToken ?? _dataModel?.customerToken,
-      accessToken: accessToken ?? _dataModel?.accessToken,
-      refreshToken: refreshToken ?? _dataModel?.refreshToken,
-      customerId: customerId ?? _dataModel?.customerId,
-      prefix: prefix ?? _dataModel?.prefix,
-      username: username ?? _dataModel?.username,
-      roleId: roleId ?? _dataModel?.roleId,
-      roleName: roleName ?? _dataModel?.roleName,
-      subscriptionPublicId: subscriptionPublicId ?? _dataModel?.subscriptionPublicId,
-      planName: planName ?? _dataModel?.planName,
-      planCode: planCode ?? _dataModel?.planCode,
-      category: category ?? _dataModel?.category,
-      billingCycle: billingCycle ?? _dataModel?.billingCycle,
-      amount: amount ?? _dataModel?.amount,
-      currencyCode: currencyCode ?? _dataModel?.currencyCode,
-      paymentStatus: paymentStatus ?? _dataModel?.paymentStatus,
-      subscriptionStatus: subscriptionStatus ?? _dataModel?.subscriptionStatus,
-      startDate: startDate ?? _dataModel?.startDate,
-      endDate: endDate ?? _dataModel?.endDate,
-      isActive: isActive ?? _dataModel?.isActive,
-      durationDays: durationDays ?? _dataModel?.durationDays,
-      profilePictureUrl: profilePictureUrl ?? _dataModel?.profilePictureUrl,
-      amountBalance: amountBalance ?? _dataModel?.amountBalance,
-      riskPercentage: riskPercentage ?? _dataModel?.riskPercentage,
-      firstTimeLogin: firstTimeLogin ?? _dataModel?.firstTimeLogin,
-    );
+    if (clearSubscription) {
+      _dataModel = _dataModel?.copyWith(
+        customerName: customerName ?? _dataModel?.customerName,
+        customerEmail: customerEmail ?? _dataModel?.customerEmail,
+        phoneNumber: phoneNumber ?? _dataModel?.phoneNumber,
+        customerToken: customerToken ?? _dataModel?.customerToken,
+        accessToken: accessToken ?? _dataModel?.accessToken,
+        refreshToken: refreshToken ?? _dataModel?.refreshToken,
+        customerId: customerId ?? _dataModel?.customerId,
+        prefix: prefix ?? _dataModel?.prefix,
+        username: username ?? _dataModel?.username,
+        roleId: roleId ?? _dataModel?.roleId,
+        roleName: roleName ?? _dataModel?.roleName,
+        profilePictureUrl: profilePictureUrl ?? _dataModel?.profilePictureUrl,
+        amountBalance: amountBalance ?? _dataModel?.amountBalance,
+        riskPercentage: riskPercentage ?? _dataModel?.riskPercentage,
+        firstTimeLogin: firstTimeLogin ?? _dataModel?.firstTimeLogin,
+        subscriptionPublicId: '',
+        planName: '',
+        planCode: '',
+        category: '',
+        billingCycle: '',
+        currencyCode: '',
+        paymentStatus: 'INACTIVE',
+        subscriptionStatus: 'EXPIRED',
+        startDate: '',
+        endDate: '',
+        isActive: false,
+        durationDays: 0,
+      );
+    } else {
+      _dataModel = _dataModel?.copyWith(
+        customerName: customerName ?? _dataModel?.customerName,
+        customerEmail: customerEmail ?? _dataModel?.customerEmail,
+        phoneNumber: phoneNumber ?? _dataModel?.phoneNumber,
+        customerToken: customerToken ?? _dataModel?.customerToken,
+        accessToken: accessToken ?? _dataModel?.accessToken,
+        refreshToken: refreshToken ?? _dataModel?.refreshToken,
+        customerId: customerId ?? _dataModel?.customerId,
+        prefix: prefix ?? _dataModel?.prefix,
+        username: username ?? _dataModel?.username,
+        roleId: roleId ?? _dataModel?.roleId,
+        roleName: roleName ?? _dataModel?.roleName,
+        subscriptionPublicId: subscriptionPublicId ?? _dataModel?.subscriptionPublicId,
+        planName: planName ?? _dataModel?.planName,
+        planCode: planCode ?? _dataModel?.planCode,
+        category: category ?? _dataModel?.category,
+        billingCycle: billingCycle ?? _dataModel?.billingCycle,
+        amount: amount ?? _dataModel?.amount,
+        currencyCode: currencyCode ?? _dataModel?.currencyCode,
+        paymentStatus: paymentStatus ?? _dataModel?.paymentStatus,
+        subscriptionStatus: subscriptionStatus ?? _dataModel?.subscriptionStatus,
+        startDate: startDate ?? _dataModel?.startDate,
+        endDate: endDate ?? _dataModel?.endDate,
+        isActive: isActive ?? _dataModel?.isActive,
+        durationDays: durationDays ?? _dataModel?.durationDays,
+        profilePictureUrl: profilePictureUrl ?? _dataModel?.profilePictureUrl,
+        amountBalance: amountBalance ?? _dataModel?.amountBalance,
+        riskPercentage: riskPercentage ?? _dataModel?.riskPercentage,
+        firstTimeLogin: firstTimeLogin ?? _dataModel?.firstTimeLogin,
+      );
+    }
 
     // Save updated model back to shared preferences
     String jsonString = jsonEncode(_dataModel?.toJson());
