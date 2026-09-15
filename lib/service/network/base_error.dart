@@ -67,6 +67,9 @@ class ErrorResult {
                 "Something Went Wrong",
             type: DioExceptionType.connectionError,
           );
+        case DioExceptionType.transformTimeout:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     } else {
       return ErrorResult(
